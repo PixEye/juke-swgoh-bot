@@ -1,4 +1,4 @@
-<div style="float:right">![Logo of JsB](Assets/Maul-s-eye_128x128.jpg)</div>
+![Logo of JsB](Assets/Maul-s-eye_128x128.jpg)
 
 # jsb
 
