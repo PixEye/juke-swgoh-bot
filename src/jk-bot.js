@@ -40,11 +40,7 @@ db_con.connect(function(exc) {
 		db_con.query(sql, function (exc, result) {
 			if (exc) {
 				console.log("SQL:", sql);
-				if (exc.sqlMessage) {
-					console.log(Date()+" - Exception:", exc.sqlMessage);
-				} else {
-					console.log(Date()+" - Exception:", exc);
-				}
+				console.log(Date()+" - Exception:", exc.sqlMessage? exc.sqlMessage: exc);
 			} else {
 				console.log(Date()+" - "+result.length+" record matche(s) user's ID:", discord_id);
 				// console.dir(result);
@@ -82,7 +78,8 @@ db_con.connect(function(exc) {
 		var user = message.author;
 
 		// Filter with the prefix & ignore bots:
-		if (message.author.bot || (message.channel.type!=="dm" && !message.content.toLowerCase().startsWith(config.prefix))) {
+		if (message.author.bot
+		|| (message.channel.type!=="dm" && !message.content.toLowerCase().startsWith(config.prefix))) {
 			return; // stop parsing the message
 		}
 
@@ -152,18 +149,15 @@ db_con.connect(function(exc) {
 							}
 
 							// Remember user's stats:
-							sql = "REPLACE guilds (swgoh_id, name) VALUES ("+
+							sql = "REPLACE INTO guilds (swgoh_id, name) VALUES ("+
 								mysql.escape(guild.id)+", "+
 								mysql.escape(guild.name)+")";
 
 							db_con.query(sql, function (exc, result) {
 								if (exc) {
 									console.log("SQL:", sql);
-									if (exc.sqlMessage) {
-										console.log(Date()+" - Exception:", exc.sqlMessage);
-									} else {
-										console.log(Date()+" - Exception:", exc);
-									}
+									console.log(
+										Date()+" - Exception:", exc.sqlMessage? exc.sqlMessage: exc);
 									return;
 								}
 
@@ -201,8 +195,10 @@ db_con.connect(function(exc) {
 				richMsg = new RichEmbed().setTitle("Help")
 					.setDescription([
 						"**Here is a quick list of user commands (without explanation):**",
-						" guildstats (gs), help, playerstat (ps), repeat, say, start, status, whoami, whois",
-						"**Admin commands:** admin, destroy, leave, register (reg), self, shutdown, stop",
+						" guildstats (gs), help, playerstat (ps), repeat,"+
+							" say, start, status, whoami, whois",
+						"**Admin commands:** admin, destroy, leave,"+
+							" register (reg), self, shutdown, stop",
 						"**NB :** in DM, the prefix is optional"
 					]).setFooter(config.footer.message, config.footer.iconUrl);
 				message.channel.send(richMsg);
@@ -234,11 +230,8 @@ db_con.connect(function(exc) {
 							db_con.query(sql, function (exc, result) {
 								if (exc) {
 									console.log("SQL:", sql);
-									if (exc.sqlMessage) {
-										console.log(Date()+" - Exception:", exc.sqlMessage);
-									} else {
-										console.log(Date()+" - Exception:", exc);
-									}
+									console.log(
+										Date()+" - Exception:", exc.sqlMessage? exc.sqlMessage: exc);
 									return;
 								}
 
@@ -246,7 +239,8 @@ db_con.connect(function(exc) {
 							});
 						});
 					} else
-						message.reply(":red_circle: Invalid or missing allycode! Try 'register' command.");
+						message.reply(
+							":red_circle: Invalid or missing allycode! Try 'register' command.");
 				}
 
 				// Extract user's tag (if any):
@@ -322,11 +316,7 @@ db_con.connect(function(exc) {
 				db_con.query("SELECT COUNT(*) AS cnt FROM users", function (exc, result) {
 					if (exc) {
 						console.log("SQL:", sql);
-						if (exc.sqlMessage) {
-							console.log(Date()+" - Exception:", exc.sqlMessage);
-						} else {
-							console.log(Date()+" - Exception:", exc);
-						}
+						console.log(Date()+" - Exception:", exc.sqlMessage? exc.sqlMessage: exc);
 					} else {
 						if (result.length === 1) {
 							console.log(Date()+" - %d users registered.", result[0].cnt);
@@ -346,7 +336,8 @@ db_con.connect(function(exc) {
 				if (message.mentions && message.mentions.users && message.mentions.users.first()) {
 					user = message.mentions.users.first();
 					nick = user.username;
-				} else if (command!=="self" && command!=="selfy" && message.mentions && message.mentions.users) {
+				} else if (command!=="self" && command!=="selfy"
+						&& message.mentions && message.mentions.users) {
 					message.reply("Cannot answer for the moment.");
 
 					console.log(Date()+" - Mentions:");
@@ -363,7 +354,6 @@ db_con.connect(function(exc) {
 				lines = [
 						"**"+nick+" ID is:** "+user.id,
 						"**"+nick+" creation date is:**", " "+user.createdAt,
-						// "**"+nick+" presence client status is:** "+user.presence.clientStatus, // object
 						"**"+nick+" presence status is:** "+user.presence.status
 					];
 
