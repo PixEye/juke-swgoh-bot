@@ -1,0 +1,20 @@
+{
+  "db": {
+    "host": "localhost",
+    "name": "swgoh",
+    "pw":   "fn3AlqupDRnjcGii",
+    "user": "jkb"
+  },
+  "footer": {
+    "iconUrl": "http://cliparts.co/cliparts/5TR/X89/5TRX89egc.png",
+    "message": "This bot is still under construction."
+  },
+  "ownerID": "222443133294739456",
+  "prefix": "jb.",
+  "swapi": {
+    "pwd": "mfBsw3Lb!!LPKJ6",
+    "user": "JukeM"
+  },
+  "token": "NjI5MzQ2NjA0MDc1NDUwMzk5.XZYbIg.PvaExV4TnGlBrIgCntaW16hIuNo",
+  "username": "JkB"
+}

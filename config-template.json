@@ -1,0 +1,20 @@
+{
+  "db": {
+    "host": "localhost",
+    "name": "swgoh",
+    "pw":   "****************",
+    "user": "jkb"
+  },
+  "footer": {
+    "iconUrl": "http://cliparts.co/cliparts/5TR/X89/5TRX89egc.png",
+    "message": "This bot is still under construction."
+  },
+  "ownerID": "012345678901234567",
+  "prefix": "foo.",
+  "swapi": {
+    "user": "<your api.swgoh.help login>",
+    "pwd": "<your api.swgoh.help password>"
+  },
+  "token": "<your long bot token>",
+  "username": "<your bot nickname>"
+}
