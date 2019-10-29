@@ -1,3 +1,5 @@
+![Logo of JsB](Assets/Maul-s-eye_128x128.jpg)
+
 # jsb
 
 ## Quick description
