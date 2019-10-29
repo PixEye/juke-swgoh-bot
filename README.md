@@ -2,14 +2,19 @@
 
 ## Quick description
 
-Juke's SWGoH Discord bot: a Star Wars Galaxy of Heros helper bot running on Discord. SWGoH is a mobile game.
+Juke's SWGoH [Discord](https://discordapp.com/) bot: a Star Wars Galaxy of Heros helper bot running on Discord. SWGoH is a mobile game.
 
 This bot get players and guilds data through the [SWGoH-API](https://api.swgoh.help/).
 
 ## Technical requirements
 
-NodeJS & a MySQL SGDB.
+[NodeJS](https://nodejs.org/en/) & a [MySQL](https://dev.mysql.com/) SGDB.
 It works under Windows 10 (but it should also work under Linux).
+
+NodeJS required modules:
+
+* DiscordJS
+* MySQL
 
 ## About the author
 
