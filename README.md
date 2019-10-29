@@ -1,5 +1,7 @@
 # jsb
 
+![Logo of JsB](Assets/Maul-s-eye_128x128.jpg)
+
 ## Quick description
 
 Juke's SWGoH [Discord](https://discordapp.com/) bot: a Star Wars Galaxy of Heros helper bot running on Discord. SWGoH is a mobile game.
