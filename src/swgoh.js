@@ -179,11 +179,11 @@ exports.getPlayerGuild = async function getPlayerGuild(allycode, message, callba
 					"",
 					"**Officers ("+officerNames.length+"):** "+officerNames.sort().join(", ")
 				])
-				.addField("**GP:**",           guild.gp.toLocaleString(locale), true)
-				.addField("**Member count:**", guild.members, true)
-				.addField("**GP average:**",   Math.round(guild.gp/guild.members).toLocaleString(locale), true)
-				.addField("**Leader:**",        leader.name+" (GP: "+ leader.gp.toLocaleString(locale)+")", true)
-				.addField("**Biggest GP:**",   biggest.name+" (GP: "+biggest.gp.toLocaleString(locale)+")", true)
+				.addField("GP:",           guild.gp.toLocaleString(locale), true)
+				.addField("Member count:", guild.members, true)
+				.addField("GP average:",   Math.round(guild.gp/guild.members).toLocaleString(locale), true)
+				.addField("Leader:",       leader.name +" (GP: "+ leader.gp.toLocaleString(locale)+")", true)
+				.addField("Biggest GP:",   biggest.name+" (GP: "+biggest.gp.toLocaleString(locale)+")", true)
 				.setTimestamp(guild.updated)
 				.setFooter(config.footer.message, config.footer.iconUrl);
 			message.reply(richMsg);

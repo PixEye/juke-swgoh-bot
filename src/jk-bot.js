@@ -37,7 +37,7 @@ db_con.connect(function(exc) {
 	{
 		var sql = "SELECT * FROM users WHERE discord_id="+parseInt(discord_id);
 
-		db_con.query(sql, function (exc, result) {
+		db_con.query(sql, function(exc, result) {
 			if (exc) {
 				console.log("SQL:", sql);
 				console.log(Date()+" - Exception:", exc.sqlMessage? exc.sqlMessage: exc);
@@ -91,7 +91,7 @@ db_con.connect(function(exc) {
 		command = args.shift().toLowerCase();
 		nick = user.username;
 
-		console.log(Date()+" - \""+user.username+"\" sent command: "+message.content);
+		console.log(Date()+" - / \""+user.username+"\" sent command: "+message.content);
 
 		// public commands:
 		switch (command) {
@@ -153,11 +153,10 @@ db_con.connect(function(exc) {
 								mysql.escape(guild.id)+", "+
 								mysql.escape(guild.name)+")";
 
-							db_con.query(sql, function (exc, result) {
+							db_con.query(sql, function(exc, result) {
 								if (exc) {
 									console.log("SQL:", sql);
-									console.log(
-										Date()+" - Exception:", exc.sqlMessage? exc.sqlMessage: exc);
+									console.log(Date()+" - Exception:", exc.sqlMessage? exc.sqlMessage: exc);
 									return;
 								}
 
@@ -227,11 +226,10 @@ db_con.connect(function(exc) {
 								" guildRefId="+mysql.escape(player.guildRefId)+","+
 								" zetaCount="+player.zetaCount+" "+
 								"WHERE allycode="+allycode;
-							db_con.query(sql, function (exc, result) {
+							db_con.query(sql, function(exc, result) {
 								if (exc) {
 									console.log("SQL:", sql);
-									console.log(
-										Date()+" - Exception:", exc.sqlMessage? exc.sqlMessage: exc);
+									console.log(Date()+" - Exception:", exc.sqlMessage? exc.sqlMessage: exc);
 									return;
 								}
 
@@ -239,8 +237,7 @@ db_con.connect(function(exc) {
 							});
 						});
 					} else
-						message.reply(
-							":red_circle: Invalid or missing allycode! Try 'register' command.");
+						message.reply(":red_circle: Invalid or missing allycode! Try 'register' command.");
 				}
 
 				// Extract user's tag (if any):
@@ -293,7 +290,7 @@ db_con.connect(function(exc) {
 					" VALUES ("+user.id+', '+mysql.escape(nick)+', '+allycode+")";
 
 				// Register:
-				db_con.query(sql, function (exc, result) {
+				db_con.query(sql, function(exc, result) {
 					if (exc) {
 						console.log("SQL:", sql);
 						if (exc.sqlMessage) {
@@ -313,16 +310,29 @@ db_con.connect(function(exc) {
 			case "start":
 			case "status":
 				message.channel.send("I am listening since: "+start);
-				db_con.query("SELECT COUNT(*) AS cnt FROM users", function (exc, result) {
+				db_con.query("SELECT COUNT(*) AS nbu FROM users", function(exc, result) {
 					if (exc) {
 						console.log("SQL:", sql);
 						console.log(Date()+" - Exception:", exc.sqlMessage? exc.sqlMessage: exc);
 					} else {
 						if (result.length === 1) {
-							console.log(Date()+" - %d users registered.", result[0].cnt);
-							message.channel.send(result[0].cnt+" users registered.");
-						}
-						console.log(Date()+" - "+result.length+" result(s)!");
+							let nbu = result[0].nbu;
+							console.log(Date()+" - %d users registered.", nbu);
+
+							db_con.query("SELECT COUNT(*) AS nbg FROM guilds", function(exc, result) {
+								if (exc) {
+									console.log("SQL:", sql);
+									console.log(Date()+" - Exception:", exc.sqlMessage? exc.sqlMessage: exc);
+								} else {
+									if (result.length === 1) {
+										let msg = nbu+" users & "+result[0].nbg+" guild(s) registered.";
+										console.log(Date()+" -", msg);
+										message.channel.send(msg);
+									}
+								}
+							});
+						} else
+							console.log(Date()+" - "+result.length+" result(s)!");
 					}
 				});
 				break;
