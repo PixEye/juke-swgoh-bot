@@ -15,8 +15,9 @@ It works under Windows 10 (but it should also work under Linux).
 
 NodeJS required modules:
 
-* DiscordJS
-* MySQL
+* api-swgoh-help
+* discord.js
+* mysql
 
 ## About the author
 
