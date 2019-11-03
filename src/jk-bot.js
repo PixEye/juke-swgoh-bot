@@ -116,7 +116,28 @@ db_con.connect(function(exc) {
 				break;
 
 			case "allycode":
-				// TODO
+				let search = args.join(" ").replace("'", "");
+
+				sql = "SELECT * FROM users";
+				sql+= " WHERE users.discord_nickname LIKE '%"+search+"%'";
+
+				db_con.query(sql, function(exc, result) {
+					if (exc) {
+						console.log("SQL:", sql);
+						console.log(Date()+" - Exception:", exc.sqlMessage? exc.sqlMessage: exc);
+					} else {
+						console.log(Date()+" - "+result.length+" record matche(s):", search);
+						// console.dir(result);
+						if (result.length !== 1) {
+							console.log(Date()+" - Allycode not found: %d result(s)", result.length);
+							message.channel.send("No match");
+						} else {
+							user = result[0];
+							console.log(Date()+" - %s's allycode is:", user.discord_nickname, user.allycode);
+							message.channel.send(user.discord_nickname+"'s allycode is: "+user.allycode);
+						}
+					}
+				});
 				break;
 
 			case "destroy":
