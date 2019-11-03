@@ -33,7 +33,7 @@ db_con.connect(function(exc) {
 
 	console.log(Date()+" - Connected to the database.");
 
-	function getAllycodeFromDiscordId(discord_id, callback)
+	function getPlayerFromDiscordId(discord_id, callback)
 	{
 		var sql = "SELECT * FROM users WHERE discord_id="+parseInt(discord_id);
 
@@ -46,11 +46,11 @@ db_con.connect(function(exc) {
 				// console.dir(result);
 				if (result.length === 1) {
 					console.log(Date()+" - Found allycode:", result[0].allycode);
-					if (typeof(callback)==="function") callback(result[0].allycode);
+					if (typeof(callback)==="function") callback(result[0]);
 					return result[0].allycode;
 				}
 				console.log(Date()+" - Allycode not found!");
-				if (typeof(callback)==="function") callback(0);
+				if (typeof(callback)==="function") callback(null);
 				return 0;
 			}
 		});
@@ -115,6 +115,10 @@ db_con.connect(function(exc) {
 				message.channel.send(richMsg);
 				break;
 
+			case "allycode":
+				// TODO
+				break;
+
 			case "destroy":
 			case "leave":
 			case "stutdown":
@@ -156,7 +160,9 @@ db_con.connect(function(exc) {
 							db_con.query(sql, function(exc, result) {
 								if (exc) {
 									console.log("SQL:", sql);
-									console.log(Date()+" - Exception:", exc.sqlMessage? exc.sqlMessage: exc);
+									let otd = exc.sqlMessage? exc.sqlMessage: exc;
+									// otd = object to display
+									console.log(Date()+" - Exception:", otd);
 									return;
 								}
 
@@ -173,7 +179,7 @@ db_con.connect(function(exc) {
 					nick = user.username;
 				}
 
-				if (arg.join("").trim().length>0) {
+				if (args.join("").trim().length>0) {
 					// Try to find an ally code in the args:
 					args.forEach(function(arg) {
 						if (arg.indexOf('<')<0) { // ignore tags
@@ -181,11 +187,14 @@ db_con.connect(function(exc) {
 							console.log(Date()+" - Found allycode:", allycode);
 						}
 					});
+				}
+
+				if (allycode) {
 					showGuildStats(allycode);
 				} else {
 					console.log(Date()+" - Try with user ID:", user.id);
-					getAllycodeFromDiscordId(user.id, function(allycode) {
-						showGuildStats(allycode);
+					getPlayerFromDiscordId(user.id, function(player) {
+						if (player) showGuildStats(player.allycode);
 					});
 				}
 				break;
@@ -260,8 +269,8 @@ db_con.connect(function(exc) {
 					showPlayerStats(allycode);
 				} else {
 					console.log(Date()+" - Try with user ID:", user.id);
-					getAllycodeFromDiscordId(user.id, function(allycode) {
-						showPlayerStats(allycode);
+					getPlayerFromDiscordId(user.id, function(player) {
+						if (player) showPlayerStats(player.allycode);
 					});
 				}
 				break;
@@ -367,9 +376,9 @@ db_con.connect(function(exc) {
 						"**"+nick+" presence status is:** "+user.presence.status
 					];
 
-				getAllycodeFromDiscordId(user.id, function(allycode) {
-					if (allycode) {
-						lines.push("**"+nick+" allycode is:** "+allycode);
+				getPlayerFromDiscordId(user.id, function(player) {
+					if (player) {
+						lines.push("**"+nick+" allycode is:** "+player.allycode);
 					}
 					if (user.presence.game && user.presence.game.name) {
 						lines.push("**"+nick+" activity is:** "+user.presence.game.name);
