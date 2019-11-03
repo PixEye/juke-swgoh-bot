@@ -42,8 +42,18 @@ exports.getPlayerData = async function getPlayerData(allycode, message, callback
 			// console.log("-----");
 			// console.log("First unit of the player's roster:");
 			// console.dir(roster[0]);
-			// id, defId, nameKey, rarity (7), level (85), xp, gear (8), combatType
-			// Arrays: equipped, skills, mods
+			// id (random string), defId 'MAGMATROOPER', nameKey 'UNIT_MAGMATROOPER_NAME',
+			// rarity (7), level (85), xp (int: 883025), gear (8), combatType (1)
+			// Array: equipped
+			// { equipmentId: '064', slot: 0, nameKey: 'EQUIPMENT_064_NAME' }
+			// Array: skills
+			// { id: 'specialskill_MAGMATROOPER01', tier: 7,
+			//	nameKey: 'SPECIALABILITY_MAGMATROOPER01_NAME', isZeta: false, tiers: 8 }
+			// Array: mods
+			// { id: 'nsdQon_cSIy44yjeGQVVXw', level: 15, tier: 4, slot: 1, set: 5,
+			//	pips: 4, primaryStat: [Object], secondaryStat: [Array] }
+			// Array: crew
+			// Others: gp (int), primaryUnitStat (null), relic {currentTier: 1}
 
 			let i = 0;
 			let unitCount = 0;
@@ -86,19 +96,19 @@ exports.getPlayerData = async function getPlayerData(allycode, message, callback
 
 			richMsg = new RichEmbed().setTitle(player.name+"'s profile").setColor("GREEN")
 				.setDescription([
-					"**Level:** "+player.level+"\t"+
+					"**Level:** "+player.level+"\t - "+
 					"**GP:** "+(player.gp.toLocaleString(locale)),
 					"**Guild name:** "+player.guildName,
 					"",
-					"**Zeta count:** "+zetaCount,
+					"**Zeta count:** "+zetaCount+"\t - "+
 					"**G13 count:** "+unitsCountByGear[13],
-					"**G12 count:** "+unitsCountByGear[12],
+					"**G12 count:** "+unitsCountByGear[12]+"\t - "+
 					"**G11 count:** "+unitsCountByGear[11],
 					"",
-					"**Ground arena rank:** "+player.arena.char.rank,
-					"**Ship arena rank:** "+player.arena.ship.rank,
+					"**Ground arena rank:** "+player.arena.char.rank+"\t - "+
+					"**Ship rank:** "+player.arena.ship.rank,
 					"",
-					"**Number of chars:** "+unitsByCombatType[1],
+					"**Number of chars:** "+unitsByCombatType[1]+"\t - "+
 					"**Number of ships:** "+unitsByCombatType[2],
 					"**Total number of unlocked units:** "+unitCount
 				])
