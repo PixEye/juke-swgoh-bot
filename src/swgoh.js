@@ -57,21 +57,36 @@ exports.getPlayerData = async function getPlayerData(allycode, message, callback
 
 			let i = 0;
 			let unitCount = 0;
-			let unitsByCombatType = {};
-			let unitsCountByGear  = {};
+			let unitsByCombaType = {};
+			let unitsCountByGear = {};
 			let zetaCount = 0;
 
 			for(i=0; i<20; i++) unitsCountByGear[i] = 0;
-			for(i=1; i<3 ; i++) unitsByCombatType[i] = 0;
+			for(i=1; i<3 ; i++) unitsByCombaType[i] = 0;
+			player.unitsData = [];
 
 			roster.forEach(function(unit) {
 				unitsCountByGear[unit.gear]++;
-				unitsByCombatType[unit.combatType]++;
-				if (unit.gp) unitCount++;
+				unitsByCombaType[unit.combatType]++;
 
+				let unitZetas = 0;
 				unit.skills.forEach(function(skill) {
-					if (skill.isZeta && skill.tier===skill.tiers) zetaCount++;
+					if (skill.isZeta && skill.tier===skill.tiers) unitZetas++;
 				});
+				zetaCount += unitZetas;
+
+				if (unit.gp) {
+					unitCount++;
+					player.unitsData.push({
+						"allycode":   allycode,
+						"combatType": unit.combatType,
+						"gear":		  unit.gear,
+						"gp":		  unit.gp,
+						"name":		  unit.defId,
+						"relic":	  (unit.relic && unit.relic.currentTier>1)? unit.relic.currentTier-2: 0,
+						"zetaCount":  unitZetas
+					});
+				}
 			});
 
 			let clean_stats = {};
@@ -84,7 +99,7 @@ exports.getPlayerData = async function getPlayerData(allycode, message, callback
 			// console.dir(clean_stats);
 
 			// console.log("-----");
-			// console.log("Units by combat type: ", unitsByCombatType);
+			// console.log("Units by combat type: ", unitsByCombaType);
 
 			// console.log("=====");
 			console.log(Date()+" - Found: "+player.name);
@@ -108,8 +123,8 @@ exports.getPlayerData = async function getPlayerData(allycode, message, callback
 					"**Ground arena rank:** "+player.arena.char.rank+"\t - "+
 					"**Ship rank:** "+player.arena.ship.rank,
 					"",
-					"**Number of chars:** "+unitsByCombatType[1]+"\t - "+
-					"**Number of ships:** "+unitsByCombatType[2],
+					"**Number of chars:** "+unitsByCombaType[1]+"\t - "+
+					"**Number of ships:** "+unitsByCombaType[2],
 					"**Total number of unlocked units:** "+unitCount
 				])
 				.setTimestamp(player.updated)

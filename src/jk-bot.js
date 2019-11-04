@@ -42,7 +42,7 @@ db_con.connect(function(exc) {
 				console.log("SQL:", sql);
 				console.log(Date()+" - Exception:", exc.sqlMessage? exc.sqlMessage: exc);
 			} else {
-				console.log(Date()+" - "+result.length+" record matche(s) user's ID:", discord_id);
+				console.log(Date()+" - "+result.length+" record match(es) user's ID:", discord_id);
 				// console.dir(result);
 				if (result.length === 1) {
 					console.log(Date()+" - Found allycode:", result[0].allycode);
@@ -107,7 +107,7 @@ db_con.connect(function(exc) {
 				richMsg = new RichEmbed().setTitle("Aide")
 					.setDescription([
 						"**Voici déjà une liste des commandes utilisateur (sans explication) :**",
-						" aide, dis, guildstats (gs), playerstats (ps), register (reg),"+
+						" aide, allycode (ac), dis, guildstats (gs), playerstats (ps), register (reg),"+
 						" repete, selfy, start, status, whoami, whois",
 						"**Commandes pour l'administrateur :** admin, stop, stoppe",
 						"**NB :** en mp, le préfix est optionnel"
@@ -115,26 +115,28 @@ db_con.connect(function(exc) {
 				message.channel.send(richMsg);
 				break;
 
+			case "ac":
 			case "allycode":
 				let search = args.join(" ").replace("'", "");
 
-				sql = "SELECT * FROM users";
-				sql+= " WHERE users.discord_nickname LIKE '%"+search+"%'";
+				sql = "SELECT * FROM users\n";
+				sql+= " WHERE users.discord_name LIKE '%"+search+"%'\n";
+				sql+= " OR    users.game_name    LIKE '%"+search+"%'";
 
 				db_con.query(sql, function(exc, result) {
 					if (exc) {
 						console.log("SQL:", sql);
 						console.log(Date()+" - Exception:", exc.sqlMessage? exc.sqlMessage: exc);
 					} else {
-						console.log(Date()+" - "+result.length+" record matche(s):", search);
+						console.log(Date()+" - "+result.length+" record match(es):", search);
 						// console.dir(result);
 						if (result.length !== 1) {
-							console.log(Date()+" - Allycode not found: %d result(s)", result.length);
-							message.channel.send("No match");
+							console.log(Date()+" - %d result(s) match allycode: %s", result.length, allycode);
+							message.channel.send(result.length+" match(es)! Please be more specific.");
 						} else {
 							user = result[0];
-							console.log(Date()+" - %s's allycode is:", user.discord_nickname, user.allycode);
-							message.channel.send(user.discord_nickname+"'s allycode is: "+user.allycode);
+							console.log(Date()+" - %s's allycode is:", user.discord_name, user.allycode);
+							message.channel.send(user.discord_name+"'s allycode is: "+user.allycode);
 						}
 					}
 				});
@@ -165,33 +167,36 @@ db_con.connect(function(exc) {
 			case "guildstat":
 			case "guildstats":
 				function showGuildStats(allycode) {
-					if (allycode) {
-						message.channel.send("Looking for stats of guild with ally: "+allycode+"...");
-						swgoh.getPlayerGuild(allycode, message, function(guild) {
-							if (!guild.gp) {
-								console.log(Date()+" - invalid guild GP:", guild.gp);
+					if (!allycode) {
+						message.reply(":red_circle: Invalid or missing allycode!");
+						return;
+					}
+
+					message.channel.send("Looking for stats of guild with ally: "+allycode+"...");
+
+					swgoh.getPlayerGuild(allycode, message, function(guild) {
+						if (!guild.gp) {
+							console.log(Date()+" - invalid guild GP:", guild.gp);
+							return;
+						}
+
+						// Remember user's stats:
+						sql = "REPLACE INTO guilds (swgoh_id, name) VALUES ("+
+							mysql.escape(guild.id)+", "+
+							mysql.escape(guild.name)+")";
+
+						db_con.query(sql, function(exc, result) {
+							if (exc) {
+								console.log("SQL:", sql);
+								let otd = exc.sqlMessage? exc.sqlMessage: exc;
+								// otd = object to display
+								console.log(Date()+" - Exception:", otd);
 								return;
 							}
 
-							// Remember user's stats:
-							sql = "REPLACE INTO guilds (swgoh_id, name) VALUES ("+
-								mysql.escape(guild.id)+", "+
-								mysql.escape(guild.name)+")";
-
-							db_con.query(sql, function(exc, result) {
-								if (exc) {
-									console.log("SQL:", sql);
-									let otd = exc.sqlMessage? exc.sqlMessage: exc;
-									// otd = object to display
-									console.log(Date()+" - Exception:", otd);
-									return;
-								}
-
-								console.log(Date()+" - %d guild record updated.", result.affectedRows);
-							});
+							console.log(Date()+" - %d guild updated.", result.affectedRows);
 						});
-					} else
-						message.reply(":red_circle: Invalid or missing allycode!");
+					});
 				}
 
 				// Extract user's tag (if any):
@@ -224,7 +229,7 @@ db_con.connect(function(exc) {
 				richMsg = new RichEmbed().setTitle("Help")
 					.setDescription([
 						"**Here is a quick list of user commands (without explanation):**",
-						" guildstats (gs), help, playerstat (ps), repeat,"+
+						" allycode (ac), guildstats (gs), help, playerstat (ps), repeat,"+
 							" say, start, status, whoami, whois",
 						"**Admin commands:** admin, destroy, leave,"+
 							" register (reg), self, shutdown, stop",
@@ -233,41 +238,87 @@ db_con.connect(function(exc) {
 				message.channel.send(richMsg);
 				break;
 
+			case "pi":
 			case "ps":
 			case "stats":
 			case "playerinfo":
 			case "playerstat":
 			case "playerstats":
 				function showPlayerStats(allycode) {
-					if (allycode) {
-						message.channel.send("Looking for "+allycode+"'s stats...");
+					if (!allycode) {
+						message.reply(":red_circle: Invalid or missing allycode! Try 'register' command.");
+						return;
+					}
 
-						swgoh.getPlayerData(allycode, message, function(player) {
-							if (!player.gp) {
-								console.log(Date()+" - invalid player GP:", player.gp);
+					message.channel.send("Looking for "+allycode+"'s stats...");
+
+					swgoh.getPlayerData(allycode, message, function(player) {
+						if (!player.gp) {
+							console.log(Date()+" - invalid player's GP:", player.gp);
+							return;
+						}
+
+						// Remember user's stats:
+						let sql = "UPDATE users SET"+
+							" game_name="+mysql.escape(player.name)+","+
+							" gp="+player.gp+","+
+							" g12Count="+player.g12Count+","+
+							" g13Count="+player.g13Count+","+
+							" guildRefId="+mysql.escape(player.guildRefId)+","+
+							" zetaCount="+player.zetaCount+" "+
+							"WHERE allycode="+allycode;
+
+						db_con.query(sql, function(exc, result) {
+							if (exc) {
+								console.log("SQL:", sql);
+								console.log(Date()+" - Exception:", exc.sqlMessage? exc.sqlMessage: exc);
 								return;
 							}
 
-							// Remember user's stats:
-							sql = "UPDATE users SET"+
-								" gp="+player.gp+","+
-								" g12Count="+player.g12Count+","+
-								" g13Count="+player.g13Count+","+
-								" guildRefId="+mysql.escape(player.guildRefId)+","+
-								" zetaCount="+player.zetaCount+" "+
-								"WHERE allycode="+allycode;
-							db_con.query(sql, function(exc, result) {
-								if (exc) {
-									console.log("SQL:", sql);
-									console.log(Date()+" - Exception:", exc.sqlMessage? exc.sqlMessage: exc);
-									return;
-								}
+							console.log(Date()+" - %d user updated.", result.affectedRows);
 
-								console.log(Date()+" - %d player record updated.", result.affectedRows);
-							});
+							if (!result.affectedRows) {
+								sql = "INSERT INTO users\n"+
+									"(allycode, game_name, gp, g12Count, g13Count, guildRefId, zetaCount)\n"+
+									"VALUES ("+allycode+", "+mysql.escape(player.name)+
+									", "+player.gp+", "+player.g12Count+", "+player.g13Count+
+									", "+mysql.escape(player.guildRefId)+", "+player.zetaCount+")";
+
+								db_con.query(sql, function(exc, result) {
+									if (exc) {
+										console.log("SQL:", sql);
+										console.log(Date()+" - Exception:", exc.sqlMessage? exc.sqlMessage: exc);
+										return;
+									}
+
+									console.log(Date()+" - %d user inserted.", result.affectedRows);
+								});
+							}
+
+							if (player.unitsData && player.unitsData.length) {
+								let lines = [];
+
+								sql = "REPLACE INTO units (allycode, name, combatType, gear, gp, relic, zetaCount) VALUES\n";
+								player.unitsData.forEach(function(unit) {
+									lines.push(
+										"("+unit.allycode+", '"+unit.name+"', "+unit.combatType+", "+
+										unit.gear+", "+unit.gp+", "+unit.relic+", "+unit.zetaCount+")"
+									);
+								});
+
+								sql+= lines.join(",\n");
+								db_con.query(sql.replace("\n", " "), function(exc, result) {
+									if (exc) {
+										console.log("SQL:", sql);
+										console.log(Date()+" - Exception:", exc.sqlMessage? exc.sqlMessage: exc);
+										return;
+									}
+
+									console.log(Date()+" - %d units updated.", result.affectedRows);
+								});
+							}
 						});
-					} else
-						message.reply(":red_circle: Invalid or missing allycode! Try 'register' command.");
+					});
 				}
 
 				// Extract user's tag (if any):
@@ -316,7 +367,7 @@ db_con.connect(function(exc) {
 					return;
 				}
 
-				sql = "INSERT INTO users (discord_id, discord_nickname, allycode)"+
+				sql = "INSERT INTO users (discord_id, discord_name, allycode)"+
 					" VALUES ("+user.id+', '+mysql.escape(nick)+', '+allycode+")";
 
 				// Register:
@@ -332,7 +383,7 @@ db_con.connect(function(exc) {
 						}
 					} else {
 						message.reply(":white_check_mark: Done.");
-						console.log(Date()+" - 1 record inserted.");
+						console.log(Date()+" - %d user inserted.", result.affectedRows);
 					}
 				});
 				break;
