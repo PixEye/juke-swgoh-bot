@@ -119,6 +119,13 @@ db_con.connect(function(exc) {
 			case "allycode":
 				let search = args.join(" ").replace("'", "");
 
+				// Extract user's tag (if any):
+				if (message.mentions && message.mentions.users && message.mentions.users.first()) {
+					user = message.mentions.users.first();
+					nick = user.username;
+					search = nick;
+				}
+
 				sql = "SELECT * FROM users\n";
 				sql+= " WHERE users.discord_name LIKE '%"+search+"%'\n";
 				sql+= " OR    users.game_name    LIKE '%"+search+"%'";
@@ -296,7 +303,7 @@ db_con.connect(function(exc) {
 							}
 
 							if (player.unitsData && player.unitsData.length) {
-								let lines = [];
+								lines = [];
 
 								sql = "REPLACE INTO units (allycode, name, combatType, gear, gp, relic, zetaCount) VALUES\n";
 								player.unitsData.forEach(function(unit) {
@@ -384,6 +391,82 @@ db_con.connect(function(exc) {
 					} else {
 						message.reply(":white_check_mark: Done.");
 						console.log(Date()+" - %d user inserted.", result.affectedRows);
+
+						if (!result.affectedRows) {
+							sql = "UPDATE users"+
+								" SET discord_id="+user.id+", discord_name="+mysql.escape(nick)+
+								" WHERE allycode="+allycode;
+
+							// Update an existing registration:
+							db_con.query(sql, function(exc, result) {
+								if (exc) {
+									console.log("SQL:", sql);
+									if (exc.sqlMessage) {
+										console.log(Date()+ " - Exception:", exc.sqlMessage);
+										message.reply(":red_circle: Error: "+exc.sqlMessage);
+									} else {
+										console.log(Date()+" - Exception:", exc);
+										message.reply(":red_circle: Error!");
+									}
+								} else {
+									message.reply(":white_check_mark: Done.");
+									console.log(Date()+" - %d user updated.", result.affectedRows);
+								}
+							});
+						}
+					}
+				});
+				break;
+
+			case "relics":
+				// Extract user's tag (if any):
+				if (message.mentions && message.mentions.users && message.mentions.users.first()) {
+					user = message.mentions.users.first();
+					nick = user.username;
+				}
+
+				// Try to find an ally code in the args:
+				args.forEach(function(arg) {
+					if (arg.indexOf('<')<0) { // ignore tags
+						allycode = parseInt(arg.replace(/[^0-9]/g, ""));
+						console.log(Date()+" - Found allycode:", allycode);
+					}
+				});
+
+				sql = "SELECT * FROM units WHERE relic>0 AND";
+				sql+= allycode? " allycode="+allycode:
+					" allycode IN (SELECT allycode FROM users WHERE discord_id="+user.id+")";
+				sql+= " ORDER BY relic DESC";
+
+				db_con.query(sql, function(exc, result) {
+					if (exc) {
+						console.log("SQL:", sql);
+						console.log(Date()+" - Exception:", exc.sqlMessage? exc.sqlMessage: exc);
+						richMsg = new RichEmbed().setTitle("Error!").setColor("RED")
+							.setDescription(["Failed to get player's units!"])
+							.setFooter(config.footer.message, config.footer.iconUrl);
+						message.channel.send(richMsg);
+					} else {
+						console.log(Date()+" - "+result.length+" unit(s) match(es):", allycode);
+						// console.dir(result);
+						if (result.length === 0) {
+							let msg = "";
+
+							console.log(Date()+" - You have no relic yet.");
+							msg = "I don't know any relic in your roster for the moment.";
+							msg+= " Try to refresh with the 'ps' command."
+							message.channel.send(msg);
+						} else {
+							console.log(Date()+" - %d unit(s) with relic found.");
+
+							result.forEach(function(unit) {
+								lines.push(unit.relic+" relics on: "+unit.name);
+							});
+							richMsg = new RichEmbed().setTitle(nick+"'s relics").setColor("GREEN")
+								.setDescription(lines)
+								.setFooter(config.footer.message, config.footer.iconUrl);
+							message.channel.send(richMsg);
+						}
 					}
 				});
 				break;
