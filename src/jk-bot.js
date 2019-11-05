@@ -107,10 +107,11 @@ db_con.connect(function(exc) {
 				richMsg = new RichEmbed().setTitle("Aide")
 					.setDescription([
 						"**Voici déjà une liste des commandes utilisateur (sans explication) :**",
-						" aide, allycode (ac), dis, guildstats (gs), playerstats (ps), register (reg),"+
-						" repete, selfy, start, status, whoami, whois",
+						" aide, allycode (ac), dis, guildstats (gs), help, playerstats (ps)"+
+						", register (reg), relics, repete, self(y), start, stats, status"+
+						", whoami, whois",
 						"**Commandes pour l'administrateur :** admin, stop, stoppe",
-						"**NB :** en mp, le préfix est optionnel"
+						"**NB :** en mp, le préfixe est optionnel"
 					]).setFooter(config.footer.message, config.footer.iconUrl);
 				message.channel.send(richMsg);
 				break;
@@ -167,7 +168,7 @@ db_con.connect(function(exc) {
 			case "repeat":
 			case "repete":
 			case "say":
-				message.reply(args.join(" "));
+				message.channel.send(args.join(" "));
 				break;
 
 			case "gs":
@@ -236,10 +237,10 @@ db_con.connect(function(exc) {
 				richMsg = new RichEmbed().setTitle("Help")
 					.setDescription([
 						"**Here is a quick list of user commands (without explanation):**",
-						" allycode (ac), guildstats (gs), help, playerstat (ps), repeat,"+
-							" say, start, status, whoami, whois",
-						"**Admin commands:** admin, destroy, leave,"+
-							" register (reg), self, shutdown, stop",
+						" aide, allycode (ac), guildstats (gs), help, playerstat (ps)"+
+						", register (reg), relics, repeat, say, self(y), start, stats, status"+
+						", whoami, whois",
+						"**Admin commands:** admin, destroy, leave, shutdown, stop",
 						"**NB :** in DM, the prefix is optional"
 					]).setFooter(config.footer.message, config.footer.iconUrl);
 				message.channel.send(richMsg);
@@ -247,7 +248,6 @@ db_con.connect(function(exc) {
 
 			case "pi":
 			case "ps":
-			case "stats":
 			case "playerinfo":
 			case "playerstat":
 			case "playerstats":
@@ -451,7 +451,7 @@ db_con.connect(function(exc) {
 					} else {
 						let n = result.length;
 
-						console.log(Date()+" - "+n+" unit(s) match(es)");
+						console.log(Date()+" - %d unit(s) with relic found.", n);
 						// console.dir(result);
 
 						if (n === 0) {
@@ -463,20 +463,57 @@ db_con.connect(function(exc) {
 							msg+= " the 'ps "+args.join(" ")+"' command."
 							message.reply(msg);
 						} else {
-							console.log(Date()+" - %d unit(s) with relic found.", n);
+							let tprc = 0; // total player's relic count
 
 							result.forEach(function(unit, i) {
+								tprc += unit.relic;
 								if (i<10)
 									lines.push(unit.relic+" relics on: "+unit.name);
 								else if (i===10)
 									lines.push("And "+(n-10)+" more...");
 							});
-							richMsg = new RichEmbed().setTitle("Player's "+n+" unit(s) with relics")
+							console.log(Date()+" - %d total relics found.", tprc);
+
+							richMsg = new RichEmbed()
+								.setTitle("Player's "+n+" unit(s) with "+tprc+" relics")
 								.setDescription(lines).setColor("GREEN")
 								.setFooter(config.footer.message, config.footer.iconUrl);
 							message.channel.send(richMsg);
 						}
 					}
+				});
+				break;
+
+			case "stats":
+			case "memstat":
+				sql = "SELECT COUNT(u.id) AS cnt, g.name FROM guilds g, `users` u";
+				sql+= " WHERE u.guildRefId=g.swgoh_id";
+				sql+= " GROUP BY guildRefId ORDER BY cnt DESC, g.name ASC";
+
+				db_con.query(sql, function(exc, result) {
+					if (exc) {
+						console.log("SQL:", sql);
+						console.log(Date()+" - Exception:", exc.sqlMessage? exc.sqlMessage: exc);
+						return;
+					}
+
+					console.log(Date()+" - %d guilds in the result", result.length);
+					lines.push(result.length+" guilds registered:");
+
+					if (result.length) {
+						lines.push("");
+						result.forEach(function(record) {
+							let playCnt = record.cnt>9? record.cnt: "0"+record.cnt;
+
+							lines.push("` "+playCnt+" player(s) in: "+record.name+"`");
+						});
+					}
+
+					richMsg = new RichEmbed()
+						.setTitle("Memory status").setColor("GREEN")
+						.setThumbnail(user.displayAvatarURL).setDescription(lines)
+						.setFooter(config.footer.message, config.footer.iconUrl);
+					message.channel.send(richMsg);
 				});
 				break;
 
@@ -487,26 +524,34 @@ db_con.connect(function(exc) {
 					if (exc) {
 						console.log("SQL:", sql);
 						console.log(Date()+" - Exception:", exc.sqlMessage? exc.sqlMessage: exc);
-					} else {
-						if (result.length === 1) {
-							let nbu = result[0].nbu;
-							console.log(Date()+" - %d users registered.", nbu);
-
-							db_con.query("SELECT COUNT(*) AS nbg FROM guilds", function(exc, result) {
-								if (exc) {
-									console.log("SQL:", sql);
-									console.log(Date()+" - Exception:", exc.sqlMessage? exc.sqlMessage: exc);
-								} else {
-									if (result.length === 1) {
-										let msg = nbu+" users & "+result[0].nbg+" guild(s) registered.";
-										console.log(Date()+" -", msg);
-										message.channel.send(msg);
-									}
-								}
-							});
-						} else
-							console.log(Date()+" - "+result.length+" result(s)!");
+						return;
 					}
+
+					if (result.length !== 1) {
+						console.log(Date()+" - "+result.length+" result(s) to count users!");
+						return;
+					}
+
+					let nbu = result[0].nbu;
+					console.log(Date()+" - %d users registered.", nbu);
+
+					db_con.query("SELECT COUNT(*) AS nbg FROM guilds", function(exc, result) {
+						if (exc) {
+							console.log("SQL:", sql);
+							console.log(Date()+" - Exception:", exc.sqlMessage? exc.sqlMessage: exc);
+							return;
+						}
+
+						if (result.length !== 1) {
+							console.log(Date()+" - "+result.length+" result(s) to count guilds!");
+							return;
+						}
+
+						let msg = nbu+" users & "+result[0].nbg+" guild(s) registered.";
+
+						console.log(Date()+" -", msg);
+						message.channel.send(msg);
+					});
 				});
 				break;
 
@@ -548,10 +593,8 @@ db_con.connect(function(exc) {
 						lines.push("**"+nick+" activity is:** "+user.presence.game.name);
 					}
 					richMsg = new RichEmbed()
-						.setColor("GREEN")
-						.setTitle("User information")
-						.setThumbnail(user.displayAvatarURL)
-						.setDescription(lines)
+						.setTitle("User information").setColor("GREEN")
+						.setThumbnail(user.displayAvatarURL).setDescription(lines)
 						.setFooter(config.footer.message, config.footer.iconUrl);
 					message.channel.send(richMsg);
 				});

@@ -1,3 +1,4 @@
 *.sw*
 *~
+error-logs
 jsb-data.sql
