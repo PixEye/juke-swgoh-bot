@@ -385,38 +385,41 @@ db_con.connect(function(exc) {
 						console.log("SQL:", sql);
 						if (exc.sqlMessage) {
 							console.log(Date()+ " - Exception:", exc.sqlMessage);
-							message.reply(":red_circle: Error: "+exc.sqlMessage);
+							// message.reply(":red_circle: Error: "+exc.sqlMessage);
+							result = {affectedRows: 0};
 						} else {
 							console.log(Date()+" - Exception:", exc);
 							message.reply(":red_circle: Error!");
-						}
-					} else {
-						message.reply(":white_check_mark: Done.");
-						console.log(Date()+" - %d user inserted.", result.affectedRows);
-
-						if (!result.affectedRows) {
-							sql = "UPDATE users"+
-								" SET discord_id="+user.id+", discord_name="+mysql.escape(nick)+
-								" WHERE allycode="+allycode;
-
-							// Update an existing registration:
-							db_con.query(sql, function(exc, result) {
-								if (exc) {
-									console.log("SQL:", sql);
-									if (exc.sqlMessage) {
-										console.log(Date()+ " - Exception:", exc.sqlMessage);
-										message.reply(":red_circle: Error: "+exc.sqlMessage);
-									} else {
-										console.log(Date()+" - Exception:", exc);
-										message.reply(":red_circle: Error!");
-									}
-								} else {
-									message.reply(":white_check_mark: Done.");
-									console.log(Date()+" - %d user updated.", result.affectedRows);
-								}
-							});
+							return;
 						}
 					}
+
+					if (result.affectedRows) {
+						message.reply(":white_check_mark: Done.");
+						console.log(Date()+" - %d user inserted.", result.affectedRows);
+						return;
+					}
+
+					sql = "UPDATE users"+
+						" SET discord_id="+user.id+", discord_name="+mysql.escape(nick)+
+						" WHERE allycode="+allycode;
+
+					// Update an existing registration:
+					db_con.query(sql, function(exc, result) {
+						if (exc) {
+							console.log("SQL:", sql);
+							if (exc.sqlMessage) {
+								console.log(Date()+ " - Exception:", exc.sqlMessage);
+								message.reply(":red_circle: Error: "+exc.sqlMessage);
+							} else {
+								console.log(Date()+" - Exception:", exc);
+								message.reply(":red_circle: Error!");
+							}
+						} else {
+							message.reply(":white_check_mark: Done.");
+							console.log(Date()+" - %d user updated.", result.affectedRows);
+						}
+					});
 				});
 				break;
 
@@ -491,6 +494,8 @@ db_con.connect(function(exc) {
 				sql+= " GROUP BY guildRefId ORDER BY cnt DESC, g.name ASC";
 
 				db_con.query(sql, function(exc, result) {
+					let tpc = 0; // total player count
+
 					if (exc) {
 						console.log("SQL:", sql);
 						console.log(Date()+" - Exception:", exc.sqlMessage? exc.sqlMessage: exc);
@@ -498,20 +503,19 @@ db_con.connect(function(exc) {
 					}
 
 					console.log(Date()+" - %d guilds in the result", result.length);
-					lines.push(result.length+" guilds registered:");
 
 					if (result.length) {
 						lines.push("");
 						result.forEach(function(record) {
-							let playCnt = record.cnt>9? record.cnt: "0"+record.cnt;
-
-							lines.push("` "+playCnt+" player(s) in: "+record.name+"`");
+							tpc+= record.cnt;
+							lines.push(record.cnt+" player(s) in: "+record.name);
 						});
 					}
+					lines.unshift("**"+tpc+" players & "+result.length+" guilds registered**");
 
 					richMsg = new RichEmbed()
 						.setTitle("Memory status").setColor("GREEN")
-						.setThumbnail(user.displayAvatarURL).setDescription(lines)
+						.setDescription(lines)
 						.setFooter(config.footer.message, config.footer.iconUrl);
 					message.channel.send(richMsg);
 				});
