@@ -307,16 +307,14 @@ db_con.connect(function(exc) {
 
 								// See:
 								// https://www.w3schools.com/nodejs/shownodejs_cmd.asp?filename=demo_db_insert_multiple
-								sql = "REPLACE units (allycode, name, combatType, gear, gp, relic, zetaCount) VALUES\n";
-								player.unitsData.forEach(function(unit) {
-									lines.push( // TODO: better with VALUES ? & arrays
-										"("+unit.allycode+", '"+unit.name+"', "+unit.combatType+", "+
-										unit.gear+", "+unit.gp+", "+unit.relic+", "+unit.zetaCount+")"
+								sql = "REPLACE units (allycode, name, combatType, gear, gp, relic, zetaCount) VALUES ?";
+								player.unitsData.forEach(function(u) { // u = current unit
+									lines.push(
+										[u.allycode, u.name, u.combatType, u.gear, u.gp, u.relic, u.zetaCount]
 									);
 								});
 
-								sql+= lines.join(",\n");
-								db_con.query(sql.replace("\n", " "), function(exc, result) {
+								db_con.query(sql, [lines], function(exc, result) {
 									if (exc) {
 										console.log("SQL:", sql);
 										console.log(Date()+" - Exception:", exc.sqlMessage? exc.sqlMessage: exc);

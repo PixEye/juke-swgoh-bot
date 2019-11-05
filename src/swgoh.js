@@ -102,7 +102,7 @@ exports.getPlayerData = async function getPlayerData(allycode, message, callback
 			// console.log("Units by combat type: ", unitsByCombaType);
 
 			// console.log("=====");
-			console.log(Date()+" - Found: "+player.name);
+			console.log(Date()+" - Found player: "+player.name);
 
 			player.gp = clean_stats.GALACTIC_POWER_ACQUIRED_NAME;
 			player.g12Count = unitsCountByGear[12];
@@ -195,7 +195,7 @@ exports.getPlayerGuild = async function getPlayerGuild(allycode, message, callba
 				}
 			});
 
-			console.log(Date()+" - Found: "+guild.name);
+			console.log(Date()+" - Found guild: "+guild.name);
 
 			richMsg = new RichEmbed().setTitle(guild.name).setColor("GREEN")
 				.setAuthor(config.username)
