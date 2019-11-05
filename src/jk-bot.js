@@ -305,9 +305,11 @@ db_con.connect(function(exc) {
 							if (player.unitsData && player.unitsData.length) {
 								lines = [];
 
-								sql = "REPLACE INTO units (allycode, name, combatType, gear, gp, relic, zetaCount) VALUES\n";
+								// See:
+								// https://www.w3schools.com/nodejs/shownodejs_cmd.asp?filename=demo_db_insert_multiple
+								sql = "REPLACE units (allycode, name, combatType, gear, gp, relic, zetaCount) VALUES\n";
 								player.unitsData.forEach(function(unit) {
-									lines.push(
+									lines.push( // TODO: better with VALUES ? & arrays
 										"("+unit.allycode+", '"+unit.name+"', "+unit.combatType+", "+
 										unit.gear+", "+unit.gp+", "+unit.relic+", "+unit.zetaCount+")"
 									);
@@ -436,7 +438,7 @@ db_con.connect(function(exc) {
 				sql = "SELECT * FROM units WHERE relic>0 AND";
 				sql+= allycode? " allycode="+allycode:
 					" allycode IN (SELECT allycode FROM users WHERE discord_id="+user.id+")";
-				sql+= " ORDER BY relic DESC";
+				sql+= " ORDER BY relic DESC"; // " LIMIT 10"
 
 				db_con.query(sql, function(exc, result) {
 					if (exc) {
@@ -447,23 +449,30 @@ db_con.connect(function(exc) {
 							.setFooter(config.footer.message, config.footer.iconUrl);
 						message.channel.send(richMsg);
 					} else {
-						console.log(Date()+" - "+result.length+" unit(s) match(es):", allycode);
+						let n = result.length;
+
+						console.log(Date()+" - "+n+" unit(s) match(es)");
 						// console.dir(result);
-						if (result.length === 0) {
+
+						if (n === 0) {
 							let msg = "";
 
-							console.log(Date()+" - You have no relic yet.");
-							msg = "I don't know any relic in your roster for the moment.";
-							msg+= " Try to refresh with the 'ps' command."
-							message.channel.send(msg);
+							console.log(Date()+" - There is 0 known relics in this roster.");
+							msg = "I don't know any relic in this roster for the moment.";
+							msg+= " Try to refresh the roster with";
+							msg+= " the 'ps "+args.join(" ")+"' command."
+							message.reply(msg);
 						} else {
-							console.log(Date()+" - %d unit(s) with relic found.");
+							console.log(Date()+" - %d unit(s) with relic found.", n);
 
-							result.forEach(function(unit) {
-								lines.push(unit.relic+" relics on: "+unit.name);
+							result.forEach(function(unit, i) {
+								if (i<10)
+									lines.push(unit.relic+" relics on: "+unit.name);
+								else if (i===10)
+									lines.push("And "+(n-10)+" more...");
 							});
-							richMsg = new RichEmbed().setTitle(nick+"'s relics").setColor("GREEN")
-								.setDescription(lines)
+							richMsg = new RichEmbed().setTitle("Player's "+n+" unit(s) with relics")
+								.setDescription(lines).setColor("GREEN")
 								.setFooter(config.footer.message, config.footer.iconUrl);
 							message.channel.send(richMsg);
 						}
