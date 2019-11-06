@@ -27,8 +27,8 @@ client.on("ready", () => {
 	client.user.setPresence({game: {name: config.prefix + "help", type: "listening"}});
 });
 
-function db_connect() {
-
+function db_connect()
+{
 	var db_con = mysql.createConnection({
 	  database: config.db.name,
 	  host:     config.db.host,
@@ -496,6 +496,47 @@ function db_connect() {
 								message.channel.send(richMsg);
 							}
 						}
+					});
+					break;
+
+				case "request":
+					if(message.author.id !== config.ownerID) {
+						message.reply("You're not my master! :imp:");
+						return;
+					}
+
+					sql = args.join(" ");
+					db_con.query(sql, function(exc, result) {
+						let tpc = 0; // total player count
+						let col = "ORANGE";
+
+						if (exc) {
+							console.log("SQL:", sql);
+							console.log(Date()+" - RQ Exception:", exc.sqlMessage? exc.sqlMessage: exc.code);
+							message.reply(exc.sqlMessage? exc.sqlMessage: exc);
+							return;
+						}
+
+						console.log(Date()+" - %d records in the result", result.length);
+
+						if (result.length) {
+							let headers = [];
+							let col_sep = ";";
+
+							col = "GREEN";
+							lines.push("");
+							result.forEach(function(record) {
+								headers = Object.keys(record);
+								lines.push(Object.values(record).join(col_sep));
+							});
+							lines.unshift(headers.join(col_sep));
+						}
+
+						richMsg = new RichEmbed()
+							.setTitle("Memory status").setColor(col)
+							.setDescription(lines)
+							.setFooter(config.footer.message, config.footer.iconUrl);
+						message.channel.send(richMsg);
 					});
 					break;
 

@@ -13,6 +13,26 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
+-- Structure of table `users`
+--
+
+DROP TABLE IF EXISTS `users`;
+CREATE TABLE `users` (
+  `id` int(11) NOT NULL,
+  `allycode` int(11) NOT NULL,
+  `discord_id` varchar(32) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `discord_name` varchar(32) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `game_name` varchar(32) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `guildRefId` varchar(16) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `gp` int(11) UNSIGNED DEFAULT NULL,
+  `g12Count` tinyint(3) UNSIGNED DEFAULT NULL,
+  `g13Count` tinyint(3) UNSIGNED DEFAULT NULL,
+  `zetaCount` tinyint(3) UNSIGNED DEFAULT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Structure of table `guilds`
 --
 
@@ -44,21 +64,17 @@ CREATE TABLE `units` (
 -- --------------------------------------------------------
 
 --
--- Structure of table `users`
+-- Structure of table `evols`
 --
 
-DROP TABLE IF EXISTS `users`;
-CREATE TABLE `users` (
-  `id` int(11) NOT NULL,
-  `allycode` int(11) NOT NULL,
-  `discord_id` varchar(32) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `discord_name` varchar(32) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `game_name` varchar(32) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `guildRefId` varchar(16) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `gp` int(11) UNSIGNED DEFAULT NULL,
-  `g12Count` tinyint(3) UNSIGNED DEFAULT NULL,
-  `g13Count` tinyint(3) UNSIGNED DEFAULT NULL,
-  `zetaCount` tinyint(3) UNSIGNED DEFAULT NULL
+DROP TABLE IF EXISTS `evols`;
+CREATE TABLE IF NOT EXISTS `evols` (
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `dt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `allycode` int(10) UNSIGNED NOT NULL,
+  `unit_id` varchar(32) COLLATE utf8_unicode_ci NOT NULL,
+  `type` varchar(5) COLLATE utf8_unicode_ci NOT NULL,
+  PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 --
