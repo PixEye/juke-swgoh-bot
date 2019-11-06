@@ -77,7 +77,10 @@ function db_connect() {
 							if (typeof(callback)==="function") callback(result[0]);
 							return result[0].allycode;
 						}
+
 						console.log(Date()+" - Allycode not found!");
+						message.reply("I don't know this player. Register her/him first please.");
+
 						if (typeof(callback)==="function") callback(null);
 						return 0;
 					}
