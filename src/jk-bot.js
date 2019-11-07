@@ -120,7 +120,7 @@ function db_connect()
 							" aide, allycode (ac), dis, guildstats (gs), help, playerstats (ps)"+
 							", register (reg), relics, repete, self(y), start, stats, status"+
 							", whoami, whois",
-							"**Commandes pour l'administrateur :** admin, stop, stoppe",
+							"**Commandes pour l'administrateur :** admin, query/req(uest), stop/stoppe",
 							"**NB :** en mp, le préfixe est optionnel"
 						]).setFooter(config.footer.message, config.footer.iconUrl);
 					message.channel.send(richMsg);
@@ -254,7 +254,7 @@ function db_connect()
 							" aide, allycode (ac), guildstats (gs), help, playerstat (ps)"+
 							", register (reg), relics, repeat, say, self(y), start, stats, status"+
 							", whoami, whois",
-							"**Admin commands:** admin, destroy, leave, shutdown, stop",
+							"**Admin commands:** admin, destroy/leave/shutdown/stop, query/req(uest)",
 							"**NB :** in DM, the prefix is optional"
 						]).setFooter(config.footer.message, config.footer.iconUrl);
 					message.channel.send(richMsg);
@@ -499,6 +499,8 @@ function db_connect()
 					});
 					break;
 
+				case "req":
+				case "query":
 				case "request":
 					if(message.author.id !== config.ownerID) {
 						message.reply("You're not my master! :imp:");
@@ -517,26 +519,21 @@ function db_connect()
 							return;
 						}
 
-						console.log(Date()+" - %d records in the result", result.length);
+						console.log(Date()+" - %d record(s) in the result", result.length);
 
 						if (result.length) {
 							let headers = [];
 							let col_sep = ";";
 
 							col = "GREEN";
-							lines.push("");
 							result.forEach(function(record) {
 								headers = Object.keys(record);
-								lines.push(Object.values(record).join(col_sep));
+								lines.push("`"+Object.values(record).join(col_sep)+"`");
 							});
-							lines.unshift(headers.join(col_sep));
+							lines.unshift("`"+headers.join(col_sep)+"`");
 						}
 
-						richMsg = new RichEmbed()
-							.setTitle("Memory status").setColor(col)
-							.setDescription(lines)
-							.setFooter(config.footer.message, config.footer.iconUrl);
-						message.channel.send(richMsg);
+						message.channel.send(lines);
 					});
 					break;
 
