@@ -117,19 +117,19 @@ client.on("message", (message) => {
 		case "ac":
 		case "allycode":
 			let search = args.join(" ").replace("'", "");
-
-			search = "users.discord_name LIKE '%"+search+"%'"+
-					" OR users.game_name LIKE '%"+search+"%'";
+			let searchStr = "users.discord_name LIKE '%"+search+"%' OR users.game_name LIKE '%"+search+"%'";
 
 			// Extract user's tag (if any):
 			if (message.mentions && message.mentions.users && message.mentions.users.first()) {
 				user = message.mentions.users.first();
-				search = "users.discord_id="+user.id;
+				search = user.id;
+				searchStr = "users.discord_id="+search;
 			} else if (args.join("").trim()==="") {
-				search = "users.discord_id="+user.id;
+				search = user.id;
+				searchStr = "users.discord_id="+search;
 			}
 
-			sql = "SELECT * FROM users WHERE "+search;
+			sql = "SELECT * FROM users WHERE "+searchStr;
 			db_pool.query(sql, function(exc, result) {
 				if (exc) {
 					console.log("SQL:", sql);
