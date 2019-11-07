@@ -1,5 +1,6 @@
 {
   "db": {
+    "conMaxCount": 10,
     "host": "localhost",
     "name": "swgoh",
     "pw":   "****************",
