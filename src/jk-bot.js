@@ -562,43 +562,75 @@ client.on("message", (message) => {
 
 		case "start":
 		case "status":
+			let nbg = 0; // number of registered guilds
+			let nbp = 0; // number of registered players
+
 			message.channel.send("I am listening since: "+start);
 
-			sql = "SELECT COUNT(*) AS nbu FROM users";
-			db_pool.query(sql, function(exc, result) {
+			sql = "SELECT COUNT(*) AS nbg FROM guilds";
+			db_pool.query(sql, countGuilds);
+
+			function countGuilds(exc, result) {
+				if (exc) {
+					console.log("SQL:", sql);
+					console.log(Date()+" - ST2 Exception:", exc.sqlMessage? exc.sqlMessage: exc);
+					message.reply("Exception: failed to count registered guilds!");
+					return;
+				}
+
+				if (result.length !== 1) {
+					console.log(Date()+" - "+result.length+" result(s) to count guilds!");
+					message.reply("Failed to count registered guilds!");
+					return;
+				}
+
+				nbg = result[0].nbg; // nbp = number of guilds
+				console.log(Date()+" - %d guild(s) registered.", nbg);
+
+				sql = "SELECT COUNT(*) AS nbp FROM users"; // nbp = number of players
+				db_pool.query(sql, countPlayers);
+			}
+
+			function countPlayers(exc, result) {
 				if (exc) {
 					console.log("SQL:", sql);
 					console.log(Date()+" - ST1 Exception:", exc.sqlMessage? exc.sqlMessage: exc.code);
+					message.reply("Exception: failed to count registered players!");
 					return;
 				}
 
 				if (result.length !== 1) {
 					console.log(Date()+" - "+result.length+" result(s) to count users!");
+					message.reply("Failed to count registered users!");
 					return;
 				}
 
-				let nbu = result[0].nbu;
-				console.log(Date()+" - %d users registered.", nbu);
+				nbp = result[0].nbp; // nbp = number of players
+				console.log(Date()+" - %d users registered.", nbp);
 
-				sql = "SELECT COUNT(*) AS nbg FROM guilds";
-				db_pool.query(sql, function(exc, result) {
-					if (exc) {
-						console.log("SQL:", sql);
-						console.log(Date()+" - ST2 Exception:", exc.sqlMessage? exc.sqlMessage: exc);
-						return;
-					}
+				sql = "SELECT COUNT(*) AS nbu FROM units";
+				db_pool.query(sql, countUnits);
+			}
 
-					if (result.length !== 1) {
-						console.log(Date()+" - "+result.length+" result(s) to count guilds!");
-						return;
-					}
+			function countUnits(exc, result) {
+				if (exc) {
+					console.log("SQL:", sql);
+					console.log(Date()+" - ST3 Exception:", exc.sqlMessage? exc.sqlMessage: exc.code);
+					message.reply("Exception: failed to count registered units!");
+					return;
+				}
 
-					let msg = nbu+" users & "+result[0].nbg+" guild(s) registered.";
+				if (result.length !== 1) {
+					console.log(Date()+" - "+result.length+" result(s) to count units!");
+					message.reply("Failed to count registered units!");
+					return;
+				}
 
-					console.log(Date()+" -", msg);
-					message.channel.send(msg);
-				});
-			});
+				let nbu = result[0].nbu; // nbp = number of units
+
+				console.log(Date()+" -", nbg+" guilds, "+nbp+" users & "+nbu+" units registered.");
+				message.channel.send(  nbg+" guilds, "+nbp+" players & "+nbu+" units registered.");
+			}
 			break;
 
 		case "self":
