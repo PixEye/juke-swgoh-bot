@@ -37,9 +37,8 @@ client.on("ready", () => {
 
 // Check for input messages:
 client.on("message", (message) => {
-
 	var allycode = 0;
-	var arg = [];
+	var args = [];
 	var command = "";
 	var guild = null;
 	var lines = [];
@@ -504,25 +503,32 @@ client.on("message", (message) => {
 				if (exc) {
 					console.log("SQL:", sql);
 					console.log(Date()+" - RQ Exception:", exc.sqlMessage? exc.sqlMessage: exc.code);
-					message.reply(exc.sqlMessage? exc.sqlMessage: exc);
-					return;
+
+					col = "RED";
+					lines = [exc.sqlMessage? exc.sqlMessage: exc.code];
+				} else {
+					console.log(Date()+" - %d record(s) in the result", result.length);
+
+					if (!result.length) {
+						lines = ["No match."];
+					} else {
+						let headers = [];
+						let col_sep = ";";
+
+						col = "GREEN";
+						result.forEach(function(record) {
+							headers = Object.keys(record);
+							lines.push("`"+Object.values(record).join(col_sep)+"`");
+						});
+						lines.unshift("`"+headers.join(col_sep)+"`");
+					}
 				}
 
-				console.log(Date()+" - %d record(s) in the result", result.length);
-
-				if (result.length) {
-					let headers = [];
-					let col_sep = ";";
-
-					col = "GREEN";
-					result.forEach(function(record) {
-						headers = Object.keys(record);
-						lines.push("`"+Object.values(record).join(col_sep)+"`");
-					});
-					lines.unshift("`"+headers.join(col_sep)+"`");
-				}
-
-				message.channel.send(lines);
+				richMsg = new RichEmbed()
+					.setTitle("DB request").setColor(col)
+					.setDescription(lines)
+					.setFooter(config.footer.message, config.footer.iconUrl);
+				message.channel.send(richMsg);
 			});
 			break;
 
