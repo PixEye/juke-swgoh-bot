@@ -1,5 +1,7 @@
 /** Juke's Discord bot for the SWGoH game */
 
+// jshint esversion: 6
+
 console.log(Date()+" - Loading...");
 
 // Extract the required classes from the discord.js module:
@@ -40,10 +42,8 @@ client.on("message", (message) => {
 	var allycode = 0;
 	var args = [];
 	var command = "";
-	var guild = null;
 	var lines = [];
 	var nick = {};
-	var player = null;
 	var richMsg = {};
 	var sql = "";
 	var user = message.author;
@@ -463,7 +463,7 @@ client.on("message", (message) => {
 						console.log(Date()+" - There is 0 known relics in this roster.");
 						msg = "I don't know any relic in this roster for the moment.";
 						msg+= " Try to refresh the roster with";
-						msg+= " the 'ps "+args.join(" ")+"' command."
+						msg+= " the 'ps "+args.join(" ")+"' command.";
 						message.reply(msg);
 					} else {
 						let tprc = 0; // total player's relic count
@@ -497,7 +497,6 @@ client.on("message", (message) => {
 
 			sql = args.join(" ");
 			db_pool.query(sql, function(exc, result) {
-				let tpc = 0; // total player count
 				let col = "ORANGE";
 
 				if (exc) {
