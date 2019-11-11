@@ -1,3 +1,10 @@
+/**
+ * swgoh.js is SWGoH module for Juke's SWGoH Discord bot
+ * @author PixEye@pixeye.net
+ */
+
+// jshint esversion: 8
+
 // Get the configuration from a separated JSON file:
 const config = require("./config.json");
 
@@ -9,7 +16,7 @@ const swapi = new ApiSwgohHelp({
 });
 
 // Extract the required classes from the discord.js module:
-const { Client, RichEmbed } = require("discord.js");
+const { RichEmbed } = require("discord.js");
 
 exports.getPlayerData = async function getPlayerData(allycode, message, callback) {
 	try {

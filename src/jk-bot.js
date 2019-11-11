@@ -1,6 +1,9 @@
-/** Juke's Discord bot for the SWGoH game */
+/**
+ * jk-bot.js: main file for Juke's Discord bot for the SWGoH game
+ * @author PixEye@pixeye.net
+ */
 
-// jshint esversion: 6
+// jshint esversion: 8
 
 console.log(Date()+" - Loading...");
 
