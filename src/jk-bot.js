@@ -1,4 +1,9 @@
-/** Juke's Discord bot for the SWGoH game */
+/**
+ * jk-bot.js: main file for Juke's Discord bot for the SWGoH game
+ * @author PixEye@pixeye.net
+ */
+
+// jshint esversion: 8
 
 console.log(Date()+" - Loading...");
 
@@ -37,14 +42,11 @@ client.on("ready", () => {
 
 // Check for input messages:
 client.on("message", (message) => {
-
 	var allycode = 0;
-	var arg = [];
+	var args = [];
 	var command = "";
-	var guild = null;
 	var lines = [];
 	var nick = {};
-	var player = null;
 	var richMsg = {};
 	var sql = "";
 	var user = message.author;
@@ -464,7 +466,7 @@ client.on("message", (message) => {
 						console.log(Date()+" - There is 0 known relics in this roster.");
 						msg = "I don't know any relic in this roster for the moment.";
 						msg+= " Try to refresh the roster with";
-						msg+= " the 'ps "+args.join(" ")+"' command."
+						msg+= " the 'ps "+args.join(" ")+"' command.";
 						message.reply(msg);
 					} else {
 						let tprc = 0; // total player's relic count
@@ -498,31 +500,37 @@ client.on("message", (message) => {
 
 			sql = args.join(" ");
 			db_pool.query(sql, function(exc, result) {
-				let tpc = 0; // total player count
 				let col = "ORANGE";
 
 				if (exc) {
 					console.log("SQL:", sql);
 					console.log(Date()+" - RQ Exception:", exc.sqlMessage? exc.sqlMessage: exc.code);
-					message.reply(exc.sqlMessage? exc.sqlMessage: exc);
-					return;
+
+					col = "RED";
+					lines = [exc.sqlMessage? exc.sqlMessage: exc.code];
+				} else {
+					console.log(Date()+" - %d record(s) in the result", result.length);
+
+					if (!result.length) {
+						lines = ["No match."];
+					} else {
+						let headers = [];
+						let col_sep = ";";
+
+						col = "GREEN";
+						result.forEach(function(record) {
+							headers = Object.keys(record);
+							lines.push("`"+Object.values(record).join(col_sep)+"`");
+						});
+						lines.unshift("`"+headers.join(col_sep)+"`");
+					}
 				}
 
-				console.log(Date()+" - %d record(s) in the result", result.length);
-
-				if (result.length) {
-					let headers = [];
-					let col_sep = ";";
-
-					col = "GREEN";
-					result.forEach(function(record) {
-						headers = Object.keys(record);
-						lines.push("`"+Object.values(record).join(col_sep)+"`");
-					});
-					lines.unshift("`"+headers.join(col_sep)+"`");
-				}
-
-				message.channel.send(lines);
+				richMsg = new RichEmbed()
+					.setTitle("DB request").setColor(col)
+					.setDescription(lines)
+					.setFooter(config.footer.message, config.footer.iconUrl);
+				message.channel.send(richMsg);
 			});
 			break;
 
