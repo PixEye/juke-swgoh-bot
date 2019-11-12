@@ -550,7 +550,7 @@ client.on("message", (message) => {
 						lines.push(record.cnt+" player(s) in: "+record.name);
 					});
 				}
-				lines.unshift("**"+tpc+" players & "+result.length+" guilds registered**");
+				lines.unshift("**"+tpc+" players registered in "+result.length+" guilds**");
 
 				richMsg = new RichEmbed()
 					.setTitle("Memory status").setColor("GREEN")
