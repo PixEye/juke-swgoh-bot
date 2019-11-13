@@ -23,7 +23,6 @@ exports.getPlayerData = async function getPlayerData(allycode, message, callback
 		// let acquiredToken = await swapi.connect();
 		// console.log(Date()+" - Token: ", acquiredToken);
 
-		let locale = "fr-FR";
 		let payload  = { "allycodes": [allycode] };
 		let { result, error, warning } = await swapi.fetchPlayer(payload);
 		let richMsg = null;
@@ -63,13 +62,13 @@ exports.getPlayerData = async function getPlayerData(allycode, message, callback
 			// Others: gp (int), primaryUnitStat (null), relic {currentTier: 1}
 
 			let i = 0;
-			let unitCount = 0;
 			let unitsByCombaType = {};
 			let unitsCountByGear = {};
 			let zetaCount = 0;
 
 			for(i=0; i<20; i++) unitsCountByGear[i] = 0;
 			for(i=1; i<3 ; i++) unitsByCombaType[i] = 0;
+			player.unitCount = 0;
 			player.unitsData = [];
 
 			roster.forEach(function(unit) {
@@ -83,7 +82,7 @@ exports.getPlayerData = async function getPlayerData(allycode, message, callback
 				zetaCount += unitZetas;
 
 				if (unit.gp) {
-					unitCount++;
+					player.unitCount++;
 					player.unitsData.push({
 						"allycode":   allycode,
 						"combatType": unit.combatType,
@@ -112,33 +111,14 @@ exports.getPlayerData = async function getPlayerData(allycode, message, callback
 			console.log(Date()+" - Found player: "+player.name);
 
 			player.allycode = allycode;
+			player.charCount = unitsByCombaType[1];
 			player.gp = clean_stats.GALACTIC_POWER_ACQUIRED_NAME;
 			player.g12Count = unitsCountByGear[12];
 			player.g13Count = unitsCountByGear[13];
+			player.shipCount = unitsByCombaType[2];
 			player.zetaCount = zetaCount;
 
-			richMsg = new RichEmbed().setTitle(player.name+"'s profile").setColor("GREEN")
-				.setDescription([
-					"**Level:** "+player.level+"\t - "+
-					"**GP:** "+(player.gp.toLocaleString(locale)),
-					"**Guild name:** "+player.guildName,
-					"",
-					"**Zeta count:** "+zetaCount+"\t - "+
-					"**G13 count:** "+unitsCountByGear[13],
-					"**G12 count:** "+unitsCountByGear[12]+"\t - "+
-					"**G11 count:** "+unitsCountByGear[11],
-					"",
-					"**Ground arena rank:** "+player.arena.char.rank+"\t - "+
-					"**Ship rank:** "+player.arena.ship.rank,
-					"",
-					"**Number of chars:** "+unitsByCombaType[1]+"\t - "+
-					"**Number of ships:** "+unitsByCombaType[2],
-					"**Total number of unlocked units:** "+unitCount
-				])
-				.setTimestamp(player.updated)
-				.setFooter(config.footer.message, config.footer.iconUrl);
-			message.reply(richMsg);
-			if (typeof(callback)==="function") callback(player);
+			if (typeof(callback)==="function") callback(player, message);
 			return;
 		}
 
@@ -220,7 +200,7 @@ exports.getPlayerGuild = async function getPlayerGuild(allycode, message, callba
 				.setTimestamp(guild.updated)
 				.setFooter(config.footer.message, config.footer.iconUrl);
 			message.reply(richMsg);
-			if (typeof(callback)==="function") callback(guild);
+			if (typeof(callback)==="function") callback(guild, message);
 			return;
 		}
 
