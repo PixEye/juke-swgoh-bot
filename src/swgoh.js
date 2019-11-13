@@ -111,6 +111,7 @@ exports.getPlayerData = async function getPlayerData(allycode, message, callback
 			// console.log("=====");
 			console.log(Date()+" - Found player: "+player.name);
 
+			player.allycode = allycode;
 			player.gp = clean_stats.GALACTIC_POWER_ACQUIRED_NAME;
 			player.g12Count = unitsCountByGear[12];
 			player.g13Count = unitsCountByGear[13];

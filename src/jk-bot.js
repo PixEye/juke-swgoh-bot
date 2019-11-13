@@ -40,6 +40,11 @@ client.on("ready", () => {
 	client.user.setPresence({game: {name: config.prefix + "help", type: "listening"}});
 });
 
+// Get errors (if any):
+client.on("error", (exc) => {
+	console.log(Date()+" - Client exception!", exc);
+});
+
 // Check for input messages:
 client.on("message", (message) => {
 	var allycode = 0;
@@ -78,8 +83,8 @@ client.on("message", (message) => {
 	}
 
 	// Filter with the prefix & ignore bots:
-	if (message.author.bot
-	|| (message.channel.type!=="dm" && !message.content.toLowerCase().startsWith(config.prefix))) {
+	if ( message.author.bot ||
+		(message.channel.type!=="dm" && !message.content.toLowerCase().startsWith(config.prefix))) {
 		return; // stop parsing the message
 	}
 
@@ -256,83 +261,6 @@ client.on("message", (message) => {
 		case "playerinfo":
 		case "playerstat":
 		case "playerstats":
-			function showPlayerStats(allycode) {
-				if (!allycode) {
-					message.reply(":red_circle: Invalid or missing allycode! Try 'register' command.");
-					return;
-				}
-
-				message.channel.send("Looking for "+allycode+"'s stats...");
-
-				swgoh.getPlayerData(allycode, message, function(player) {
-					if (!player.gp) {
-						console.log(Date()+" - invalid player's GP:", player.gp);
-						return;
-					}
-
-					// Remember user's stats:
-					let sql = "UPDATE users SET"+
-						" game_name="+mysql.escape(player.name)+","+
-						" gp="+player.gp+","+
-						" g12Count="+player.g12Count+","+
-						" g13Count="+player.g13Count+","+
-						" guildRefId="+mysql.escape(player.guildRefId)+","+
-						" zetaCount="+player.zetaCount+" "+
-						"WHERE allycode="+allycode;
-
-					db_pool.query(sql, function(exc, result) {
-						if (exc) {
-							console.log("SQL:", sql);
-							console.log(Date()+" - UC Exception:", exc.sqlMessage? exc.sqlMessage: exc);
-							return;
-						}
-
-						console.log(Date()+" - %d user updated.", result.affectedRows);
-
-						if (!result.affectedRows) {
-							sql = "INSERT INTO users\n"+
-								"(allycode, game_name, gp, g12Count, g13Count, guildRefId, zetaCount)\n"+
-								"VALUES ("+allycode+", "+mysql.escape(player.name)+
-								", "+player.gp+", "+player.g12Count+", "+player.g13Count+
-								", "+mysql.escape(player.guildRefId)+", "+player.zetaCount+")";
-
-							db_pool.query(sql, function(exc, result) {
-								if (exc) {
-									console.log("SQL:", sql);
-									console.log(Date()+" - GC Exception:", exc.sqlMessage? exc.sqlMessage: exc);
-									return;
-								}
-
-								console.log(Date()+" - %d user inserted.", result.affectedRows);
-							});
-						}
-
-						if (player.unitsData && player.unitsData.length) {
-							lines = [];
-
-							// See:
-							// https://www.w3schools.com/nodejs/shownodejs_cmd.asp?filename=demo_db_insert_multiple
-							sql = "REPLACE units (allycode, name, combatType, gear, gp, relic, zetaCount) VALUES ?";
-							player.unitsData.forEach(function(u) { // u = current unit
-								lines.push(
-									[u.allycode, u.name, u.combatType, u.gear, u.gp, u.relic, u.zetaCount]
-								);
-							});
-
-							db_pool.query(sql, [lines], function(exc, result) {
-								if (exc) {
-									console.log("SQL:", sql);
-									console.log(Date()+" - RU Exception:", exc.sqlMessage? exc.sqlMessage: exc);
-									return;
-								}
-
-								console.log(Date()+" - %d units updated.", result.affectedRows);
-							});
-						}
-					});
-				});
-			}
-
 			// Extract user's tag (if any):
 			if (message.mentions && message.mentions.users && message.mentions.users.first()) {
 				user = message.mentions.users.first();
@@ -350,14 +278,42 @@ client.on("message", (message) => {
 			}
 
 			if (allycode) {
-				showPlayerStats(allycode);
+				getPlayerStats(allycode, message);
 			} else {
 				console.log(Date()+" - Try with user ID:", user.id);
 				getPlayerFromDiscordId(user.id, function(player) {
-					if (player) showPlayerStats(player.allycode);
+					if (player) getPlayerStats(player.allycode, message);
 				});
 			}
 			break;
+
+		case "drelics":
+			// Extract user's tag (if any):
+			if (message.mentions && message.mentions.users && message.mentions.users.first()) {
+				user = message.mentions.users.first();
+				nick = user.username;
+			}
+
+			if (args.join("").trim().length>0) {
+				// Try to find an ally code in the args:
+				args.forEach(function(arg) {
+					if (arg.indexOf('<')<0) { // ignore tags
+						allycode = parseInt(arg.replace(/[^0-9]/g, ""));
+						console.log(Date()+" - Found allycode:", allycode);
+					}
+				});
+			}
+
+			if (allycode) {
+				getPlayerStats(allycode, message);
+			} else {
+				console.log(Date()+" - Try with user ID:", user.id);
+				getPlayerFromDiscordId(user.id, function(player) {
+					if (player) getPlayerStats(player.allycode, message);
+				});
+			}
+			break;
+
 
 		case "reg":
 		case "register":
@@ -441,9 +397,10 @@ client.on("message", (message) => {
 				}
 			});
 
-			sql = "SELECT * FROM units WHERE relic>0 AND";
-			sql+= allycode? " allycode="+allycode:
-				" allycode IN (SELECT allycode FROM users WHERE discord_id="+user.id+")";
+			sql = "SELECT * FROM units";
+			sql+= " WHERE relic>0";
+			sql+= " AND allycode"+(allycode? "="+allycode:
+				" IN (SELECT allycode FROM users WHERE discord_id="+user.id+")");
 			sql+= " ORDER BY relic DESC"; // " LIMIT 10"
 
 			db_pool.query(sql, function(exc, result) {
@@ -454,39 +411,41 @@ client.on("message", (message) => {
 						.setDescription(["Failed to get player's units!"])
 						.setFooter(config.footer.message, config.footer.iconUrl);
 					message.channel.send(richMsg);
-				} else {
-					let n = result.length;
-
-					console.log(Date()+" - %d unit(s) with relic found.", n);
-					// console.dir(result);
-
-					if (n === 0) {
-						let msg = "";
-
-						console.log(Date()+" - There is 0 known relics in this roster.");
-						msg = "I don't know any relic in this roster for the moment.";
-						msg+= " Try to refresh the roster with";
-						msg+= " the 'ps "+args.join(" ")+"' command.";
-						message.reply(msg);
-					} else {
-						let tprc = 0; // total player's relic count
-
-						result.forEach(function(unit, i) {
-							tprc += unit.relic;
-							if (i<10)
-								lines.push(unit.relic+" relics on: "+unit.name);
-							else if (i===10)
-								lines.push("And "+(n-10)+" more...");
-						});
-						console.log(Date()+" - %d total relics found.", tprc);
-
-						richMsg = new RichEmbed()
-							.setTitle("Player's "+n+" unit(s) with "+tprc+" relics")
-							.setDescription(lines).setColor("GREEN")
-							.setFooter(config.footer.message, config.footer.iconUrl);
-						message.channel.send(richMsg);
-					}
+					return;
 				}
+
+				let n = result.length;
+
+				console.log(Date()+" - %d unit(s) with relic found.", n);
+				// console.dir(result);
+
+				if (n === 0) {
+					let msg = "";
+
+					console.log(Date()+" - There is 0 known relics in this roster.");
+					msg = "I don't know any relic in this roster for the moment.";
+					msg+= " Try to refresh the roster with";
+					msg+= " the 'ps "+args.join(" ")+"' command.";
+					message.reply(msg);
+					return;
+				}
+
+				let tprc = 0; // total player's relic count
+
+				result.forEach(function(unit, i) {
+					tprc += unit.relic;
+					if (i<10)
+						lines.push(unit.relic+" relic(s) on: "+unit.name);
+					else if (i===10)
+						lines.push("And "+(n-10)+" more...");
+				});
+				console.log(Date()+" - %d total relic(s) found.", tprc);
+
+				richMsg = new RichEmbed()
+					.setTitle("Player's "+n+" unit(s) with "+tprc+" relic(s)")
+					.setDescription(lines).setColor("GREEN")
+					.setFooter(config.footer.message, config.footer.iconUrl);
+				message.channel.send(richMsg);
 			});
 			break;
 
@@ -536,9 +495,11 @@ client.on("message", (message) => {
 
 		case "stats":
 		case "memstat":
-			sql = "SELECT COUNT(u.id) AS cnt, g.name FROM guilds g, `users` u";
-			sql+= " WHERE u.guildRefId=g.swgoh_id";
-			sql+= " GROUP BY guildRefId ORDER BY cnt DESC, g.name ASC";
+			sql = "SELECT COUNT(u.id) AS cnt, g.name";
+			sql+= " FROM `guilds` g, `users` u";
+			sql+= " WHERE u.guildRefId=g.swgoh_id"; // join
+			sql+= " GROUP BY guildRefId";
+			sql+= " ORDER BY cnt DESC, g.name ASC";
 
 			db_pool.query(sql, function(exc, result) {
 				let tpc = 0; // total player count
@@ -645,13 +606,15 @@ client.on("message", (message) => {
 		case "selfy":
 			user = client.user;
 			nick = "My";
+			showWhoIs(user, nick);
+			break;
 
 		case "whois":
 			if (message.mentions && message.mentions.users && message.mentions.users.first()) {
 				user = message.mentions.users.first();
 				nick = user.username;
-			} else if (command!=="self" && command!=="selfy"
-					&& message.mentions && message.mentions.users) {
+			} else
+			if (command!=="self" && command!=="selfy" && message.mentions && message.mentions.users) {
 				message.reply("Cannot answer for the moment.");
 
 				console.log(Date()+" - Mentions:");
@@ -662,28 +625,12 @@ client.on("message", (message) => {
 				message.reply("No user specified!");
 				return;
 			}
+			showWhoIs(user, nick);
+			break;
 
 		case "whoami":
 			nick = (nick==="My")? nick: (nick+"'s");
-			lines = [
-					"**"+nick+" ID is:** "+user.id,
-					"**"+nick+" creation date is:**", " "+user.createdAt,
-					"**"+nick+" presence status is:** "+user.presence.status
-				];
-
-			getPlayerFromDiscordId(user.id, function(player) {
-				if (player) {
-					lines.push("**"+nick+" allycode is:** "+player.allycode);
-				}
-				if (user.presence.game && user.presence.game.name) {
-					lines.push("**"+nick+" activity is:** "+user.presence.game.name);
-				}
-				richMsg = new RichEmbed()
-					.setTitle("User information").setColor("GREEN")
-					.setThumbnail(user.displayAvatarURL).setDescription(lines)
-					.setFooter(config.footer.message, config.footer.iconUrl);
-				message.channel.send(richMsg);
-			});
+			showWhoIs(user, nick);
 			break;
 
 		default:
@@ -691,6 +638,110 @@ client.on("message", (message) => {
 			console.log(Date()+" - Unknown command was: "+command);
 	}
 });
+
+function getPlayerStats(allycode, message) {
+	if (!allycode) {
+		message.reply(":red_circle: Invalid or missing allycode! Try 'register' command.");
+		return;
+	}
+
+	message.channel.send("Looking for "+allycode+"'s stats...");
+
+	swgoh.getPlayerData(allycode, message, showPlayerStats);
+}
+
+function showPlayerStats(player) {
+	let allycode = player.allycode;
+
+	if (!player.gp) {
+		console.log(Date()+" - invalid player's GP:", player.gp);
+		return;
+	}
+
+	// Remember user's stats:
+	let sql = "UPDATE users SET"+
+		" game_name="+mysql.escape(player.name)+","+
+		" gp="+player.gp+","+
+		" g12Count="+player.g12Count+","+
+		" g13Count="+player.g13Count+","+
+		" guildRefId="+mysql.escape(player.guildRefId)+","+
+		" zetaCount="+player.zetaCount+" "+
+		"WHERE allycode="+allycode;
+
+	db_pool.query(sql, function(exc, result) {
+		if (exc) {
+			console.log("SQL:", sql);
+			console.log(Date()+" - UC Exception:", exc.sqlMessage? exc.sqlMessage: exc);
+			return;
+		}
+
+		console.log(Date()+" - %d user updated.", result.affectedRows);
+
+		if (!result.affectedRows) {
+			sql = "INSERT INTO users\n"+
+				"(allycode, game_name, gp, g12Count, g13Count, guildRefId, zetaCount)\n"+
+				"VALUES ("+allycode+", "+mysql.escape(player.name)+
+				", "+player.gp+", "+player.g12Count+", "+player.g13Count+
+				", "+mysql.escape(player.guildRefId)+", "+player.zetaCount+")";
+
+			db_pool.query(sql, function(exc, result) {
+				if (exc) {
+					console.log("SQL:", sql);
+					console.log(Date()+" - GC Exception:", exc.sqlMessage? exc.sqlMessage: exc);
+					return;
+				}
+
+				console.log(Date()+" - %d user inserted.", result.affectedRows);
+			});
+		}
+
+		if (player.unitsData && player.unitsData.length) {
+			let lines = [];
+
+			// See:
+			// https://www.w3schools.com/nodejs/shownodejs_cmd.asp?filename=demo_db_insert_multiple
+			sql = "REPLACE units (allycode, name, combatType, gear, gp, relic, zetaCount) VALUES ?";
+			player.unitsData.forEach(function(u) { // u = current unit
+				lines.push(
+					[u.allycode, u.name, u.combatType, u.gear, u.gp, u.relic, u.zetaCount]
+				);
+			});
+
+			db_pool.query(sql, [lines], function(exc, result) {
+				if (exc) {
+					console.log("SQL:", sql);
+					console.log(Date()+" - RU Exception:", exc.sqlMessage? exc.sqlMessage: exc);
+					return;
+				}
+
+				console.log(Date()+" - %d units updated.", result.affectedRows);
+			});
+		}
+	});
+}
+
+function showWhoIs(user, nick)
+{
+	let lines = [
+			"**"+nick+" ID is:** "+user.id,
+			"**"+nick+" creation date is:**", " "+user.createdAt,
+			"**"+nick+" presence status is:** "+user.presence.status
+		];
+
+	getPlayerFromDiscordId(user.id, function(player) {
+		if (player) {
+			lines.push("**"+nick+" allycode is:** "+player.allycode);
+		}
+		if (user.presence.game && user.presence.game.name) {
+			lines.push("**"+nick+" activity is:** "+user.presence.game.name);
+		}
+		richMsg = new RichEmbed()
+			.setTitle("User information").setColor("GREEN")
+			.setThumbnail(user.displayAvatarURL).setDescription(lines)
+			.setFooter(config.footer.message, config.footer.iconUrl);
+		message.channel.send(richMsg);
+	});
+}
 
 client.login(config.token);
 
