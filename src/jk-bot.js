@@ -607,7 +607,7 @@ function checkPlayerMods(player, message)
 
 	updatePlayerDataInDb(player);
 
-	let color = "GREEEN";
+	let color = "GREEN";
 	let lines = [];
 	let maxModsCount = 6;
 	let minCharLevel = 50;
@@ -628,7 +628,7 @@ function checkPlayerMods(player, message)
 		let msg = "";
 
 		console.log(Date()+" - There is 0 known units with missing modules in this roster.");
-		lines = ["All player's characters have "+maxModsCount+" modules."];
+		lines = ["All player's level 50+ characters have "+maxModsCount+" modules."];
 	} else {
 		color = "ORANGE";
 		unitsWithoutAllModules.forEach(function(unit, i) {
@@ -664,7 +664,7 @@ function showPlayerRelics(player, message)
 
 	updatePlayerDataInDb(player);
 
-	let color = "GREEEN";
+	let color = "GREEN";
 	let lines = [];
 	let n = 0;
 	let unitsWithRelics = player.unitsData.filter(function(unit) {
