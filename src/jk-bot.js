@@ -116,7 +116,7 @@ client.on("message", (message) => {
 			richMsg = new RichEmbed().setTitle("Aide")
 				.setDescription([
 					"**Voici déjà une liste des commandes utilisateur (sans explication) :**",
-					" aide, allycode (ac), dis, guildstats (gs), help, playerstats (ps)"+
+					" aide, allycode (ac), checkmods (cm), dis, guildstats (gs), help, playerstats (ps)"+
 					", register (reg), relics, repete, self(y), start, stats, status"+
 					", whoami, whois",
 					"**Commandes pour l'administrateur :** admin, query/req(uest), stop/stoppe",
@@ -158,6 +158,37 @@ client.on("message", (message) => {
 					}
 				}
 			});
+			break;
+
+		case "cm":
+		case "chkmod":
+		case "chkmods":
+		case "checkmod":
+		case "checkmods":
+			// Extract user's tag (if any):
+			if (message.mentions && message.mentions.users && message.mentions.users.first()) {
+				user = message.mentions.users.first();
+				nick = user.username;
+			}
+
+			if (args.join("").trim().length>0) {
+				// Try to find an ally code in the args:
+				args.forEach(function(arg) {
+					if (arg.indexOf('<')<0) { // ignore tags
+						allycode = parseInt(arg.replace(/[^0-9]/g, ""));
+						console.log(Date()+" - Found allycode:", allycode);
+					}
+				});
+			}
+
+			if (allycode) {
+				getPlayerStats(allycode, message, checkPlayerMods);
+			} else {
+				console.log(Date()+" - Try with user ID:", user.id);
+				getPlayerFromDiscordId(user.id, function(player) {
+					if (player) getPlayerStats(player.allycode, message, checkPlayerMods);
+				});
+			}
 			break;
 
 		case "destroy":
@@ -251,7 +282,7 @@ client.on("message", (message) => {
 			richMsg = new RichEmbed().setTitle("Help")
 				.setDescription([
 					"**Here is a quick list of user commands (without explanation):**",
-					" aide, allycode (ac), guildstats (gs), help, playerstat (ps)"+
+					" aide, allycode (ac), checkmods (cm), guildstats (gs), help, playerstat (ps)"+
 					", register (reg), relics, repeat, say, self(y), start, stats, status"+
 					", whoami, whois",
 					"**Admin commands:** admin, destroy/leave/shutdown/stop, query/req(uest)",
@@ -567,6 +598,63 @@ function getPlayerStats(allycode, message, callback)
 	swgoh.getPlayerData(allycode, message, callback);
 }
 
+function checkPlayerMods(player, message)
+{
+	if (!player.gp) {
+		console.log(Date()+" - invalid GP for player:", player);
+		return;
+	}
+
+	updatePlayerDataInDb(player);
+
+	let color = "GREEEN";
+	let lines = [];
+	let maxModsCount = 6;
+	let minCharLevel = 50;
+	let n = 0;
+	let unitsWithoutAllModules = player.unitsData.filter(function(unit) {
+			// Main filter:
+			return unit.combatType===1 && unit.level>=minCharLevel && unit.mods.length<maxModsCount;
+		}).sort(function(a, b) {
+			return b.gp-a.gp; // sort by galactic power (descending GP)
+		});
+	let tpmmc = 0; // total player's missing modules count
+
+	n = unitsWithoutAllModules.length;
+	console.log(Date()+" - %d unit(s) with missing modules found.", n);
+	// console.dir(player.unitsData);
+
+	if (n === 0) {
+		let msg = "";
+
+		console.log(Date()+" - There is 0 known units with missing modules in this roster.");
+		lines = ["All player's characters have "+maxModsCount+" modules."];
+	} else {
+		color = "ORANGE";
+		unitsWithoutAllModules.forEach(function(unit, i) {
+			tpmmc += maxModsCount - unit.mods.length;
+			if (i<10)
+				lines.push((maxModsCount-unit.mods.length)+" missing module(s) on: (GP="+unit.gp+") "+unit.name);
+			else if (i===10)
+				lines.push("And "+(n-10)+" more...");
+		});
+		console.log(Date()+" - %d total character(s) with %d total missing modules found.", tpmmc, maxModsCount);
+	}
+
+	richMsg = new RichEmbed()
+		.setTitle(player.name+" has "+n+" unit(s) with "+tpmmc+" missing module(s)")
+		.setDescription(lines).setColor(color)
+		.setTimestamp(player.updated)
+		.setFooter(config.footer.message, config.footer.iconUrl);
+	message.channel.send(richMsg);
+
+	player.unitsData.forEach(function(u) { // u = current unit
+		lines.push(
+			[u.allycode, u.name, u.combatType, u.gear, u.gp, u.relic, u.zetaCount]
+		);
+	});
+}
+
 function showPlayerRelics(player, message)
 {
 	if (!player.gp) {
@@ -580,9 +668,9 @@ function showPlayerRelics(player, message)
 	let lines = [];
 	let n = 0;
 	let unitsWithRelics = player.unitsData.filter(function(unit) {
-			return unit.relic>0;
+			return unit.relic>0; // main filter
 		}).sort(function(a, b) {
-			return b.relic-a.relic;
+			return b.relic-a.relic; // sort by relic count (descending)
 		});
 	let tprc = 0; // total player's relic count
 

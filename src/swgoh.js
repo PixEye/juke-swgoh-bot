@@ -86,10 +86,12 @@ exports.getPlayerData = async function getPlayerData(allycode, message, callback
 					player.unitsData.push({
 						"allycode":   allycode,
 						"combatType": unit.combatType,
-						"gear":		  unit.gear,
-						"gp":		  unit.gp,
-						"name":		  unit.defId,
-						"relic":	  (unit.relic && unit.relic.currentTier>1)? unit.relic.currentTier-2: 0,
+						"gear":       unit.gear,
+						"gp":         unit.gp,
+						"level":      unit.level,
+						"mods":       unit.mods,
+						"name":       unit.defId,
+						"relic":      (unit.relic && unit.relic.currentTier>1)? unit.relic.currentTier-2: 0,
 						"zetaCount":  unitZetas
 					});
 				}
