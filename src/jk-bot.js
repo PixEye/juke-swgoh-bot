@@ -56,36 +56,6 @@ client.on("message", (message) => {
 	var sql = "";
 	var user = message.author;
 
-	function getPlayerFromDiscordId(discord_id, callback)
-	{
-		let sql = "SELECT * FROM users WHERE discord_id="+parseInt(discord_id);
-
-		db_pool.query(sql, function(exc, result) {
-			if (exc) {
-				console.log("SQL:", sql);
-				console.log(Date()+" - GPFDI Exception:", exc.sqlMessage? exc.sqlMessage: exc);
-
-				if (typeof(callback)==="function") callback(null);
-				return null;
-			}
-
-			console.log(Date()+" - "+result.length+" record match(es) user's ID:", discord_id);
-			// console.dir(result);
-			if (result.length === 1) {
-				console.log(Date()+" - Found allycode:", result[0].allycode);
-
-				if (typeof(callback)==="function") callback(result[0]);
-				return result[0];
-			}
-
-			console.log(Date()+" - Allycode not found!");
-			message.reply("I don't know this player. Register her/him first please.");
-
-			if (typeof(callback)==="function") callback(null);
-			return null;
-		});
-	}
-
 	// Filter with the prefix & ignore bots:
 	if ( message.author.bot ||
 		(message.channel.type!=="dm" && !message.content.toLowerCase().startsWith(config.prefix))) {
@@ -120,8 +90,9 @@ client.on("message", (message) => {
 					", register (reg), relics, repete, self(y), start, stats, status"+
 					", whoami, whois",
 					"**Commandes pour l'administrateur :** admin, query/req(uest), stop/stoppe",
-					"**NB :** en mp, le préfixe est optionnel"
-				]).setFooter(config.footer.message, config.footer.iconUrl);
+					"**NB :** en mp, le préfixe est optionnel"])
+				.setTimestamp(message.createdTimestamp)
+				.setFooter(config.footer.message, config.footer.iconUrl);
 			message.channel.send(richMsg);
 			break;
 
@@ -219,39 +190,6 @@ client.on("message", (message) => {
 		case "gs":
 		case "guildstat":
 		case "guildstats":
-			function showGuildStats(allycode) {
-				if (!allycode) {
-					message.reply(":red_circle: Invalid or missing allycode!");
-					return;
-				}
-
-				message.channel.send("Looking for stats of guild with ally: "+allycode+"...");
-
-				swgoh.getPlayerGuild(allycode, message, function(guild) {
-					if (!guild.gp) {
-						console.log(Date()+" - invalid guild GP:", guild.gp);
-						return;
-					}
-
-					// Remember user's stats:
-					sql = "REPLACE INTO guilds (swgoh_id, name) VALUES ("+
-						mysql.escape(guild.id)+", "+
-						mysql.escape(guild.name)+")";
-
-					db_pool.query(sql, function(exc, result) {
-						if (exc) {
-							console.log("SQL:", sql);
-							let otd = exc.sqlMessage? exc.sqlMessage: exc;
-							// otd = object to display
-							console.log(Date()+" - GS Exception:", otd);
-							return;
-						}
-
-						console.log(Date()+" - %d guild updated.", result.affectedRows);
-					});
-				});
-			}
-
 			// Extract user's tag (if any):
 			if (message.mentions && message.mentions.users && message.mentions.users.first()) {
 				user = message.mentions.users.first();
@@ -269,11 +207,11 @@ client.on("message", (message) => {
 			}
 
 			if (allycode) {
-				showGuildStats(allycode);
+				showGuildStats(allycode, message);
 			} else {
 				console.log(Date()+" - Try with user ID:", user.id);
 				getPlayerFromDiscordId(user.id, function(player) {
-					if (player) showGuildStats(player.allycode);
+					if (player) showGuildStats(player.allycode, message);
 				});
 			}
 			break;
@@ -286,8 +224,9 @@ client.on("message", (message) => {
 					", register (reg), relics, repeat, say, self(y), start, stats, status"+
 					", whoami, whois",
 					"**Admin commands:** admin, destroy/leave/shutdown/stop, query/req(uest)",
-					"**NB :** in DM, the prefix is optional"
-				]).setFooter(config.footer.message, config.footer.iconUrl);
+					"**NB :** in DM, the prefix is optional"])
+				.setTimestamp(message.createdTimestamp)
+				.setFooter(config.footer.message, config.footer.iconUrl);
 			message.channel.send(richMsg);
 			break;
 
@@ -456,6 +395,7 @@ client.on("message", (message) => {
 				richMsg = new RichEmbed()
 					.setTitle("DB request").setColor(col)
 					.setDescription(lines)
+					.setTimestamp(message.createdTimestamp)
 					.setFooter(config.footer.message, config.footer.iconUrl);
 				message.channel.send(richMsg);
 			});
@@ -488,11 +428,12 @@ client.on("message", (message) => {
 					});
 				}
 				console.log(Date()+" - %d guilds & %d players in the result", result.length, tpc);
-				lines.unshift("**"+tpc+" players registered in "+result.length+" guilds**");
+				lines.unshift("**"+tpc+" player(s) registered in "+result.length+" guilds**");
 
 				richMsg = new RichEmbed()
 					.setTitle("Memory status").setColor("GREEN")
 					.setDescription(lines)
+					.setTimestamp(message.createdTimestamp)
 					.setFooter(config.footer.message, config.footer.iconUrl);
 				message.channel.send(richMsg);
 			});
@@ -505,13 +446,13 @@ client.on("message", (message) => {
 
 			message.channel.send("I am listening since: "+start);
 
-			sql = "SELECT COUNT(*) AS nbg FROM guilds";
+			sql = "SELECT COUNT(`id`) AS nbg FROM guilds";
 			db_pool.query(sql, countGuilds);
 
 			function countGuilds(exc, result) {
 				if (exc) {
 					console.log("SQL:", sql);
-					console.log(Date()+" - ST2 Exception:", exc.sqlMessage? exc.sqlMessage: exc);
+					console.log(Date()+" - ST1 Exception:", exc.sqlMessage? exc.sqlMessage: exc);
 					message.reply("Exception: failed to count registered guilds!");
 					return;
 				}
@@ -525,14 +466,14 @@ client.on("message", (message) => {
 				nbg = result[0].nbg; // nbg = number of guilds
 				console.log(Date()+" - %d guild(s) registered.", nbg);
 
-				sql = "SELECT COUNT(*) AS nbp FROM users"; // nbp = number of players
+				sql = "SELECT COUNT(`id`) AS nbp FROM users"; // nbp = number of players
 				db_pool.query(sql, countPlayers);
 			}
 
 			function countPlayers(exc, result) {
 				if (exc) {
 					console.log("SQL:", sql);
-					console.log(Date()+" - ST1 Exception:", exc.sqlMessage? exc.sqlMessage: exc.code);
+					console.log(Date()+" - ST2 Exception:", exc.sqlMessage? exc.sqlMessage: exc.code);
 					message.reply("Exception: failed to count registered players!");
 					return;
 				}
@@ -544,8 +485,30 @@ client.on("message", (message) => {
 				}
 
 				nbp = result[0].nbp; // nbp = number of players
-				console.log(Date()+" -", nbg+" guilds & "+nbp+  " users registered.");
-				message.channel.send(    nbg+" guilds & "+nbp+" players registered.");
+				console.log(Date()+" -", nbp+  " user(s) registered.");
+
+				sql = "SELECT COUNT(`id`) AS nbu FROM units"; // nbp = number of units
+				db_pool.query(sql, countUnits);
+			}
+
+			function countUnits(exc, result) {
+				if (exc) {
+					console.log("SQL:", sql);
+					console.log(Date()+" - ST3 Exception:", exc.sqlMessage? exc.sqlMessage: exc.code);
+					message.reply("Exception: failed to count registered players!");
+					return;
+				}
+
+				if (result.length !== 1) {
+					console.log(Date()+" - "+result.length+" result(s) to count users!");
+					message.reply("Failed to count registered units!");
+					return;
+				}
+
+				let nbu = result[0].nbu; // nbu = number of units
+				console.log(Date()+" -", nbu+  " unit(s) registered.");
+
+				message.channel.send(nbg+" guilds, "+nbp+" players & "+nbu+" unit(s) registered.");
 			}
 			break;
 
@@ -553,7 +516,7 @@ client.on("message", (message) => {
 		case "selfy":
 			user = client.user;
 			nick = "My";
-			showWhoIs(user, nick);
+			showWhoIs(user, nick, message);
 			break;
 
 		case "whois":
@@ -572,12 +535,12 @@ client.on("message", (message) => {
 				message.reply("No user specified!");
 				return;
 			}
-			showWhoIs(user, nick);
+			showWhoIs(user, nick, message);
 			break;
 
 		case "whoami":
 			nick = (nick==="My")? nick: (nick+"'s");
-			showWhoIs(user, nick);
+			showWhoIs(user, nick, message);
 			break;
 
 		default:
@@ -585,6 +548,36 @@ client.on("message", (message) => {
 			console.log(Date()+" - Unknown command was: "+command);
 	}
 });
+
+function getPlayerFromDiscordId(discord_id, callback)
+{
+	let sql = "SELECT * FROM users WHERE discord_id="+parseInt(discord_id);
+
+	db_pool.query(sql, function(exc, result) {
+		if (exc) {
+			console.log("SQL:", sql);
+			console.log(Date()+" - GPFDI Exception:", exc.sqlMessage? exc.sqlMessage: exc);
+
+			if (typeof(callback)==="function") callback(null);
+			return null;
+		}
+
+		console.log(Date()+" - "+result.length+" record match(es) user's ID:", discord_id);
+		// console.dir(result);
+		if (result.length === 1) {
+			console.log(Date()+" - Found allycode:", result[0].allycode);
+
+			if (typeof(callback)==="function") callback(result[0]);
+			return result[0];
+		}
+
+		console.log(Date()+" - Allycode not found!");
+		message.reply("I don't know this player. Register her/him first please.");
+
+		if (typeof(callback)==="function") callback(null);
+		return null;
+	});
+}
 
 function getPlayerStats(allycode, message, callback)
 {
@@ -652,6 +645,40 @@ function checkPlayerMods(player, message)
 		lines.push(
 			[u.allycode, u.name, u.combatType, u.gear, u.gp, u.relic, u.zetaCount]
 		);
+	});
+}
+
+function showGuildStats(allycode, message)
+{
+	if (!allycode) {
+		message.reply(":red_circle: Invalid or missing allycode!");
+		return;
+	}
+
+	message.channel.send("Looking for stats of guild with ally: "+allycode+"...");
+
+	swgoh.getPlayerGuild(allycode, message, function(guild) {
+		if (!guild.gp) {
+			console.log(Date()+" - invalid guild GP:", guild.gp);
+			return;
+		}
+
+		// Remember user's stats:
+		sql = "REPLACE INTO guilds (swgoh_id, name) VALUES ("+
+			mysql.escape(guild.id)+", "+
+			mysql.escape(guild.name)+")";
+
+		db_pool.query(sql, function(exc, result) {
+			if (exc) {
+				console.log("SQL:", sql);
+				let otd = exc.sqlMessage? exc.sqlMessage: exc;
+				// otd = object to display
+				console.log(Date()+" - GS Exception:", otd);
+				return;
+			}
+
+			console.log(Date()+" - %d guild updated.", result.affectedRows);
+		});
 	});
 }
 
@@ -742,7 +769,7 @@ function showPlayerStats(player, message)
 	message.reply(richMsg);
 }
 
-function showWhoIs(user, nick)
+function showWhoIs(user, nick, message)
 {
 	let lines = [
 			"**"+nick+" ID is:** "+user.id,
@@ -760,6 +787,7 @@ function showWhoIs(user, nick)
 		richMsg = new RichEmbed()
 			.setTitle("User information").setColor("GREEN")
 			.setThumbnail(user.displayAvatarURL).setDescription(lines)
+			.setTimestamp(message.createdTimestamp)
 			.setFooter(config.footer.message, config.footer.iconUrl);
 		message.channel.send(richMsg);
 	});
