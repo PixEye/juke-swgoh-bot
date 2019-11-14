@@ -572,6 +572,7 @@ function showPlayerRelics(player, message)
 
 	updatePlayerDataInDb(player);
 
+	let color = "GREEEN";
 	let lines = [];
 	let n = 0;
 	let unitsWithRelics = player.unitsData.filter(function(unit) {
@@ -579,6 +580,7 @@ function showPlayerRelics(player, message)
 		}).sort(function(a, b) {
 			return b.relic-a.relic;
 		});
+	let tprc = 0; // total player's relic count
 
 	n = unitsWithRelics.length;
 	console.log(Date()+" - %d unit(s) with relic found.", n);
@@ -587,28 +589,23 @@ function showPlayerRelics(player, message)
 	if (n === 0) {
 		let msg = "";
 
+		color = "ORANGE";
 		console.log(Date()+" - There is 0 known relics in this roster.");
-		msg = "I don't know any relic in this roster for the moment.";
-		msg+= " Try to refresh the roster with";
-		msg+= " the 'ps "+args.join(" ")+"' command.";
-		message.reply(msg);
-		return;
+		lines = ["I don't know any relic in this roster for the moment."];
+	} else {
+		unitsWithRelics.forEach(function(unit, i) {
+			tprc += unit.relic;
+			if (i<10)
+				lines.push(unit.relic+" relic(s) on: "+unit.name);
+			else if (i===10)
+				lines.push("And "+(n-10)+" more...");
+		});
+		console.log(Date()+" - %d total relic(s) found.", tprc);
 	}
-
-	let tprc = 0; // total player's relic count
-
-	unitsWithRelics.forEach(function(unit, i) {
-		tprc += unit.relic;
-		if (i<10)
-			lines.push(unit.relic+" relic(s) on: "+unit.name);
-		else if (i===10)
-			lines.push("And "+(n-10)+" more...");
-	});
-	console.log(Date()+" - %d total relic(s) found.", tprc);
 
 	richMsg = new RichEmbed()
 		.setTitle("Player has "+n+" unit(s) with "+tprc+" relic(s)")
-		.setDescription(lines).setColor("GREEN")
+		.setDescription(lines).setColor(color)
 		.setTimestamp(player.updated)
 		.setFooter(config.footer.message, config.footer.iconUrl);
 	message.channel.send(richMsg);

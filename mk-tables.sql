@@ -46,13 +46,31 @@ CREATE TABLE `guilds` (
 -- --------------------------------------------------------
 
 --
+-- Structure of table `units`
+--
+
+DROP TABLE IF EXISTS `units`;
+CREATE TABLE `units` (
+  `id` int(10) UNSIGNED NOT NULL,
+  `allycode` int(10) UNSIGNED NOT NULL,
+  `name` varchar(32) COLLATE utf8_unicode_ci NOT NULL,
+  `combatType` tinyint(3) UNSIGNED DEFAULT NULL,
+  `gear` tinyint(3) UNSIGNED DEFAULT NULL,
+  `relic` tinyint(3) UNSIGNED DEFAULT NULL,
+  `zetaCount` tinyint(3) UNSIGNED DEFAULT NULL,
+  `gp` int(10) UNSIGNED DEFAULT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Structure of table `evols`
 --
 
 DROP TABLE IF EXISTS `evols`;
 CREATE TABLE IF NOT EXISTS `evols` (
   `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
-  `dt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `ts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `allycode` int(10) UNSIGNED NOT NULL,
   `unit_id` varchar(32) COLLATE utf8_unicode_ci NOT NULL,
   `type` varchar(5) COLLATE utf8_unicode_ci NOT NULL,
@@ -72,6 +90,15 @@ ALTER TABLE `guilds`
   ADD KEY `name` (`name`);
 
 --
+-- Index pour la table `units`
+--
+ALTER TABLE `units`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `playerUnitId` (`name`,`allycode`),
+  ADD KEY `allycode` (`allycode`),
+  ADD KEY `name` (`name`);
+
+--
 -- Index pour la table `users`
 --
 ALTER TABLE `users`
@@ -88,6 +115,12 @@ ALTER TABLE `users`
 --
 ALTER TABLE `guilds`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT pour la table `units`
+--
+ALTER TABLE `units`
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT pour la table `users`
