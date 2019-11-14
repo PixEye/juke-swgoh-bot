@@ -113,6 +113,7 @@ exports.getPlayerData = async function getPlayerData(allycode, message, callback
 			player.allycode = allycode;
 			player.charCount = unitsByCombaType[1];
 			player.gp = clean_stats.GALACTIC_POWER_ACQUIRED_NAME;
+			player.g11Count = unitsCountByGear[11];
 			player.g12Count = unitsCountByGear[12];
 			player.g13Count = unitsCountByGear[13];
 			player.shipCount = unitsByCombaType[2];

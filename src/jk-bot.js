@@ -42,7 +42,7 @@ client.on("ready", () => {
 
 // Get errors (if any):
 client.on("error", (exc) => {
-	console.log(Date()+" - Client exception!", exc);
+	console.log(Date()+" - Client exception!", exc.error? exc.error: exc);
 });
 
 // Check for input messages:
@@ -58,27 +58,31 @@ client.on("message", (message) => {
 
 	function getPlayerFromDiscordId(discord_id, callback)
 	{
-		var sql = "SELECT * FROM users WHERE discord_id="+parseInt(discord_id);
+		let sql = "SELECT * FROM users WHERE discord_id="+parseInt(discord_id);
 
 		db_pool.query(sql, function(exc, result) {
 			if (exc) {
 				console.log("SQL:", sql);
 				console.log(Date()+" - GPFDI Exception:", exc.sqlMessage? exc.sqlMessage: exc);
-			} else {
-				console.log(Date()+" - "+result.length+" record match(es) user's ID:", discord_id);
-				// console.dir(result);
-				if (result.length === 1) {
-					console.log(Date()+" - Found allycode:", result[0].allycode);
-					if (typeof(callback)==="function") callback(result[0]);
-					return result[0].allycode;
-				}
-
-				console.log(Date()+" - Allycode not found!");
-				message.reply("I don't know this player. Register her/him first please.");
 
 				if (typeof(callback)==="function") callback(null);
-				return 0;
+				return null;
 			}
+
+			console.log(Date()+" - "+result.length+" record match(es) user's ID:", discord_id);
+			// console.dir(result);
+			if (result.length === 1) {
+				console.log(Date()+" - Found allycode:", result[0].allycode);
+
+				if (typeof(callback)==="function") callback(result[0]);
+				return result[0];
+			}
+
+			console.log(Date()+" - Allycode not found!");
+			message.reply("I don't know this player. Register her/him first please.");
+
+			if (typeof(callback)==="function") callback(null);
+			return null;
 		});
 	}
 
