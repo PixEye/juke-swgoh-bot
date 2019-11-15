@@ -156,7 +156,7 @@ client.on("message", (message) => {
 				getPlayerStats(allycode, message, checkPlayerMods);
 			} else {
 				console.log(Date()+" - Try with user ID:", user.id);
-				getPlayerFromDiscordId(user.id, function(player) {
+				getPlayerFromDiscordId(user.id, message, function(player) {
 					if (player) getPlayerStats(player.allycode, message, checkPlayerMods);
 				});
 			}
@@ -210,7 +210,7 @@ client.on("message", (message) => {
 				showGuildStats(allycode, message);
 			} else {
 				console.log(Date()+" - Try with user ID:", user.id);
-				getPlayerFromDiscordId(user.id, function(player) {
+				getPlayerFromDiscordId(user.id, message, function(player) {
 					if (player) showGuildStats(player.allycode, message);
 				});
 			}
@@ -255,7 +255,7 @@ client.on("message", (message) => {
 				getPlayerStats(allycode, message, showPlayerStats);
 			} else {
 				console.log(Date()+" - Try with user ID:", user.id);
-				getPlayerFromDiscordId(user.id, function(player) {
+				getPlayerFromDiscordId(user.id, message, function(player) {
 					if (player) getPlayerStats(player.allycode, message, showPlayerStats);
 				});
 			}
@@ -349,7 +349,7 @@ client.on("message", (message) => {
 				getPlayerStats(allycode, message, showPlayerRelics);
 			} else {
 				console.log(Date()+" - Try with user ID:", user.id);
-				getPlayerFromDiscordId(user.id, function(player) {
+				getPlayerFromDiscordId(user.id, message, function(player) {
 					if (player) getPlayerStats(player.allycode, message, showPlayerRelics);
 				});
 			}
@@ -549,7 +549,7 @@ client.on("message", (message) => {
 	}
 });
 
-function getPlayerFromDiscordId(discord_id, callback)
+function getPlayerFromDiscordId(discord_id, message, callback)
 {
 	let sql = "SELECT * FROM users WHERE discord_id="+parseInt(discord_id);
 
@@ -777,7 +777,7 @@ function showWhoIs(user, nick, message)
 			"**"+nick+" presence status is:** "+user.presence.status
 		];
 
-	getPlayerFromDiscordId(user.id, function(player) {
+	getPlayerFromDiscordId(user.id, message, function(player) {
 		if (player) {
 			lines.push("**"+nick+" allycode is:** "+player.allycode);
 		}
