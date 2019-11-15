@@ -42,7 +42,7 @@ client.on("ready", () => {
 
 // Get errors (if any):
 client.on("error", (exc) => {
-	console.log(Date()+" - Client exception!", exc.error? exc.error: exc);
+	console.log(Date()+" - Client exception!", exc); // .error? exc.error: exc);
 });
 
 // Check for input messages:
@@ -207,11 +207,11 @@ client.on("message", (message) => {
 			}
 
 			if (allycode) {
-				showGuildStats(allycode, message);
+				getGuildStats(allycode, message);
 			} else {
 				console.log(Date()+" - Try with user ID:", user.id);
 				getPlayerFromDiscordId(user.id, message, function(player) {
-					if (player) showGuildStats(player.allycode, message);
+					if (player) getGuildStats(player.allycode, message);
 				});
 			}
 			break;
@@ -549,6 +549,40 @@ client.on("message", (message) => {
 	}
 });
 
+function getGuildStats(allycode, message)
+{
+	if (!allycode) {
+		message.reply(":red_circle: Invalid or missing allycode!");
+		return;
+	}
+
+	message.channel.send("Looking for stats of guild with ally: "+allycode+"...");
+
+	swgoh.getPlayerGuild(allycode, message, function(guild) {
+		if (!guild.gp) {
+			console.log(Date()+" - invalid guild GP:", guild.gp);
+			return;
+		}
+
+		// Remember user's stats:
+		sql = "REPLACE INTO guilds (swgoh_id, name) VALUES ("+
+			mysql.escape(guild.id)+", "+
+			mysql.escape(guild.name)+")";
+
+		db_pool.query(sql, function(exc, result) {
+			if (exc) {
+				console.log("SQL:", sql);
+				let otd = exc.sqlMessage? exc.sqlMessage: exc;
+				// otd = object to display
+				console.log(Date()+" - GS Exception:", otd);
+				return;
+			}
+
+			console.log(Date()+" - %d guild updated.", result.affectedRows);
+		});
+	});
+}
+
 function getPlayerFromDiscordId(discord_id, message, callback)
 {
 	let sql = "SELECT * FROM users WHERE discord_id="+parseInt(discord_id);
@@ -648,40 +682,6 @@ function checkPlayerMods(player, message)
 	});
 }
 
-function showGuildStats(allycode, message)
-{
-	if (!allycode) {
-		message.reply(":red_circle: Invalid or missing allycode!");
-		return;
-	}
-
-	message.channel.send("Looking for stats of guild with ally: "+allycode+"...");
-
-	swgoh.getPlayerGuild(allycode, message, function(guild) {
-		if (!guild.gp) {
-			console.log(Date()+" - invalid guild GP:", guild.gp);
-			return;
-		}
-
-		// Remember user's stats:
-		sql = "REPLACE INTO guilds (swgoh_id, name) VALUES ("+
-			mysql.escape(guild.id)+", "+
-			mysql.escape(guild.name)+")";
-
-		db_pool.query(sql, function(exc, result) {
-			if (exc) {
-				console.log("SQL:", sql);
-				let otd = exc.sqlMessage? exc.sqlMessage: exc;
-				// otd = object to display
-				console.log(Date()+" - GS Exception:", otd);
-				return;
-			}
-
-			console.log(Date()+" - %d guild updated.", result.affectedRows);
-		});
-	});
-}
-
 function showPlayerRelics(player, message)
 {
 	if (!player.gp) {
@@ -723,7 +723,7 @@ function showPlayerRelics(player, message)
 	}
 
 	richMsg = new RichEmbed()
-		.setTitle("Player has "+n+" unit(s) with "+tprc+" relic(s)")
+		.setTitle(player.name+" has "+n+" unit(s) with "+tprc+" relic(s)")
 		.setDescription(lines).setColor(color)
 		.setTimestamp(player.updated)
 		.setFooter(config.footer.message, config.footer.iconUrl);
@@ -803,13 +803,18 @@ function updatePlayerDataInDb(player)
 	}
 
 	// Remember user's stats:
+	let update = new Date(player.updated);
+
+	update = update.toISOString().replace('T', ' ').replace(/z$/i, '');
+
 	let sql = "UPDATE users SET"+
 		" game_name="+mysql.escape(player.name)+","+
 		" gp="+player.gp+","+
 		" g12Count="+player.g12Count+","+
 		" g13Count="+player.g13Count+","+
 		" guildRefId="+mysql.escape(player.guildRefId)+","+
-		" zetaCount="+player.zetaCount+" "+
+		" zetaCount="+player.zetaCount+","+
+		" ts="+mysql.escape(update)+" "+
 		"WHERE allycode="+allycode;
 
 	db_pool.query(sql, function(exc, result) {

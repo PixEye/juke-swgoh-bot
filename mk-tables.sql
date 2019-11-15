@@ -127,4 +127,11 @@ ALTER TABLE `units`
 --
 ALTER TABLE `users`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- Add a timestamp on `users`
+--
+ALTER TABLE `users`
+  ADD `ts` TIMESTAMP on update CURRENT_TIMESTAMP NULL DEFAULT NULL AFTER `zetaCount`;
+
 COMMIT;
