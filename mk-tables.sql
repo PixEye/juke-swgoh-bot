@@ -25,9 +25,9 @@ CREATE TABLE `users` (
   `game_name` varchar(32) COLLATE utf8_unicode_ci DEFAULT NULL,
   `guildRefId` varchar(16) COLLATE utf8_unicode_ci DEFAULT NULL,
   `gp` int(11) UNSIGNED DEFAULT NULL,
-  `g12Count` tinyint(3) UNSIGNED DEFAULT NULL,
-  `g13Count` tinyint(3) UNSIGNED DEFAULT NULL,
-  `zetaCount` tinyint(3) UNSIGNED DEFAULT NULL
+  `g12Count` tinyint(1) UNSIGNED DEFAULT NULL,
+  `g13Count` tinyint(1) UNSIGNED DEFAULT NULL,
+  `zetaCount` tinyint(1) UNSIGNED DEFAULT NULL
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- --------------------------------------------------------
@@ -54,10 +54,10 @@ CREATE TABLE `units` (
   `id` int(10) UNSIGNED NOT NULL,
   `allycode` int(10) UNSIGNED NOT NULL,
   `name` varchar(32) COLLATE utf8_unicode_ci NOT NULL,
-  `combatType` tinyint(3) UNSIGNED DEFAULT NULL,
-  `gear` tinyint(3) UNSIGNED DEFAULT NULL,
-  `relic` tinyint(3) UNSIGNED DEFAULT NULL,
-  `zetaCount` tinyint(3) UNSIGNED DEFAULT NULL,
+  `combatType` tinyint(1) UNSIGNED DEFAULT NULL,
+  `gear` tinyint(1) UNSIGNED DEFAULT NULL,
+  `relic` tinyint(1) UNSIGNED DEFAULT NULL,
+  `zetaCount` tinyint(1) UNSIGNED DEFAULT NULL,
   `gp` int(10) UNSIGNED DEFAULT NULL
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 

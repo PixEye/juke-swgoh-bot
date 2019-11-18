@@ -1,4 +1,4 @@
 *.sw*
 *~
-error-logs
-jsb-data.sql
+data/
+error-logs/

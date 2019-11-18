@@ -42,7 +42,7 @@ client.on("ready", () => {
 
 // Get errors (if any):
 client.on("error", (exc) => {
-	console.log(Date()+" - Client exception!", exc); // .error? exc.error: exc);
+	console.log(Date()+" - Client exception!\n %s: %s", exc.type, exc.message? exc.message: exc);
 });
 
 // Check for input messages:
@@ -556,31 +556,35 @@ function getGuildStats(allycode, message)
 		return;
 	}
 
-	message.channel.send("Looking for stats of guild with ally: "+allycode+"...");
+	message.channel.send("Looking for stats of guild with ally: "+allycode+"...")
+		.then(msg => {
+			if (typeof(msg.delete)==='function') msg.delete();
 
-	swgoh.getPlayerGuild(allycode, message, function(guild) {
-		if (!guild.gp) {
-			console.log(Date()+" - invalid guild GP:", guild.gp);
-			return;
-		}
+			swgoh.getPlayerGuild(allycode, message, function(guild) {
+				if (!guild.gp) {
+					console.log(Date()+" - invalid guild GP:", guild.gp);
+					return;
+				}
 
-		// Remember user's stats:
-		sql = "REPLACE INTO guilds (swgoh_id, name) VALUES ("+
-			mysql.escape(guild.id)+", "+
-			mysql.escape(guild.name)+")";
+				// Remember user's stats:
+				sql = "REPLACE INTO guilds (swgoh_id, name) VALUES ("+
+					mysql.escape(guild.id)+", "+
+					mysql.escape(guild.name)+")";
 
-		db_pool.query(sql, function(exc, result) {
-			if (exc) {
-				console.log("SQL:", sql);
-				let otd = exc.sqlMessage? exc.sqlMessage: exc;
-				// otd = object to display
-				console.log(Date()+" - GS Exception:", otd);
-				return;
-			}
+				db_pool.query(sql, function(exc, result) {
+					if (exc) {
+						console.log("SQL:", sql);
+						let otd = exc.sqlMessage? exc.sqlMessage: exc;
+						// otd = object to display
+						console.log(Date()+" - GS Exception:", otd);
+						return;
+					}
 
-			console.log(Date()+" - %d guild updated.", result.affectedRows);
-		});
-	});
+					console.log(Date()+" - %d guild updated.", result.affectedRows);
+				});
+			});
+		})
+		.catch(console.error);
 }
 
 function getPlayerFromDiscordId(discord_id, message, callback)
@@ -620,9 +624,15 @@ function getPlayerStats(allycode, message, callback)
 		return;
 	}
 
-	message.channel.send("Looking for "+allycode+"'s stats...");
+	message.channel.send("Looking for "+allycode+"'s stats...")
+		.then(msg => {
+			if (typeof(msg.delete)==='function') msg.delete();
 
-	swgoh.getPlayerData(allycode, message, callback);
+			swgoh.getPlayerData(allycode, message, function(arg1, arg2, arg3) {
+				if (typeof(callback)==='function') callback(arg1, arg2, arg3);
+			});
+		})
+		.catch(console.error);
 }
 
 function checkPlayerMods(player, message)
