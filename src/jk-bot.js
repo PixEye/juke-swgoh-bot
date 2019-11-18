@@ -558,9 +558,9 @@ function getGuildStats(allycode, message)
 
 	message.channel.send("Looking for stats of guild with ally: "+allycode+"...")
 		.then(msg => {
-			if (typeof(msg.delete)==='function') msg.delete();
-
 			swgoh.getPlayerGuild(allycode, message, function(guild) {
+				if (typeof(msg.delete)==='function') msg.delete();
+
 				if (!guild.gp) {
 					console.log(Date()+" - invalid guild GP:", guild.gp);
 					return;
@@ -626,9 +626,9 @@ function getPlayerStats(allycode, message, callback)
 
 	message.channel.send("Looking for "+allycode+"'s stats...")
 		.then(msg => {
-			if (typeof(msg.delete)==='function') msg.delete();
-
 			swgoh.getPlayerData(allycode, message, function(arg1, arg2, arg3) {
+				if (typeof(msg.delete)==='function') msg.delete();
+
 				if (typeof(callback)==='function') callback(arg1, arg2, arg3);
 			});
 		})
