@@ -854,6 +854,29 @@ function updatePlayerDataInDb(player)
 			});
 		}
 	});
+
+	if (player.unitsData && player.unitsData.length) {
+		let lines = [];
+
+		// See:
+		// https://www.w3schools.com/nodejs/shownodejs_cmd.asp?filename=demo_db_insert_multiple
+		sql = "REPLACE units (allycode, name, combatType, gear, gp, relic, zetaCount) VALUES ?";
+		player.unitsData.forEach(function(u) { // u = current unit
+			lines.push(
+				[u.allycode, u.name, u.combatType, u.gear, u.gp, u.relic, u.zetaCount]
+			);
+		});
+
+		db_pool.query(sql, [lines], function(exc, result) {
+			if (exc) {
+				console.log("SQL:", sql);
+				console.log(Date()+" - RU Exception:", exc.sqlMessage? exc.sqlMessage: exc);
+				return;
+			}
+
+			console.log(Date()+" - %d units updated.", result.affectedRows);
+		});
+	}
 }
 
 // Main:
