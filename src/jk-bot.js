@@ -566,16 +566,17 @@ function getGuildStats(allycode, message)
 					return;
 				}
 
-				// Remember user's stats:
+				// Remember stats of the guild:
 				sql = "REPLACE INTO guilds (swgoh_id, name) VALUES ("+
 					mysql.escape(guild.id)+", "+
 					mysql.escape(guild.name)+")";
 
 				db_pool.query(sql, function(exc, result) {
 					if (exc) {
-						console.log("SQL:", sql);
 						let otd = exc.sqlMessage? exc.sqlMessage: exc;
 						// otd = object to display
+
+						console.log("SQL:", sql);
 						console.log(Date()+" - GS Exception:", otd);
 						return;
 					}
@@ -597,7 +598,7 @@ function getPlayerFromDiscordId(discord_id, message, callback)
 			console.log(Date()+" - GPFDI Exception:", exc.sqlMessage? exc.sqlMessage: exc);
 
 			if (typeof(callback)==="function") callback(null);
-			return null;
+			return;
 		}
 
 		console.log(Date()+" - "+result.length+" record match(es) user's ID:", discord_id);
@@ -606,14 +607,13 @@ function getPlayerFromDiscordId(discord_id, message, callback)
 			console.log(Date()+" - Found allycode:", result[0].allycode);
 
 			if (typeof(callback)==="function") callback(result[0]);
-			return result[0];
+			return;
 		}
 
 		console.log(Date()+" - Allycode not found!");
 		message.reply("I don't know this player. Register her/him first please.");
 
 		if (typeof(callback)==="function") callback(null);
-		return null;
 	});
 }
 
