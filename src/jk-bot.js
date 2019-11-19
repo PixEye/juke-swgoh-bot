@@ -623,7 +623,11 @@ function getPlayerFromdatabase(allycode, message, callback)
 
 				// Add units to the player object:
 				console.log(Date()+" - GPFAC get %d characters for:", result.length, player.game_name);
-				player.unitsData = result;
+				player.unitsData = {length: 0};
+				result.forEach(function(u) {
+					player.unitsData.length++;
+					player.unitsData[u.name] = u;
+				});
 
 				if (typeof(callback)==="function") callback(player);
 			});
@@ -874,7 +878,6 @@ function updatePlayerDataInDb(player, message)
 		dataToCheck.forEach(function(k) {
 			let key = k.toLowerCase()+"Count";
 			let msg = "";
-			let unit_id = ""; // TODO
 
 			if (oldPlVersion[key] && player[key] > oldPlVersion[key]) {
 				msg = "Evolution: "+(player[key] - oldPlVersion[key]);
@@ -883,15 +886,35 @@ function updatePlayerDataInDb(player, message)
 				message.channel.send(msg);
 
 				// Add new evolution in the database ("evols" table):
-				lines.push([allycode, unit_id, k, player[key]]);
+				lines.push([allycode, "", k, player[key]]);
 			}
 		});
 		console.log(Date()+" - %d global evolution(s) detected for:", lines.length, player.name);
 
-		/* Check for evolutions:
+		// Check for evolutions:
 		lines = [];
 		player.unitsData.forEach(function(u) {
-			// TODO
+			let oldUnit = oldPlVersion.unitsData[u.name];
+
+			if (typeof(oldUnit)==="undefined") return;
+
+			if (u.gear > 11 && u.gear > oldUnit.gear) {
+				msg = "Evolution: "+player.name+"'s "+u.name+" is now G"+u.gear;
+				console.log(Date()+" - "+msg);
+				message.channel.send(msg);
+
+				// Add new evolution in the database ("evols" table):
+				lines.push([allycode, u.name, "gear", u.gear]);
+			}
+
+			if (u.zetaCount > oldUnit.zetaCount) {
+				msg = "Evolution: "+player.name+"'s "+u.name+" has now "+u.zetaCount+" zeta(s)";
+				console.log(Date()+" - "+msg);
+				message.channel.send(msg);
+
+				// Add new evolution in the database ("evols" table):
+				lines.push([allycode, u.name, "zeta", u.zetaCount]);
+			}
 		});
 		console.log(Date()+" - %d evolution(s) detected for:", lines.length, player.name); // */
 
