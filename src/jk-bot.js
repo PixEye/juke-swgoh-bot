@@ -117,7 +117,7 @@ client.on("message", (message) => {
 					console.log("SQL:", sql);
 					console.log(Date()+" - AC Exception:", exc.sqlMessage? exc.sqlMessage: exc);
 				} else {
-					console.log(Date()+" - "+result.length+" record match(es):", search);
+					console.log(Date()+" - "+result.length+" record(s) match(es):", search);
 					// console.dir(result);
 					if (result.length !== 1) {
 						console.log(Date()+" - %d result(s) match allycode: %s", result.length, allycode);
@@ -588,6 +588,35 @@ function getGuildStats(allycode, message)
 		.catch(console.error);
 }
 
+function getPlayerFromAllycode(allycode, message, callback)
+{
+	let sql = "SELECT * FROM users WHERE allycode="+parseInt(allycode);
+
+	db_pool.query(sql, function(exc, result) {
+		if (exc) {
+			console.log("SQL:", sql);
+			console.log(Date()+" - GPFAC Exception:", exc.sqlMessage? exc.sqlMessage: exc);
+
+			if (typeof(callback)==="function") callback(null);
+			return;
+		}
+
+		console.log(Date()+" - "+result.length+" record(s) match(es) allycode:", allycode);
+		// console.dir(result);
+		if (result.length === 1) {
+			console.log(Date()+" - Found user:", result[0].game_name);
+
+			if (typeof(callback)==="function") callback(result[0]);
+			return;
+		}
+
+		console.log(Date()+" - User with allycode "+allycode+" not found!");
+		message.reply("I don't know this player. Register her/him first please.");
+
+		if (typeof(callback)==="function") callback(null);
+	});
+}
+
 function getPlayerFromDiscordId(discord_id, message, callback)
 {
 	let sql = "SELECT * FROM users WHERE discord_id="+parseInt(discord_id);
@@ -601,7 +630,7 @@ function getPlayerFromDiscordId(discord_id, message, callback)
 			return;
 		}
 
-		console.log(Date()+" - "+result.length+" record match(es) user's ID:", discord_id);
+		console.log(Date()+" - "+result.length+" record(s) match(es) user's ID:", discord_id);
 		// console.dir(result);
 		if (result.length === 1) {
 			console.log(Date()+" - Found allycode:", result[0].allycode);
@@ -642,7 +671,7 @@ function checkPlayerMods(player, message)
 		return;
 	}
 
-	updatePlayerDataInDb(player);
+	updatePlayerDataInDb(player, message);
 
 	let color = "GREEN";
 	let lines = [];
@@ -699,7 +728,7 @@ function showPlayerRelics(player, message)
 		return;
 	}
 
-	updatePlayerDataInDb(player);
+	updatePlayerDataInDb(player, message);
 
 	let color = "GREEN";
 	let lines = [];
@@ -753,7 +782,7 @@ function showPlayerStats(player, message)
 		return;
 	}
 
-	updatePlayerDataInDb(player);
+	updatePlayerDataInDb(player, message);
 
 	let locale = "fr-FR";
 	let richMsg = new RichEmbed().setTitle(player.name+"'s profile").setColor("GREEN")
@@ -803,7 +832,7 @@ function showWhoIs(user, nick, message)
 	});
 }
 
-function updatePlayerDataInDb(player)
+function updatePlayerDataInDb(player, message)
 {
 	let allycode = player.allycode;
 
@@ -811,6 +840,41 @@ function updatePlayerDataInDb(player)
 		console.log(Date()+" - invalid GP for player:", player);
 		return;
 	}
+
+	// Try to find the same user in the database:
+	getPlayerFromAllycode(allycode, message, function(oldPlVersion) {
+		let dataToCheck = ["G12", "G13", "zeta"];
+		let lines = [];
+		let sql = "INSERT INTO `evols` (allycode, unit_id, type, new_value) VALUES ?";
+
+		dataToCheck.forEach(function(k) {
+			let key = k.toLowerCase()+"Count";
+			let msg = "";
+			let unit_id = ""; // TODO
+
+			if (player[key] > oldPlVersion[key]) {
+				msg = "Evolution: "+(player[key] - oldPlVersion[key]);
+				msg+= " new "+k+" for "+player.game_name;
+				console.log(Date()+" - "+msg);
+				message.channel.send(msg);
+
+				// Add new evolution in the database ("evols" table):
+				lines.push([allycode, unit_id, k, player[key]]);
+			}
+		});
+
+		if (lines.length) {
+			db_pool.query(sql, [lines], function(exc, result) {
+				if (exc) {
+					console.log("SQL:", sql);
+					console.log(Date()+" - UC Exception:", exc.sqlMessage? exc.sqlMessage: exc);
+					return;
+				}
+
+				console.log(Date()+" - %d evolution(s) inserted.", result.affectedRows);
+			});
+		}
+	});
 
 	// Remember user's stats:
 	let update = new Date(player.updated);
