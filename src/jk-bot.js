@@ -301,7 +301,7 @@ client.on("message", (message) => {
 
 				if (result.affectedRows) {
 					message.reply(":white_check_mark: Done.");
-					console.log(Date()+" - %d user inserted.", result.affectedRows);
+					console.log(Date()+" - %d user inserted:", result.affectedRows, nick);
 					return;
 				}
 
@@ -588,14 +588,15 @@ function getGuildStats(allycode, message)
 		.catch(console.error);
 }
 
-function getPlayerFromAllycode(allycode, message, callback)
+function getPlayerFromdatabase(allycode, message, callback)
 {
+	let player = null;
 	let sql = "SELECT * FROM users WHERE allycode="+parseInt(allycode);
 
 	db_pool.query(sql, function(exc, result) {
 		if (exc) {
 			console.log("SQL:", sql);
-			console.log(Date()+" - GPFAC Exception:", exc.sqlMessage? exc.sqlMessage: exc);
+			console.log(Date()+" - GPFAC1 Exception:", exc.sqlMessage? exc.sqlMessage: exc);
 
 			if (typeof(callback)==="function") callback(null);
 			return;
@@ -604,16 +605,35 @@ function getPlayerFromAllycode(allycode, message, callback)
 		console.log(Date()+" - "+result.length+" record(s) match(es) allycode:", allycode);
 		// console.dir(result);
 		if (result.length === 1) {
-			console.log(Date()+" - Found user:", result[0].game_name);
+			player = result[0];
+			console.log(Date()+" - Found user:", player.game_name);
 
-			if (typeof(callback)==="function") callback(result[0]);
+			// Get player's units:
+			sql = "SELECT * FROM `units` WHERE allycode="+parseInt(allycode);
+			sql+= " AND `combatType`=1"; // keep only characters (exclude ships)
+
+			db_pool.query(sql, function(exc, result) {
+				if (exc) {
+					console.log("SQL:", sql);
+					console.log(Date()+" - GPFAC2 Exception:", exc.sqlMessage? exc.sqlMessage: exc);
+
+					if (typeof(callback)==="function") callback(player);
+					return;
+				}
+
+				// Add units to the player object:
+				console.log(Date()+" - GPFAC get %d characters for:", result.length, player.game_name);
+				player.unitsData = result;
+
+				if (typeof(callback)==="function") callback(player);
+			});
 			return;
 		}
 
 		console.log(Date()+" - User with allycode "+allycode+" not found!");
 		message.reply("I don't know this player. Register her/him first please.");
 
-		if (typeof(callback)==="function") callback(null);
+		if (typeof(callback)==="function") callback(player);
 	});
 }
 
@@ -842,19 +862,23 @@ function updatePlayerDataInDb(player, message)
 	}
 
 	// Try to find the same user in the database:
-	getPlayerFromAllycode(allycode, message, function(oldPlVersion) {
+	getPlayerFromdatabase(allycode, message, function(oldPlVersion) {
 		let dataToCheck = ["G12", "G13", "zeta"];
 		let lines = [];
 		let sql = "INSERT INTO `evols` (allycode, unit_id, type, new_value) VALUES ?";
 
+		// If the user was unknown, do no look for evolution:
+		if (!oldPlVersion || !oldPlVersion.gp) return;
+
+		// Check for global evolutions:
 		dataToCheck.forEach(function(k) {
 			let key = k.toLowerCase()+"Count";
 			let msg = "";
 			let unit_id = ""; // TODO
 
-			if (player[key] > oldPlVersion[key]) {
+			if (oldPlVersion[key] && player[key] > oldPlVersion[key]) {
 				msg = "Evolution: "+(player[key] - oldPlVersion[key]);
-				msg+= " new "+k+" for "+player.game_name;
+				msg+= " new "+k+" for "+player.name;
 				console.log(Date()+" - "+msg);
 				message.channel.send(msg);
 
@@ -862,6 +886,14 @@ function updatePlayerDataInDb(player, message)
 				lines.push([allycode, unit_id, k, player[key]]);
 			}
 		});
+		console.log(Date()+" - %d global evolution(s) detected for:", lines.length, player.name);
+
+		/* Check for evolutions:
+		lines = [];
+		player.unitsData.forEach(function(u) {
+			// TODO
+		});
+		console.log(Date()+" - %d evolution(s) detected for:", lines.length, player.name); // */
 
 		if (lines.length) {
 			db_pool.query(sql, [lines], function(exc, result) {
@@ -914,7 +946,7 @@ function updatePlayerDataInDb(player, message)
 					return;
 				}
 
-				console.log(Date()+" - %d user inserted.", result.affectedRows);
+				console.log(Date()+" - %d user inserted:", result.affectedRows, player.name);
 			});
 		}
 	});
