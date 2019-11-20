@@ -992,7 +992,8 @@ function updatePlayerDataInDb(player, message)
 					return;
 				}
 
-				console.log(Date()+" - %d units updated.", result.affectedRows);
+				let nbr = result.affectedRows; // shortcut for number of records
+				console.log(Date()+" - %d unit records updated (%d new units).", nbr, lines.length);
 			});
 		}
 	});
