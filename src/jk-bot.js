@@ -322,7 +322,7 @@ client.on("message", (message) => {
 						}
 					} else {
 						message.reply(":white_check_mark: Done.");
-						console.log(Date()+" - %d user updated.", result.affectedRows);
+						console.log(Date()+" - %d user updated:", result.affectedRows, nick);
 					}
 				});
 			});
@@ -485,7 +485,8 @@ client.on("message", (message) => {
 				}
 
 				nbp = result[0].nbp; // nbp = number of players
-				console.log(Date()+" -", nbp+  " user(s) registered.");
+				let avg = nbg? Math.round(nbp/nbg): nbp; // average per guild
+				console.log(Date()+" - %d user(s) registered (~%d per guild).", nbp, avg);
 
 				sql = "SELECT COUNT(`id`) AS nbu FROM units"; // nbp = number of units
 				db_pool.query(sql, countUnits);
@@ -506,7 +507,8 @@ client.on("message", (message) => {
 				}
 
 				let nbu = result[0].nbu; // nbu = number of units
-				console.log(Date()+" -", nbu+  " unit(s) registered.");
+				let avg = nbp? Math.round(nbu/nbp): nbu; // average per player
+				console.log(Date()+" - %d unit(s) registered (~%d per player).", nbu, avg);
 
 				message.channel.send(nbg+" guilds, "+nbp+" players & "+nbu+" unit(s) registered.");
 			}
@@ -867,135 +869,133 @@ function updatePlayerDataInDb(player, message)
 
 	// Try to find the same user in the database:
 	getPlayerFromdatabase(allycode, message, function(oldPlVersion) {
-		let dataToCheck = ["G12", "G13", "zeta"];
 		let lines = [];
 		let sql = "INSERT INTO `evols` (allycode, unit_id, type, new_value) VALUES ?";
 
-		// If the user was unknown, do no look for evolution:
-		if (!oldPlVersion || !oldPlVersion.gp) return;
+		// If the user was unknown, do no look for any evolution:
+		if (oldPlVersion && oldPlVersion.gp) {
+			// Check for evolutions:
+			let newUnitCount = 0;
+			let nbShips = 0;
+			let oldCharsCount = oldPlVersion.unitsData.length;
 
-		// Check for global evolutions:
-		dataToCheck.forEach(function(k) {
-			let key = k.toLowerCase()+"Count";
-			let msg = "";
+			console.log(Date()+" - Old chars count:", oldCharsCount);
+			player.unitsData.forEach(function(u) {
+				let oldUnit = oldPlVersion.unitsData[u.name];
 
-			if (oldPlVersion[key] && player[key] > oldPlVersion[key]) {
-				msg = "Evolution: "+(player[key] - oldPlVersion[key]);
-				msg+= " new "+k+" for "+player.name;
-				console.log(Date()+" - "+msg);
-				message.channel.send(msg);
-
-				// Add new evolution in the database ("evols" table):
-				lines.push([allycode, "", k, player[key]]);
-			}
-		});
-		console.log(Date()+" - %d global evolution(s) detected for:", lines.length, player.name);
-
-		// Check for evolutions:
-		lines = [];
-		player.unitsData.forEach(function(u) {
-			let oldUnit = oldPlVersion.unitsData[u.name];
-
-			if (typeof(oldUnit)==="undefined") return;
-
-			if (u.gear > 11 && u.gear > oldUnit.gear) {
-				msg = "Evolution: "+player.name+"'s "+u.name+" is now G"+u.gear;
-				console.log(Date()+" - "+msg);
-				message.channel.send(msg);
-
-				// Add new evolution in the database ("evols" table):
-				lines.push([allycode, u.name, "gear", u.gear]);
-			}
-
-			if (u.zetaCount > oldUnit.zetaCount) {
-				msg = "Evolution: "+player.name+"'s "+u.name+" has now "+u.zetaCount+" zeta(s)";
-				console.log(Date()+" - "+msg);
-				message.channel.send(msg);
-
-				// Add new evolution in the database ("evols" table):
-				lines.push([allycode, u.name, "zeta", u.zetaCount]);
-			}
-		});
-		console.log(Date()+" - %d evolution(s) detected for:", lines.length, player.name); // */
-
-		if (lines.length) {
-			db_pool.query(sql, [lines], function(exc, result) {
-				if (exc) {
-					console.log("SQL:", sql);
-					console.log(Date()+" - UC Exception:", exc.sqlMessage? exc.sqlMessage: exc);
+				if (typeof(oldUnit)==="undefined") {
+					if (u.combatType===1) { // New character:
+						if (oldCharsCount) {
+							lines.push([allycode, u.name, "new", 1]);
+						}
+						++newUnitCount;
+					} else ++nbShips;
 					return;
 				}
 
-				console.log(Date()+" - %d evolution(s) inserted.", result.affectedRows);
-			});
-		}
-	});
+				if (u.gear > 11 && u.gear > oldUnit.gear) {
+					msg = "Evolution: "+player.name+"'s "+u.name+" is now G"+u.gear;
+					console.log(Date()+" - "+msg);
+					message.channel.send(msg);
 
-	// Remember user's stats:
-	let update = new Date(player.updated);
-
-	update = update.toISOString().replace('T', ' ').replace(/z$/i, '');
-
-	let sql = "UPDATE users SET"+
-		" game_name="+mysql.escape(player.name)+","+
-		" gp="+player.gp+","+
-		" g12Count="+player.g12Count+","+
-		" g13Count="+player.g13Count+","+
-		" guildRefId="+mysql.escape(player.guildRefId)+","+
-		" zetaCount="+player.zetaCount+","+
-		" ts="+mysql.escape(update)+" "+
-		"WHERE allycode="+allycode;
-
-	db_pool.query(sql, function(exc, result) {
-		if (exc) {
-			console.log("SQL:", sql);
-			console.log(Date()+" - UC Exception:", exc.sqlMessage? exc.sqlMessage: exc);
-			return;
-		}
-
-		console.log(Date()+" - %d user updated.", result.affectedRows);
-
-		if (!result.affectedRows) {
-			sql = "INSERT INTO users\n"+
-				"(allycode, game_name, gp, g12Count, g13Count, guildRefId, zetaCount)\n"+
-				"VALUES ("+allycode+", "+mysql.escape(player.name)+
-				", "+player.gp+", "+player.g12Count+", "+player.g13Count+
-				", "+mysql.escape(player.guildRefId)+", "+player.zetaCount+")";
-
-			db_pool.query(sql, function(exc, result) {
-				if (exc) {
-					console.log("SQL:", sql);
-					console.log(Date()+" - GC Exception:", exc.sqlMessage? exc.sqlMessage: exc);
-					return;
+					// Add new evolution in the database ("evols" table):
+					lines.push([allycode, u.name, "gear", u.gear]);
 				}
 
-				console.log(Date()+" - %d user inserted:", result.affectedRows, player.name);
+				if (u.zetaCount > oldUnit.zetaCount) {
+					msg = "Evolution: "+player.name+"'s "+u.name+" has now "+u.zetaCount+" zeta(s)";
+					console.log(Date()+" - "+msg);
+					message.channel.send(msg);
+
+					// Add new evolution in the database ("evols" table):
+					lines.push([allycode, u.name, "zeta", u.zetaCount]);
+				}
 			});
+			if (newUnitCount) {
+				console.log(Date()+" - There is %d new unit(s) in %s's roster.", newUnitCount, player.name);
+			}
+			console.log(Date()+" - %s owns %d ships", player.name, nbShips);
+			console.log(Date()+" - %d evolution(s) detected for:", lines.length, player.name); // */
+
+			if (lines.length) {
+				db_pool.query(sql, [lines], function(exc, result) {
+					if (exc) {
+						console.log("SQL:", sql);
+						console.log(Date()+" - UC Exception:", exc.sqlMessage? exc.sqlMessage: exc);
+						return;
+					}
+
+					console.log(Date()+" - %d evolution(s) inserted.", result.affectedRows);
+				});
+			}
 		}
-	});
 
-	if (player.unitsData && player.unitsData.length) {
-		let lines = [];
+		// Remember user's stats:
+		let update = new Date(player.updated);
 
-		// See:
-		// https://www.w3schools.com/nodejs/shownodejs_cmd.asp?filename=demo_db_insert_multiple
-		sql = "REPLACE units (allycode, name, combatType, gear, gp, relic, zetaCount) VALUES ?";
-		player.unitsData.forEach(function(u) { // u = current unit
-			lines.push(
-				[u.allycode, u.name, u.combatType, u.gear, u.gp, u.relic, u.zetaCount]
-			);
-		});
+		update = update.toISOString().replace('T', ' ').replace(/z$/i, '');
 
-		db_pool.query(sql, [lines], function(exc, result) {
+		sql = "UPDATE users SET"+
+			" game_name="+mysql.escape(player.name)+","+
+			" gp="+player.gp+","+
+			" g12Count="+player.g12Count+","+
+			" g13Count="+player.g13Count+","+
+			" guildRefId="+mysql.escape(player.guildRefId)+","+
+			" zetaCount="+player.zetaCount+","+
+			" ts="+mysql.escape(update)+" "+
+			"WHERE allycode="+allycode;
+
+		db_pool.query(sql, function(exc, result) {
 			if (exc) {
 				console.log("SQL:", sql);
-				console.log(Date()+" - RU Exception:", exc.sqlMessage? exc.sqlMessage: exc);
+				console.log(Date()+" - UC Exception:", exc.sqlMessage? exc.sqlMessage: exc);
 				return;
 			}
 
-			console.log(Date()+" - %d units updated.", result.affectedRows);
+			console.log(Date()+" - %d user updated:", result.affectedRows, player.name);
+
+			if (!result.affectedRows) {
+				sql = "INSERT INTO users\n"+
+					"(allycode, game_name, gp, g12Count, g13Count, guildRefId, zetaCount)\n"+
+					"VALUES ("+allycode+", "+mysql.escape(player.name)+
+					", "+player.gp+", "+player.g12Count+", "+player.g13Count+
+					", "+mysql.escape(player.guildRefId)+", "+player.zetaCount+")";
+
+				db_pool.query(sql, function(exc, result) {
+					if (exc) {
+						console.log("SQL:", sql);
+						console.log(Date()+" - GC Exception:", exc.sqlMessage? exc.sqlMessage: exc);
+						return;
+					}
+
+					console.log(Date()+" - %d user inserted:", result.affectedRows, player.name);
+				});
+			}
 		});
-	}
+
+		if (player.unitsData && player.unitsData.length) {
+			let lines = [];
+
+			// See:
+			// https://www.w3schools.com/nodejs/shownodejs_cmd.asp?filename=demo_db_insert_multiple
+			sql = "REPLACE units (allycode, name, combatType, gear, gp, relic, zetaCount) VALUES ?";
+			player.unitsData.forEach(function(u) { // u = current unit
+				lines.push(
+					[u.allycode, u.name, u.combatType, u.gear, u.gp, u.relic, u.zetaCount]
+				);
+			});
+
+			db_pool.query(sql, [lines], function(exc, result) {
+				if (exc) {
+					console.log("SQL:", sql);
+					console.log(Date()+" - RU Exception:", exc.sqlMessage? exc.sqlMessage: exc);
+					return;
+				}
+
+				console.log(Date()+" - %d units updated.", result.affectedRows);
+			});
+		}
+	});
 }
 
 // Main:

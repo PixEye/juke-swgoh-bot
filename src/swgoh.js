@@ -73,7 +73,7 @@ exports.getPlayerData = async function getPlayerData(allycode, message, callback
 
 			roster.forEach(function(unit) {
 				unitsCountByGear[unit.gear]++;
-				unitsByCombaType[unit.combatType]++;
+				unitsByCombaType[unit.combatType]++; // 1 = character, 2 = ship
 
 				let unitZetas = 0;
 				unit.skills.forEach(function(skill) {
@@ -85,7 +85,7 @@ exports.getPlayerData = async function getPlayerData(allycode, message, callback
 					player.unitCount++;
 					player.unitsData.push({
 						"allycode":   allycode,
-						"combatType": unit.combatType,
+						"combatType": unit.combatType, // 1 = character, 2 = ship
 						"gear":       unit.gear,
 						"gp":         unit.gp,
 						"level":      unit.level,
