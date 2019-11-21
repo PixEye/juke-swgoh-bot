@@ -608,7 +608,7 @@ function getPlayerFromdatabase(allycode, message, callback)
 		// console.dir(result);
 		if (result.length === 1) {
 			player = result[0];
-			console.log(Date()+" - Found user:", player.game_name);
+			console.log(Date()+" - Found user:", player.discord_name);
 
 			// Get player's units:
 			sql = "SELECT * FROM `units` WHERE allycode="+parseInt(allycode);
@@ -624,7 +624,7 @@ function getPlayerFromdatabase(allycode, message, callback)
 				}
 
 				// Add units to the player object:
-				console.log(Date()+" - GPFAC get %d characters for:", result.length, player.game_name);
+				console.log(Date()+" - GPFAC get %d characters for:", result.length, player.discord_name);
 				player.unitsData = {length: 0};
 				result.forEach(function(u) {
 					player.unitsData.length++;
