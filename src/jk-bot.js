@@ -665,8 +665,8 @@ function getPlayerFromDiscordId(discord_id, message, callback)
 			return;
 		}
 
-		console.log(Date()+" - Allycode not found!");
-		message.reply("I don't know this player. Register her/him first please.");
+		console.log(Date()+" - Allycode not found"); // Normal for "self(y)" command
+		message.reply("This user has no player ID. You may try: "+config.prefix+"register ally-code");
 
 		if (typeof(callback)==="function") callback(null);
 	});
