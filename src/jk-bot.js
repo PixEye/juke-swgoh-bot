@@ -427,7 +427,7 @@ client.on("message", (message) => {
 						lines.push(record.cnt+" player(s) in: "+record.name);
 					});
 				}
-				console.log(Date()+" - %d guilds & %d players in the result", result.length, tpc);
+				console.log(Date()+" - %d guilds & %d users in the result", result.length, tpc);
 				lines.unshift("**"+tpc+" player(s) registered in "+result.length+" guilds**");
 
 				richMsg = new RichEmbed()
@@ -508,7 +508,7 @@ client.on("message", (message) => {
 
 				let nbu = result[0].nbu; // nbu = number of units
 				let avg = nbp? Math.round(nbu/nbp): nbu; // average per player
-				console.log(Date()+" - %d unit(s) registered (~%d per player).", nbu, avg);
+				console.log(Date()+" - %d unit(s) registered (~%d per user).", nbu, avg);
 
 				message.channel.send(nbg+" guilds, "+nbp+" players & "+nbu+" unit(s) registered.");
 			}
@@ -693,7 +693,7 @@ function getPlayerStats(allycode, message, callback)
 function checkPlayerMods(player, message)
 {
 	if (!player.gp) {
-		console.log(Date()+" - invalid GP for player:", player);
+		console.log(Date()+" - invalid GP for user:", player);
 		return;
 	}
 
@@ -750,7 +750,7 @@ function checkPlayerMods(player, message)
 function showPlayerRelics(player, message)
 {
 	if (!player.gp) {
-		console.log(Date()+" - invalid GP for player:", player);
+		console.log(Date()+" - invalid GP for user:", player);
 		return;
 	}
 
@@ -804,7 +804,7 @@ function showPlayerRelics(player, message)
 function showPlayerStats(player, message)
 {
 	if (!player.gp) {
-		console.log(Date()+" - invalid GP for player:", player);
+		console.log(Date()+" - invalid GP for user:", player);
 		return;
 	}
 
@@ -863,7 +863,7 @@ function updatePlayerDataInDb(player, message)
 	let allycode = player.allycode;
 
 	if (!player.gp) {
-		console.log(Date()+" - invalid GP for player:", player);
+		console.log(Date()+" - invalid GP for user:", player);
 		return;
 	}
 
