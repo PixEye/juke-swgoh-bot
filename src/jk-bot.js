@@ -230,6 +230,35 @@ client.on("message", (message) => {
 			message.channel.send(richMsg);
 			break;
 
+		case "le":
+		case "evols":
+		case "lastevols":
+			// Extract user's tag (if any):
+			if (message.mentions && message.mentions.users && message.mentions.users.first()) {
+				user = message.mentions.users.first();
+				nick = user.username;
+			}
+
+			if (args.join("").trim().length>0) {
+				// Try to find an ally code in the args:
+				args.forEach(function(arg) {
+					if (arg.indexOf('<')<0) { // ignore tags
+						allycode = parseInt(arg.replace(/[^0-9]/g, ""));
+						console.log(Date()+" - Found allycode:", allycode);
+					}
+				});
+			}
+
+			if (allycode) {
+				getLastEvols(allycode, message, showLastEvols);
+			} else {
+				console.log(Date()+" - Try with user ID:", user.id);
+				getPlayerFromDiscordId(user.id, message, function(player) {
+					if (player) getLastEvols(player.allycode, message, showLastEvols);
+				});
+			}
+			break;
+
 		case "pi":
 		case "ps":
 		case "playerinfo":
@@ -551,6 +580,29 @@ client.on("message", (message) => {
 	}
 });
 
+function getLastEvols(allycode, message, callback)
+{
+	let sql = "SELECT * FROM `evols`"+
+		" WHERE allycode="+parseInt(allycode)+
+		" ORDER BY `id` DESC LIMIT 11";
+
+	db_pool.query(sql, function(exc, result) {
+		if (exc) {
+			let otd = exc.sqlMessage? exc.sqlMessage: exc;
+			// otd = object to display
+
+			console.log("SQL:", sql);
+			console.log(Date()+" - GLA Exception:", otd);
+			return;
+		}
+
+		console.log(Date()+" - %d evols match allycode:", result.length, allycode);
+
+		// Main callback is: showLastEvols
+		if (typeof(callback)==="function") callback(message, allycode, result);
+	});
+}
+
 function getGuildStats(allycode, message)
 {
 	if (!allycode) {
@@ -747,6 +799,52 @@ function checkPlayerMods(player, message)
 	});
 }
 
+function showLastEvols(message, allycode, result)
+{
+	if (!result.length) {
+		console.log(Date()+" - no evolution known about allycode:", allycode);
+		return;
+	}
+
+	let color = "GREEN";
+	let lines = [];
+	let maxPeriod = 24 * 3600 * 7 * 1000;
+	let n = 0;
+	let now = new Date();
+	let lastEvols = result.filter(function(evol) {
+			return (now.getTime() - evol.ts)<maxPeriod;
+		});
+
+	n = lastEvols.length;
+	console.log(Date()+" - %d evol(s) found.", n);
+	// console.dir(player.unitsData);
+
+	if (n === 0) {
+		let msg = "";
+
+		color = "ORANGE";
+		console.log(Date()+" - There is 0 known evols in this roster.");
+		lines = ["I don't know any evol in this roster for the moment."];
+	} else {
+		lastEvols.forEach(function(e, i) {
+			let dt = e.ts.toString().replace(/\(.*\)$/, '');
+			let msg = dt+": "+e.unit_id+" turned "+e.type+" "+e.new_value;
+
+			if (i<10)
+				lines.push(msg);
+			else if (i===10)
+				lines.push("And some more...");
+		});
+	}
+
+	richMsg = new RichEmbed()
+		.setTitle(message.author.username+" has "+n+" evolution(s)")
+		.setDescription(lines).setColor(color)
+		.setTimestamp(message.createdTimestamp)
+		.setFooter(config.footer.message, config.footer.iconUrl);
+	message.channel.send(richMsg);
+}
+
 function showPlayerRelics(player, message)
 {
 	if (!player.gp) {
@@ -793,12 +891,6 @@ function showPlayerRelics(player, message)
 		.setTimestamp(player.updated)
 		.setFooter(config.footer.message, config.footer.iconUrl);
 	message.channel.send(richMsg);
-
-	player.unitsData.forEach(function(u) { // u = current unit
-		lines.push(
-			[u.allycode, u.name, u.combatType, u.gear, u.gp, u.relic, u.zetaCount]
-		);
-	});
 }
 
 function showPlayerStats(player, message)
@@ -993,7 +1085,7 @@ function updatePlayerDataInDb(player, message)
 				}
 
 				let nbr = result.affectedRows; // shortcut for number of records
-				console.log(Date()+" - %d unit records updated (%d new units).", nbr, lines.length);
+				console.log(Date()+" - %d unit records updated (%d fresh units).", nbr, lines.length);
 			});
 		}
 	});
