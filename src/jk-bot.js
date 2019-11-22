@@ -86,9 +86,9 @@ client.on("message", (message) => {
 			richMsg = new RichEmbed().setTitle("Aide")
 				.setDescription([
 					"**Voici déjà une liste des commandes utilisateur (sans explication) :**",
-					" aide, allycode (ac), checkmods (cm), dis, guildstats (gs), help, playerstats (ps)"+
-					", register (reg), relics, repete, self(y), start, stats, status"+
-					", whoami, whois",
+					" aide, allycode (ac), checkmods (cm), dis, guildstats (gs), help, (last)evols (le)"+
+					", playerstats (ps), register (reg), relics, repete, self(y), start, stats"+
+					", status, whoami, whois",
 					"**Commandes pour l'administrateur :** admin, query/req(uest), stop/stoppe",
 					"**NB :** en mp, le préfixe est optionnel"])
 				.setTimestamp(message.createdTimestamp)
@@ -220,9 +220,9 @@ client.on("message", (message) => {
 			richMsg = new RichEmbed().setTitle("Help")
 				.setDescription([
 					"**Here is a quick list of user commands (without explanation):**",
-					" aide, allycode (ac), checkmods (cm), guildstats (gs), help, playerstat (ps)"+
-					", register (reg), relics, repeat, say, self(y), start, stats, status"+
-					", whoami, whois",
+					" aide, allycode (ac), checkmods (cm), guildstats (gs), help, (last)evols (le),"+
+					" playerstat (ps), register (reg), relics, repeat, say, self(y), start, stats"+
+					", status, whoami, whois",
 					"**Admin commands:** admin, destroy/leave/shutdown/stop, query/req(uest)",
 					"**NB :** in DM, the prefix is optional"])
 				.setTimestamp(message.createdTimestamp)
