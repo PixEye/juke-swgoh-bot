@@ -86,9 +86,9 @@ client.on("message", (message) => {
 			richMsg = new RichEmbed().setTitle("Aide")
 				.setDescription([
 					"**Voici déjà une liste des commandes utilisateur (sans explication) :**",
-					" aide, allycode (ac), checkmods (cm), dis, guildstats (gs), help, (last)evols (le)"+
-					", playerstats (ps), register (reg), relics, repete, self(y), start, stats"+
-					", status, whoami, whois",
+					" aide, allycode (ac), checkMods (cm), checkUnitsGp (cugp), dis, guildStats (gs)"+
+					", help, (last)evols (le), playerStats (ps), register (reg), relics, repete, self(y)"+
+					", start, stats, status, whoami, whois",
 					"**Commandes pour l'administrateur :** admin, query/req(uest), stop/stoppe",
 					"**NB :** en mp, le préfixe est optionnel"])
 				.setTimestamp(message.createdTimestamp)
@@ -162,6 +162,37 @@ client.on("message", (message) => {
 			}
 			break;
 
+		case "cgp":
+		case "cugp":
+		case "chkgp":
+		case "checkgp":
+		case "checkunitsgp":
+			// Extract user's tag (if any):
+			if (message.mentions && message.mentions.users && message.mentions.users.first()) {
+				user = message.mentions.users.first();
+				nick = user.username;
+			}
+
+			if (args.join("").trim().length>0) {
+				// Try to find an ally code in the args:
+				args.forEach(function(arg) {
+					if (arg.indexOf('<')<0) { // ignore tags
+						allycode = parseInt(arg.replace(/[^0-9]/g, ""));
+						console.log(Date()+" - Found allycode:", allycode);
+					}
+				});
+			}
+
+			if (allycode) {
+				getPlayerStats(allycode, message, checkUnitsGp);
+			} else {
+				console.log(Date()+" - Try with user ID:", user.id);
+				getPlayerFromDiscordId(user.id, message, function(player) {
+					if (player) getPlayerStats(player.allycode, message, checkUnitsGp);
+				});
+			}
+			break;
+
 		case "destroy":
 		case "leave":
 		case "stutdown":
@@ -220,9 +251,9 @@ client.on("message", (message) => {
 			richMsg = new RichEmbed().setTitle("Help")
 				.setDescription([
 					"**Here is a quick list of user commands (without explanation):**",
-					" aide, allycode (ac), checkmods (cm), guildstats (gs), help, (last)evols (le),"+
-					" playerstat (ps), register (reg), relics, repeat, say, self(y), start, stats"+
-					", status, whoami, whois",
+					" aide, allycode (ac), checkMods (cm), checkUnitsGp (cugp), guildStats (gs), help"+
+					", (last)evols (le), playerStat (ps), register (reg), relics, repeat, say, self(y)"+
+					", start, stats, status, whoami, whois",
 					"**Admin commands:** admin, destroy/leave/shutdown/stop, query/req(uest)",
 					"**NB :** in DM, the prefix is optional"])
 				.setTimestamp(message.createdTimestamp)
@@ -410,7 +441,7 @@ client.on("message", (message) => {
 						lines = ["No match."];
 					} else {
 						let headers = [];
-						let col_sep = ";";
+						let col_sep = "\t";
 
 						col = "GREEN";
 						result.forEach(function(record) {
@@ -739,7 +770,11 @@ function getPlayerStats(allycode, message, callback)
 				if (typeof(callback)==='function') callback(arg1, arg2, arg3);
 			});
 		})
-		.catch(console.error);
+		.catch(function(exc) {
+			if (msg && typeof(msg.delete)==='function') msg.delete();
+
+			console.error(exc);
+		});
 }
 
 function checkPlayerMods(player, message)
@@ -787,6 +822,64 @@ function checkPlayerMods(player, message)
 
 	richMsg = new RichEmbed()
 		.setTitle(player.name+" has "+n+" unit(s) with "+tpmmc+" missing module(s)")
+		.setDescription(lines).setColor(color)
+		.setTimestamp(player.updated)
+		.setFooter(config.footer.message, config.footer.iconUrl);
+	message.channel.send(richMsg);
+
+	player.unitsData.forEach(function(u) { // u = current unit
+		lines.push(
+			[u.allycode, u.name, u.combatType, u.gear, u.gp, u.relic, u.zetaCount]
+		);
+	});
+}
+
+function checkUnitsGp(player, message)
+{
+	if (!player.gp) {
+		console.log(Date()+" - invalid GP for user:", player);
+		return;
+	}
+
+	updatePlayerDataInDb(player, message);
+
+	let color = "GREEN";
+	let limit = 21;
+	let minit = limit-1;
+	let lines = [];
+	let maxGp = limit*1000;
+	let minGp = minit*1000;
+	let minCharLevel = 50;
+	let n = 0;
+	let units = player.unitsData.filter(function(unit) {
+			// Main filter:
+			return unit.combatType===1 && unit.gp>minGp && unit.gp<maxGp;
+		}).sort(function(a, b) {
+			return b.gp-a.gp; // sort by galactic power (descending GP)
+		});
+
+	n = units.length;
+	console.log(Date()+" - %d unit(s) on the border-line.", n);
+	// console.dir(player.unitsData);
+
+	if (n === 0) {
+		let msg = "";
+
+		console.log(Date()+" - There is 0 known units on the border line in this roster.");
+		lines = ["There is no player's characters between "+minGp+" and "+maxGp+" of GP."];
+	} else {
+		color = "ORANGE";
+		units.forEach(function(u, i) {
+			if (i<10)
+				lines.push("(GP="+u.gp+"; G"+u.gear+"; "+u.zetaCount+"z) "+u.name);
+			else if (i===10)
+				lines.push("And "+(n-10)+" more...");
+		});
+		console.log(Date()+" - %d total character(s) with GP between %dk & %dk.", n, minit, limit);
+	}
+
+	richMsg = new RichEmbed()
+		.setTitle(player.name+" has "+n+" unit(s) with GP between "+minit+"k and "+limit+"k")
 		.setDescription(lines).setColor(color)
 		.setTimestamp(player.updated)
 		.setFooter(config.footer.message, config.footer.iconUrl);

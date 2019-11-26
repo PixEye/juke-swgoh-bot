@@ -29,8 +29,23 @@ exports.getPlayerData = async function getPlayerData(allycode, message, callback
 		let roster = null;
 		let stats  = null;
 
-		if (error)   console.log(Date()+" - My ERR: ", error);
-		if (warning) console.log(Date()+" - MyWARN: ", warning);
+		if (warning) {
+			if (warning.error && warning.error===warning.message) delete warning.error;
+			console.log(Date()+" - MyWARN: ", warning);
+			message.channel.send(warning.message);
+		}
+
+		if (error) {
+			if (error.error && error.error===error.message) delete error.error;
+			console.log(Date()+" - My ERR: ", error);
+			/* richMsg = new RichEmbed().setTitle("Error!").setColor("RED")
+				.setDescription(error.message)
+				.setFooter(config.footer.message, config.footer.iconUrl);
+			message.channel.send(richMsg);
+			return; // */
+			throw error.message;
+		}
+
 		if (result) {
 			let player = result[0];
 
@@ -148,8 +163,22 @@ exports.getPlayerGuild = async function getPlayerGuild(allycode, message, callba
 		let richMsg = null;
 		let roster = null;
 
-		if (error)   console.log(Date()+" - My ERR: ", error);
-		if (warning) console.log(Date()+" - MyWARN: ", warning);
+		if (warning) {
+			if (warning.error && warning.error===warning.message) delete warning.error;
+			console.log(Date()+" - MyWARN: ", warning);
+			message.channel.send(warning.message);
+		}
+
+		if (error) {
+			if (error.error && error.error===error.message) delete error.error;
+			console.log(Date()+" - My ERR: ", error);
+			richMsg = new RichEmbed().setTitle("Error!").setColor("RED")
+				.setDescription(error.message)
+				.setFooter(config.footer.message, config.footer.iconUrl);
+			message.channel.send(richMsg);
+			return;
+		}
+
 		if (result) {
 			let guild = result[0];
 
