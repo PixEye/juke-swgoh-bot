@@ -173,22 +173,31 @@ client.on("message", (message) => {
 				nick = user.username;
 			}
 
+			let limit = 21;
 			if (args.join("").trim().length>0) {
 				// Try to find an ally code in the args:
 				args.forEach(function(arg) {
-					if (arg.indexOf('<')<0) { // ignore tags
+					if (arg.match(/^[0-9-]{9-12}$/i) && arg.indexOf('<')<0) { // ignore tags
 						allycode = parseInt(arg.replace(/[^0-9]/g, ""));
 						console.log(Date()+" - Found allycode:", allycode);
+					} else if (arg.match(/^[0-9][0-9]k?$/i)) {
+						limit = parseInt(arg.replace(/k$/i, ""));
 					}
 				});
 			}
 
 			if (allycode) {
-				getPlayerStats(allycode, message, checkUnitsGp);
+				getPlayerStats(allycode, message, function(player, message) {
+					return checkUnitsGp(player, message, limit);
+				});
 			} else {
 				console.log(Date()+" - Try with user ID:", user.id);
 				getPlayerFromDiscordId(user.id, message, function(player) {
-					if (player) getPlayerStats(player.allycode, message, checkUnitsGp);
+					if (player) {
+						getPlayerStats(player.allycode, message, function(player, message) {
+							return checkUnitsGp(player, message, limit);
+						});
+					}
 				});
 			}
 			break;
@@ -834,7 +843,7 @@ function checkPlayerMods(player, message)
 	});
 }
 
-function checkUnitsGp(player, message)
+function checkUnitsGp(player, message, limit)
 {
 	if (!player.gp) {
 		console.log(Date()+" - invalid GP for user:", player);
@@ -844,7 +853,6 @@ function checkUnitsGp(player, message)
 	updatePlayerDataInDb(player, message);
 
 	let color = "GREEN";
-	let limit = 21;
 	let minit = limit-1;
 	let lines = [];
 	let maxGp = limit*1000;
