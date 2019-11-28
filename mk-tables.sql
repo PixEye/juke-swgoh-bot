@@ -26,6 +26,7 @@ CREATE TABLE IF NOT EXISTS `evols` (
   `new_value` tinyint(1) UNSIGNED NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+ALTER TABLE `evols` ADD INDEX(`allycode`);
 
 -- --------------------------------------------------------
 
