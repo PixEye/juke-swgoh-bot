@@ -64,6 +64,7 @@ CREATE TABLE IF NOT EXISTS `units` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `playerUnitId` (`allycode`,`name`) USING BTREE
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+ALTER TABLE `units` ADD INDEX(`combatType`);
 
 -- --------------------------------------------------------
 
@@ -88,4 +89,5 @@ CREATE TABLE IF NOT EXISTS `users` (
   UNIQUE KEY `allycode` (`allycode`) USING BTREE,
   KEY `discord_id` (`discord_id`) USING BTREE
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+ALTER TABLE `users` ADD INDEX(`guildRefId`);
 COMMIT;
