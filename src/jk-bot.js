@@ -275,6 +275,7 @@ client.on("message", (message) => {
 			break;
 
 		case "le":
+		case "evol":
 		case "evols":
 		case "lastevols":
 			// Extract user's tag (if any):
@@ -909,6 +910,7 @@ function showLastEvols(message, allycode, evols)
 	let color = "GREEN";
 	let lines = [];
 	let maxDays = 10;
+	let maxDt = 0;
 	let maxPeriod = 24 * 3600 * 1000 * maxDays;
 	let msg = "";
 	let n = 0;
@@ -933,13 +935,21 @@ function showLastEvols(message, allycode, evols)
 			let dt = e.ts.toString().replace(/ \(.*\)$/, '');
 			let msg = dt+": "+e.unit_id;
 
-			if (e.type==="gear") {
-				msg+= " turned G"+e.new_value;
-			} else if (e.type==="zeta") {
-				msg+= " get "+e.type+" #"+e.new_value;
-			} else {
-				msg+= " turned "+e.type+" to: "+e.new_value;
-				console.warn("Unexpected evolution type '%s' at ID %d", e.type, e.id);
+			maxDt = (e.ts>maxDt)? e.ts: maxDt;
+
+			switch(e.type) {
+				case "gear":
+					msg+= " turned G"+e.new_value;
+					break;
+				case "zeta":
+					msg+= " get "+e.type+" #"+e.new_value;
+					break;
+				case "new":
+					msg+= " unlocked.";
+					break;
+				default:
+					msg+= " turned "+e.type+" to: "+e.new_value;
+					console.warn("Unexpected evolution type '%s' at ID %d", e.type, e.id);
 			}
 
 			if (i<10)
@@ -949,10 +959,12 @@ function showLastEvols(message, allycode, evols)
 		});
 	}
 
+	if (!maxDt) maxDt = message.createdTimestamp;
+	else maxDt = new Date(maxDt);
+
 	richMsg = new RichEmbed()
 		.setTitle(n+" evolution(s) in the last "+maxDays+" days")
-		.setDescription(lines).setColor(color)
-		.setTimestamp(message.createdTimestamp)
+		.setDescription(lines).setColor(color).setTimestamp(maxDt)
 		.setFooter(config.footer.message, config.footer.iconUrl);
 	message.channel.send(richMsg);
 }
