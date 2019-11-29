@@ -74,6 +74,10 @@ client.on("message", (message) => {
 
 	// public commands:
 	switch (command) {
+		case "about":
+			message.channel.send("This bot is by Juke (Discor #4992) also known as PixEye.");
+			break;
+
 		case "admin":
 			if(message.author.id !== config.ownerID) {
 				message.reply("You're not my master! :imp:");
@@ -86,7 +90,7 @@ client.on("message", (message) => {
 			richMsg = new RichEmbed().setTitle("Aide")
 				.setDescription([
 					"**Voici déjà une liste des commandes utilisateur (sans explication) :**",
-					" aide, allycode (ac), checkMods (cm), checkUnitsGp (cugp), dis, guildStats (gs)"+
+					" about, aide, allycode (ac), checkMods (cm), checkUnitsGp (cugp), dis, guildStats (gs)"+
 					", help, (last)evols (le), playerStats (ps), register (reg), relics, repete, self(y)"+
 					", start, stats, status, whoami, whois",
 					"**Commandes pour l'administrateur :** admin, query/req(uest), stop/stoppe",
@@ -260,9 +264,9 @@ client.on("message", (message) => {
 			richMsg = new RichEmbed().setTitle("Help")
 				.setDescription([
 					"**Here is a quick list of user commands (without explanation):**",
-					" aide, allycode (ac), checkMods (cm), checkUnitsGp (cugp), guildStats (gs), help"+
-					", (last)evols (le), playerStat (ps), register (reg), relics, repeat, say, self(y)"+
-					", start, stats, status, whoami, whois",
+					" about, aide, allycode (ac), checkMods (cm), checkUnitsGp (cugp), guildStats (gs)"+
+					", help, (last)evols (le), playerStat (ps), register (reg), relics, repeat, say"+
+					", self(y), start, stats, status, whoami, whois",
 					"**Admin commands:** admin, destroy/leave/shutdown/stop, query/req(uest)",
 					"**NB :** in DM, the prefix is optional"])
 				.setTimestamp(message.createdTimestamp)
@@ -900,19 +904,16 @@ function checkUnitsGp(player, message, limit)
 	});
 }
 
-function showLastEvols(message, allycode, result)
+function showLastEvols(message, allycode, evols)
 {
-	if (!result.length) {
-		console.log(Date()+" - no evolution known about allycode:", allycode);
-		return;
-	}
-
 	let color = "GREEN";
 	let lines = [];
-	let maxPeriod = 24 * 3600 * 7 * 1000;
+	let maxDays = 10;
+	let maxPeriod = 24 * 3600 * 1000 * maxDays;
+	let msg = "";
 	let n = 0;
 	let now = new Date();
-	let lastEvols = result.filter(function(evol) {
+	let lastEvols = evols.filter(function(evol) {
 			return (now.getTime() - evol.ts)<maxPeriod;
 		});
 
@@ -924,12 +925,22 @@ function showLastEvols(message, allycode, result)
 		let msg = "";
 
 		color = "ORANGE";
-		console.log(Date()+" - There is 0 known evols in this roster.");
-		lines = ["I don't know any evol in this roster for the moment."];
+		msg = "No evolution in this roster for the last "+maxDays+" days";
+		console.log(Date()+" - "+msg);
+		lines = [msg];
 	} else {
 		lastEvols.forEach(function(e, i) {
-			let dt = e.ts.toString().replace(/\(.*\)$/, '');
-			let msg = dt+": "+e.unit_id+" turned "+e.type+" "+e.new_value;
+			let dt = e.ts.toString().replace(/ \(.*\)$/, '');
+			let msg = dt+": "+e.unit_id;
+
+			if (e.type==="gear") {
+				msg+= " turned G"+e.new_value;
+			} else if (e.type==="zeta") {
+				msg+= " get "+e.type+" #"+e.new_value;
+			} else {
+				msg+= " turned "+e.type+" to: "+e.new_value;
+				console.warn("Unexpected evolution type '%s' at ID %d", e.type, e.id);
+			}
 
 			if (i<10)
 				lines.push(msg);
@@ -939,7 +950,7 @@ function showLastEvols(message, allycode, result)
 	}
 
 	richMsg = new RichEmbed()
-		.setTitle(message.author.username+" has "+n+" evolution(s)")
+		.setTitle(n+" evolution(s) in the last "+maxDays+" days")
 		.setDescription(lines).setColor(color)
 		.setTimestamp(message.createdTimestamp)
 		.setFooter(config.footer.message, config.footer.iconUrl);
