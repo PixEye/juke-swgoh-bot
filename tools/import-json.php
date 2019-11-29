@@ -33,6 +33,11 @@ if ($argc!==1 || $argv[0]==='-h' || $argv[0]==='--help') {
 
 $input_file = array_shift($argv);
 $json = file_get_contents($input_file, true);
+if ($json===false) {
+    fprintf(STDERR, "Cannot read file: %s", $input_file, PHP_EOL);
+    exit(3);
+}
+
 $export = json_decode($json, true);
 // We asume that JSON export is in MySQL format
 $nb_blocks = count($export);
@@ -47,7 +52,7 @@ forEach($export as $i => $block) {
         printf("%d records(s) found in data for table: '%s'.%s", $nb_records, $table, PHP_EOL);
         if ($nb_records<=0) {
             fprintf(STDERR, "No records to insert in DB!%s", PHP_EOL);
-            exit(3);
+            exit(4);
         }
 
         $keys = array_keys($block['data'][0]);
@@ -85,7 +90,7 @@ $mysqli = new mysqli($db_config['host'], $db_config['user'], $db_config['pw'], $
 // Check connection:
 if ($mysqli->connect_errno) {
     printf("Connection failed: %s%s", $mysqli->connect_error, PHP_EOL);
-    exit(4);
+    exit(5);
 }
 
 if ($result = $mysqli->query($sql)) {
