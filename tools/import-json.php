@@ -1,6 +1,18 @@
 #!/bin/env php
 <?php
-$config_file = "src/config.json";
+/**
+ * This command line interface PHP script read a JSON file and import its data into the MySQL DB.
+ *
+ * The format of the JSON file is the one created by MySQL at export.
+ *
+ * Options -h or --help are supported to give some help.
+ * The full path of the input JSON file must be given as the first argument of this script.
+ *
+ * 2019-11-14 written by pix@pixeye.net
+ */
+
+$config_file = "../src/config.json";
+
 $json_config = file_get_contents($config_file, true);
 $config = json_decode($json_config, true);
 $db_config = $config['db'];
@@ -88,5 +100,5 @@ if ($result = $mysqli->query($sql)) {
 // Close DB connection:
 $mysqli->close();
 
-// Normal exit
+// Normal exit:
 exit(0);
