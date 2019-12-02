@@ -625,7 +625,7 @@ client.on("message", (message) => {
 	}
 });
 
-function getLastEvols(player, message, callback)
+function getLastEvols(player, message)
 {
 	let allycode = player.allycode;
 	let sql = "SELECT * FROM `evols`"+
@@ -646,10 +646,7 @@ function getLastEvols(player, message, callback)
 
 		console.log(Date()+" - %d evols match allycode:", result.length, allycode);
 
-		if (typeof(callback)==="function")
-		         callback(message, allycode, result);
-		else
-			showLastEvols(message, allycode, result);
+		showLastEvols(player, message, result);
 	});
 }
 
@@ -910,8 +907,9 @@ function checkUnitsGp(player, message, limit)
 	});
 }
 
-function showLastEvols(message, allycode, evols)
+function showLastEvols(player, message, evols)
 {
+	let allycode = player.allycode;
 	let color = "GREEN";
 	let lines = [];
 	let maxDays = 10;
@@ -968,7 +966,7 @@ function showLastEvols(message, allycode, evols)
 	else maxDt = new Date(maxDt);
 
 	richMsg = new RichEmbed()
-		.setTitle(n+" evolution(s) in the last "+maxDays+" days")
+		.setTitle(player.name+"'s "+n+" evolution(s) in the last "+maxDays+" days")
 		.setDescription(lines).setColor(color).setTimestamp(maxDt)
 		.setFooter(config.footer.message, config.footer.iconUrl);
 	message.channel.send(richMsg);
@@ -1079,7 +1077,7 @@ function showWhoIs(user, nick, message)
 	});
 }
 
-function updatePlayerDataInDb(player, message)
+function updatePlayerDataInDb(player, message, callback)
 {
 	let allycode = player.allycode;
 
@@ -1221,8 +1219,11 @@ function updatePlayerDataInDb(player, message)
 
 				let nbr = result.affectedRows; // shortcut for number of records
 				console.log(Date()+" - %d unit records updated (%d fresh units).", nbr, lines.length);
+
+				if (typeof(callback)==='function') callback(player, message);
 			});
-		}
+		} else
+				if (typeof(callback)==='function') callback(player, message);
 	});
 }
 
