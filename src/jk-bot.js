@@ -295,11 +295,11 @@ client.on("message", (message) => {
 			}
 
 			if (allycode) {
-				getLastEvols(allycode, message, showLastEvols);
+				getPlayerStats(allycode, message, getLastEvols);
 			} else {
 				console.log(Date()+" - Try with user ID:", user.id);
 				getPlayerFromDiscordId(user.id, message, function(player) {
-					if (player) getLastEvols(player.allycode, message, showLastEvols);
+					if (player) getPlayerStats(player.allycode, message, getLastEvols);
 				});
 			}
 			break;
@@ -625,11 +625,14 @@ client.on("message", (message) => {
 	}
 });
 
-function getLastEvols(allycode, message, callback)
+function getLastEvols(player, message, callback)
 {
+	let allycode = player.allycode;
 	let sql = "SELECT * FROM `evols`"+
 		" WHERE allycode="+parseInt(allycode)+
 		" ORDER BY `id` DESC LIMIT 11";
+
+	updatePlayerDataInDb(player, message);
 
 	db_pool.query(sql, function(exc, result) {
 		if (exc) {
@@ -643,8 +646,10 @@ function getLastEvols(allycode, message, callback)
 
 		console.log(Date()+" - %d evols match allycode:", result.length, allycode);
 
-		// Main callback is: showLastEvols
-		if (typeof(callback)==="function") callback(message, allycode, result);
+		if (typeof(callback)==="function")
+		         callback(message, allycode, result);
+		else
+			showLastEvols(message, allycode, result);
 	});
 }
 
@@ -1086,6 +1091,7 @@ function updatePlayerDataInDb(player, message)
 	// Try to find the same user in the database:
 	getPlayerFromdatabase(allycode, message, function(oldPlVersion) {
 		let lines = [];
+		let msg = "";
 		let sql = "INSERT INTO `evols` (allycode, unit_id, type, new_value) VALUES ?";
 
 		// If the user was unknown, do no look for any evolution:
@@ -1099,9 +1105,13 @@ function updatePlayerDataInDb(player, message)
 			player.unitsData.forEach(function(u) {
 				let oldUnit = oldPlVersion.unitsData[u.name];
 
+				msg = "Evolution: "+player.name;
 				if (typeof(oldUnit)==="undefined") {
-					if (u.combatType===1) { // New character:
-						if (oldCharsCount) {
+					if (u.combatType===1) {
+						if (oldCharsCount) { // New character:
+							msg += " unlocked "+u.name;
+							console.log(Date()+" - "+msg);
+
 							lines.push([allycode, u.name, "new", 1]);
 						}
 						++newUnitCount;
@@ -1110,18 +1120,16 @@ function updatePlayerDataInDb(player, message)
 				}
 
 				if (u.gear > 11 && u.gear > oldUnit.gear) {
-					msg = "Evolution: "+player.name+"'s "+u.name+" is now G"+u.gear;
+					msg += "'s "+u.name+" is now G"+u.gear;
 					console.log(Date()+" - "+msg);
-					message.channel.send(msg);
 
 					// Add new evolution in the database ("evols" table):
 					lines.push([allycode, u.name, "gear", u.gear]);
 				}
 
 				if (u.zetaCount > oldUnit.zetaCount) {
-					msg = "Evolution: "+player.name+"'s "+u.name+" has now "+u.zetaCount+" zeta(s)";
+					msg += "'s "+u.name+" has now "+u.zetaCount+" zeta(s)";
 					console.log(Date()+" - "+msg);
-					message.channel.send(msg);
 
 					// Add new evolution in the database ("evols" table):
 					lines.push([allycode, u.name, "zeta", u.zetaCount]);
@@ -1131,7 +1139,10 @@ function updatePlayerDataInDb(player, message)
 				console.log(Date()+" - There is %d new unit(s) in %s's roster.", newUnitCount, player.name);
 			}
 			console.log(Date()+" - %s owns %d ships", player.name, nbShips);
-			console.log(Date()+" - %d evolution(s) detected for:", lines.length, player.name); // */
+
+			msg = lines.length+" evolution(s) detected for: "+player.name;
+			console.log(Date()+" - "+msg);
+			if (lines.length) message.channel.send(msg);
 
 			if (lines.length) {
 				db_pool.query(sql, [lines], function(exc, result) {

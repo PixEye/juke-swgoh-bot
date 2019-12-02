@@ -38,11 +38,6 @@ exports.getPlayerData = async function getPlayerData(allycode, message, callback
 		if (error) {
 			if (error.error && error.error===error.message) delete error.error;
 			console.log(Date()+" - My ERR: ", error);
-			/* richMsg = new RichEmbed().setTitle("Error!").setColor("RED")
-				.setDescription(error.message)
-				.setFooter(config.footer.message, config.footer.iconUrl);
-			message.channel.send(richMsg);
-			return; // */
 			throw error.message;
 		}
 
@@ -150,7 +145,8 @@ exports.getPlayerData = async function getPlayerData(allycode, message, callback
 		console.log(Date()+" - Player exception: ", ex);
 		richMsg = new RichEmbed().setTitle("Error!").setColor("RED")
 			.setDescription(["Failed to get player with allycode: "+allycode])
-			.setFooter(config.footer.message, config.footer.iconUrl);
+			.setFooter(config.footer.message, config.footer.iconUrl)
+			.setTimestamp(message.createdTimestamp);
 		message.channel.send(richMsg);
 	}
 };
