@@ -146,16 +146,7 @@ client.on("message", (message) => {
 				nick = user.username;
 			}
 
-			if (args.join("").trim().length>0) {
-				// Try to find an ally code in the args:
-				args.forEach(function(arg) {
-					if (arg.indexOf('<')<0) { // ignore tags
-						allycode = parseInt(arg.replace(/[^0-9]/g, ""));
-						console.log(Date()+" - Found allycode:", allycode);
-					}
-				});
-			}
-
+			allycode = getFirstAllycodeInWords(args);
 			if (allycode) {
 				getPlayerStats(allycode, message, checkPlayerMods);
 			} else {
@@ -178,18 +169,7 @@ client.on("message", (message) => {
 			}
 
 			let limit = 21;
-			if (args.join("").trim().length>0) {
-				// Try to find an ally code in the args:
-				args.forEach(function(arg) {
-					if (arg.match(/^[0-9-]{9-12}$/i) && arg.indexOf('<')<0) { // ignore tags
-						allycode = parseInt(arg.replace(/[^0-9]/g, ""));
-						console.log(Date()+" - Found allycode:", allycode);
-					} else if (arg.match(/^[0-9][0-9]k?$/i)) {
-						limit = parseInt(arg.replace(/k$/i, ""));
-					}
-				});
-			}
-
+			allycode = getFirstAllycodeInWords(args);
 			if (allycode) {
 				getPlayerStats(allycode, message, function(player, message) {
 					return checkUnitsGp(player, message, limit);
@@ -240,16 +220,7 @@ client.on("message", (message) => {
 				nick = user.username;
 			}
 
-			if (args.join("").trim().length>0) {
-				// Try to find an ally code in the args:
-				args.forEach(function(arg) {
-					if (arg.indexOf('<')<0) { // ignore tags
-						allycode = parseInt(arg.replace(/[^0-9]/g, ""));
-						console.log(Date()+" - Found allycode:", allycode);
-					}
-				});
-			}
-
+			allycode = getFirstAllycodeInWords(args);
 			if (allycode) {
 				getGuildStats(allycode, message);
 			} else {
@@ -284,16 +255,7 @@ client.on("message", (message) => {
 				nick = user.username;
 			}
 
-			if (args.join("").trim().length>0) {
-				// Try to find an ally code in the args:
-				args.forEach(function(arg) {
-					if (arg.indexOf('<')<0) { // ignore tags
-						allycode = parseInt(arg.replace(/[^0-9]/g, ""));
-						console.log(Date()+" - Found allycode:", allycode);
-					}
-				});
-			}
-
+			allycode = getFirstAllycodeInWords(args);
 			if (allycode) {
 				getPlayerStats(allycode, message, getLastEvols);
 			} else {
@@ -315,16 +277,7 @@ client.on("message", (message) => {
 				nick = user.username;
 			}
 
-			if (args.join("").trim().length>0) {
-				// Try to find an ally code in the args:
-				args.forEach(function(arg) {
-					if (arg.indexOf('<')<0) { // ignore tags
-						allycode = parseInt(arg.replace(/[^0-9]/g, ""));
-						console.log(Date()+" - Found allycode:", allycode);
-					}
-				});
-			}
-
+			allycode = getFirstAllycodeInWords(args);
 			if (allycode) {
 				getPlayerStats(allycode, message, showPlayerStats);
 			} else {
@@ -343,13 +296,7 @@ client.on("message", (message) => {
 				nick = user.username;
 			}
 
-			// Try to find an ally code in the args:
-			args.forEach(function(arg) {
-				if (arg.indexOf('<')<0) { // ignore tags
-					allycode = parseInt(arg.replace(/[^0-9]/g, ""));
-					console.log(Date()+" - Found allycode:", allycode);
-				}
-			});
+			allycode = getFirstAllycodeInWords(args);
 			if (!allycode) {
 				message.reply(":warning: Allycode is invalid or missing!");
 				return;
@@ -409,16 +356,7 @@ client.on("message", (message) => {
 				nick = user.username;
 			}
 
-			if (args.join("").trim().length>0) {
-				// Try to find an ally code in the args:
-				args.forEach(function(arg) {
-					if (arg.indexOf('<')<0) { // ignore tags
-						allycode = parseInt(arg.replace(/[^0-9]/g, ""));
-						console.log(Date()+" - Found allycode:", allycode);
-					}
-				});
-			}
-
+			allycode = getFirstAllycodeInWords(args);
 			if (allycode) {
 				getPlayerStats(allycode, message, showPlayerRelics);
 			} else {
@@ -624,6 +562,23 @@ client.on("message", (message) => {
 			console.log(Date()+" - Unknown command was: "+command);
 	}
 });
+
+/** Try to find an ally code in the args */
+function getFirstAllycodeInWords(args)
+{
+	var allycode = 0;
+
+	if (args.join("").trim().length>0) {
+		args.forEach(function(arg) {
+			if (arg.indexOf('<')<0 && arg.match(/[0-9]{3,}/)) { // ignore tags
+				allycode = parseInt(arg.replace(/[^0-9]/g, ""));
+				console.log(Date()+" - Found allycode:", allycode);
+			}
+		});
+	}
+
+	return allycode;
+}
 
 function getLastEvols(player, message)
 {
@@ -1229,5 +1184,8 @@ function updatePlayerDataInDb(player, message, callback)
 
 // Main:
 client.login(config.token);
+
+// SQL query to request for orphelin players:
+// SELECT * FROM `users` WHERE guildRefId NOT IN (SELECT swgoh_id FROM guilds)
 
 // vim: noexpandtab shiftwidth=4 softtabstop=4 tabstop=4
