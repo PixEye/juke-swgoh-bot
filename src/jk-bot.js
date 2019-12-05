@@ -91,8 +91,8 @@ client.on("message", (message) => {
 				.setDescription([
 					"**Voici déjà une liste des commandes utilisateur (sans explication) :**",
 					" about, aide, allycode (ac), checkMods (cm), checkUnitsGp (cugp), dis, guildStats (gs)"+
-					", help, (last)evols (le), playerStats (ps), register (reg), relics, repete, self(y)"+
-					", start, stats, status, whoami, whois",
+					", help, invite, (last)evols (le), playerStats (ps), register (reg), relics, repete"+
+					", self(y), start, stats, status, whoami, whois",
 					"**Commandes pour l'administrateur :** admin, query/req(uest), stop/stoppe",
 					"**NB :** en mp, le préfixe est optionnel"])
 				.setTimestamp(message.createdTimestamp)
@@ -236,10 +236,20 @@ client.on("message", (message) => {
 				.setDescription([
 					"**Here is a quick list of user commands (without explanation):**",
 					" about, aide, allycode (ac), checkMods (cm), checkUnitsGp (cugp), guildStats (gs)"+
-					", help, (last)evols (le), playerStat (ps), register (reg), relics, repeat, say"+
-					", self(y), start, stats, status, whoami, whois",
+					", help, invite, (last)evols (le), playerStat (ps), register (reg), relics, repeat"+
+					", say, self(y), start, stats, status, whoami, whois",
 					"**Admin commands:** admin, destroy/leave/shutdown/stop, query/req(uest)",
 					"**NB :** in DM, the prefix is optional"])
+				.setTimestamp(message.createdTimestamp)
+				.setFooter(config.footer.message, config.footer.iconUrl);
+			message.channel.send(richMsg);
+			break;
+
+		case "invite":
+			// https://discordapp.com/api/oauth2/authorize?client_id=629346604075450399&permissions=2112&scope=bot
+			richMsg = new RichEmbed().setTitle("Invite")
+				.setDescription([
+					"Follow this link to invite me to your server(s): http://bit.ly/JukeSwgohBot"])
 				.setTimestamp(message.createdTimestamp)
 				.setFooter(config.footer.message, config.footer.iconUrl);
 			message.channel.send(richMsg);
