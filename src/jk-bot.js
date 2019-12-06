@@ -154,13 +154,13 @@ client.on("message", (message) => {
 			// Look for a character name:
 			args.forEach(function(word) {
 				// ignore tags/mentions & allycodes:
-				if (word.indexOf("<")<0 && ! word.match(/[0-9]{3,}/)) {
+				if (word.indexOf("<")<0 && word.match(/[a-z]/i)) {
 					msg+= " "+ucfirst(word);
 				}
 			});
 
 			if (!msg) {
-				console.warn( "No character name found in the message!" );
+				console.warn(Date()+" - No character name found in the message!" );
 				message.reply("No character name found in your message!");
 				return;
 			}
@@ -625,7 +625,8 @@ function getFirstAllycodeInWords(words)
 
 	if (words.join("").trim().length>0) {
 		words.forEach(function(word) {
-			if (word.indexOf("<")<0 && word.match(/[0-9]{3,}/)) { // ignore tags/mentions
+			// ignore too short words, tags/mentions & not numeric words:
+			if (word.length>8 && word.indexOf("<")<0 && !word.match(/[a-z]/i) && word.match(/[0-9]{3,}/)) {
 				allycode = parseInt(word.replace(/[^0-9]/g, ""));
 				console.log(Date()+" - Found allycode:", allycode);
 			}
@@ -930,22 +931,33 @@ function showCharInfo(player, message, charName)
 	let foundUnit = null;
 	let hiddenFields = ["allycode", "combatType", "name"];
 	let lines = [];
+	var pattern = null;
 	let strToLookFor = charName.replace(/ /g, "").toUpperCase();
 
 	console.log(Date()+" - Name to look for:", strToLookFor);
+	pattern = new RegExp("^"+strToLookFor);
 
 	player.unitsData.forEach(function(unit) {
-		if (!foundUnit && unit.combatType===1 && unit.name.indexOf(strToLookFor)>=0) {
+		if (!foundUnit && unit.combatType===1 && unit.name.match(pattern)) {
 			color = "GREEN";
 			foundUnit = unit;
 		}
 	});
 
+	if (!foundUnit) {
+		player.unitsData.forEach(function(unit) {
+			if (!foundUnit && unit.combatType===1 && unit.name.indexOf(strToLookFor)>=0) {
+				color = "GREEN";
+				foundUnit = unit;
+			}
+		});
+	}
+
 	let richMsg = new RichEmbed().setTimestamp(player.updated).setColor(color)
 		.setFooter(config.footer.message, config.footer.iconUrl);
 
 	if (!foundUnit) {
-		lines = ["Did not find a character with name: "+charName];
+		lines = ["Did not find a character named '"+charName+"' in this roster!"];
 		richMsg.setDescription(lines).setTitle(player.name+"'s "+charName);
 		message.reply(richMsg);
 		return;
@@ -955,8 +967,26 @@ function showCharInfo(player, message, charName)
 		.setTitle(player.name+"'s "+charName+" ("+foundUnit.name+")");
 
 	Object.keys(foundUnit).forEach(function(key) {
+		var val = foundUnit[key];
+
 		if (hiddenFields.indexOf(key)<0) {
-			richMsg.addField(ucfirst(key)+":", key==="mods"? foundUnit[key].length: foundUnit[key], true);
+			switch(key) {
+				case "gear":
+				case "relic":
+				case "zetaCount":
+					val = val? "**"+val+"**": val;
+					break;
+
+				case "mods":
+					val = val.length;
+					break;
+
+				case "stars":
+					key+= " ("+val+")";
+					val = ":star:".repeat(val);
+					break;
+			}
+			richMsg.addField(ucfirst(key)+":", val, true);
 		}
 	});
 	message.channel.send(richMsg);
