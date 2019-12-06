@@ -357,7 +357,7 @@ client.on("message", (message) => {
 				return;
 			}
 
-			sql = "INSERT INTO users (discord_id, discord_name, allycode)"+
+			sql = "INSERT INTO `users` (discord_id, discord_name, allycode)"+
 				" VALUES ("+user.id+", "+mysql.escape(nick)+", "+allycode+")";
 
 			// Register:
@@ -678,7 +678,7 @@ function getGuildStats(allycode, message)
 				}
 
 				// Remember stats of the guild:
-				sql = "REPLACE INTO guilds (swgoh_id, name) VALUES ("+
+				sql = "REPLACE INTO `guilds` (swgoh_id, name) VALUES ("+
 					mysql.escape(guild.id)+", "+
 					mysql.escape(guild.name)+")";
 
@@ -1235,7 +1235,7 @@ function updatePlayerDataInDb(player, message, callback)
 			console.log(Date()+" - %d user updated:", result.affectedRows, player.name);
 
 			if (!result.affectedRows) {
-				sql = "INSERT INTO users\n"+
+				sql = "INSERT INTO `users`\n"+
 					"(allycode, game_name, gp, g12Count, g13Count, guildRefId, zetaCount)\n"+
 					"VALUES ("+allycode+", "+mysql.escape(player.name)+
 					", "+player.gp+", "+player.g12Count+", "+player.g13Count+
@@ -1258,10 +1258,10 @@ function updatePlayerDataInDb(player, message, callback)
 
 			// See:
 			// https://www.w3schools.com/nodejs/shownodejs_cmd.asp?filename=demo_db_insert_multiple
-			sql = "REPLACE units (allycode, name, combatType, gear, gp, relic, zetaCount) VALUES ?";
+			sql = "REPLACE `units` (allycode, name, combatType, gear, gp, relic, stars, zetaCount) VALUES ?";
 			player.unitsData.forEach(function(u) { // u = current unit
 				lines.push(
-					[u.allycode, u.name, u.combatType, u.gear, u.gp, u.relic, u.zetaCount]
+					[u.allycode, u.name, u.combatType, u.gear, u.gp, u.relic, u.stars, u.zetaCount]
 				);
 			});
 

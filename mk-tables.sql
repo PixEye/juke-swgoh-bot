@@ -65,6 +65,7 @@ CREATE TABLE IF NOT EXISTS `units` (
   UNIQUE KEY `playerUnitId` (`allycode`,`name`) USING BTREE
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 ALTER TABLE `units` ADD INDEX(`combatType`);
+ALTER TABLE `units` ADD `stars` TINYINT(1) NULL AFTER `relic`;
 
 -- --------------------------------------------------------
 
