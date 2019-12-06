@@ -51,7 +51,8 @@ client.on("message", (message) => {
 	var args = [];
 	var command = "";
 	var lines = [];
-	var nick = {};
+	var msg = "";
+	var nick = "";
 	var richMsg = {};
 	var sql = "";
 	var user = message.author;
@@ -75,7 +76,11 @@ client.on("message", (message) => {
 	// public commands:
 	switch (command) {
 		case "about":
-			message.channel.send("This bot is by Juke (Discor #4992) also known as PixEye.");
+			msg = "This bot is written by Juke (Discor #4992) also known as PixEye.";
+			richMsg = new RichEmbed().setTitle("About").setColor("GREEN")
+				.setDescription([msg]).setTimestamp(message.createdTimestamp)
+				.setFooter(config.footer.message, config.footer.iconUrl);
+			message.channel.send(richMsg);
 			break;
 
 		case "admin":
@@ -87,14 +92,14 @@ client.on("message", (message) => {
 			break;
 
 		case "aide":
-			richMsg = new RichEmbed().setTitle("Aide")
+			richMsg = new RichEmbed().setTitle("Liste des commandes")
 				.setDescription([
-					"**Voici déjà une liste des commandes utilisateur (sans explication) :**",
-					" about, aide, allycode (ac), checkMods (cm), checkUnitsGp (cugp), dis, guildStats (gs)"+
-					", help, invite, (last)evols (le), playerStats (ps), register (reg), relics, repete"+
-					", self(y), start, stats, status, whoami, whois",
+					"**Commandes utilisateur :**",
+					" about, aide, allycode (ac), charInfo (ci), checkMods (cm), checkUnitsGp (cugp)"+
+					", dis, guildStats (gs), help, invite, (last)evols (le), playerStats (ps)"+
+					", register (reg), relics, repete, self(y), start, stats, status, whoami, whois",
 					"**Commandes pour l'administrateur :** admin, query/req(uest), stop/stoppe",
-					"**NB :** en mp, le préfixe est optionnel"])
+					"**NB :** en mp, le préfixe est optionnel."])
 				.setTimestamp(message.createdTimestamp)
 				.setFooter(config.footer.message, config.footer.iconUrl);
 			message.channel.send(richMsg);
@@ -115,7 +120,7 @@ client.on("message", (message) => {
 				searchStr = "users.discord_id="+search;
 			}
 
-			sql = "SELECT * FROM users WHERE "+searchStr;
+			sql = "SELECT * FROM `users` WHERE "+searchStr;
 			db_pool.query(sql, function(exc, result) {
 				if (exc) {
 					console.log("SQL:", sql);
@@ -135,11 +140,9 @@ client.on("message", (message) => {
 			});
 			break;
 
-		case "cm":
-		case "chkmod":
-		case "chkmods":
-		case "checkmod":
-		case "checkmods":
+		case "ci":
+		case "charinfo":
+		case "characterinfo":
 			// Extract user's tag (if any):
 			if (message.mentions && message.mentions.users && message.mentions.users.first()) {
 				user = message.mentions.users.first();
@@ -147,12 +150,33 @@ client.on("message", (message) => {
 			}
 
 			allycode = getFirstAllycodeInWords(args);
+
+			// Look for a character name:
+			args.forEach(function(word) {
+				// ignore tags/mentions & allycodes:
+				if (word.indexOf("<")<0 && ! word.match(/[0-9]{3,}/)) {
+					msg+= " "+ucfirst(word);
+				}
+			});
+
+			if (!msg) {
+				console.warn( "No character name found in the message!" );
+				message.reply("No character name found in your message!");
+				return;
+			}
+
+			msg = msg.trim();
+			console.log(Date()+" - Character to look for is:", msg);
 			if (allycode) {
-				getPlayerStats(allycode, message, checkPlayerMods);
+				getPlayerStats(allycode, message, function(player, message) {
+					return showCharInfo(player, message, msg);
+				});
 			} else {
 				console.log(Date()+" - Try with user ID:", user.id);
 				getPlayerFromDiscordId(user.id, message, function(player) {
-					if (player) getPlayerStats(player.allycode, message, checkPlayerMods);
+					if (player) getPlayerStats(player.allycode, message, function(player, message) {
+						return showCharInfo(player, message, msg);
+					});
 				});
 			}
 			break;
@@ -182,6 +206,28 @@ client.on("message", (message) => {
 							return checkUnitsGp(player, message, limit);
 						});
 					}
+				});
+			}
+			break;
+
+		case "cm":
+		case "chkmod":
+		case "chkmods":
+		case "checkmod":
+		case "checkmods":
+			// Extract user's tag (if any):
+			if (message.mentions && message.mentions.users && message.mentions.users.first()) {
+				user = message.mentions.users.first();
+				nick = user.username;
+			}
+
+			allycode = getFirstAllycodeInWords(args);
+			if (allycode) {
+				getPlayerStats(allycode, message, checkPlayerMods);
+			} else {
+				console.log(Date()+" - Try with user ID:", user.id);
+				getPlayerFromDiscordId(user.id, message, function(player) {
+					if (player) getPlayerStats(player.allycode, message, checkPlayerMods);
 				});
 			}
 			break;
@@ -232,14 +278,14 @@ client.on("message", (message) => {
 			break;
 
 		case "help":
-			richMsg = new RichEmbed().setTitle("Help")
+			richMsg = new RichEmbed().setTitle("Avialable commands")
 				.setDescription([
-					"**Here is a quick list of user commands (without explanation):**",
-					" about, aide, allycode (ac), checkMods (cm), checkUnitsGp (cugp), guildStats (gs)"+
-					", help, invite, (last)evols (le), playerStat (ps), register (reg), relics, repeat"+
-					", say, self(y), start, stats, status, whoami, whois",
+					"**User commands:**",
+					" about, aide, allycode (ac), charInfo (ci), checkMods (cm), checkUnitsGp (cugp)"+
+					", guildStats (gs), help, invite, (last)evols (le), playerStat (ps), register (reg)"+
+					", relics, repeat, say, self(y), start, stats, status, whoami, whois",
 					"**Admin commands:** admin, destroy/leave/shutdown/stop, query/req(uest)",
-					"**NB :** in DM, the prefix is optional"])
+					"**NB:** in DM, the prefix is optional."])
 				.setTimestamp(message.createdTimestamp)
 				.setFooter(config.footer.message, config.footer.iconUrl);
 			message.channel.send(richMsg);
@@ -247,10 +293,9 @@ client.on("message", (message) => {
 
 		case "invite":
 			// https://discordapp.com/api/oauth2/authorize?client_id=629346604075450399&permissions=2112&scope=bot
-			richMsg = new RichEmbed().setTitle("Invite")
-				.setDescription([
-					"Follow this link to invite me to your server(s): http://bit.ly/JukeSwgohBot"])
-				.setTimestamp(message.createdTimestamp)
+			msg = "Follow this link to invite me to your server(s): http://bit.ly/JukeSwgohBot";
+			richMsg = new RichEmbed().setTitle("Invite").setColor("GREEN")
+				.setDescription([msg]).setTimestamp(message.createdTimestamp)
 				.setFooter(config.footer.message, config.footer.iconUrl);
 			message.channel.send(richMsg);
 			break;
@@ -313,7 +358,7 @@ client.on("message", (message) => {
 			}
 
 			sql = "INSERT INTO users (discord_id, discord_name, allycode)"+
-				" VALUES ("+user.id+', '+mysql.escape(nick)+', '+allycode+")";
+				" VALUES ("+user.id+", "+mysql.escape(nick)+", "+allycode+")";
 
 			// Register:
 			db_pool.query(sql, function(exc, result) {
@@ -468,7 +513,7 @@ client.on("message", (message) => {
 
 			message.channel.send("I am listening since: "+start);
 
-			sql = "SELECT COUNT(`id`) AS nbg FROM guilds";
+			sql = "SELECT COUNT(`id`) AS nbg FROM `guilds`";
 			db_pool.query(sql, countGuilds);
 
 			function countGuilds(exc, result) {
@@ -488,7 +533,7 @@ client.on("message", (message) => {
 				nbg = result[0].nbg; // nbg = number of guilds
 				console.log(Date()+" - %d guild(s) registered.", nbg);
 
-				sql = "SELECT COUNT(`id`) AS nbp FROM users"; // nbp = number of players
+				sql = "SELECT COUNT(`id`) AS nbp FROM `users`"; // nbp = number of players
 				db_pool.query(sql, countPlayers);
 			}
 
@@ -510,7 +555,7 @@ client.on("message", (message) => {
 				let avg = nbg? Math.round(nbp/nbg): nbp; // average per guild
 				console.log(Date()+" - %d user(s) registered (~%d per guild).", nbp, avg);
 
-				sql = "SELECT COUNT(`id`) AS nbu FROM units"; // nbp = number of units
+				sql = "SELECT COUNT(`id`) AS nbu FROM `units`"; // nbp = number of units
 				db_pool.query(sql, countUnits);
 			}
 
@@ -573,15 +618,15 @@ client.on("message", (message) => {
 	}
 });
 
-/** Try to find an ally code in the args */
-function getFirstAllycodeInWords(args)
+/** Try to find an ally code in the words of the user's message */
+function getFirstAllycodeInWords(words)
 {
 	var allycode = 0;
 
-	if (args.join("").trim().length>0) {
-		args.forEach(function(arg) {
-			if (arg.indexOf('<')<0 && arg.match(/[0-9]{3,}/)) { // ignore tags
-				allycode = parseInt(arg.replace(/[^0-9]/g, ""));
+	if (words.join("").trim().length>0) {
+		words.forEach(function(word) {
+			if (word.indexOf("<")<0 && word.match(/[0-9]{3,}/)) { // ignore tags/mentions
+				allycode = parseInt(word.replace(/[^0-9]/g, ""));
 				console.log(Date()+" - Found allycode:", allycode);
 			}
 		});
@@ -625,7 +670,7 @@ function getGuildStats(allycode, message)
 	message.channel.send("Looking for stats of guild with ally: "+allycode+"...")
 		.then(msg => {
 			swgoh.getPlayerGuild(allycode, message, function(guild) {
-				if (typeof(msg.delete)==='function') msg.delete();
+				if (typeof(msg.delete)==="function") msg.delete();
 
 				if (!guild.gp) {
 					console.log(Date()+" - invalid guild GP:", guild.gp);
@@ -657,7 +702,7 @@ function getGuildStats(allycode, message)
 function getPlayerFromdatabase(allycode, message, callback)
 {
 	let player = null;
-	let sql = "SELECT * FROM users WHERE allycode="+parseInt(allycode);
+	let sql = "SELECT * FROM `users` WHERE allycode="+parseInt(allycode);
 
 	db_pool.query(sql, function(exc, result) {
 		if (exc) {
@@ -709,7 +754,7 @@ function getPlayerFromdatabase(allycode, message, callback)
 
 function getPlayerFromDiscordId(discord_id, message, callback)
 {
-	let sql = "SELECT * FROM users WHERE discord_id="+parseInt(discord_id);
+	let sql = "SELECT * FROM `users` WHERE discord_id="+parseInt(discord_id);
 
 	db_pool.query(sql, function(exc, result) {
 		if (exc) {
@@ -746,13 +791,13 @@ function getPlayerStats(allycode, message, callback)
 	message.channel.send("Looking for "+allycode+"'s stats...")
 		.then(msg => {
 			swgoh.getPlayerData(allycode, message, function(arg1, arg2, arg3) {
-				if (typeof(msg.delete)==='function') msg.delete();
+				if (typeof(msg.delete)==="function") msg.delete();
 
-				if (typeof(callback)==='function') callback(arg1, arg2, arg3);
+				if (typeof(callback)==="function") callback(arg1, arg2, arg3);
 			});
 		})
 		.catch(function(exc) {
-			if (msg && typeof(msg.delete)==='function') msg.delete();
+			if (msg && typeof(msg.delete)==="function") msg.delete();
 
 			console.error(exc);
 		});
@@ -872,6 +917,51 @@ function checkUnitsGp(player, message, limit)
 	});
 }
 
+function showCharInfo(player, message, charName)
+{
+	if (!player.gp) {
+		console.log(Date()+" - invalid GP for user:", player);
+		return;
+	}
+
+	updatePlayerDataInDb(player, message);
+
+	let color = "RED";
+	let foundUnit = null;
+	let hiddenFields = ["allycode", "combatType", "name"];
+	let lines = [];
+	let strToLookFor = charName.replace(/ /g, "").toUpperCase();
+
+	console.log(Date()+" - Name to look for:", strToLookFor);
+
+	player.unitsData.forEach(function(unit) {
+		if (!foundUnit && unit.combatType===1 && unit.name.indexOf(strToLookFor)>=0) {
+			color = "GREEN";
+			foundUnit = unit;
+		}
+	});
+
+	let richMsg = new RichEmbed().setTimestamp(player.updated).setColor(color)
+		.setFooter(config.footer.message, config.footer.iconUrl);
+
+	if (!foundUnit) {
+		lines = ["Did not find a character with name: "+charName];
+		richMsg.setDescription(lines).setTitle(player.name+"'s "+charName);
+		message.reply(richMsg);
+		return;
+	}
+
+	richMsg.setThumbnail("https://swgoh.gg/game-asset/u/"+foundUnit.name+"/")
+		.setTitle(player.name+"'s "+charName+" ("+foundUnit.name+")");
+
+	Object.keys(foundUnit).forEach(function(key) {
+		if (hiddenFields.indexOf(key)<0) {
+			richMsg.addField(ucfirst(key)+":", key==="mods"? foundUnit[key].length: foundUnit[key], true);
+		}
+	});
+	message.channel.send(richMsg);
+}
+
 function showLastEvols(player, message, evols)
 {
 	let allycode = player.allycode;
@@ -900,7 +990,7 @@ function showLastEvols(player, message, evols)
 		lines = [msg];
 	} else {
 		lastEvols.forEach(function(e, i) {
-			let dt = e.ts.toString().replace(/ \(.*\)$/, '');
+			let dt = e.ts.toString().replace(/ \(.*\)$/, "");
 			let msg = dt+": "+e.unit_id;
 
 			maxDt = (e.ts>maxDt)? e.ts: maxDt;
@@ -1123,7 +1213,7 @@ function updatePlayerDataInDb(player, message, callback)
 		// Remember user's stats:
 		let update = new Date(player.updated);
 
-		update = update.toISOString().replace('T', ' ').replace(/z$/i, '');
+		update = update.toISOString().replace("T", " ").replace(/z$/i, "");
 
 		sql = "UPDATE users SET"+
 			" game_name="+mysql.escape(player.name)+","+
@@ -1185,17 +1275,31 @@ function updatePlayerDataInDb(player, message, callback)
 				let nbr = result.affectedRows; // shortcut for number of records
 				console.log(Date()+" - %d unit records updated (%d fresh units).", nbr, lines.length);
 
-				if (typeof(callback)==='function') callback(player, message);
+				if (typeof(callback)==="function") callback(player, message);
 			});
 		} else
-				if (typeof(callback)==='function') callback(player, message);
+				if (typeof(callback)==="function") callback(player, message);
 	});
+}
+
+function ucfirst (str) {
+  //  discuss at: https://locutus.io/php/ucfirst/
+  // original by: Kevin van Zonneveld (https://kvz.io)
+  // bugfixed by: Onno Marsman (https://twitter.com/onnomarsman)
+  // improved by: Brett Zamir (https://brett-zamir.me)
+  //   example 1: ucfirst('kevin van zonneveld')
+  //   returns 1: 'Kevin van zonneveld'
+
+  str += '';
+  var f = str.charAt(0).toUpperCase();
+
+  return f + str.substr(1);
 }
 
 // Main:
 client.login(config.token);
 
 // SQL query to request for orphelin players:
-// SELECT * FROM `users` WHERE guildRefId NOT IN (SELECT swgoh_id FROM guilds)
+// SELECT * FROM `users` WHERE guildRefId NOT IN (SELECT swgoh_id FROM `guilds`)
 
 // vim: noexpandtab shiftwidth=4 softtabstop=4 tabstop=4

@@ -85,6 +85,8 @@ exports.getPlayerData = async function getPlayerData(allycode, message, callback
 				unitsCountByGear[unit.gear]++;
 				unitsByCombaType[unit.combatType]++; // 1 = character, 2 = ship
 
+				// if (unit.defId==="AHSOKATANO") console.log("Unit:", unit); // for debug
+
 				let unitZetas = 0;
 				unit.skills.forEach(function(skill) {
 					if (skill.isZeta && skill.tier===skill.tiers) unitZetas++;
@@ -102,6 +104,7 @@ exports.getPlayerData = async function getPlayerData(allycode, message, callback
 						"mods":       unit.mods,
 						"name":       unit.defId,
 						"relic":      (unit.relic && unit.relic.currentTier>1)? unit.relic.currentTier-2: 0,
+						"stars":      unit.rarity,
 						"zetaCount":  unitZetas
 					});
 				}
