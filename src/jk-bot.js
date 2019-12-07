@@ -1029,11 +1029,14 @@ function showLastEvols(player, message, evols)
 				case "gear":
 					msg+= " turned G"+e.new_value;
 					break;
-				case "zeta":
-					msg+= " get "+e.type+" #"+e.new_value;
-					break;
 				case "new":
 					msg+= " unlocked.";
+					break;
+				case "star":
+					msg+= " turned "+e.new_value+"*";
+					break;
+				case "zeta":
+					msg+= " get "+e.type+" #"+e.new_value;
 					break;
 				default:
 					msg+= " turned "+e.type+" to: "+e.new_value;
@@ -1189,6 +1192,9 @@ function updatePlayerDataInDb(player, message, callback)
 				let oldUnit = oldPlVersion.unitsData[u.name];
 
 				msg = "Evolution: "+player.name;
+
+				// Compare old & new units:
+				// Look for new units:
 				if (typeof(oldUnit)==="undefined") {
 					if (u.combatType===1) {
 						if (oldCharsCount) { // New character:
@@ -1202,6 +1208,7 @@ function updatePlayerDataInDb(player, message, callback)
 					return;
 				}
 
+				// Look for new gears:
 				if (u.gear > 11 && u.gear > oldUnit.gear) {
 					msg += "'s "+u.name+" is now G"+u.gear;
 					console.log(Date()+" - "+msg);
@@ -1210,6 +1217,16 @@ function updatePlayerDataInDb(player, message, callback)
 					lines.push([allycode, u.name, "gear", u.gear]);
 				}
 
+				// Look for new stars:
+				if (u.stars > 6 && u.stars > oldUnit.stars) {
+					msg += "'s "+u.name+" is now "+u.stars+"*";
+					console.log(Date()+" - "+msg);
+
+					// Add new evolution in the database ("evols" table):
+					lines.push([allycode, u.name, "star", u.stars]);
+				}
+
+				// Look for new zetas:
 				if (u.zetaCount > oldUnit.zetaCount) {
 					msg += "'s "+u.name+" has now "+u.zetaCount+" zeta(s)";
 					console.log(Date()+" - "+msg);
