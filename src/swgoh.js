@@ -217,7 +217,7 @@ exports.getPlayerGuild = async function getPlayerGuild(allycode, message, callba
 			console.log(Date()+" - Found guild: "+guild.name);
 
 			richMsg = new RichEmbed().setTitle(guild.name).setColor("GREEN")
-				.setAuthor(config.username)
+				.setAuthor(config.discord.username)
 				.setDescription([
 					"**Guild description:** "+guild.desc,
 					"",

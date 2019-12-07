@@ -36,8 +36,8 @@ const db_pool = mysql.createPool({
 // Start listening:
 client.on("ready", () => {
 	console.log(Date()+" - I am ready and listening.");
-	client.user.username = config.username;
-	client.user.setPresence({game: {name: config.prefix + "help", type: "listening"}});
+	client.user.username = config.discord.username;
+	client.user.setPresence({game: {name: config.discord.prefix + "help", type: "listening"}});
 });
 
 // Get errors (if any):
@@ -59,14 +59,14 @@ client.on("message", (message) => {
 
 	// Filter with the prefix & ignore bots:
 	if ( message.author.bot ||
-		(message.channel.type!=="dm" && !message.content.toLowerCase().startsWith(config.prefix))) {
+		(message.channel.type!=="dm" && !message.content.toLowerCase().startsWith(config.discord.prefix))) {
 		return; // stop parsing the message
 	}
 
 	if (message.channel.type==="dm") {
-		args = message.content.trim().replace(config.prefix, "").trim().split(/ +/g);
+		args = message.content.trim().replace(config.discord.prefix, "").trim().split(/ +/g);
 	} else {
-		args = message.content.slice(config.prefix.length).trim().split(/ +/g);
+		args = message.content.slice(config.discord.prefix.length).trim().split(/ +/g);
 	}
 	command = args.shift().toLowerCase();
 	nick = user.username;
@@ -84,7 +84,7 @@ client.on("message", (message) => {
 			break;
 
 		case "admin":
-			if(message.author.id !== config.ownerID) {
+			if(message.author.id !== config.discord.ownerID) {
 				message.reply("You're not my master! :imp:");
 			} else {
 				message.reply("Yes master?");
@@ -237,7 +237,7 @@ client.on("message", (message) => {
 		case "stutdown":
 		case "stop":
 		case "stoppe":
-			if(message.author.id !== config.ownerID) {
+			if(message.author.id !== config.discord.ownerID) {
 				message.reply("You're not my master! :imp:");
 			} else {
 				message.reply("Up to your will master. Leaving...");
@@ -426,7 +426,7 @@ client.on("message", (message) => {
 		case "sql":
 		case "query":
 		case "request":
-			if(message.author.id !== config.ownerID) {
+			if(message.author.id !== config.discord.ownerID) {
 				message.reply("You're not my master! :imp:");
 				return;
 			}
@@ -776,7 +776,7 @@ function getPlayerFromDiscordId(discord_id, message, callback)
 		}
 
 		console.log(Date()+" - Allycode not found"); // Normal for "self(y)" command
-		message.reply("This user has no player ID. You may try: "+config.prefix+"register ally-code");
+		message.reply("This user has no player ID. You may try: "+config.discord.prefix+"register ally-code");
 
 		if (typeof(callback)==="function") callback(null);
 	});
@@ -1344,7 +1344,7 @@ function ucfirst (str) {
 }
 
 // Main:
-client.login(config.token);
+client.login(config.discord.token);
 
 // SQL query to request for orphelin players:
 // SELECT * FROM `users` WHERE guildRefId NOT IN (SELECT swgoh_id FROM `guilds`)
