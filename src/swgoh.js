@@ -25,13 +25,15 @@ const { RichEmbed } = require("discord.js");
 // Shortcut(s):
 let logPrefix = tools.logPrefix;
 
-exports.getPlayerData = async function getPlayerData(allycode, message, callback) {
+exports.getPlayerData = async function getPlayerData(allycodes, message, callback) {
 	try {
 		// let acquiredToken = await swapi.connect();
 		// console.log(logPrefix()+"Token: ", acquiredToken);
 
-		let payload  = { "allycodes": [allycode] };
-		let { result, error, warning } = await swapi.fetchPlayer(payload);
+		if ( ! (allycodes instanceof Array) ) allycodes = [allycodes];
+
+		let payload  = { "allycodes": allycodes };
+		let { result, error, warning } = await swapi.fetchPlayer(payload); // <--
 		let richMsg = null;
 		let roster = null;
 		let stats  = null;
@@ -49,6 +51,7 @@ exports.getPlayerData = async function getPlayerData(allycode, message, callback
 		}
 
 		if (result) {
+			let allycode = allycodes[0];
 			let player = result[0];
 
 			roster = player.roster;
@@ -161,12 +164,15 @@ exports.getPlayerData = async function getPlayerData(allycode, message, callback
 	}
 };
 
-exports.getPlayerGuild = async function getPlayerGuild(allycode, message, callback) {
+exports.getPlayerGuild = async function getPlayerGuild(allycodes, message, callback) {
 	try {
+		if ( ! (allycodes instanceof Array) ) allycodes = [allycodes];
+
+		let allycode = allycodes[0];
 		let locale = config.discord.locale; // shortcut
 		let msg = "";
-		let payload  = { allycodes:[ allycode ] };
-		let { result, error, warning } = await swapi.fetchGuild(payload);
+		let payload  = { allycodes: allycodes };
+		let { result, error, warning } = await swapi.fetchGuild(payload); // <--
 		let richMsg = null;
 		let roster = null;
 
@@ -274,6 +280,8 @@ exports.getPlayerGuild = async function getPlayerGuild(allycode, message, callba
 
 		if (typeof(callback)==="function") callback(guild, message);
 	} catch(ex) {
+		let allycode = allycodes[0];
+
 		console.log(logPrefix()+"Guild exception: ", ex);
 		richMsg = new RichEmbed().setTitle("Error!").setColor("RED")
 			.setDescription(["Failed to get guild with ally: "+allycode])
