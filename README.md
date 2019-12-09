@@ -21,7 +21,7 @@ NodeJS required modules:
 
 ## Run it
 
-I use to run the bot by simply typing:
+I use to run the bot by simply typing the following command line in a console from the "src" folder:
 
     node jk-bot.js ; date
 
