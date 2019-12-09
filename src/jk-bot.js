@@ -1,6 +1,7 @@
 /**
- * jk-bot.js: main file for Juke's Discord bot for the SWGoH game
+ * jk-bot.js is the main file for Juke's Discord bot for the SWGoH game
  * @author PixEye@pixeye.net
+ * @since  2019-10-29
  */
 
 // jshint esversion: 8
@@ -33,7 +34,7 @@ const db_pool = mysql.createPool({
 	user           : config.db.user
 });
 
-// Shortcuts:
+// Shortcut(s):
 let logPrefix = tools.logPrefix;
 
 console.log(logPrefix()+"Loading...");

@@ -1,6 +1,7 @@
 /**
  * swgoh.js is SWGoH module for Juke's SWGoH Discord bot
  * @author PixEye@pixeye.net
+ * @since  2019-10-29
  */
 
 // jshint esversion: 8
@@ -21,7 +22,7 @@ const swapi = new ApiSwgohHelp({
 // Extract the required classes from the discord.js module:
 const { RichEmbed } = require("discord.js");
 
-// Shortcuts:
+// Shortcut(s):
 let logPrefix = tools.logPrefix;
 
 exports.getPlayerData = async function getPlayerData(allycode, message, callback) {

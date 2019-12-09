@@ -1,6 +1,7 @@
 /**
- * swgoh.js is SWGoH module for Juke's SWGoH Discord bot
+ * tools.js is the functions module for Juke's SWGoH Discord bot
  * @author PixEye@pixeye.net
+ * @since  2019-12-09
  */
 
 // jshint esversion: 8
@@ -33,7 +34,7 @@ const db_pool = mysql.createPool({
 	user           : config.db.user
 });
 
-// Shortcuts:
+// Shortcut(s):
 //var logPrefix = exports.logPrefix;
 
 /** Try to find an ally code in the words of the user's message */
