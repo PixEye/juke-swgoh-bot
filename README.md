@@ -21,9 +21,9 @@ NodeJS required modules:
 
 ## Run it
 
-I use to run it by typing:
+I use to run the bot by simply typing:
 
-> node jk-bot.js ; date
+    node jk-bot.js ; date
 
 ## About the author
 
