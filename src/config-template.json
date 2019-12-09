@@ -7,6 +7,7 @@
     "user": "jsb"
   },
   "discord": {
+    "locale": "fr-FR",
     "ownerID": "012345678901234567",
     "prefix": "jsb.",
     "token": "<your long bot token>",

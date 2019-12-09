@@ -8,6 +8,9 @@
 // Get the configuration from a separated JSON file:
 const config = require("./config.json");
 
+// Load my other modules:
+const tools = require("./tools"); // My functions
+
 // SWGoH API connection:
 const ApiSwgohHelp = require("api-swgoh-help");
 const swapi = new ApiSwgohHelp({
@@ -18,10 +21,13 @@ const swapi = new ApiSwgohHelp({
 // Extract the required classes from the discord.js module:
 const { RichEmbed } = require("discord.js");
 
+// Shortcuts:
+let logPrefix = tools.logPrefix;
+
 exports.getPlayerData = async function getPlayerData(allycode, message, callback) {
 	try {
 		// let acquiredToken = await swapi.connect();
-		// console.log(Date()+" - Token: ", acquiredToken);
+		// console.log(logPrefix()+"Token: ", acquiredToken);
 
 		let payload  = { "allycodes": [allycode] };
 		let { result, error, warning } = await swapi.fetchPlayer(payload);
@@ -31,13 +37,13 @@ exports.getPlayerData = async function getPlayerData(allycode, message, callback
 
 		if (warning) {
 			if (warning.error && warning.error===warning.message) delete warning.error;
-			console.log(Date()+" - MyWARN: ", warning);
+			console.log(logPrefix()+"MyWARN: ", warning);
 			message.channel.send(warning.message);
 		}
 
 		if (error) {
 			if (error.error && error.error===error.message) delete error.error;
-			console.log(Date()+" - My ERR: ", error);
+			console.log(logPrefix()+"My ERR: ", error);
 			throw error.message;
 		}
 
@@ -52,7 +58,7 @@ exports.getPlayerData = async function getPlayerData(allycode, message, callback
 			player.roster    = "departed"; // array
 			player.stats     = "departed"; // array
 			player.titles    = "departed"; // { selected: string, unlocked: [strings] }
-			console.log(Date()+" - Player:");
+			console.log(logPrefix()+"Player:");
 			console.dir(player); // */
 
 			// console.log("-----");
@@ -123,7 +129,7 @@ exports.getPlayerData = async function getPlayerData(allycode, message, callback
 			// console.log("Units by combat type: ", unitsByCombaType);
 
 			// console.log("=====");
-			console.log(Date()+" - Found user: "+player.name);
+			console.log(logPrefix()+"Found user: "+player.name);
 
 			player.allycode = allycode;
 			player.charCount = unitsByCombaType[1];
@@ -139,13 +145,13 @@ exports.getPlayerData = async function getPlayerData(allycode, message, callback
 		}
 
 		// Fail:
-		console.log(Date()+" - Player "+allycode+" not found: "+typeof(player));
+		console.log(logPrefix()+"Player "+allycode+" not found: "+typeof(player));
 		richMsg = new RichEmbed().setTitle("Warning!").setColor("ORANGE")
 			.setDescription(["Ally " + allycode+" not found: "+typeof(player)])
 			.setFooter(config.footer.message, config.footer.iconUrl);
 		message.channel.send(richMsg);
 	} catch(ex) {
-		console.log(Date()+" - Player exception: ", ex);
+		console.log(logPrefix()+"Player exception: ", ex);
 		richMsg = new RichEmbed().setTitle("Error!").setColor("RED")
 			.setDescription(["Failed to get player with allycode: "+allycode])
 			.setFooter(config.footer.message, config.footer.iconUrl)
@@ -156,7 +162,7 @@ exports.getPlayerData = async function getPlayerData(allycode, message, callback
 
 exports.getPlayerGuild = async function getPlayerGuild(allycode, message, callback) {
 	try {
-		let locale = "fr-FR";
+		let locale = config.discord.locale; // shortcut
 		let payload  = { allycodes:[ allycode ] };
 		let { result, error, warning } = await swapi.fetchGuild(payload);
 		let richMsg = null;
@@ -164,13 +170,13 @@ exports.getPlayerGuild = async function getPlayerGuild(allycode, message, callba
 
 		if (warning) {
 			if (warning.error && warning.error===warning.message) delete warning.error;
-			console.log(Date()+" - MyWARN: ", warning);
+			console.log(logPrefix()+"MyWARN: ", warning);
 			message.channel.send(warning.message);
 		}
 
 		if (error) {
 			if (error.error && error.error===error.message) delete error.error;
-			console.log(Date()+" - My ERR: ", error);
+			console.log(logPrefix()+"My ERR: ", error);
 			richMsg = new RichEmbed().setTitle("Error!").setColor("RED")
 				.setDescription(error.message)
 				.setFooter(config.footer.message, config.footer.iconUrl);
@@ -184,11 +190,11 @@ exports.getPlayerGuild = async function getPlayerGuild(allycode, message, callba
 			roster = guild.roster;
 			/*
 			guild.roster = "departed";
-			console.log(Date()+" - Guild:");
+			console.log(logPrefix()+"Guild:");
 			console.dir(result);
 
 			console.log("-----");
-			console.log(Date()+" - First player found in the guild:");
+			console.log(logPrefix()+"First player found in the guild:");
 			console.dir(roster[0]);
 			// id, guildMemberLevel (3), level (85), allycode, gp, gpChar, gpShip, updated (bigint)
 			console.log("====="); // */
@@ -214,7 +220,7 @@ exports.getPlayerGuild = async function getPlayerGuild(allycode, message, callba
 				}
 			});
 
-			console.log(Date()+" - Found guild: "+guild.name);
+			console.log(logPrefix()+"Found guild: "+guild.name);
 
 			richMsg = new RichEmbed().setTitle(guild.name).setColor("GREEN")
 				.setAuthor(config.discord.username)
@@ -236,14 +242,14 @@ exports.getPlayerGuild = async function getPlayerGuild(allycode, message, callba
 		}
 
 		// Fail:
-		console.log(Date()+" - Guild with ally "+allycode+" not found: "+typeof(player));
+		console.log(logPrefix()+"Guild with ally "+allycode+" not found: "+typeof(player));
 		message.reply( "Guild with ally "+allycode+" not found: "+typeof(player));
 		richMsg = new RichEmbed().setTitle("Warning!").setColor("ORANGE")
 			.setDescription(["Ally " + allycode+" not found: "+typeof(player)])
 			.setFooter(config.footer.message, config.footer.iconUrl);
 		message.channel.send(richMsg);
 	} catch(ex) {
-		console.log(Date()+" - Guild exception: ", ex);
+		console.log(logPrefix()+"Guild exception: ", ex);
 		richMsg = new RichEmbed().setTitle("Error!").setColor("RED")
 			.setDescription(["Failed to get guild with ally: "+allycode])
 			.setFooter(config.footer.message, config.footer.iconUrl);
