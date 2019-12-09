@@ -19,6 +19,8 @@ NodeJS required modules:
 * discord.js
 * mysql
 
+Use the "mk-tables.sql" file to create the tables in a MySQL database.
+
 ## Run it
 
 I use to run the bot by simply typing the following command line in a console from the "src" folder:
