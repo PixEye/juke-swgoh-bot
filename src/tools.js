@@ -134,7 +134,7 @@ exports.getPlayerFromdatabase = function(allycode, message, callback) {
 			return;
 		}
 
-		console.log(logPrefix()+""+result.length+" record(s) match(es) allycode:", allycode);
+		console.log(logPrefix()+result.length+" record(s) match(es) allycode:", allycode);
 		// console.dir(result);
 		if (result.length === 1) {
 			player = result[0];
@@ -186,7 +186,7 @@ exports.getPlayerFromDiscordId = function(discord_id, message, callback) {
 			return;
 		}
 
-		console.log(logPrefix()+""+result.length+" record(s) match(es) user's ID:", discord_id);
+		console.log(logPrefix()+result.length+" record(s) match(es) user's ID:", discord_id);
 		// console.dir(result);
 		if (result.length === 1) {
 			console.log(logPrefix()+"Found allycode:", result[0].allycode);
@@ -360,7 +360,9 @@ exports.showCharInfo = function(player, message, charName) {
 	pattern = new RegExp("^"+strToLookFor);
 
 	player.unitsData.forEach(function(unit) {
-		if (!foundUnit && unit.combatType===1 && unit.name.match(pattern)) {
+	//	if (!foundUnit && unit.combatType===1 && unit.name.match(pattern))
+		if (!foundUnit && unit.name.match(pattern))
+		{
 			color = "GREEN";
 			foundUnit = unit;
 		}
@@ -368,7 +370,9 @@ exports.showCharInfo = function(player, message, charName) {
 
 	if (!foundUnit) {
 		player.unitsData.forEach(function(unit) {
-			if (!foundUnit && unit.combatType===1 && unit.name.indexOf(strToLookFor)>=0) {
+		//	if (!foundUnit && unit.combatType===1 && unit.name.indexOf(strToLookFor)>=0)
+			if (!foundUnit && unit.name.indexOf(strToLookFor)>=0)
+			{
 				color = "GREEN";
 				foundUnit = unit;
 			}
@@ -442,7 +446,7 @@ exports.showLastEvols = function(player, message, evols) {
 
 		color = "ORANGE";
 		msg = "No evolution in this roster for the last "+maxDays+" days";
-		console.log(logPrefix()+""+msg);
+		console.log(logPrefix()+msg);
 		lines = [msg];
 	} else {
 		lastEvols.forEach(function(e, i) {
@@ -626,7 +630,7 @@ exports.updatePlayerDataInDb = function(player, message, callback) {
 					if (u.combatType===1) {
 						if (oldCharsCount) { // New character:
 							msg += " unlocked "+u.name;
-							console.log(logPrefix()+""+msg);
+							console.log(logPrefix()+msg);
 
 							lines.push([allycode, u.name, "new", 1]);
 						}
@@ -638,7 +642,7 @@ exports.updatePlayerDataInDb = function(player, message, callback) {
 				// Look for new gears:
 				if (u.gear > 11 && u.gear > oldUnit.gear) {
 					msg += "'s "+u.name+" is now G"+u.gear;
-					console.log(logPrefix()+""+msg);
+					console.log(logPrefix()+msg);
 
 					// Add new evolution in the database ("evols" table):
 					lines.push([allycode, u.name, "gear", u.gear]);
@@ -647,7 +651,7 @@ exports.updatePlayerDataInDb = function(player, message, callback) {
 				// Look for new stars:
 				if (u.stars > 6 && u.stars > oldUnit.stars) {
 					msg += "'s "+u.name+" is now "+u.stars+"*";
-					console.log(logPrefix()+""+msg);
+					console.log(logPrefix()+msg);
 
 					// Add new evolution in the database ("evols" table):
 					lines.push([allycode, u.name, "star", u.stars]);
@@ -656,19 +660,20 @@ exports.updatePlayerDataInDb = function(player, message, callback) {
 				// Look for new zetas:
 				if (u.zetaCount > oldUnit.zetaCount) {
 					msg += "'s "+u.name+" has now "+u.zetaCount+" zeta(s)";
-					console.log(logPrefix()+""+msg);
+					console.log(logPrefix()+msg);
 
 					// Add new evolution in the database ("evols" table):
 					lines.push([allycode, u.name, "zeta", u.zetaCount]);
 				}
 			});
 			if (newUnitCount) {
-				console.log(logPrefix()+"There is %d new unit(s) in %s's roster.", newUnitCount, player.name);
+				msg = "There is %d new unit(s) in %s's roster.";
+				console.log(logPrefix()+msg, newUnitCount, player.name);
 			}
 			console.log(logPrefix()+"%s owns %d ships", player.name, nbShips);
 
 			msg = lines.length+" evolution(s) detected for: "+player.name;
-			console.log(logPrefix()+""+msg);
+			console.log(logPrefix()+msg);
 			if (lines.length) message.channel.send(msg);
 
 			if (lines.length) {

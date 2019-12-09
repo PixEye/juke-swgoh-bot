@@ -164,6 +164,7 @@ exports.getPlayerData = async function getPlayerData(allycode, message, callback
 exports.getPlayerGuild = async function getPlayerGuild(allycode, message, callback) {
 	try {
 		let locale = config.discord.locale; // shortcut
+		let msg = "";
 		let payload  = { allycodes:[ allycode ] };
 		let { result, error, warning } = await swapi.fetchGuild(payload);
 		let richMsg = null;
@@ -185,70 +186,93 @@ exports.getPlayerGuild = async function getPlayerGuild(allycode, message, callba
 			return;
 		}
 
-		if (result) {
-			let guild = result[0];
-
-			roster = guild.roster;
-			/*
-			guild.roster = "departed";
-			console.log(logPrefix()+"Guild:");
-			console.dir(result);
-
-			console.log("-----");
-			console.log(logPrefix()+"First player found in the guild:");
-			console.dir(roster[0]);
-			// id, guildMemberLevel (3), level (85), allycode, gp, gpChar, gpShip, updated (bigint)
-			console.log("====="); // */
-
-			let biggest = {gp: 0}; // biggest player
-			let leader = {};
-			let officerNames = [];
-
-			roster.forEach(function(player) {
-				if (player.gp > biggest.gp) biggest = player;
-
-				switch(player.guildMemberLevel) {
-					case 2: // member
-						break;
-					case 3: // officer
-						officerNames.push(player.name);
-						break;
-					case 4: // chief (or grand-master)
-						leader = player;
-						break;
-					default:
-						console.warn("Found a player with guildMemberLevel of %s: ", player.guildMemberLevel, player);
-				}
-			});
-
-			console.log(logPrefix()+"Found guild: "+guild.name);
-
-			richMsg = new RichEmbed().setTitle(guild.name).setColor("GREEN")
-				.setAuthor(config.discord.username)
-				.setDescription([
-					"**Guild description:** "+guild.desc,
-					"",
-					"**Officers ("+officerNames.length+"):** "+officerNames.sort().join(", ")
-				])
-				.addField("GP:",           guild.gp.toLocaleString(locale), true)
-				.addField("Member count:", guild.members, true)
-				.addField("GP average:",   Math.round(guild.gp/guild.members).toLocaleString(locale), true)
-				.addField("Leader:",       leader.name +" (GP: "+ leader.gp.toLocaleString(locale)+")", true)
-				.addField("Biggest GP:",   biggest.name+" (GP: "+biggest.gp.toLocaleString(locale)+")", true)
-				.setTimestamp(guild.updated)
+		if (!result) {
+			// Fail:
+			console.log(logPrefix()+"Guild with ally "+allycode+" not found: "+typeof(player));
+			message.reply( "Guild with ally "+allycode+" not found: "+typeof(player));
+			richMsg = new RichEmbed().setTitle("Warning!").setColor("ORANGE")
+				.setDescription(["Ally " + allycode+" not found: "+typeof(player)])
 				.setFooter(config.footer.message, config.footer.iconUrl);
-			message.reply(richMsg);
-			if (typeof(callback)==="function") callback(guild, message);
+			message.channel.send(richMsg);
 			return;
 		}
 
-		// Fail:
-		console.log(logPrefix()+"Guild with ally "+allycode+" not found: "+typeof(player));
-		message.reply( "Guild with ally "+allycode+" not found: "+typeof(player));
-		richMsg = new RichEmbed().setTitle("Warning!").setColor("ORANGE")
-			.setDescription(["Ally " + allycode+" not found: "+typeof(player)])
+		let guild = result[0];
+
+		roster = guild.roster;
+		delete guild.roster;
+
+		/*
+		guild.roster = "departed";
+		console.log(logPrefix()+"Guild:");
+		console.dir(result);
+
+		console.log("-----");
+		console.log(logPrefix()+"First player found in the guild:");
+		console.dir(roster[0]);
+		// id, guildMemberLevel (3), level (85), allycode, gp, gpChar, gpShip, updated (bigint)
+		console.log("====="); // */
+
+		let biggest = {gp: 0}; // biggest player
+		let leader = {};
+		let players = {}; // allycode => playerName
+		let officerNames = [];
+		let unitsOfInterest = [
+			"DARTHMALAK", "DARTHREVAN", "DARTHTRAYA",
+			"GENERALSKYWALKER", "GEONOSIANBROODALPHA", "GRIEVOUS",
+			"JEDIKNIGHTREVAN"
+		];
+		let unitCounts = {};
+
+		roster.forEach(function(player) {
+			players[player.allycode] = player.name;
+
+			if (player.gp > biggest.gp) biggest = player;
+
+			// if (unitsOfInterest.indexOf(unit.name)>=0) { } // TODO
+
+			switch(player.guildMemberLevel) {
+				case 2: // member
+					break;
+
+				case 3: // officer
+					officerNames.push(player.name);
+					break;
+
+				case 4: // chief or grand-master (GM)
+					leader = player;
+					break;
+
+				default:
+					msg = "Found a player with guildMemberLevel of %s: ";
+					console.warn(msg, player.guildMemberLevel, player);
+			}
+		});
+
+		console.log(logPrefix()+"Found guild: "+guild.name);
+
+		richMsg = new RichEmbed().setTitle(guild.name).setColor("GREEN")
+			.setAuthor(config.discord.username)
+			.setDescription([
+				"**Guild description:** "+guild.desc, "",
+				"**Officers ("+officerNames.length+"):** "+officerNames.sort().join(", "), "",
+				"**Ally codes:** "+Object(players).values.sort().join(", ")
+			])
+			.addField("GP:",
+				guild.gp.toLocaleString(locale), true)
+			.addField("Member count:",
+				guild.members, true)
+			.addField("GP average:",
+				Math.round(guild.gp/guild.members).toLocaleString(locale), true)
+			.addField("Leader:",
+				leader.name +" (GP: "+ leader.gp.toLocaleString(locale)+")", true)
+			.addField("Biggest GP:",
+				biggest.name+" (GP: "+biggest.gp.toLocaleString(locale)+")", true)
+			.setTimestamp(guild.updated)
 			.setFooter(config.footer.message, config.footer.iconUrl);
-		message.channel.send(richMsg);
+		message.reply(richMsg);
+
+		if (typeof(callback)==="function") callback(guild, message);
 	} catch(ex) {
 		console.log(logPrefix()+"Guild exception: ", ex);
 		richMsg = new RichEmbed().setTitle("Error!").setColor("RED")
