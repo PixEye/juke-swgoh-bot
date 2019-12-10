@@ -1,4 +1,11 @@
 {
+  "custom": {
+    "unitsOfInterest": [
+      "DARTHMALAK", "DARTHREVAN", "DARTHTRAYA",
+      "GENERALSKYWALKER", "GEONOSIANBROODALPHA", "GRIEVOUS", "JEDIKNIGHTREVAN",
+      "CAPITALMALEVOLENCE", "CAPITALNEGOTIATOR", "HOUNDSTOOTH", "MILLENNIUMFALCON"
+    ]
+  },
   "db": {
     "conMaxCount": 10,
     "host": "localhost",

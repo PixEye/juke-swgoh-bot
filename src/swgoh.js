@@ -25,7 +25,7 @@ const { RichEmbed } = require("discord.js");
 // Shortcut(s):
 let logPrefix = tools.logPrefix;
 
-exports.getPlayerData = async function getPlayerData(allycodes, message, callback) {
+exports.getPlayerData = async function(allycodes, message, callback) {
 	try {
 		// let acquiredToken = await swapi.connect();
 		// console.log(logPrefix()+"Token: ", acquiredToken);
@@ -50,9 +50,20 @@ exports.getPlayerData = async function getPlayerData(allycodes, message, callbac
 			throw error.message;
 		}
 
-		if (result) {
-			let allycode = allycodes[0];
-			let player = result[0];
+		let allycode = allycodes[0];
+
+		if (!result) {
+			// Fail:
+			console.log(logPrefix()+"Player "+allycode+" not found!");
+			richMsg = new RichEmbed().setTitle("Warning!").setColor("ORANGE")
+				.setDescription(["Ally " + allycode+" not found!"])
+				.setFooter(config.footer.message, config.footer.iconUrl);
+			message.channel.send(richMsg);
+			return;
+		}
+
+		result.forEach(function(player) {
+			let clean_stats = null;
 
 			roster = player.roster;
 			stats  = player.stats;
@@ -120,7 +131,7 @@ exports.getPlayerData = async function getPlayerData(allycodes, message, callbac
 				}
 			});
 
-			let clean_stats = {};
+			clean_stats = {};
 			stats.forEach(function(stat) {
 				clean_stats[stat.nameKey.replace("STAT_", "")] = stat.value;
 			});
@@ -145,15 +156,7 @@ exports.getPlayerData = async function getPlayerData(allycodes, message, callbac
 			player.zetaCount = zetaCount;
 
 			if (typeof(callback)==="function") callback(player, message);
-			return;
-		}
-
-		// Fail:
-		console.log(logPrefix()+"Player "+allycode+" not found: "+typeof(player));
-		richMsg = new RichEmbed().setTitle("Warning!").setColor("ORANGE")
-			.setDescription(["Ally " + allycode+" not found: "+typeof(player)])
-			.setFooter(config.footer.message, config.footer.iconUrl);
-		message.channel.send(richMsg);
+		});
 	} catch(ex) {
 		console.log(logPrefix()+"Player exception: ", ex);
 		richMsg = new RichEmbed().setTitle("Error!").setColor("RED")
@@ -164,12 +167,11 @@ exports.getPlayerData = async function getPlayerData(allycodes, message, callbac
 	}
 };
 
-exports.getPlayerGuild = async function getPlayerGuild(allycodes, message, callback) {
+exports.getPlayerGuild = async function(allycodes, message, callback) {
 	try {
 		if ( ! (allycodes instanceof Array) ) allycodes = [allycodes];
 
 		let allycode = allycodes[0];
-		let locale = config.discord.locale; // shortcut
 		let msg = "";
 		let payload  = { allycodes: allycodes };
 		let { result, error, warning } = await swapi.fetchGuild(payload); // <--
@@ -206,7 +208,7 @@ exports.getPlayerGuild = async function getPlayerGuild(allycodes, message, callb
 		let guild = result[0];
 
 		roster = guild.roster;
-		delete guild.roster;
+		// delete guild.roster;
 
 		/*
 		guild.roster = "departed";
@@ -216,26 +218,19 @@ exports.getPlayerGuild = async function getPlayerGuild(allycodes, message, callb
 		console.log("-----");
 		console.log(logPrefix()+"First player found in the guild:");
 		console.dir(roster[0]);
-		// id, guildMemberLevel (3), level (85), allycode, gp, gpChar, gpShip, updated (bigint)
+		// id, guildMemberLevel (3), level (85), allyCode, gp, gpChar, gpShip, updated (bigint)
 		console.log("====="); // */
 
 		let biggest = {gp: 0}; // biggest player
 		let leader = {};
-		let players = {}; // allycode => playerName
+		let players = {}; // allycode => (IG nick) name
 		let officerNames = [];
-		let unitsOfInterest = [
-			"DARTHMALAK", "DARTHREVAN", "DARTHTRAYA",
-			"GENERALSKYWALKER", "GEONOSIANBROODALPHA", "GRIEVOUS",
-			"JEDIKNIGHTREVAN"
-		];
 		let unitCounts = {};
 
 		roster.forEach(function(player) {
-			players[player.allycode] = player.name;
+			players[player.allyCode] = player.name;
 
 			if (player.gp > biggest.gp) biggest = player;
-
-			// if (unitsOfInterest.indexOf(unit.name)>=0) { } // TODO
 
 			switch(player.guildMemberLevel) {
 				case 2: // member
@@ -255,30 +250,15 @@ exports.getPlayerGuild = async function getPlayerGuild(allycodes, message, callb
 			}
 		});
 
-		console.log(logPrefix()+"Found guild: "+guild.name);
+		console.log(logPrefix()+"Found %d players in guild:", Object.keys(players).length, guild.name);
 
-		richMsg = new RichEmbed().setTitle(guild.name).setColor("GREEN")
-			.setAuthor(config.discord.username)
-			.setDescription([
-				"**Guild description:** "+guild.desc, "",
-				"**Officers ("+officerNames.length+"):** "+officerNames.sort().join(", "), "",
-				"**Ally codes:** "+Object(players).values.sort().join(", ")
-			])
-			.addField("GP:",
-				guild.gp.toLocaleString(locale), true)
-			.addField("Member count:",
-				guild.members, true)
-			.addField("GP average:",
-				Math.round(guild.gp/guild.members).toLocaleString(locale), true)
-			.addField("Leader:",
-				leader.name +" (GP: "+ leader.gp.toLocaleString(locale)+")", true)
-			.addField("Biggest GP:",
-				biggest.name+" (GP: "+biggest.gp.toLocaleString(locale)+")", true)
-			.setTimestamp(guild.updated)
-			.setFooter(config.footer.message, config.footer.iconUrl);
-		message.reply(richMsg);
-
-		if (typeof(callback)==="function") callback(guild, message);
+		if (typeof(callback)==="function")
+			callback(guild, {
+				biggestPlayer: biggest,
+				leader: leader,
+				officerNames: officerNames,
+				players: players
+			});
 	} catch(ex) {
 		let allycode = allycodes[0];
 

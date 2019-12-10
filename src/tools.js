@@ -80,7 +80,69 @@ exports.getLastEvols = function(player, message) {
 	});
 };
 
+exports.getUnregPlayers = function(allycode, message) {
+    let logPrefix = exports.logPrefix; // shortcut
+
+	if (!allycode) {
+		message.reply(":red_circle: Invalid or missing allycode!");
+		return;
+	}
+
+	message.channel.send("Looking for unregistered players of guild with ally: "+allycode+"...")
+		.then(msg => {
+			swgoh.getPlayerGuild(allycode, message, function(guild, stats) {
+                let players = stats.players;
+
+				if (typeof(msg.delete)==="function") msg.delete();
+
+				if (!guild.gp) {
+					console.warn(logPrefix()+"GUP: invalid guild GP:", guild.gp);
+					return;
+				}
+
+				// Remember stats of the guild:
+				let sql = "SELECT * FROM `users` WHERE allycode IN (?)";
+                let values = Object.keys(players);
+                let n = values.length;
+
+                console.log(logPrefix()+"GUP: received %d user(s).", n);
+
+				db_pool.query(sql, [values], function(exc, regPlayers) {
+                    let msg = "%d registered users out of %d.";
+                    let unregPlayers = [];
+
+					if (exc) {
+						let otd = exc.sqlMessage? exc.sqlMessage: exc;
+						// otd = object to display
+
+						console.log(logPrefix()+"SQL:", sql);
+						console.log(logPrefix()+"GUP Exception:", otd);
+                        message.reply("Failed!");
+						return;
+					}
+
+					console.log(logPrefix()+msg, regPlayers.length, n);
+
+                    n-= regPlayers.length;
+                    msg = n+" not registered player(s) found";
+					console.log(logPrefix()+msg);
+
+                    regPlayers.forEach(function(regPlayer) {
+                        delete players[regPlayer.allycode];
+                    });
+                    Object.keys(players).forEach(function(allycode, i) {
+                        unregPlayers.push(players[allycode]+" ("+allycode+")");
+                    });
+                    msg = "**"+msg+":** "+unregPlayers.sort().join(", ")+".";
+                    message.channel.send(msg);
+				});
+			});
+		})
+		.catch(console.error);
+};
+
 exports.getGuildStats = function(allycode, message) {
+    let locale = config.discord.locale; // shortcut
     let logPrefix = exports.logPrefix; // shortcut
 
 	if (!allycode) {
@@ -90,20 +152,47 @@ exports.getGuildStats = function(allycode, message) {
 
 	message.channel.send("Looking for stats of guild with ally: "+allycode+"...")
 		.then(msg => {
-			swgoh.getPlayerGuild(allycode, message, function(guild) {
+			swgoh.getPlayerGuild(allycode, message, function(guild, stats) {
+                let msg = "";
+
+                let biggestPlayer = stats.biggestPlayer;
+                let leader = stats.leader;
+                let officerNames = stats.officerNames;
+
 				if (typeof(msg.delete)==="function") msg.delete();
 
 				if (!guild.gp) {
-					console.log(logPrefix()+"invalid guild GP:", guild.gp);
+                    msg = "Invalid guild GP: "+guild.gp;
+					console.log(logPrefix()+msg);
+                    message.reply(msg);
 					return;
 				}
 
-				// Remember stats of the guild:
-				sql = "REPLACE INTO `guilds` (swgoh_id, name) VALUES ("+
-					mysql.escape(guild.id)+", "+
-					mysql.escape(guild.name)+")";
+                richMsg = new RichEmbed().setTitle(guild.name).setColor("GREEN")
+                    .setAuthor(config.discord.username)
+                    .setDescription([
+                        "**Guild description:** "+guild.desc,
+                        "", "**Officers ("+officerNames.length+"):** "+officerNames.sort().join(", ")
+                    ])
+                    .addField("GP:",
+                        guild.gp.toLocaleString(locale), true)
+                    .addField("Member count:",
+                        guild.members, true)
+                    .addField("GP average:",
+                        Math.round(guild.gp/guild.members).toLocaleString(locale), true)
+                    .addField("Leader:",
+                        leader.name +" (GP: "+ leader.gp.toLocaleString(locale)+")", true)
+                    .addField("Biggest GP:",
+                        biggestPlayer.name+" (GP: "+biggestPlayer.gp.toLocaleString(locale)+")", true)
+                    .setTimestamp(guild.updated)
+                    .setFooter(config.footer.message, config.footer.iconUrl);
+                message.reply(richMsg);
 
-				db_pool.query(sql, function(exc, result) {
+				// Remember stats of the guild:
+				let sql = "REPLACE INTO `guilds` (swgoh_id, name) VALUES ?";
+                let values = [[guild.id, guild.name]];
+
+				db_pool.query(sql, [values], function(exc, result) {
 					if (exc) {
 						let otd = exc.sqlMessage? exc.sqlMessage: exc;
 						// otd = object to display
@@ -360,9 +449,7 @@ exports.showCharInfo = function(player, message, charName) {
 	pattern = new RegExp("^"+strToLookFor);
 
 	player.unitsData.forEach(function(unit) {
-	//	if (!foundUnit && unit.combatType===1 && unit.name.match(pattern))
-		if (!foundUnit && unit.name.match(pattern))
-		{
+		if (!foundUnit && unit.combatType===1 && unit.name.match(pattern)) {
 			color = "GREEN";
 			foundUnit = unit;
 		}
@@ -370,9 +457,7 @@ exports.showCharInfo = function(player, message, charName) {
 
 	if (!foundUnit) {
 		player.unitsData.forEach(function(unit) {
-		//	if (!foundUnit && unit.combatType===1 && unit.name.indexOf(strToLookFor)>=0)
-			if (!foundUnit && unit.name.indexOf(strToLookFor)>=0)
-			{
+			if (!foundUnit && unit.combatType===1 && unit.name.indexOf(strToLookFor)>=0) {
 				color = "GREEN";
 				foundUnit = unit;
 			}
@@ -552,7 +637,7 @@ exports.showPlayerStats = function(player, message) {
 	let richMsg = new RichEmbed().setTitle(player.name+"'s profile").setColor("GREEN")
 		.setDescription([
 			"**Level:** "+player.level+"\t - "+
-			"**GP:** "+(player.gp.toLocaleString(locale)),
+			"**GP:** "+(player.gp.toLocaleString(config.discord.locale)),
 			"**Guild name:** "+player.guildName,
 			"",
 			"**Zeta count:** "+player.zetaCount+"\t - "+

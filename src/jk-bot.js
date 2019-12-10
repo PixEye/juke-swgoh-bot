@@ -102,7 +102,8 @@ client.on("message", (message) => {
 				.setDescription([
 					"**Commandes utilisateur :**",
 					" about, aide, allycode (ac), charInfo (ci), checkMods (cm), checkUnitsGp (cugp)"+
-					", dis, guildStats (gs), help, invite, (last)evols (le), playerStats (ps)"+
+					", dis, getUnregisteredPlayers (gup), guildStats (gs), help, invite"+
+					", (last)evols (le), playerStats (ps)"+
 					", register (reg), relics, repete, self(y), start, stats, status, whoami, whois",
 					"**Commandes pour l'administrateur :** admin, query/req(uest), stop/stoppe",
 					"**NB :** en mp, le préfixe est optionnel."])
@@ -283,12 +284,35 @@ client.on("message", (message) => {
 			}
 			break;
 
+		case "gu":
+		case "gup":
+		case "getunregistered":
+		case "getunregplayers":
+		case "getunregisteredplayers":
+			// Extract user's tag (if any):
+			if (message.mentions && message.mentions.users && message.mentions.users.first()) {
+				user = message.mentions.users.first();
+				nick = user.username;
+			}
+
+			allycode = tools.getFirstAllycodeInWords(args);
+			if (allycode) {
+				tools.getUnregPlayers(allycode, message);
+			} else {
+				console.log(logPrefix()+"Try with user ID:", user.id);
+				tools.getPlayerFromDiscordId(user.id, message, function(player) {
+					if (player) tools.getUnregPlayers(player.allycode, message);
+				});
+			}
+			break;
+
 		case "help":
 			richMsg = new RichEmbed().setTitle("Avialable commands")
 				.setDescription([
 					"**User commands:**",
 					" about, aide, allycode (ac), charInfo (ci), checkMods (cm), checkUnitsGp (cugp)"+
-					", guildStats (gs), help, invite, (last)evols (le), playerStat (ps), register (reg)"+
+					", getUnregisteredPlayers (gup), guildStats (gs), help, invite, (last)evols (le)"+
+					", playerStat (ps), register (reg)"+
 					", relics, repeat, say, self(y), start, stats, status, whoami, whois",
 					"**Admin commands:** admin, destroy/leave/shutdown/stop, query/req(uest)",
 					"**NB:** in DM, the prefix is optional."])
