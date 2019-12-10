@@ -90,9 +90,7 @@ exports.getUnregPlayers = function(allycode, message) {
 
 	message.channel.send("Looking for unregistered players of guild with ally: "+allycode+"...")
 		.then(msg => {
-			swgoh.getPlayerGuild(allycode, message, function(guild, stats) {
-                let players = stats.players;
-
+			swgoh.getPlayerGuild(allycode, message, function(guild) {
 				if (typeof(msg.delete)==="function") msg.delete();
 
 				if (!guild.gp) {
@@ -102,7 +100,7 @@ exports.getUnregPlayers = function(allycode, message) {
 
 				// Remember stats of the guild:
 				let sql = "SELECT * FROM `users` WHERE allycode IN (?)";
-                let values = Object.keys(players);
+                let values = Object.keys(guild.players);
                 let n = values.length;
 
                 console.log(logPrefix()+"GUP: received %d user(s).", n);
@@ -124,16 +122,21 @@ exports.getUnregPlayers = function(allycode, message) {
 					console.log(logPrefix()+msg, regPlayers.length, n);
 
                     n-= regPlayers.length;
-                    msg = n+" not registered player(s) found";
+                    msg = n+" not registered player(s) found in this guild";
 					console.log(logPrefix()+msg);
 
-                    regPlayers.forEach(function(regPlayer) {
-                        delete players[regPlayer.allycode];
-                    });
-                    Object.keys(players).forEach(function(allycode, i) {
-                        unregPlayers.push(players[allycode]+" ("+allycode+")");
-                    });
-                    msg = "**"+msg+":** "+unregPlayers.sort().join(", ")+".";
+                    if (!n) {
+                        msg = "All "+values.length+
+                            " players in this guild are registered. :white_check_mark:";
+                    } else {
+                        regPlayers.forEach(function(regPlayer) {
+                            delete guild.players[regPlayer.allycode];
+                        });
+                        Object.keys(guild.players).forEach(function(allycode, i) {
+                            unregPlayers.push(guild.players[allycode]+" ("+allycode+")");
+                        });
+                        msg = "**"+msg+":** "+unregPlayers.sort().join(", ")+".";
+                    }
                     message.channel.send(msg);
 				});
 			});
@@ -152,12 +155,8 @@ exports.getGuildStats = function(allycode, message) {
 
 	message.channel.send("Looking for stats of guild with ally: "+allycode+"...")
 		.then(msg => {
-			swgoh.getPlayerGuild(allycode, message, function(guild, stats) {
+			swgoh.getPlayerGuild(allycode, message, function(guild) {
                 let msg = "";
-
-                let biggestPlayer = stats.biggestPlayer;
-                let leader = stats.leader;
-                let officerNames = stats.officerNames;
 
 				if (typeof(msg.delete)==="function") msg.delete();
 
@@ -172,7 +171,7 @@ exports.getGuildStats = function(allycode, message) {
                     .setAuthor(config.discord.username)
                     .setDescription([
                         "**Guild description:** "+guild.desc,
-                        "", "**Officers ("+officerNames.length+"):** "+officerNames.sort().join(", ")
+                        "", "**Officers ("+guild.officerNames.length+"):** "+guild.officerNames.sort().join(", ")
                     ])
                     .addField("GP:",
                         guild.gp.toLocaleString(locale), true)
@@ -181,9 +180,9 @@ exports.getGuildStats = function(allycode, message) {
                     .addField("GP average:",
                         Math.round(guild.gp/guild.members).toLocaleString(locale), true)
                     .addField("Leader:",
-                        leader.name +" (GP: "+ leader.gp.toLocaleString(locale)+")", true)
+                        guild.leader.name +" (GP: "+ guild.leader.gp.toLocaleString(locale)+")", true)
                     .addField("Biggest GP:",
-                        biggestPlayer.name+" (GP: "+biggestPlayer.gp.toLocaleString(locale)+")", true)
+                        guild.biggestPlayer.name+" (GP: "+guild.biggestPlayer.gp.toLocaleString(locale)+")", true)
                     .setTimestamp(guild.updated)
                     .setFooter(config.footer.message, config.footer.iconUrl);
                 message.reply(richMsg);
@@ -314,6 +313,7 @@ exports.getPlayerStats = function(allycode, message, callback) {
 
 exports.checkPlayerMods = function(player, message) {
     let logPrefix = exports.logPrefix; // shortcut
+    let maxLines = 5;
 
 	if (!player.gp) {
 		console.log(logPrefix()+"invalid GP for user:", player);
@@ -348,10 +348,10 @@ exports.checkPlayerMods = function(player, message) {
 		color = "ORANGE";
 		unitsWithoutAllModules.forEach(function(unit, i) {
 			tpmmc += maxModsCount - unit.mods.length;
-			if (i<10)
+			if (i<maxLines)
 				lines.push((maxModsCount-unit.mods.length)+" missing module(s) on: (GP="+unit.gp+") "+unit.name);
-			else if (i===10)
-				lines.push("And "+(n-10)+" more...");
+			else if (i===maxLines)
+				lines.push("And "+(n-maxLines)+" more...");
 		});
 		console.log(logPrefix()+"%d total character(s) with %d total missing modules found.", tpmmc, maxModsCount);
 	}
@@ -384,6 +384,7 @@ exports.checkUnitsGp = function(player, message, limit) {
 	let minit = limit-1;
 	let lines = [];
 	let maxGp = limit*1000;
+    let maxLines = 10;
 	let minGp = minit*1000;
 	let minCharLevel = 50;
 	let n = 0;
@@ -406,10 +407,10 @@ exports.checkUnitsGp = function(player, message, limit) {
 	} else {
 		color = "ORANGE";
 		units.forEach(function(u, i) {
-			if (i<10)
+			if (i<maxLines)
 				lines.push("(GP="+u.gp+"; G"+u.gear+"; "+u.zetaCount+"z) "+u.name);
-			else if (i===10)
-				lines.push("And "+(n-10)+" more...");
+			else if (i===maxLines)
+				lines.push("And "+(n-maxLines)+" more...");
 		});
 		console.log(logPrefix()+"%d total character(s) with GP between %dk & %dk.", n, minit, limit);
 	}
@@ -513,6 +514,7 @@ exports.showLastEvols = function(player, message, evols) {
 	let lines = [];
 	let maxDays = 10;
 	let maxDt = 0;
+    let maxLines = 10;
 	let maxPeriod = 24 * 3600 * 1000 * maxDays;
 	let msg = "";
 	let n = 0;
@@ -558,9 +560,9 @@ exports.showLastEvols = function(player, message, evols) {
 					console.warn("Unexpected evolution type '%s' at ID %d", e.type, e.id);
 			}
 
-			if (i<10)
+			if (i<maxLines)
 				lines.push(msg);
-			else if (i===10)
+			else if (i===maxLines)
 				lines.push("And some more...");
 		});
 	}
@@ -577,6 +579,7 @@ exports.showLastEvols = function(player, message, evols) {
 
 exports.showPlayerRelics = function(player, message) {
     let logPrefix = exports.logPrefix; // shortcut
+    let maxLines = 10;
 
 	if (!player.gp) {
 		console.log(logPrefix()+"invalid GP for user:", player);
@@ -608,10 +611,10 @@ exports.showPlayerRelics = function(player, message) {
 	} else {
 		unitsWithRelics.forEach(function(unit, i) {
 			tprc += unit.relic;
-			if (i<10)
+			if (i<maxLines)
 				lines.push(unit.relic+" relic(s) on: "+unit.name);
-			else if (i===10)
-				lines.push("And "+(n-10)+" more...");
+			else if (i===maxLines)
+				lines.push("And "+(n-maxLines)+" more...");
 		});
 		console.log(logPrefix()+"%d total relic(s) found.", tprc);
 	}
@@ -734,7 +737,7 @@ exports.updatePlayerDataInDb = function(player, message, callback) {
 				}
 
 				// Look for new stars:
-				if (u.stars > 6 && u.stars > oldUnit.stars) {
+				if (oldUnit.stars > 0 && u.stars > 6 && u.stars > oldUnit.stars) {
 					msg += "'s "+u.name+" is now "+u.stars+"*";
 					console.log(logPrefix()+msg);
 

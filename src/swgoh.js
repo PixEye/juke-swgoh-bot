@@ -221,27 +221,27 @@ exports.getPlayerGuild = async function(allycodes, message, callback) {
 		// id, guildMemberLevel (3), level (85), allyCode, gp, gpChar, gpShip, updated (bigint)
 		console.log("====="); // */
 
-		let biggest = {gp: 0}; // biggest player
-		let leader = {};
-		let players = {}; // allycode => (IG nick) name
-		let officerNames = [];
+		guild.biggestPlayer = {gp: 0};
+		guild.leader = {};
+		guild.players = {}; // allycode => (IG nick) name
+		guild.officerNames = [];
 		let unitCounts = {};
 
 		roster.forEach(function(player) {
-			players[player.allyCode] = player.name;
+			guild.players[player.allyCode] = player.name;
 
-			if (player.gp > biggest.gp) biggest = player;
+			if (player.gp > guild.biggestPlayer.gp) guild.biggestPlayer = player;
 
 			switch(player.guildMemberLevel) {
 				case 2: // member
 					break;
 
 				case 3: // officer
-					officerNames.push(player.name);
+					guild.officerNames.push(player.name);
 					break;
 
 				case 4: // chief or grand-master (GM)
-					leader = player;
+					guild.leader = player;
 					break;
 
 				default:
@@ -250,15 +250,9 @@ exports.getPlayerGuild = async function(allycodes, message, callback) {
 			}
 		});
 
-		console.log(logPrefix()+"Found %d players in guild:", Object.keys(players).length, guild.name);
+		console.log(logPrefix()+"Found %d players in guild:", Object.keys(guild.players).length, guild.name);
 
-		if (typeof(callback)==="function")
-			callback(guild, {
-				biggestPlayer: biggest,
-				leader: leader,
-				officerNames: officerNames,
-				players: players
-			});
+		if (typeof(callback)==="function") callback(guild);
 	} catch(ex) {
 		let allycode = allycodes[0];
 
