@@ -217,21 +217,7 @@ exports.getGuildStats = function(allycode, message) {
                 message.reply(richMsg);
 
 				// Remember stats of the guild:
-				let sql = "REPLACE INTO `guilds` (swgoh_id, name) VALUES ?";
-                let values = [[guild.id, guild.name]];
-
-				db_pool.query(sql, [values], function(exc, result) {
-					if (exc) {
-						let otd = exc.sqlMessage? exc.sqlMessage: exc;
-						// otd = object to display
-
-						console.log("SQL:", sql);
-						console.log(logPrefix()+"GS Exception:", otd);
-						return;
-					}
-
-					console.log(logPrefix()+"%d guild updated.", result.affectedRows);
-				});
+                exports.rememberGuildStats(guild);
 			});
 		})
 		.catch(console.error);
@@ -383,7 +369,6 @@ exports.getUnregPlayers = function(allycode, message) {
 					return;
 				}
 
-				// Remember stats of the guild:
 				let sql = "SELECT * FROM `users` WHERE allycode IN (?)";
                 let values = Object.keys(guild.players);
                 let n = values.length;
@@ -429,10 +414,79 @@ exports.getUnregPlayers = function(allycode, message) {
 		.catch(console.error);
 };
 
+exports.guildPlayerStats = function(allycode, message) {
+    let locale = config.discord.locale; // shortcut
+    let logPrefix = exports.logPrefix; // shortcut
+
+	if (!allycode) {
+		message.reply(":red_circle: Invalid or missing allycode!");
+		return;
+	}
+
+	message.channel.send("Looking for stats of guild with ally: "+allycode+"...")
+		.then(msg => {
+			swgoh.getPlayerGuild(allycode, message, function(guild) {
+                let msg = "";
+
+				if (typeof(msg.delete)==="function") msg.delete();
+
+				if (!guild.gp) {
+                    msg = "Invalid guild GP: "+guild.gp;
+					console.log(logPrefix()+msg);
+                    message.reply(msg);
+					return;
+				}
+
+                richMsg = new RichEmbed().setTitle(guild.name).setColor("GREEN")
+                    .setAuthor(config.discord.username)
+                    .setDescription([
+                        "**Guild description:** "+guild.desc,
+                        "", "**Officers ("+guild.officerNames.length+"):** "+guild.officerNames.sort().join(", ")
+                    ])
+                    .addField("GP:",
+                        guild.gp.toLocaleString(locale), true)
+                    .addField("Member count:",
+                        guild.members, true)
+                    .addField("GP average:",
+                        Math.round(guild.gp/guild.members).toLocaleString(locale), true)
+                    .addField("Leader:",
+                        guild.leader.name +" (GP: "+ guild.leader.gp.toLocaleString(locale)+")", true)
+                    .addField("Biggest GP:",
+                        guild.biggestPlayer.name+" (GP: "+guild.biggestPlayer.gp.toLocaleString(locale)+")", true)
+                    .setTimestamp(guild.updated)
+                    .setFooter(config.footer.message, config.footer.iconUrl);
+                message.reply(richMsg);
+
+				// Remember stats of the guild:
+                exports.rememberGuildStats(guild);
+			});
+		})
+		.catch(console.error);
+};
+
 exports.logPrefix = function () {
 	let dt = new Date();
 
 	return dt.toString().replace(/ GMT.*$$/, "")+" - ";
+};
+
+/** Remember stats of the guild */
+exports.rememberGuildStats = function(guild) {
+    let sql = "REPLACE INTO `guilds` (swgoh_id, name) VALUES ?";
+    let values = [[guild.id, guild.name]];
+
+    db_pool.query(sql, [values], function(exc, result) {
+        if (exc) {
+            let otd = exc.sqlMessage? exc.sqlMessage: exc;
+            // otd = object to display
+
+            console.log("SQL:", sql);
+            console.log(logPrefix()+"GS Exception:", otd);
+            return;
+        }
+
+        console.log(exports.logPrefix()+"%d guild updated.", result.affectedRows);
+    });
 };
 
 exports.showCharInfo = function(player, message, charName) {

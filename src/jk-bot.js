@@ -284,6 +284,26 @@ client.on("message", (message) => {
 			}
 			break;
 
+		case "gps":
+		case "guildPlayerStat":
+		case "guildPlayerStats":
+			// Extract user's tag (if any):
+			if (message.mentions && message.mentions.users && message.mentions.users.first()) {
+				user = message.mentions.users.first();
+				nick = user.username;
+			}
+
+			allycode = tools.getFirstAllycodeInWords(args);
+			if (allycode) {
+				tools.guildPlayerStats(allycode, message);
+			} else {
+				console.log(logPrefix()+"Try with user ID:", user.id);
+				tools.getPlayerFromDiscordId(user.id, message, function(player) {
+					if (player) tools.guildPlayerStats(player.allycode, message);
+				});
+			}
+			break;
+
 		case "gu":
 		case "gup":
 		case "getunregistered":
