@@ -40,7 +40,7 @@ exports.getPlayerData = async function(allycodes, message, callback) {
 
 		if (warning) {
 			if (warning.error && warning.error===warning.message) delete warning.error;
-			console.log(logPrefix()+"MyWARN: ", warning);
+			console.log(logPrefix()+"GP WARN: ", warning);
 			message.channel.send(warning.message);
 		}
 
@@ -169,7 +169,8 @@ exports.getPlayerData = async function(allycodes, message, callback) {
 
 exports.getPlayerGuild = async function(allycodes, message, callback) {
 	try {
-		if ( ! (allycodes instanceof Array) ) allycodes = [allycodes];
+		if ( typeof(allycodes)!=="object" || ! (allycodes instanceof Array) )
+			allycodes = [allycodes];
 
 		let allycode = allycodes[0];
 		let msg = "";
@@ -178,15 +179,15 @@ exports.getPlayerGuild = async function(allycodes, message, callback) {
 		let richMsg = null;
 		let roster = null;
 
-		if (warning) {
+		/* if (warning) { // useless
 			if (warning.error && warning.error===warning.message) delete warning.error;
-			console.log(logPrefix()+"MyWARN: ", warning);
+			console.log(logPrefix()+"GS WARN: ", warning);
 			message.channel.send(warning.message);
-		}
+		} // */
 
 		if (error) {
 			if (error.error && error.error===error.message) delete error.error;
-			console.log(logPrefix()+"My ERR: ", error);
+			console.log(logPrefix()+"GS ERR: ", error);
 			richMsg = new RichEmbed().setTitle("Error!").setColor("RED")
 				.setDescription(error.message)
 				.setFooter(config.footer.message, config.footer.iconUrl);

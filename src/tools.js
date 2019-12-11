@@ -185,8 +185,6 @@ exports.getGuildStats = function(allycode, message) {
 	message.channel.send("Looking for stats of guild with ally: "+allycode+"...")
 		.then(msg => {
 			swgoh.getPlayerGuild(allycode, message, function(guild) {
-                let msg = "";
-
 				if (typeof(msg.delete)==="function") msg.delete();
 
 				if (!guild.gp) {
@@ -263,41 +261,37 @@ exports.getPlayerFromDatabase = function(allycode, message, callback) {
 		}
 
 		console.log(logPrefix()+result.length+" record(s) match(es) allycode:", allycode);
-		// console.dir(result);
-		if (result.length === 1) {
-			player = result[0];
-			console.log(logPrefix()+"Found user:", player.discord_name);
-
-			// Get player's units:
-			sql = "SELECT * FROM `units` WHERE allycode="+parseInt(allycode);
-			sql+= " AND `combatType`=1"; // keep only characters (exclude ships)
-
-			db_pool.query(sql, function(exc, result) {
-				if (exc) {
-					console.log("SQL:", sql);
-					console.log(logPrefix()+"GPFAC2 Exception:", exc.sqlMessage? exc.sqlMessage: exc);
-
-					if (typeof(callback)==="function") callback(player);
-					return;
-				}
-
-				// Add units to the player object:
-				console.log(logPrefix()+"GPFAC get %d characters for:", result.length, player.discord_name);
-				player.unitsData = {length: 0};
-				result.forEach(function(u) {
-					player.unitsData.length++;
-					player.unitsData[u.name] = u;
-				});
-
-				if (typeof(callback)==="function") callback(player);
-			});
-			return;
+		if ( ! result.length ) {
+            console.log(logPrefix()+"User with allycode "+allycode+" not registered.");
+            message.channel.send("I don't know this player yet. You may use the 'register' command.");
+            if (typeof(callback)==="function") callback(player);
+            return;
 		}
 
-		console.log(logPrefix()+"User with allycode "+allycode+" not found!");
-		message.reply("I don't know this player. Register her/him first please.");
+        player = result[result.length - 1]; // take last match
+        console.log(logPrefix()+"Found user:", player.discord_name);
 
-		if (typeof(callback)==="function") callback(player);
+        // Get player's units:
+        sql = "SELECT * FROM `units` WHERE allycode="+parseInt(allycode);
+
+        db_pool.query(sql, function(exc, result) {
+            if (exc) {
+                console.log("SQL:", sql);
+                console.log(logPrefix()+"GPFAC2 Exception:", exc.sqlMessage? exc.sqlMessage: exc);
+                message.reply("Failed! "+(exc.sqlMessage? exc.sqlMessage: exc));
+                return;
+            }
+
+            // Add units to the player object:
+            console.log(logPrefix()+"GPFAC get %d characters for:", result.length, player.discord_name);
+            player.unitsData = {length: 0};
+            result.forEach(function(u) {
+                player.unitsData.length++;
+                player.unitsData[u.name] = u;
+            });
+
+            if (typeof(callback)==="function") callback(player);
+        });
 	});
 };
 
@@ -426,8 +420,6 @@ exports.guildPlayerStats = function(allycode, message) {
 	message.channel.send("Looking for stats of guild with ally: "+allycode+"...")
 		.then(msg => {
 			swgoh.getPlayerGuild(allycode, message, function(guild) {
-                let msg = "";
-
 				if (typeof(msg.delete)==="function") msg.delete();
 
 				if (!guild.gp) {
@@ -777,10 +769,11 @@ exports.updatePlayerDataInDb = function(player, message, callback) {
 		if (oldPlVersion && oldPlVersion.gp) {
 			// Check for evolutions:
 			let newUnitCount = 0;
+			let nbChars = 0;
 			let nbShips = 0;
-			let oldCharsCount = oldPlVersion.unitsData.length;
+			let oldUnitsCount = oldPlVersion.unitsData.length;
 
-			console.log(logPrefix()+"Old chars count:", oldCharsCount);
+			console.log(logPrefix()+"Old chars count:", oldUnitsCount);
 			player.unitsData.forEach(function(u) {
 				let oldUnit = oldPlVersion.unitsData[u.name];
 
@@ -789,15 +782,19 @@ exports.updatePlayerDataInDb = function(player, message, callback) {
 				// Compare old & new units:
 				// Look for new units:
 				if (typeof(oldUnit)==="undefined") {
-					if (u.combatType===1) {
-						if (oldCharsCount) { // New character:
-							msg += " unlocked "+u.name;
-							console.log(logPrefix()+msg);
-
-							lines.push([allycode, u.name, "new", 1]);
-						}
+                    if (oldUnitsCount) { // New unit:
 						++newUnitCount;
-					} else ++nbShips;
+                        msg += " unlocked "+u.name;
+                        console.log(logPrefix()+msg);
+
+                        lines.push([allycode, u.name, "new", 1]);
+                    }
+
+					if (u.combatType===1)
+						++nbChars;
+					else
+                        ++nbShips;
+
 					return;
 				}
 

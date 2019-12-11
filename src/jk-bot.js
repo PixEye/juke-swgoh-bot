@@ -454,7 +454,12 @@ client.on("message", (message) => {
 			});
 			break;
 
+		case "tc":
+		case "rel":
+		case "relic":
 		case "relics":
+		case "topchar":
+		case "topchars":
 			// Extract user's tag (if any):
 			if (message.mentions && message.mentions.users && message.mentions.users.first()) {
 				user = message.mentions.users.first();
