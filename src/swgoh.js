@@ -38,11 +38,11 @@ exports.getPlayerData = async function(allycodes, message, callback) {
 		let roster = null;
 		let stats  = null;
 
-		if (warning) {
+		/* if (warning) { // useless
 			if (warning.error && warning.error===warning.message) delete warning.error;
 			console.log(logPrefix()+"GP WARN: ", warning);
 			message.channel.send(warning.message);
-		}
+		} // */
 
 		if (error) {
 			if (error.error && error.error===error.message) delete error.error;
