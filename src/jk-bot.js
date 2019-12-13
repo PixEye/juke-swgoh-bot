@@ -556,6 +556,7 @@ client.on("message", (message) => {
 			sql+= " ORDER BY cnt DESC, g.name ASC";
 
 			db_pool.query(sql, function(exc, result) {
+				let maxLines = 10;
 				let tpc = 0; // total player count
 
 				if (exc) {
@@ -568,9 +569,13 @@ client.on("message", (message) => {
 
 				if (result.length) {
 					lines.push("");
-					result.forEach(function(record) {
+					result.forEach(function(record, i) {
 						tpc+= record.cnt;
-						lines.push(record.cnt+" player(s) in: "+record.name);
+
+						if (i<maxLines)
+							lines.push(record.cnt+" player(s) in: "+record.name);
+						else if (i===maxLines)
+							lines.push("And "+(result.length - i)+" more...");
 					});
 				}
 				console.log(logPrefix()+"%d guilds & %d users in the result", result.length, tpc);
