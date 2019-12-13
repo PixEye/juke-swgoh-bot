@@ -112,7 +112,6 @@ exports.checkUnitsGp = function(player, message, limit) {
 	let maxGp = limit*1000;
     let maxLines = 10;
 	let minGp = minit*1000;
-	let minCharLevel = 50;
 	let n = 0;
 	let units = player.unitsData.filter(function(unit) {
 			// Main filter:
@@ -613,7 +612,7 @@ exports.showLastEvols = function(player, message, evols) {
 			}
 
 			if (i<maxLines)
-				lines.push(msg);
+				lines.push("`"+msg+"`");
 			else if (i===maxLines)
 				lines.push("And some more...");
 		});

@@ -82,9 +82,11 @@ client.on("message", (message) => {
 	// public commands:
 	switch (command) {
 		case "about":
-			msg = "This bot is written by Juke (Discor #4992) also known as PixEye.";
-			richMsg = new RichEmbed().setTitle("About").setColor("GREEN")
-				.setDescription([msg]).setTimestamp(message.createdTimestamp)
+			lines.push("This bot is written by <@222443133294739456> (aka PixEye).");
+			lines.push("Report him any bug or enhancement request.");
+			lines.push("This instance of the bot is owned by <@"+config.discord.ownerID+">.");
+			richMsg = new RichEmbed().setTitle("About the author").setColor("GREEN")
+				.setDescription(lines).setTimestamp(message.createdTimestamp)
 				.setFooter(config.footer.message, config.footer.iconUrl);
 			message.channel.send(richMsg);
 			break;
@@ -101,7 +103,7 @@ client.on("message", (message) => {
 			richMsg = new RichEmbed().setTitle("Liste des commandes")
 				.setDescription([
 					"**Commandes utilisateur :**",
-					" about, aide, allycode (ac), charInfo (ci), checkMods (cm), checkUnitsGp (cugp)"+
+					" aide, allycode (ac), auteur, charInfo (ci), checkMods (cm), checkUnitsGp (cugp)"+
 					", dis, getUnregisteredPlayers (gup), guildStats (gs), help, invite"+
 					", (last)evols (le), playerStats (ps)"+
 					", register (reg), relics, repete, self(y), start, stats, status, whoami, whois",
@@ -145,6 +147,16 @@ client.on("message", (message) => {
 					}
 				}
 			});
+			break;
+
+		case "auteur":
+			lines.push("Ce bot a été écrit par <@222443133294739456> (aka PixEye).");
+			lines.push("En cas de bug ou de demande d'amélioration, contactez-le.");
+			lines.push("Cette instance du bot appartient à <@"+config.discord.ownerID+">.");
+			richMsg = new RichEmbed().setTitle("A propos de l'auteur").setColor("GREEN")
+				.setDescription(lines).setTimestamp(message.createdTimestamp)
+				.setFooter(config.footer.message, config.footer.iconUrl);
+			message.channel.send(richMsg);
 			break;
 
 		case "ci":
@@ -237,6 +249,16 @@ client.on("message", (message) => {
 					if (player) tools.getPlayerStats(player.allycode, message, tools.checkPlayerMods);
 				});
 			}
+			break;
+
+		case "licence":
+		case "license":
+			lines.push("This free software is published under the Apache License 2.0");
+			lines.push("https://choosealicense.com/licenses/apache-2.0/");
+			richMsg = new RichEmbed().setTitle("License").setColor("GREEN")
+				.setDescription(lines).setTimestamp(message.createdTimestamp)
+				.setFooter(config.footer.message, config.footer.iconUrl);
+			message.channel.send(richMsg);
 			break;
 
 		case "destroy":
@@ -343,9 +365,9 @@ client.on("message", (message) => {
 
 		case "invite":
 			// https://discordapp.com/api/oauth2/authorize?client_id=629346604075450399&permissions=2112&scope=bot
-			msg = "Follow this link to invite me to your server(s): http://bit.ly/JukeSwgohBot";
+			lines.push("Follow this link to invite me to your server(s): http://bit.ly/JukeSwgohBot");
 			richMsg = new RichEmbed().setTitle("Invite").setColor("GREEN")
-				.setDescription([msg]).setTimestamp(message.createdTimestamp)
+				.setDescription(lines).setTimestamp(message.createdTimestamp)
 				.setFooter(config.footer.message, config.footer.iconUrl);
 			message.channel.send(richMsg);
 			break;
