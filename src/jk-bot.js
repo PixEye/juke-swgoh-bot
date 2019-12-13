@@ -84,6 +84,7 @@ client.on("message", (message) => {
 		case "about":
 			lines.push("This bot is written by <@222443133294739456> (aka PixEye).");
 			lines.push("Report him any bug or enhancement request.");
+			lines.push("");
 			lines.push("This instance of the bot is owned by <@"+config.discord.ownerID+">.");
 			richMsg = new RichEmbed().setTitle("About the author").setColor("GREEN")
 				.setDescription(lines).setTimestamp(message.createdTimestamp)
@@ -152,6 +153,7 @@ client.on("message", (message) => {
 		case "auteur":
 			lines.push("Ce bot a été écrit par <@222443133294739456> (aka PixEye).");
 			lines.push("En cas de bug ou de demande d'amélioration, contactez-le.");
+			lines.push("");
 			lines.push("Cette instance du bot appartient à <@"+config.discord.ownerID+">.");
 			richMsg = new RichEmbed().setTitle("A propos de l'auteur").setColor("GREEN")
 				.setDescription(lines).setTimestamp(message.createdTimestamp)
@@ -254,7 +256,7 @@ client.on("message", (message) => {
 		case "licence":
 		case "license":
 			lines.push("This free software is published under the Apache License 2.0");
-			lines.push("https://choosealicense.com/licenses/apache-2.0/");
+			lines.push("http://www.apache.org/licenses/LICENSE-2.0");
 			richMsg = new RichEmbed().setTitle("License").setColor("GREEN")
 				.setDescription(lines).setTimestamp(message.createdTimestamp)
 				.setFooter(config.footer.message, config.footer.iconUrl);
