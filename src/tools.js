@@ -196,19 +196,18 @@ exports.getGuildStats = function(allycode, message) {
                 richMsg = new RichEmbed().setTitle(guild.name).setColor("GREEN")
                     .setAuthor(config.discord.username)
                     .setDescription([
-                        "**Guild description:** "+guild.desc,
-                        "", "**Officers ("+guild.officerNames.length+"):** "+guild.officerNames.sort().join(", ")
+                        "**Guild description:** "+guild.desc, "",
+                        "**Officers ("+guild.officerNames.length+"):** "+
+                            guild.officerNames.sort().join(", ")
                     ])
-                    .addField("GP:",
-                        guild.gp.toLocaleString(locale), true)
-                    .addField("Member count:",
-                        guild.members, true)
+                    .addField("GP:", guild.gp.toLocaleString(locale), true)
+                    .addField("Member count:", guild.members, true)
                     .addField("GP average:",
                         Math.round(guild.gp/guild.members).toLocaleString(locale), true)
-                    .addField("Leader:",
-                        guild.leader.name +" (GP: "+ guild.leader.gp.toLocaleString(locale)+")", true)
-                    .addField("Biggest GP:",
-                        guild.biggestPlayer.name+" (GP: "+guild.biggestPlayer.gp.toLocaleString(locale)+")", true)
+                    .addField("Leader:", guild.leader.name+
+                        " (GP: "+ guild.leader.gp.toLocaleString(locale)+")", true)
+                    .addField("Biggest GP:", guild.biggestPlayer.name+
+                        " (GP: "+guild.biggestPlayer.gp.toLocaleString(locale)+")", true)
                     .setTimestamp(guild.updated)
                     .setFooter(config.footer.message, config.footer.iconUrl);
                 message.reply(richMsg);
@@ -481,7 +480,13 @@ exports.rememberGuildStats = function(guild) {
 };
 
 exports.showCharInfo = function(player, message, charName) {
+	let color = "RED";
+	let foundUnit = null;
+	let hiddenFields = ["allycode", "combatType", "name"];
+	let lines = [];
     let logPrefix = exports.logPrefix; // shortcut
+	let pattern = null;
+	let strToLookFor = charName.replace(/ /g, "").replace(/-/g, '_').toUpperCase();
 
 	if (!player.gp) {
 		console.log(logPrefix()+"invalid GP for user:", player);
@@ -489,13 +494,6 @@ exports.showCharInfo = function(player, message, charName) {
 	}
 
 	exports.updatePlayerDataInDb(player, message);
-
-	let color = "RED";
-	let foundUnit = null;
-	let hiddenFields = ["allycode", "combatType", "name"];
-	let lines = [];
-	var pattern = null;
-	let strToLookFor = charName.replace(/ /g, "").toUpperCase();
 
 	console.log(logPrefix()+"Name to look for:", strToLookFor);
 	pattern = new RegExp("^"+strToLookFor);
@@ -529,33 +527,41 @@ exports.showCharInfo = function(player, message, charName) {
 	richMsg.setThumbnail("https://swgoh.gg/game-asset/u/"+foundUnit.name+"/")
 		.setTitle(player.name+"'s "+charName+" ("+foundUnit.name+")");
 
+    // Start with stars:
+    key = 'stars';
+    val = foundUnit[key];
+    key+= " ("+val+")";
+    val = ":star:".repeat(val);
+    val = "**"+exports.ucfirst(key)+":** "+val;
+    lines.push(val);
+    delete foundUnit.stars;
+
+    // Continue with others keys:
 	Object.keys(foundUnit).forEach(function(key) {
 		var val = foundUnit[key];
 
 		if (hiddenFields.indexOf(key)<0) {
 			switch(key) {
 				case "gp":
+                    key = "GP";
 					val = val.toLocaleString();
 					break;
-
-				case "gear":
-				case "relic":
-				case "zetaCount":
-					val = val? "**"+val+"**": val;
-					break;
-
 				case "mods":
 					val = val.length;
 					break;
-
-				case "stars":
-					key+= " ("+val+")";
-					val = ":star:".repeat(val);
-					break;
 			}
-			richMsg.addField(exports.ucfirst(key)+":", val, true);
+
+			// richMsg.addField(exports.ucfirst(key)+":", val, true);
+            val = "**"+exports.ucfirst(key)+":** "+val;
+            if (lines.length && lines[lines.length-1].length<30)
+                lines[lines.length-1] += " ; "+val;
+            else
+                lines.push(val);
 		}
 	});
+
+    // Build the message & show it:
+    if (lines.length) richMsg.setDescription(lines);
 	message.channel.send(richMsg);
 };
 
