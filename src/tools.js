@@ -479,14 +479,14 @@ exports.rememberGuildStats = function(guild) {
     });
 };
 
-exports.showCharInfo = function(player, message, charName) {
+exports.showUnitInfo = function(player, message, unitName, ct) {
 	let color = "RED";
 	let foundUnit = null;
 	let hiddenFields = ["allycode", "combatType", "name"];
 	let lines = [];
     let logPrefix = exports.logPrefix; // shortcut
 	let pattern = null;
-	let strToLookFor = charName.replace(/ /g, "").replace(/-/g, '_').toUpperCase();
+	let strToLookFor = unitName.replace(/ /g, "").replace(/-/g, '_').toUpperCase();
 
 	if (!player.gp) {
 		console.log(logPrefix()+"invalid GP for user:", player);
@@ -497,9 +497,10 @@ exports.showCharInfo = function(player, message, charName) {
 
 	console.log(logPrefix()+"Name to look for:", strToLookFor);
 	pattern = new RegExp("^"+strToLookFor);
+    if (!ct) ct = 1; // combatType: 1 for characters / 2 for ships
 
 	player.unitsData.forEach(function(unit) {
-		if (!foundUnit && unit.combatType===1 && unit.name.match(pattern)) {
+		if (!foundUnit && unit.combatType===ct && unit.name.match(pattern)) {
 			color = "GREEN";
 			foundUnit = unit;
 		}
@@ -507,7 +508,7 @@ exports.showCharInfo = function(player, message, charName) {
 
 	if (!foundUnit) {
 		player.unitsData.forEach(function(unit) {
-			if (!foundUnit && unit.combatType===1 && unit.name.indexOf(strToLookFor)>=0) {
+			if (!foundUnit && unit.combatType===ct && unit.name.indexOf(strToLookFor)>=0) {
 				color = "GREEN";
 				foundUnit = unit;
 			}
@@ -518,14 +519,14 @@ exports.showCharInfo = function(player, message, charName) {
 		.setFooter(config.footer.message, config.footer.iconUrl);
 
 	if (!foundUnit) {
-		lines = ["Did not find a character named '"+charName+"' in this roster!"];
-		richMsg.setDescription(lines).setTitle(player.name+"'s "+charName);
+		lines = ["Did not find a unit named '"+unitName+"' in this roster!"];
+		richMsg.setDescription(lines).setTitle(player.name+"'s "+unitName);
 		message.reply(richMsg);
 		return;
 	}
 
 	richMsg.setThumbnail("https://swgoh.gg/game-asset/u/"+foundUnit.name+"/")
-		.setTitle(player.name+"'s "+charName+" ("+foundUnit.name+")");
+		.setTitle(player.name+"'s "+unitName+" ("+foundUnit.name+")");
 
     // Start with stars:
     key = 'stars';
@@ -604,7 +605,7 @@ exports.showLastEvols = function(player, message, evols) {
 					msg+= " turned G"+e.new_value;
 					break;
 				case "new":
-					msg+= " unlocked.";
+					msg+= " unlocked";
 					break;
 				case "star":
 					msg+= " turned "+e.new_value+"*";

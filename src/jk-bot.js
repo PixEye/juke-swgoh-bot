@@ -106,8 +106,8 @@ client.on("message", (message) => {
 					"**Commandes utilisateur :**",
 					" aide, allycode (ac), auteur, charInfo (ci), checkMods (cm), checkUnitsGp (cugp)"+
 					", dis, getUnregisteredPlayers (gup), guildStats (gs), help, invite"+
-					", (last)evols (le), playerStats (ps)"+
-					", register (reg), relics, repete, self(y), start, stats, status, whoami, whois",
+					", (last)evols (le), playerStats (ps), register (reg), relics"+
+					", repete, self(y), shipInfo (si), start, stats, status, whoami, whois",
 					"**Commandes pour l'administrateur :** admin, query/req(uest), stop/stoppe",
 					"**NB :** en mp, le préfixe est optionnel."])
 				.setTimestamp(message.createdTimestamp)
@@ -190,13 +190,13 @@ client.on("message", (message) => {
 			console.log(logPrefix()+"Character to look for is:", msg);
 			if (allycode) {
 				tools.getPlayerStats(allycode, message, function(player, message) {
-					return tools.showCharInfo(player, message, msg);
+					return tools.showUnitInfo(player, message, msg, 1);
 				});
 			} else {
 				console.log(logPrefix()+"Try with user ID:", user.id);
 				tools.getPlayerFromDiscordId(user.id, message, function(player) {
 					if (player) tools.getPlayerStats(player.allycode, message, function(player, message) {
-						return tools.showCharInfo(player, message, msg);
+						return tools.showUnitInfo(player, message, msg, 1);
 					});
 				});
 			}
@@ -356,8 +356,8 @@ client.on("message", (message) => {
 					"**User commands:**",
 					" about, aide, allycode (ac), charInfo (ci), checkMods (cm), checkUnitsGp (cugp)"+
 					", getUnregisteredPlayers (gup), guildStats (gs), help, invite, (last)evols (le)"+
-					", playerStat (ps), register (reg)"+
-					", relics, repeat, say, self(y), start, stats, status, whoami, whois",
+					", playerStat (ps), register (reg), relics, repeat, say"+
+					", self(y), shipInfo (si), start, stats, status, whoami, whois",
 					"**Admin commands:** admin, destroy/leave/shutdown/stop, query/req(uest)",
 					"**NB:** in DM, the prefix is optional."])
 				.setTimestamp(message.createdTimestamp)
@@ -476,6 +476,46 @@ client.on("message", (message) => {
 					}
 				});
 			});
+			break;
+
+		case "si":
+		case "shipinfo":
+			// Extract user's tag (if any):
+			if (message.mentions && message.mentions.users && message.mentions.users.first()) {
+				user = message.mentions.users.first();
+				nick = user.username;
+			}
+
+			allycode = tools.getFirstAllycodeInWords(args);
+
+			// Look for a ship name:
+			args.forEach(function(word) {
+				// ignore tags/mentions & allycodes:
+				if (word.indexOf("<")<0 && word.match(/[a-z]/i)) {
+					msg+= " "+tools.ucfirst(word);
+				}
+			});
+
+			if (!msg) {
+				console.warn(logPrefix()+"No ship name found in the message!" );
+				message.reply("No ship name found in your message!");
+				return;
+			}
+
+			msg = msg.trim();
+			console.log(logPrefix()+"Ship to look for is:", msg);
+			if (allycode) {
+				tools.getPlayerStats(allycode, message, function(player, message) {
+					return tools.showUnitInfo(player, message, msg, 2);
+				});
+			} else {
+				console.log(logPrefix()+"Try with user ID:", user.id);
+				tools.getPlayerFromDiscordId(user.id, message, function(player) {
+					if (player) tools.getPlayerStats(player.allycode, message, function(player, message) {
+						return tools.showUnitInfo(player, message, msg, 2);
+					});
+				});
+			}
 			break;
 
 		case "tc":
