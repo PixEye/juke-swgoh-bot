@@ -32,8 +32,8 @@ exports.getPlayerData = async function(allycodes, message, callback) {
 
 		if ( ! (allycodes instanceof Array) ) allycodes = [allycodes];
 
-		let payload  = { "allycodes": allycodes };
-		let { result, error, warning } = await swapi.fetchPlayer(payload); // <--
+		let input  = { "allycodes": allycodes }; // payload
+		let { result, error, warning } = await swapi.fetchPlayer(input); // <--
 		let richMsg = null;
 		let roster = null;
 		let stats  = null;
@@ -174,8 +174,8 @@ exports.getPlayerGuild = async function(allycodes, message, callback) {
 
 		let allycode = allycodes[0];
 		let msg = "";
-		let payload  = { allycodes: allycodes };
-		let { result, error, warning } = await swapi.fetchGuild(payload); // <--
+		let input  = { "allycodes": allycodes }; // payload
+		let { result, error, warning } = await swapi.fetchGuild(input); // <--
 		let richMsg = null;
 		let roster = null;
 
@@ -197,10 +197,10 @@ exports.getPlayerGuild = async function(allycodes, message, callback) {
 
 		if (!result) {
 			// Fail:
-			console.log(logPrefix()+"Guild with ally "+allycode+" not found: "+typeof(player));
-			message.reply( "Guild with ally "+allycode+" not found: "+typeof(player));
+			msg = "Guild with ally "+allycode+" not found: "+typeof(player);
+			console.log(logPrefix()+msg);
 			richMsg = new RichEmbed().setTitle("Warning!").setColor("ORANGE")
-				.setDescription(["Ally " + allycode+" not found: "+typeof(player)])
+				.setDescription([msg])
 				.setFooter(config.footer.message, config.footer.iconUrl);
 			message.channel.send(richMsg);
 			return;
@@ -226,7 +226,6 @@ exports.getPlayerGuild = async function(allycodes, message, callback) {
 		guild.leader = {};
 		guild.players = {}; // allycode => (IG nick) name
 		guild.officerNames = [];
-		let unitCounts = {};
 
 		roster.forEach(function(player) {
 			guild.players[player.allyCode] = player.name;
@@ -245,7 +244,7 @@ exports.getPlayerGuild = async function(allycodes, message, callback) {
 					guild.leader = player;
 					break;
 
-				default:
+				default: // should not happen
 					msg = "Found a player with guildMemberLevel of %s: ";
 					console.warn(msg, player.guildMemberLevel, player);
 			}
@@ -255,8 +254,6 @@ exports.getPlayerGuild = async function(allycodes, message, callback) {
 
 		if (typeof(callback)==="function") callback(guild);
 	} catch(ex) {
-		let allycode = allycodes[0];
-
 		console.log(logPrefix()+"Guild exception: ", ex);
 		richMsg = new RichEmbed().setTitle("Error!").setColor("RED")
 			.setDescription(["Failed to get guild with ally: "+allycode])
