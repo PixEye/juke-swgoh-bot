@@ -153,6 +153,7 @@ exports.getPlayerData = async function(allycodes, message, callback) {
 			player.g12Count = unitsCountByGear[12];
 			player.g13Count = unitsCountByGear[13];
 			player.shipCount = unitsByCombaType[2];
+			player.title = player.titles.selected.replace('PLAYERTITLE_', '').replace(/_/g, ' ');
 			player.zetaCount = zetaCount;
 
 			if (typeof(callback)==="function") callback(player, message);

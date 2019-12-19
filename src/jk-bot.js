@@ -109,7 +109,10 @@ client.on("message", (message) => {
 					", (last)evols (le), playerStats (ps), register (reg), relics"+
 					", repete, self(y), shipInfo (si), start, stats, status, whoami, whois",
 					"**Commandes pour l'administrateur :** admin, query/req(uest), stop/stoppe",
-					"**NB :** en mp, le préfixe est optionnel."])
+					"**NB1 :** en mp, le préfixe est optionnel.",
+					"**NB2 :** la plupart des commandes accepte un tag ou un code allié (9 chiffres).",
+					"**NB3 :** la \"cible\" par défaut est la personne qui tape la commande (\"me\" inutile).",
+					"**NB4 :** l'ordre des arguments n'importe pas."])
 				.setTimestamp(message.createdTimestamp)
 				.setFooter(config.footer.message, config.footer.iconUrl);
 			message.channel.send(richMsg);
@@ -359,7 +362,10 @@ client.on("message", (message) => {
 					", playerStat (ps), register (reg), relics, repeat, say"+
 					", self(y), shipInfo (si), start, stats, status, whoami, whois",
 					"**Admin commands:** admin, destroy/leave/shutdown/stop, query/req(uest)",
-					"**NB:** in DM, the prefix is optional."])
+					"**NB1:** in DM, prefix is optional.",
+					"**NB2:** most of commands accept a user's tag or an ally code (9 digits).",
+					"**NB3:** the default target is the command writer (\"me\" is useless).",
+					"**NB4:** order of arguments is up to you (whatever the one you choose)."])
 				.setTimestamp(message.createdTimestamp)
 				.setFooter(config.footer.message, config.footer.iconUrl);
 			message.channel.send(richMsg);
@@ -377,6 +383,7 @@ client.on("message", (message) => {
 		case "le":
 		case "evol":
 		case "evols":
+		case "lastevol":
 		case "lastevols":
 			// Extract user's tag (if any):
 			if (message.mentions && message.mentions.users && message.mentions.users.first()) {

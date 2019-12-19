@@ -697,19 +697,20 @@ exports.showPlayerStats = function(player, message) {
 
 	let richMsg = new RichEmbed().setTitle(player.name+"'s profile").setColor("GREEN")
 		.setDescription([
-			"**Level:** "+player.level+"\t - "+
+			"**Level:** "+player.level+" - "+
 			"**GP:** "+(player.gp.toLocaleString(config.discord.locale)),
+			"**Title:** "+player.title,
 			"**Guild name:** "+player.guildName,
 			"",
-			"**Zeta count:** "+player.zetaCount+"\t - "+
+			"**Zeta count:** "+player.zetaCount+" - "+
 			"**G13 count:** "+player.g13Count,
-			"**G12 count:** "+player.g12Count+"\t - "+
+			"**G12 count:** "+player.g12Count+" - "+
 			"**G11 count:** "+player.g11Count,
 			"",
-			"**Ground arena rank:** "+player.arena.char.rank+"\t - "+
+			"**Ground arena rank:** "+player.arena.char.rank+" - "+
 			"**Ship rank:** "+player.arena.ship.rank,
 			"",
-			"**Number of chars:** "+player.charCount+"\t - "+
+			"**Number of chars:** "+player.charCount+" - "+
 			"**Number of ships:** "+player.shipCount,
 			"**Total number of unlocked units:** "+player.unitCount
 		])
