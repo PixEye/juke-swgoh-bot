@@ -21,9 +21,12 @@ const start = Date();
 // Database connection:
 const mysql = require("mysql");
 
-// Load my other modules:
+// Load other modules:
 const swgoh = require("./swgoh"); // SWGoH API
-const tools = require("./tools"); // My functions
+const tools = require("./tools"); // Several functions
+
+// Shortcut(s):
+let logPrefix = tools.logPrefix;
 
 // Prepare DB connection pool:
 const db_pool = mysql.createPool({
@@ -33,9 +36,6 @@ const db_pool = mysql.createPool({
 	password       : config.db.pw,
 	user           : config.db.user
 });
-
-// Shortcut(s):
-let logPrefix = tools.logPrefix;
 
 console.log(logPrefix()+"Loading...");
 

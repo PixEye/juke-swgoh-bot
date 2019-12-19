@@ -7,7 +7,7 @@
 // jshint esversion: 8
 
 // Extract the required classes from the discord.js module:
-const { Client, RichEmbed } = require("discord.js");
+const { RichEmbed } = require("discord.js");
 
 // Create an instance of a Discord client:
 //const client = new Client();
@@ -21,9 +21,12 @@ const config = require("./config.json");
 // Database connection:
 const mysql = require("mysql");
 
-// Load my other module(s):
+// Load other module(s):
 const swgoh = require("./swgoh"); // SWGoH API
-//const tools = require("./tools"); // My functions
+//const tools = require("./tools"); // Several functions
+
+// Shortcut(s):
+//var logPrefix = exports.logPrefix;
 
 // Prepare DB connection pool:
 const db_pool = mysql.createPool({
@@ -33,9 +36,6 @@ const db_pool = mysql.createPool({
 	password       : config.db.pw,
 	user           : config.db.user
 });
-
-// Shortcut(s):
-//var logPrefix = exports.logPrefix;
 
 exports.checkPlayerMods = function(player, message) {
     let logPrefix = exports.logPrefix; // shortcut

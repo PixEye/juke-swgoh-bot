@@ -6,25 +6,40 @@
 
 // jshint esversion: 8
 
+// Extract the required classes from the discord.js module:
+const { RichEmbed } = require("discord.js");
+
+// Create an instance of a Discord client:
+//const client = new Client();
+
 // Get the configuration from a separated JSON file:
 const config = require("./config.json");
 
-// Load my other modules:
-const tools = require("./tools"); // My functions
+// Remember when this program started:
+//const start = Date();
 
-// SWGoH API connection:
+// Database connection:
+//const mysql = require("mysql");
+
+// Load other modules:
+//const swgoh = require("./swgoh"); // SWGoH API
+const tools = require("./tools"); // Several functions
+
+// Shortcut(s):
+let logPrefix = tools.logPrefix;
+
+// SWGoH Help API connection:
 const ApiSwgohHelp = require("api-swgoh-help");
 const swapi = new ApiSwgohHelp({
 	"username": config.swapi.user,
 	"password": config.swapi.pwd
 });
 
-// Extract the required classes from the discord.js module:
-const { RichEmbed } = require("discord.js");
-
-// Shortcut(s):
-let logPrefix = tools.logPrefix;
-
+/** Get player(s)' data from the SWGoH Help API
+ * @param {Array|number} allycodes - An allycode (as number) or an array of numbers
+ * @param {Object} message - The user's message to reply to
+ * @param {function} callback - Function to call once the data is retrieved
+ */
 exports.getPlayerData = async function(allycodes, message, callback) {
 	try {
 		// let acquiredToken = await swapi.connect();
@@ -133,6 +148,8 @@ exports.getPlayerData = async function(allycodes, message, callback) {
 
 			clean_stats = {};
 			stats.forEach(function(stat) {
+				if (!stat || stat.nameKey===null) return;
+
 				clean_stats[stat.nameKey.replace("STAT_", "")] = stat.value;
 			});
 
@@ -153,7 +170,8 @@ exports.getPlayerData = async function(allycodes, message, callback) {
 			player.g12Count = unitsCountByGear[12];
 			player.g13Count = unitsCountByGear[13];
 			player.shipCount = unitsByCombaType[2];
-			player.title = player.titles.selected.replace('PLAYERTITLE_', '').replace(/_/g, ' ');
+			player.title = player.titles.selected?
+				player.titles.selected.replace('PLAYERTITLE_', '').replace(/_/g, ' '): 'Default';
 			player.zetaCount = zetaCount;
 
 			if (typeof(callback)==="function") callback(player, message);
@@ -168,6 +186,11 @@ exports.getPlayerData = async function(allycodes, message, callback) {
 	}
 };
 
+/** Get data for a guild from the SWGoH Help API
+ * @param {Array|number} allycodes - An allycode (as number) or an array of numbers
+ * @param {Object} message - The user's message to reply to
+ * @param {function} callback - Function to call once the data is retrieved
+ */
 exports.getPlayerGuild = async function(allycodes, message, callback) {
 	try {
 		if ( typeof(allycodes)!=="object" || ! (allycodes instanceof Array) )
