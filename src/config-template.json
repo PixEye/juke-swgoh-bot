@@ -14,10 +14,10 @@
     "user": "jsb"
   },
   "discord": {
-    "locale": "fr-FR",
+    "locale": "en-EN",
     "ownerID": "012345678901234567",
     "prefix": "jsb.",
-    "token": "<your long bot token>",
+    "token": "<your long bot token. See: https://discordapp.com/developers/applications/ >",
     "username": "JsB"
   },
   "footer": {
