@@ -22,7 +22,8 @@ const start = Date();
 const mysql = require("mysql");
 
 // Load other modules:
-const swgoh = require("./swgoh"); // SWGoH API
+const locutus = require("./locutus"); // Functions from locutus.io
+const swgoh  = require("./swgoh");  // SWGoH API
 const tools = require("./tools"); // Several functions
 
 // Shortcut(s):
@@ -179,7 +180,7 @@ client.on("message", (message) => {
 			args.forEach(function(word) {
 				// ignore tags/mentions & allycodes:
 				if (word.indexOf("<")<0 && word.match(/[a-z]/i)) {
-					msg+= " "+tools.ucfirst(word);
+					msg+= " "+locutus.ucfirst(word);
 				}
 			});
 
@@ -277,9 +278,7 @@ client.on("message", (message) => {
 				message.reply("Up to your will master. Leaving...");
 				console.log(logPrefix()+"Stopping!");
 
-				db_pool.end(function(exc) {
-					console.log(logPrefix()+"DB connection stopped.");
-				});
+				db_pool.end(tools.db_close);
 				client.destroy();
 			}
 			break;
@@ -499,7 +498,7 @@ client.on("message", (message) => {
 			args.forEach(function(word) {
 				// ignore tags/mentions & allycodes:
 				if (word.indexOf("<")<0 && word.match(/[a-z]/i)) {
-					msg+= " "+tools.ucfirst(word);
+					msg+= " "+locutus.ucfirst(word);
 				}
 			});
 

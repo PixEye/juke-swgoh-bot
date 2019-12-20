@@ -22,8 +22,8 @@ const config = require("./config.json");
 const mysql = require("mysql");
 
 // Load other module(s):
+const locutus = require("./locutus"); // Functions from locutus.io
 const swgoh = require("./swgoh"); // SWGoH API
-//const tools = require("./tools"); // Several functions
 
 // Shortcut(s):
 //var logPrefix = exports.logPrefix;
@@ -36,6 +36,18 @@ const db_pool = mysql.createPool({
 	password       : config.db.pw,
 	user           : config.db.user
 });
+
+exports.db_close = function(exc) {
+    let logPrefix = exports.logPrefix; // shortcut
+
+    if (exc) {
+        console.warn(logPrefix()+"DB closing exception:", exc);
+    }
+
+    if (db_pool && typeof(db_pool.end)==='function') db_pool.end();
+
+    console.log(logPrefix()+"DB connections stopped.");
+};
 
 exports.checkPlayerMods = function(player, message) {
     let logPrefix = exports.logPrefix; // shortcut
@@ -499,14 +511,26 @@ exports.showUnitInfo = function(player, message, unitName, ct) {
 	pattern = new RegExp("^"+strToLookFor);
     if (!ct) ct = 1; // combatType: 1 for characters / 2 for ships
 
+    // Try exact match...
 	player.unitsData.forEach(function(unit) {
-		if (!foundUnit && unit.combatType===ct && unit.name.match(pattern)) {
+		if (!foundUnit && unit.combatType===ct && unit.name===strToLookFor) {
 			color = "GREEN";
 			foundUnit = unit;
 		}
 	});
 
 	if (!foundUnit) {
+        // Try: starts with...
+        player.unitsData.forEach(function(unit) {
+            if (!foundUnit && unit.combatType===ct && unit.name.match(pattern)) {
+                color = "GREEN";
+                foundUnit = unit;
+            }
+        });
+	}
+
+	if (!foundUnit) {
+        // Try: contains...
 		player.unitsData.forEach(function(unit) {
 			if (!foundUnit && unit.combatType===ct && unit.name.indexOf(strToLookFor)>=0) {
 				color = "GREEN";
@@ -518,6 +542,7 @@ exports.showUnitInfo = function(player, message, unitName, ct) {
 	let richMsg = new RichEmbed().setTimestamp(player.updated).setColor(color)
 		.setFooter(config.footer.message, config.footer.iconUrl);
 
+    unitName = locutus.ucwords(unitName);
 	if (!foundUnit) {
 		lines = ["Did not find a unit named '"+unitName+"' in this roster!"];
 		richMsg.setDescription(lines).setTitle(player.name+"'s "+unitName);
@@ -533,12 +558,12 @@ exports.showUnitInfo = function(player, message, unitName, ct) {
     val = foundUnit[key];
     key+= " ("+val+")";
     val = ":star:".repeat(val);
-    val = "**"+exports.ucfirst(key)+":** "+val;
+    val = "**"+locutus.ucfirst(key)+":** "+val;
     lines.push(val);
     delete foundUnit.stars;
 
     // Continue with others keys:
-	Object.keys(foundUnit).forEach(function(key) {
+	Object.keys(foundUnit).sort(function(a, b){return b-a}).forEach(function(key) {
 		var val = foundUnit[key];
 
 		if (hiddenFields.indexOf(key)<0) {
@@ -547,13 +572,21 @@ exports.showUnitInfo = function(player, message, unitName, ct) {
                     key = "GP";
 					val = val.toLocaleString();
 					break;
+
 				case "mods":
+                    if (ct===2) return; // ignore for ships
 					val = val.length;
-					break;
+                    break;
+
+                case "gear":
+                case "relic":
+                case "zetaCount":
+                    if (ct===2) return; // ignore for ships
+                    break;
 			}
 
-			// richMsg.addField(exports.ucfirst(key)+":", val, true);
-            val = "**"+exports.ucfirst(key)+":** "+val;
+			// richMsg.addField(locutus.ucfirst(key)+":", val, true);
+            val = "**"+locutus.ucfirst(key)+":** "+val;
             if (lines.length && lines[lines.length-1].length<30)
                 lines[lines.length-1] += " ; "+val;
             else
@@ -699,7 +732,7 @@ exports.showPlayerStats = function(player, message) {
 		.setDescription([
 			"**Level:** "+player.level+" - "+
 			"**GP:** "+(player.gp.toLocaleString(config.discord.locale)),
-			"**Title:** "+player.title,
+			"**Title:** "+locutus.ucwords(player.title.toLowerCase()),
 			"**Guild name:** "+player.guildName,
 			"",
 			"**Zeta count:** "+player.zetaCount+" - "+
@@ -741,20 +774,6 @@ exports.showWhoIs = function(user, nick, message) {
 			.setFooter(config.footer.message, config.footer.iconUrl);
 		message.channel.send(richMsg);
 	});
-};
-
-exports.ucfirst = function (str) {
-	//	discuss at: https://locutus.io/php/ucfirst/
-	// original by: Kevin van Zonneveld (https://kvz.io)
-	// bugfixed by: Onno Marsman (https://twitter.com/onnomarsman)
-	// improved by: Brett Zamir (https://brett-zamir.me)
-	//	 example 1: ucfirst('kevin van zonneveld')
-	//	 returns 1: 'Kevin van zonneveld'
-
-	str += '';
-	var f = str.charAt(0).toUpperCase();
-
-	return f + str.substr(1);
 };
 
 exports.updatePlayerDataInDb = function(player, message, callback) {
