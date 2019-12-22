@@ -310,9 +310,11 @@ client.on("message", (message) => {
 			}
 			break;
 
+		case "ggs":
 		case "gps":
-		case "guildPlayerStat":
-		case "guildPlayerStats":
+		case "getGuildStats":
+		case "guildPlayersStat":
+		case "guildPlayersStats":
 			// Extract user's tag (if any):
 			if (message.mentions && message.mentions.users && message.mentions.users.first()) {
 				user = message.mentions.users.first();
@@ -321,11 +323,11 @@ client.on("message", (message) => {
 
 			allycode = tools.getFirstAllycodeInWords(args);
 			if (allycode) {
-				tools.guildPlayerStats(allycode, message);
+				tools.getPlayerFromDatabase(allycode, message, guildPlayerStats);
 			} else {
 				console.log(logPrefix()+"Try with user ID:", user.id);
 				tools.getPlayerFromDiscordId(user.id, message, function(player) {
-					if (player) tools.guildPlayerStats(player.allycode, message);
+					if (player) tools.getPlayerFromDatabase(player.allycode, message, guildPlayerStats);
 				});
 			}
 			break;
@@ -707,7 +709,7 @@ client.on("message", (message) => {
 				let avg = nbp? Math.round(nbu/nbp): nbu; // average per player
 				console.log(logPrefix()+"%d unit(s) registered (~%d per user).", nbu, avg);
 
-				message.channel.send(nbg+" guilds, "+nbp+" players & "+nbu+" unit(s) registered.");
+				message.channel.send(nbg+" guilds, "+nbp+" players & "+nbu+" units registered.");
 			}
 			break;
 
