@@ -147,8 +147,8 @@ client.on("message", (message) => {
 						message.channel.send(result.length+" match(es)! Please be more specific.");
 					} else {
 						user = result[0];
-						console.log(logPrefix()+"%s's allycode is:", user.discord_name, user.allycode);
-						message.channel.send(user.discord_name+"'s allycode is: "+user.allycode);
+						console.log(logPrefix()+"%s's allycode is:", user.game_name, user.allycode);
+						message.channel.send(user.game_name+"'s allycode is: "+user.allycode);
 					}
 				}
 			});
