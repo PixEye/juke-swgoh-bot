@@ -264,7 +264,7 @@ exports.getPlayerFromDatabase = function(allycode, message, callback) {
 	db_pool.query(sql, function(exc, result) {
 		if (exc) {
 			console.log("SQL:", sql);
-			console.log(logPrefix()+"GPFAC1 Exception:", exc.sqlMessage? exc.sqlMessage: exc);
+			console.log(logPrefix()+"GPFDB1 Exception:", exc.sqlMessage? exc.sqlMessage: exc);
 
 			if (typeof(callback)==="function") callback(null);
 			return;
@@ -287,13 +287,13 @@ exports.getPlayerFromDatabase = function(allycode, message, callback) {
         db_pool.query(sql, function(exc, result) {
             if (exc) {
                 console.log("SQL:", sql);
-                console.log(logPrefix()+"GPFAC2 Exception:", exc.sqlMessage? exc.sqlMessage: exc);
+                console.log(logPrefix()+"GPFDB2 Exception:", exc.sqlMessage? exc.sqlMessage: exc);
                 message.reply("Failed! "+(exc.sqlMessage? exc.sqlMessage: exc));
                 return;
             }
 
             // Add units to the player object:
-            console.log(logPrefix()+"GPFAC get %d characters for:", result.length, player.discord_name);
+            console.log(logPrefix()+"GPFDB get %d characters for:", result.length, player.discord_name);
             player.unitsData = {length: 0};
             result.forEach(function(u) {
                 player.unitsData.length++;
@@ -786,29 +786,29 @@ exports.updatePlayerDataInDb = function(player, message, callback) {
 	}
 
 	// Try to find the same user in the database:
-	exports.getPlayerFromDatabase(allycode, message, function(oldPlVersion) {
+	exports.getPlayerFromDatabase(allycode, message, function(prevPlayerVersion) {
 		let lines = [];
 		let msg = "";
 		let sql = "INSERT INTO `evols` (allycode, unit_id, type, new_value) VALUES ?";
 
 		// If the user was unknown, do no look for any evolution:
-		if (oldPlVersion && oldPlVersion.gp) {
+		if (prevPlayerVersion && prevPlayerVersion.gp) {
 			// Check for evolutions:
 			let newUnitCount = 0;
 			let nbChars = 0;
 			let nbShips = 0;
-			let oldUnitsCount = oldPlVersion.unitsData.length;
+			let prevUnitsCount = prevPlayerVersion.unitsData.length;
 
-			console.log(logPrefix()+"Old chars count:", oldUnitsCount);
+			console.log(logPrefix()+"Old chars count:", prevUnitsCount);
 			player.unitsData.forEach(function(u) {
-				let oldUnit = oldPlVersion.unitsData[u.name];
+				let prevUnit = prevPlayerVersion.unitsData[u.name];
 
 				msg = "Evolution: "+player.name;
 
 				// Compare old & new units:
 				// Look for new units:
-				if (typeof(oldUnit)==="undefined") {
-                    if (oldUnitsCount) { // New unit:
+				if (typeof(prevUnit)==="undefined") {
+                    if (prevUnitsCount) { // New unit:
 						++newUnitCount;
                         msg += " unlocked "+u.name;
                         console.log(logPrefix()+msg);
@@ -825,7 +825,7 @@ exports.updatePlayerDataInDb = function(player, message, callback) {
 				}
 
 				// Look for new gears:
-				if (u.gear > 11 && u.gear > oldUnit.gear) {
+				if (u.gear > 11 && u.gear > prevUnit.gear) {
 					msg += "'s "+u.name+" is now G"+u.gear;
 					console.log(logPrefix()+msg);
 
@@ -834,7 +834,7 @@ exports.updatePlayerDataInDb = function(player, message, callback) {
 				}
 
 				// Look for new stars:
-				if (oldUnit.stars > 0 && u.stars > 6 && u.stars > oldUnit.stars) {
+				if (prevUnit.stars > 0 && u.stars > 6 && u.stars > prevUnit.stars) {
 					msg += "'s "+u.name+" is now "+u.stars+"*";
 					console.log(logPrefix()+msg);
 
@@ -843,7 +843,7 @@ exports.updatePlayerDataInDb = function(player, message, callback) {
 				}
 
 				// Look for new zetas:
-				if (u.zetaCount > oldUnit.zetaCount) {
+				if (u.zetaCount > prevUnit.zetaCount) {
 					msg += "'s "+u.name+" has now "+u.zetaCount+" zeta(s)";
 					console.log(logPrefix()+msg);
 
