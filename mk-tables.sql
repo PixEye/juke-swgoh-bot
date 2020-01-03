@@ -91,4 +91,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   KEY `discord_id` (`discord_id`) USING BTREE
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 ALTER TABLE `users` ADD INDEX(`guildRefId`);
+ALTER TABLE `users` CHANGE `game_name`
+ `game_name` VARCHAR(32) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL;
+
 COMMIT;

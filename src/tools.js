@@ -640,6 +640,9 @@ exports.showLastEvols = function(player, message, evols) {
 				case "new":
 					msg+= " unlocked";
 					break;
+				case "relic":
+					msg+= " turned R"+e.new_value;
+					break;
 				case "star":
 					msg+= " turned "+e.new_value+"*";
 					break;
@@ -849,6 +852,15 @@ exports.updatePlayerDataInDb = function(player, message, callback) {
 
 					// Add new evolution in the database ("evols" table):
 					lines.push([allycode, u.name, "zeta", u.zetaCount]);
+				}
+
+				// Look for new relics:
+				if (u.relic>3 && u.relic>prevUnit.relic) {
+					msg += "'s "+u.name+" is now R"+u.relic;
+					console.log(logPrefix()+msg);
+
+					// Add new evolution in the database ("evols" table):
+					lines.push([allycode, u.name, "relic", u.relic]);
 				}
 			});
 			if (newUnitCount) {
