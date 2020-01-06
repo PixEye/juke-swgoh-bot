@@ -557,7 +557,7 @@ exports.showUnitInfo = function(player, message, unitName, ct) {
 	key = 'stars';
 	val = foundUnit[key];
 	key+= " ("+val+")";
-	val = ":star:".repeat(val);
+	val = ":star:".repeat(val) + ":low_brightness:".repeat(7-val);
 	val = "**"+locutus.ucfirst(key)+":** "+val;
 	lines.push(val);
 
@@ -577,13 +577,17 @@ exports.showUnitInfo = function(player, message, unitName, ct) {
 					val = val.length;
 					break;
 
-				case "stars": // already done at first line
-					break;
+				case "stars":
+					return; // already done at first line
 
 				case "gear":
 				case "relic":
+					if (ct===2) return; // ignore for ships
+					break;
+
 				case "zetaCount":
 					if (ct===2) return; // ignore for ships
+					key = "zeta";
 					break;
 			}
 
