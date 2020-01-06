@@ -1,7 +1,7 @@
 /**
  * tools.js is the functions module for Juke's SWGoH Discord bot
  * @author PixEye@pixeye.net
- * @since  2019-12-09
+ * @since 2019-12-09
  */
 
 // jshint esversion: 8
@@ -23,7 +23,7 @@ const mysql = require("mysql");
 
 // Load other module(s):
 const locutus = require("./locutus"); // Functions from locutus.io
-const swgoh = require("./swgoh"); // SWGoH API
+const swgoh   = require("./swgoh");  // SWGoH API
 
 // Shortcut(s):
 //var logPrefix = exports.logPrefix;
@@ -38,20 +38,20 @@ const db_pool = mysql.createPool({
 });
 
 exports.db_close = function(exc) {
-    let logPrefix = exports.logPrefix; // shortcut
+	let logPrefix = exports.logPrefix; // shortcut
 
-    if (exc) {
-        console.warn(logPrefix()+"DB closing exception:", exc);
-    }
+	if (exc) {
+		console.warn(logPrefix()+"DB closing exception:", exc);
+	}
 
-    if (db_pool && typeof(db_pool.end)==='function') db_pool.end();
+	if (db_pool && typeof(db_pool.end)==='function') db_pool.end();
 
-    console.log(logPrefix()+"DB connections stopped.");
+	console.log(logPrefix()+"DB connections stopped.");
 };
 
 exports.checkPlayerMods = function(player, message) {
-    let logPrefix = exports.logPrefix; // shortcut
-    let maxLines = 5;
+	let logPrefix = exports.logPrefix; // shortcut
+	let maxLines = 5;
 
 	if (!player.gp) {
 		console.log(logPrefix()+"invalid GP for user:", player);
@@ -109,7 +109,7 @@ exports.checkPlayerMods = function(player, message) {
 };
 
 exports.checkUnitsGp = function(player, message, limit) {
-    let logPrefix = exports.logPrefix; // shortcut
+	let logPrefix = exports.logPrefix; // shortcut
 
 	if (!player.gp) {
 		console.log(logPrefix()+"invalid GP for user:", player);
@@ -122,7 +122,7 @@ exports.checkUnitsGp = function(player, message, limit) {
 	let minit = limit-1;
 	let lines = [];
 	let maxGp = limit*1000;
-    let maxLines = 10;
+	let maxLines = 10;
 	let minGp = minit*1000;
 	let n = 0;
 	let units = player.unitsData.filter(function(unit) {
@@ -169,7 +169,7 @@ exports.checkUnitsGp = function(player, message, limit) {
 /** Try to find an ally code in the words of the user's message */
 exports.getFirstAllycodeInWords = function(words) {
 	var allycode = 0;
-    let logPrefix = exports.logPrefix; // shortcut
+	let logPrefix = exports.logPrefix; // shortcut
 
 	if (words.join("").trim().length>0) {
 		words.forEach(function(word) {
@@ -185,8 +185,8 @@ exports.getFirstAllycodeInWords = function(words) {
 };
 
 exports.getGuildStats = function(allycode, message) {
-    let locale = config.discord.locale; // shortcut
-    let logPrefix = exports.logPrefix; // shortcut
+	let locale = config.discord.locale; // shortcut
+	let logPrefix = exports.logPrefix; // shortcut
 
 	if (!allycode) {
 		message.reply(":red_circle: Invalid or missing allycode!");
@@ -199,33 +199,33 @@ exports.getGuildStats = function(allycode, message) {
 				if (typeof(msg.delete)==="function") msg.delete();
 
 				if (!guild.gp) {
-                    msg = "Invalid guild GP: "+guild.gp;
+					msg = "Invalid guild GP: "+guild.gp;
 					console.log(logPrefix()+msg);
-                    message.reply(msg);
+					message.reply(msg);
 					return;
 				}
 
-                richMsg = new RichEmbed().setTitle(guild.name).setColor("GREEN")
-                    .setAuthor(config.discord.username)
-                    .setDescription([
-                        "**Guild description:** "+guild.desc, "",
-                        "**Officers ("+guild.officerNames.length+"):** "+
-                            guild.officerNames.sort().join(", ")
-                    ])
-                    .addField("GP:", guild.gp.toLocaleString(locale), true)
-                    .addField("Member count:", guild.members, true)
-                    .addField("GP average:",
-                        Math.round(guild.gp/guild.members).toLocaleString(locale), true)
-                    .addField("Leader:", guild.leader.name+
-                        " (GP: "+ guild.leader.gp.toLocaleString(locale)+")", true)
-                    .addField("Biggest GP:", guild.biggestPlayer.name+
-                        " (GP: "+guild.biggestPlayer.gp.toLocaleString(locale)+")", true)
-                    .setTimestamp(guild.updated)
-                    .setFooter(config.footer.message, config.footer.iconUrl);
-                message.reply(richMsg);
+				richMsg = new RichEmbed().setTitle(guild.name).setColor("GREEN")
+					.setAuthor(config.discord.username)
+					.setDescription([
+						"**Guild description:** "+guild.desc, "",
+						"**Officers ("+guild.officerNames.length+"):** "+
+							guild.officerNames.sort().join(", ")
+					])
+					.addField("GP:", guild.gp.toLocaleString(locale), true)
+					.addField("Member count:", guild.members, true)
+					.addField("GP average:",
+						Math.round(guild.gp/guild.members).toLocaleString(locale), true)
+					.addField("Leader:", guild.leader.name+
+						" (GP: "+ guild.leader.gp.toLocaleString(locale)+")", true)
+					.addField("Biggest GP:", guild.biggestPlayer.name+
+						" (GP: "+guild.biggestPlayer.gp.toLocaleString(locale)+")", true)
+					.setTimestamp(guild.updated)
+					.setFooter(config.footer.message, config.footer.iconUrl);
+				message.reply(richMsg);
 
 				// Remember stats of the guild:
-                exports.rememberGuildStats(guild);
+				exports.rememberGuildStats(guild);
 			});
 		})
 		.catch(console.error);
@@ -233,7 +233,7 @@ exports.getGuildStats = function(allycode, message) {
 
 exports.getLastEvols = function(player, message) {
 	let allycode = player.allycode;
-    let logPrefix = exports.logPrefix; // shortcut
+	let logPrefix = exports.logPrefix; // shortcut
 	let sql = "SELECT * FROM `evols`"+
 		" WHERE allycode="+parseInt(allycode)+
 		" ORDER BY `id` DESC LIMIT 11";
@@ -257,7 +257,7 @@ exports.getLastEvols = function(player, message) {
 };
 
 exports.getPlayerFromDatabase = function(allycode, message, callback) {
-    let logPrefix = exports.logPrefix; // shortcut
+	let logPrefix = exports.logPrefix; // shortcut
 	let player = null;
 	let sql = "SELECT * FROM `users` WHERE allycode="+parseInt(allycode);
 
@@ -272,41 +272,41 @@ exports.getPlayerFromDatabase = function(allycode, message, callback) {
 
 		console.log(logPrefix()+result.length+" record(s) match(es) allycode:", allycode);
 		if ( ! result.length ) {
-            console.log(logPrefix()+"User with allycode "+allycode+" not registered.");
-            message.channel.send("I don't know this player yet. You may use the 'register' command.");
-            if (typeof(callback)==="function") callback(player);
-            return;
+			console.log(logPrefix()+"User with allycode "+allycode+" not registered.");
+			message.channel.send("I don't know this player yet. You may use the 'register' command.");
+			if (typeof(callback)==="function") callback(player);
+			return;
 		}
 
-        player = result[result.length - 1]; // take last match
-        console.log(logPrefix()+"Found user:", player.discord_name);
+		player = result[result.length - 1]; // take last match
+		console.log(logPrefix()+"Found user:", player.discord_name);
 
-        // Get player's units:
-        sql = "SELECT * FROM `units` WHERE allycode="+parseInt(allycode);
+		// Get player's units:
+		sql = "SELECT * FROM `units` WHERE allycode="+parseInt(allycode);
 
-        db_pool.query(sql, function(exc, result) {
-            if (exc) {
-                console.log("SQL:", sql);
-                console.log(logPrefix()+"GPFDB2 Exception:", exc.sqlMessage? exc.sqlMessage: exc);
-                message.reply("Failed! "+(exc.sqlMessage? exc.sqlMessage: exc));
-                return;
-            }
+		db_pool.query(sql, function(exc, result) {
+			if (exc) {
+				console.log("SQL:", sql);
+				console.log(logPrefix()+"GPFDB2 Exception:", exc.sqlMessage? exc.sqlMessage: exc);
+				message.reply("Failed! "+(exc.sqlMessage? exc.sqlMessage: exc));
+				return;
+			}
 
-            // Add units to the player object:
-            console.log(logPrefix()+"GPFDB get %d characters for:", result.length, player.discord_name);
-            player.unitsData = {length: 0};
-            result.forEach(function(u) {
-                player.unitsData.length++;
-                player.unitsData[u.name] = u;
-            });
+			// Add units to the player object:
+			console.log(logPrefix()+"GPFDB get %d characters for:", result.length, player.discord_name);
+			player.unitsData = {length: 0};
+			result.forEach(function(u) {
+				player.unitsData.length++;
+				player.unitsData[u.name] = u;
+			});
 
-            if (typeof(callback)==="function") callback(player);
-        });
+			if (typeof(callback)==="function") callback(player);
+		});
 	});
 };
 
 exports.getPlayerFromDiscordId = function(discord_id, message, callback) {
-    let logPrefix = exports.logPrefix; // shortcut
+	let logPrefix = exports.logPrefix; // shortcut
 	let sql = "SELECT * FROM `users` WHERE discord_id="+parseInt(discord_id);
 
 	db_pool.query(sql, function(exc, result) {
@@ -356,7 +356,7 @@ exports.getPlayerStats = function(allycode, message, callback) {
 };
 
 exports.getUnregPlayers = function(allycode, message) {
-    let logPrefix = exports.logPrefix; // shortcut
+	let logPrefix = exports.logPrefix; // shortcut
 
 	if (!allycode) {
 		message.reply(":red_circle: Invalid or missing allycode!");
@@ -374,14 +374,14 @@ exports.getUnregPlayers = function(allycode, message) {
 				}
 
 				let sql = "SELECT * FROM `users` WHERE allycode IN (?)";
-                let values = Object.keys(guild.players);
-                let n = values.length;
+				let values = Object.keys(guild.players);
+				let n = values.length;
 
-                console.log(logPrefix()+"GUP: received %d user(s).", n);
+				console.log(logPrefix()+"GUP: received %d user(s).", n);
 
 				db_pool.query(sql, [values], function(exc, regPlayers) {
-                    let msg = "%d registered users out of %d.";
-                    let unregPlayers = [];
+					let msg = "%d registered users out of %d.";
+					let unregPlayers = [];
 
 					if (exc) {
 						let otd = exc.sqlMessage? exc.sqlMessage: exc;
@@ -389,29 +389,29 @@ exports.getUnregPlayers = function(allycode, message) {
 
 						console.log(logPrefix()+"SQL:", sql);
 						console.log(logPrefix()+"GUP Exception:", otd);
-                        message.reply("Failed!");
+						message.reply("Failed!");
 						return;
 					}
 
 					console.log(logPrefix()+msg, regPlayers.length, n);
 
-                    n-= regPlayers.length;
-                    msg = n+" not registered player(s) found in this guild";
+					n-= regPlayers.length;
+					msg = n+" not registered player(s) found in this guild";
 					console.log(logPrefix()+msg);
 
-                    if (!n) {
-                        msg = "All "+values.length+
-                            " players in this guild are registered. :white_check_mark:";
-                    } else {
-                        regPlayers.forEach(function(regPlayer) {
-                            delete guild.players[regPlayer.allycode];
-                        });
-                        Object.keys(guild.players).forEach(function(allycode, i) {
-                            unregPlayers.push(guild.players[allycode]+" ("+allycode+")");
-                        });
-                        msg = "**"+msg+":** "+unregPlayers.sort().join(", ")+".";
-                    }
-                    message.channel.send(msg);
+					if (!n) {
+						msg = "All "+values.length+
+							" players in this guild are registered. :white_check_mark:";
+					} else {
+						regPlayers.forEach(function(regPlayer) {
+							delete guild.players[regPlayer.allycode];
+						});
+						Object.keys(guild.players).forEach(function(allycode, i) {
+							unregPlayers.push(guild.players[allycode]+" ("+allycode+")");
+						});
+						msg = "**"+msg+":** "+unregPlayers.sort().join(", ")+".";
+					}
+					message.channel.send(msg);
 				});
 			});
 		})
@@ -419,8 +419,8 @@ exports.getUnregPlayers = function(allycode, message) {
 };
 
 exports.guildPlayerStats = function(allycode, message) {
-    let locale = config.discord.locale; // shortcut
-    let logPrefix = exports.logPrefix; // shortcut
+	let locale = config.discord.locale; // shortcut
+	let logPrefix = exports.logPrefix; // shortcut
 
 	if (!allycode) {
 		message.reply(":red_circle: Invalid or missing allycode!");
@@ -433,34 +433,34 @@ exports.guildPlayerStats = function(allycode, message) {
 				if (typeof(msg.delete)==="function") msg.delete();
 
 				if (!guild.gp) {
-                    msg = "Invalid guild GP: "+guild.gp;
+					msg = "Invalid guild GP: "+guild.gp;
 					console.log(logPrefix()+msg);
-                    message.reply(msg);
+					message.reply(msg);
 					return;
 				}
 
-                richMsg = new RichEmbed().setTitle(guild.name).setColor("GREEN")
-                    .setAuthor(config.discord.username)
-                    .setDescription([
-                        "**Guild description:** "+guild.desc,
-                        "", "**Officers ("+guild.officerNames.length+"):** "+guild.officerNames.sort().join(", ")
-                    ])
-                    .addField("GP:",
-                        guild.gp.toLocaleString(locale), true)
-                    .addField("Member count:",
-                        guild.members, true)
-                    .addField("GP average:",
-                        Math.round(guild.gp/guild.members).toLocaleString(locale), true)
-                    .addField("Leader:",
-                        guild.leader.name +" (GP: "+ guild.leader.gp.toLocaleString(locale)+")", true)
-                    .addField("Biggest GP:",
-                        guild.biggestPlayer.name+" (GP: "+guild.biggestPlayer.gp.toLocaleString(locale)+")", true)
-                    .setTimestamp(guild.updated)
-                    .setFooter(config.footer.message, config.footer.iconUrl);
-                message.reply(richMsg);
+				richMsg = new RichEmbed().setTitle(guild.name).setColor("GREEN")
+					.setAuthor(config.discord.username)
+					.setDescription([
+						"**Guild description:** "+guild.desc,
+						"", "**Officers ("+guild.officerNames.length+"):** "+guild.officerNames.sort().join(", ")
+					])
+					.addField("GP:",
+						guild.gp.toLocaleString(locale), true)
+					.addField("Member count:",
+						guild.members, true)
+					.addField("GP average:",
+						Math.round(guild.gp/guild.members).toLocaleString(locale), true)
+					.addField("Leader:",
+						guild.leader.name +" (GP: "+ guild.leader.gp.toLocaleString(locale)+")", true)
+					.addField("Biggest GP:",
+						guild.biggestPlayer.name+" (GP: "+guild.biggestPlayer.gp.toLocaleString(locale)+")", true)
+					.setTimestamp(guild.updated)
+					.setFooter(config.footer.message, config.footer.iconUrl);
+				message.reply(richMsg);
 
 				// Remember stats of the guild:
-                exports.rememberGuildStats(guild);
+				exports.rememberGuildStats(guild);
 			});
 		})
 		.catch(console.error);
@@ -474,21 +474,21 @@ exports.logPrefix = function () {
 
 /** Remember stats of the guild */
 exports.rememberGuildStats = function(guild) {
-    let sql = "REPLACE INTO `guilds` (swgoh_id, name) VALUES ?";
-    let values = [[guild.id, guild.name]];
+	let sql = "REPLACE INTO `guilds` (swgoh_id, name) VALUES ?";
+	let values = [[guild.id, guild.name]];
 
-    db_pool.query(sql, [values], function(exc, result) {
-        if (exc) {
-            let otd = exc.sqlMessage? exc.sqlMessage: exc;
-            // otd = object to display
+	db_pool.query(sql, [values], function(exc, result) {
+		if (exc) {
+			let otd = exc.sqlMessage? exc.sqlMessage: exc;
+			// otd = object to display
 
-            console.log("SQL:", sql);
-            console.log(logPrefix()+"GS Exception:", otd);
-            return;
-        }
+			console.log("SQL:", sql);
+			console.log(logPrefix()+"GS Exception:", otd);
+			return;
+		}
 
-        console.log(exports.logPrefix()+"%d guild updated.", result.affectedRows);
-    });
+		console.log(exports.logPrefix()+"%d guild updated.", result.affectedRows);
+	});
 };
 
 exports.showUnitInfo = function(player, message, unitName, ct) {
@@ -496,7 +496,7 @@ exports.showUnitInfo = function(player, message, unitName, ct) {
 	let foundUnit = null;
 	let hiddenFields = ["allycode", "combatType", "name"];
 	let lines = [];
-    let logPrefix = exports.logPrefix; // shortcut
+	let logPrefix = exports.logPrefix; // shortcut
 	let pattern = null;
 	let strToLookFor = unitName.replace(/ /g, "").replace(/-/g, '_').toUpperCase();
 
@@ -509,9 +509,9 @@ exports.showUnitInfo = function(player, message, unitName, ct) {
 
 	console.log(logPrefix()+"Name to look for:", strToLookFor);
 	pattern = new RegExp("^"+strToLookFor);
-    if (!ct) ct = 1; // combatType: 1 for characters / 2 for ships
+	if (!ct) ct = 1; // combatType: 1 for characters / 2 for ships
 
-    // Try exact match...
+	// Try exact match...
 	player.unitsData.forEach(function(unit) {
 		if (!foundUnit && unit.combatType===ct && unit.name===strToLookFor) {
 			color = "GREEN";
@@ -520,17 +520,17 @@ exports.showUnitInfo = function(player, message, unitName, ct) {
 	});
 
 	if (!foundUnit) {
-        // Try: starts with...
-        player.unitsData.forEach(function(unit) {
-            if (!foundUnit && unit.combatType===ct && unit.name.match(pattern)) {
-                color = "GREEN";
-                foundUnit = unit;
-            }
-        });
+		// Try: starts with...
+		player.unitsData.forEach(function(unit) {
+			if (!foundUnit && unit.combatType===ct && unit.name.match(pattern)) {
+				color = "GREEN";
+				foundUnit = unit;
+			}
+		});
 	}
 
 	if (!foundUnit) {
-        // Try: contains...
+		// Try: contains...
 		player.unitsData.forEach(function(unit) {
 			if (!foundUnit && unit.combatType===ct && unit.name.indexOf(strToLookFor)>=0) {
 				color = "GREEN";
@@ -542,7 +542,7 @@ exports.showUnitInfo = function(player, message, unitName, ct) {
 	let richMsg = new RichEmbed().setTimestamp(player.updated).setColor(color)
 		.setFooter(config.footer.message, config.footer.iconUrl);
 
-    unitName = locutus.ucwords(unitName);
+	unitName = locutus.ucwords(unitName);
 	if (!foundUnit) {
 		lines = ["Did not find a unit named '"+unitName+"' in this roster!"];
 		richMsg.setDescription(lines).setTitle(player.name+"'s "+unitName);
@@ -553,49 +553,51 @@ exports.showUnitInfo = function(player, message, unitName, ct) {
 	richMsg.setThumbnail("https://swgoh.gg/game-asset/u/"+foundUnit.name+"/")
 		.setTitle(player.name+"'s "+unitName+" ("+foundUnit.name+")");
 
-    // Start with stars:
-    key = 'stars';
-    val = foundUnit[key];
-    key+= " ("+val+")";
-    val = ":star:".repeat(val);
-    val = "**"+locutus.ucfirst(key)+":** "+val;
-    lines.push(val);
-    delete foundUnit.stars;
+	// Start with stars:
+	key = 'stars';
+	val = foundUnit[key];
+	key+= " ("+val+")";
+	val = ":star:".repeat(val);
+	val = "**"+locutus.ucfirst(key)+":** "+val;
+	lines.push(val);
 
-    // Continue with others keys:
+	// Continue with others keys:
 	Object.keys(foundUnit).sort(function(a, b){return b-a}).forEach(function(key) {
 		var val = foundUnit[key];
 
 		if (hiddenFields.indexOf(key)<0) {
 			switch(key) {
 				case "gp":
-                    key = "GP";
+					key = "GP";
 					val = val.toLocaleString();
 					break;
 
 				case "mods":
-                    if (ct===2) return; // ignore for ships
+					if (ct===2) return; // ignore for ships
 					val = val.length;
-                    break;
+					break;
 
-                case "gear":
-                case "relic":
-                case "zetaCount":
-                    if (ct===2) return; // ignore for ships
-                    break;
+				case "stars": // already done at first line
+					break;
+
+				case "gear":
+				case "relic":
+				case "zetaCount":
+					if (ct===2) return; // ignore for ships
+					break;
 			}
 
 			// richMsg.addField(locutus.ucfirst(key)+":", val, true);
-            val = "**"+locutus.ucfirst(key)+":** "+val;
-            if (lines.length && lines[lines.length-1].length<30)
-                lines[lines.length-1] += " ; "+val;
-            else
-                lines.push(val);
+			val = "**"+locutus.ucfirst(key)+":** "+val;
+			if (lines.length && lines[lines.length-1].length<30)
+				lines[lines.length-1] += " ; "+val;
+			else
+				lines.push(val);
 		}
 	});
 
-    // Build the message & show it:
-    if (lines.length) richMsg.setDescription(lines);
+	// Build the message & show it:
+	if (lines.length) richMsg.setDescription(lines);
 	message.channel.send(richMsg);
 };
 
@@ -605,7 +607,7 @@ exports.showLastEvols = function(player, message, evols) {
 	let lines = [];
 	let maxDays = 10;
 	let maxDt = 0;
-    let maxLines = 10;
+	let maxLines = 10;
 	let maxPeriod = 24 * 3600 * 1000 * maxDays;
 	let msg = "";
 	let n = 0;
@@ -613,7 +615,7 @@ exports.showLastEvols = function(player, message, evols) {
 	let lastEvols = evols.filter(function(evol) {
 			return (now.getTime() - evol.ts)<maxPeriod;
 		});
-    let logPrefix = exports.logPrefix; // shortcut
+	let logPrefix = exports.logPrefix; // shortcut
 
 	n = lastEvols.length;
 	console.log(logPrefix()+"%d evol(s) found.", n);
@@ -672,8 +674,8 @@ exports.showLastEvols = function(player, message, evols) {
 };
 
 exports.showPlayerRelics = function(player, message) {
-    let logPrefix = exports.logPrefix; // shortcut
-    let maxLines = 10;
+	let logPrefix = exports.logPrefix; // shortcut
+	let maxLines = 10;
 
 	if (!player.gp) {
 		console.log(logPrefix()+"invalid GP for user:", player);
@@ -722,7 +724,7 @@ exports.showPlayerRelics = function(player, message) {
 };
 
 exports.showPlayerStats = function(player, message) {
-    let logPrefix = exports.logPrefix; // shortcut
+	let logPrefix = exports.logPrefix; // shortcut
 
 	if (!player.gp) {
 		console.log(logPrefix()+"invalid GP for user:", player);
@@ -761,7 +763,7 @@ exports.showWhoIs = function(user, nick, message) {
 			"**"+nick+" creation date is:**", " "+user.createdAt,
 			"**"+nick+" presence status is:** "+user.presence.status
 		];
-    let logPrefix = exports.logPrefix; // shortcut
+	let logPrefix = exports.logPrefix; // shortcut
 
 	exports.getPlayerFromDiscordId(user.id, message, function(player) {
 		if (player) {
@@ -781,7 +783,7 @@ exports.showWhoIs = function(user, nick, message) {
 
 exports.updatePlayerDataInDb = function(player, message, callback) {
 	let allycode = player.allycode;
-    let logPrefix = exports.logPrefix; // shortcut
+	let logPrefix = exports.logPrefix; // shortcut
 
 	if (!player.gp) {
 		console.log(logPrefix()+"invalid GP for user:", player);
@@ -808,21 +810,21 @@ exports.updatePlayerDataInDb = function(player, message, callback) {
 
 				msg = "Evolution: "+player.name;
 
+				if (u.combatType===1)
+					++nbChars;
+				else
+					++nbShips;
+
 				// Compare old & new units:
 				// Look for new units:
 				if (typeof(prevUnit)==="undefined") {
-                    if (prevUnitsCount) { // New unit:
+					if (prevUnitsCount) { // New unit:
 						++newUnitCount;
-                        msg += " unlocked "+u.name;
-                        console.log(logPrefix()+msg);
+						msg += " unlocked "+u.name;
+						console.log(logPrefix()+msg);
 
-                        lines.push([allycode, u.name, "new", 1]);
-                    }
-
-					if (u.combatType===1)
-						++nbChars;
-					else
-                        ++nbShips;
+						lines.push([allycode, u.name, "new", 1]);
+					}
 
 					return;
 				}
@@ -936,6 +938,9 @@ exports.updatePlayerDataInDb = function(player, message, callback) {
 			// https://www.w3schools.com/nodejs/shownodejs_cmd.asp?filename=demo_db_insert_multiple
 			sql = "REPLACE `units` (allycode, name, combatType, gear, gp, relic, stars, zetaCount) VALUES ?";
 			player.unitsData.forEach(function(u) { // u = current unit
+				if (!u.stars) {
+					console.warn(logPrefix()+"Invalid star count for unit:\n ", JSON.stringify(u));
+				}
 				lines.push(
 					[u.allycode, u.name, u.combatType, u.gear, u.gp, u.relic, u.stars, u.zetaCount]
 				);
@@ -957,3 +962,5 @@ exports.updatePlayerDataInDb = function(player, message, callback) {
 				if (typeof(callback)==="function") callback(player, message);
 	});
 };
+
+// vim: noexpandtab shiftwidth=4 softtabstop=4 tabstop=4
