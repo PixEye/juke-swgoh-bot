@@ -719,8 +719,12 @@ exports.showPlayerRelics = function(player, message) {
 		console.log(logPrefix()+"%d total relic(s) found.", tprc);
 	}
 
+	let su = n===1? '': 's';
+	let sr = tprc===1? '': 's';
+
+	lines.push("**Total:** "+tprc+" relic"+sr);
 	richMsg = new RichEmbed()
-		.setTitle(player.name+" has "+n+" unit(s) with "+tprc+" relic(s)")
+		.setTitle(player.name+" has "+n+" unit"+su+" with relics:")
 		.setDescription(lines).setColor(color)
 		.setTimestamp(player.updated)
 		.setFooter(config.footer.message, config.footer.iconUrl);
