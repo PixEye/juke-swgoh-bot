@@ -199,8 +199,8 @@ exports.getGuildStats = function(allycode, message) {
 				if (typeof(msg.delete)==="function") msg.delete();
 
 				if (!guild.gp) {
-					msg = "Invalid guild GP: "+guild.gp;
-					console.log(logPrefix()+msg);
+					msg = "GGS: Invalid guild GP: "+guild.gp;
+					console.warn(logPrefix()+msg);
 					message.reply(msg);
 					return;
 				}
@@ -208,12 +208,15 @@ exports.getGuildStats = function(allycode, message) {
 				richMsg = new RichEmbed().setTitle(guild.name).setColor("GREEN")
 					.setAuthor(config.discord.username)
 					.setDescription([
-						"**Guild description:** "+guild.desc, "",
+						"**Guild description:** "+guild.desc,
 						"**Officers ("+guild.officerNames.length+"):** "+
 							guild.officerNames.sort().join(", ")
 					])
 					.addField("GP:", guild.gp.toLocaleString(locale), true)
+					.addField("Toon GP:", guild.gpChar.toLocaleString(locale), true)
+					.addField("Ship GP:", guild.gpShip.toLocaleString(locale), true)
 					.addField("Member count:", guild.members, true)
+					.addField("Yellow banner:", guild.message, true)
 					.addField("GP average:",
 						Math.round(guild.gp/guild.members).toLocaleString(locale), true)
 					.addField("Leader:", guild.leader.name+
@@ -265,8 +268,8 @@ exports.getPlayerFromDatabase = function(allycode, message, callback) {
 		if (exc) {
 			console.log("SQL:", sql);
 			console.log(logPrefix()+"GPFDB1 Exception:", exc.sqlMessage? exc.sqlMessage: exc);
+			message.reply("Failed #1! "+(exc.sqlMessage? exc.sqlMessage: exc));
 
-			if (typeof(callback)==="function") callback(null);
 			return;
 		}
 
@@ -274,7 +277,7 @@ exports.getPlayerFromDatabase = function(allycode, message, callback) {
 		if ( ! result.length ) {
 			console.log(logPrefix()+"User with allycode "+allycode+" not registered.");
 			message.channel.send("I don't know this player yet. You may use the 'register' command.");
-			if (typeof(callback)==="function") callback(player);
+
 			return;
 		}
 
@@ -288,7 +291,7 @@ exports.getPlayerFromDatabase = function(allycode, message, callback) {
 			if (exc) {
 				console.log("SQL:", sql);
 				console.log(logPrefix()+"GPFDB2 Exception:", exc.sqlMessage? exc.sqlMessage: exc);
-				message.reply("Failed! "+(exc.sqlMessage? exc.sqlMessage: exc));
+				message.reply("Failed #3! "+(exc.sqlMessage? exc.sqlMessage: exc));
 				return;
 			}
 
@@ -300,7 +303,7 @@ exports.getPlayerFromDatabase = function(allycode, message, callback) {
 				player.unitsData[u.name] = u;
 			});
 
-			if (typeof(callback)==="function") callback(player);
+			if (typeof(callback)==="function") callback(player, message);
 		});
 	});
 };
@@ -369,7 +372,9 @@ exports.getUnregPlayers = function(allycode, message) {
 				if (typeof(msg.delete)==="function") msg.delete();
 
 				if (!guild.gp) {
-					console.warn(logPrefix()+"GUP: invalid guild GP:", guild.gp);
+					msg = "GUP: invalid guild GP: "+guild.gp;
+					console.warn(logPrefix()+msg);
+					message.reply(msg);
 					return;
 				}
 
@@ -380,8 +385,10 @@ exports.getUnregPlayers = function(allycode, message) {
 				console.log(logPrefix()+"GUP: received %d user(s).", n);
 
 				db_pool.query(sql, [values], function(exc, regPlayers) {
+					let dbRegByAc = {};
 					let msg = "%d registered users out of %d.";
-					let unregPlayers = [];
+					let nbReg = 0;
+					let notRegPlayers = [];
 
 					if (exc) {
 						let otd = exc.sqlMessage? exc.sqlMessage: exc;
@@ -395,7 +402,14 @@ exports.getUnregPlayers = function(allycode, message) {
 
 					console.log(logPrefix()+msg, regPlayers.length, n);
 
-					n-= regPlayers.length;
+					regPlayers.forEach(function(regPlayer) {
+						if (guild.players[regPlayer.allycode]) {
+							dbRegByAc[regPlayer.allycode] = regPlayer;
+							++nbReg;
+						}
+					});
+
+					n-= nbReg;
 					msg = n+" not registered player(s) found in this guild";
 					console.log(logPrefix()+msg);
 
@@ -403,13 +417,12 @@ exports.getUnregPlayers = function(allycode, message) {
 						msg = "All "+values.length+
 							" players in this guild are registered. :white_check_mark:";
 					} else {
-						regPlayers.forEach(function(regPlayer) {
-							delete guild.players[regPlayer.allycode];
-						});
 						Object.keys(guild.players).forEach(function(allycode, i) {
-							unregPlayers.push(guild.players[allycode]+" ("+allycode+")");
+							if (!dbRegByAc[allycode])
+								notRegPlayers.push(guild.players[allycode]+" ("+allycode+")");
 						});
-						msg = "**"+msg+":** "+unregPlayers.sort().join(", ")+".";
+
+						msg = "**"+msg+":** "+notRegPlayers.sort().join(", ")+".";
 					}
 					message.channel.send(msg);
 				});
@@ -418,7 +431,8 @@ exports.getUnregPlayers = function(allycode, message) {
 		.catch(console.error);
 };
 
-exports.guildPlayerStats = function(allycode, message) {
+exports.guildPlayerStats = function(player, message) {
+	let allycode = player.allycode;
 	let locale = config.discord.locale; // shortcut
 	let logPrefix = exports.logPrefix; // shortcut
 
@@ -433,8 +447,8 @@ exports.guildPlayerStats = function(allycode, message) {
 				if (typeof(msg.delete)==="function") msg.delete();
 
 				if (!guild.gp) {
-					msg = "Invalid guild GP: "+guild.gp;
-					console.log(logPrefix()+msg);
+					msg = "GPS: Invalid guild GP: "+guild.gp;
+					console.warn(logPrefix()+msg);
 					message.reply(msg);
 					return;
 				}
@@ -443,18 +457,20 @@ exports.guildPlayerStats = function(allycode, message) {
 					.setAuthor(config.discord.username)
 					.setDescription([
 						"**Guild description:** "+guild.desc,
-						"", "**Officers ("+guild.officerNames.length+"):** "+guild.officerNames.sort().join(", ")
+						"**Officers ("+guild.officerNames.length+"):** "+
+							guild.officerNames.sort().join(", ")
 					])
-					.addField("GP:",
-						guild.gp.toLocaleString(locale), true)
-					.addField("Member count:",
-						guild.members, true)
+					.addField("GP:", guild.gp.toLocaleString(locale), true)
+					.addField("Toon GP:", guild.gpChar.toLocaleString(locale), true)
+					.addField("Ship GP:", guild.gpShip.toLocaleString(locale), true)
+					.addField("Member count:", guild.members, true)
+					.addField("Yellow banner:", guild.message, true)
 					.addField("GP average:",
 						Math.round(guild.gp/guild.members).toLocaleString(locale), true)
-					.addField("Leader:",
-						guild.leader.name +" (GP: "+ guild.leader.gp.toLocaleString(locale)+")", true)
-					.addField("Biggest GP:",
-						guild.biggestPlayer.name+" (GP: "+guild.biggestPlayer.gp.toLocaleString(locale)+")", true)
+					.addField("Leader:", guild.leader.name+
+						" (GP: "+ guild.leader.gp.toLocaleString(locale)+")", true)
+					.addField("Biggest GP:", guild.biggestPlayer.name+
+						" (GP: "+guild.biggestPlayer.gp.toLocaleString(locale)+")", true)
 					.setTimestamp(guild.updated)
 					.setFooter(config.footer.message, config.footer.iconUrl);
 				message.reply(richMsg);
@@ -487,7 +503,8 @@ exports.rememberGuildStats = function(guild) {
 			return;
 		}
 
-		console.log(exports.logPrefix()+"%d guild updated.", result.affectedRows);
+		let n = result.affectedRows;
+		console.log(exports.logPrefix()+"%d guild records updated (DEL+ADD).", n);
 	});
 };
 
@@ -497,6 +514,9 @@ exports.showUnitInfo = function(player, message, unitName, ct) {
 	let hiddenFields = ["allycode", "combatType", "name"];
 	let lines = [];
 	let logPrefix = exports.logPrefix; // shortcut
+	let matchingNames = [];
+	let msg = "";
+	let nbFound = 0;
 	let pattern = null;
 	let strToLookFor = unitName.replace(/ /g, "").replace(/-/g, '_').toUpperCase();
 
@@ -507,44 +527,51 @@ exports.showUnitInfo = function(player, message, unitName, ct) {
 
 	exports.updatePlayerDataInDb(player, message);
 
-	console.log(logPrefix()+"Name to look for:", strToLookFor);
+	console.log(logPrefix()+"Name to look for: '%s'", strToLookFor);
 	pattern = new RegExp("^"+strToLookFor);
 	if (!ct) ct = 1; // combatType: 1 for characters / 2 for ships
 
 	// Try exact match...
 	player.unitsData.forEach(function(unit) {
-		if (!foundUnit && unit.combatType===ct && unit.name===strToLookFor) {
-			color = "GREEN";
-			foundUnit = unit;
+		if (unit.combatType===ct && unit.name===strToLookFor) {
+			matchingNames.push(unit.name);
+			if (!nbFound) foundUnit = unit;
+			++nbFound;
 		}
 	});
 
-	if (!foundUnit) {
+	if (!nbFound) {
 		// Try: starts with...
 		player.unitsData.forEach(function(unit) {
-			if (!foundUnit && unit.combatType===ct && unit.name.match(pattern)) {
-				color = "GREEN";
-				foundUnit = unit;
+			if (unit.combatType===ct && unit.name.match(pattern)) {
+				matchingNames.push(unit.name);
+				if (!nbFound) foundUnit = unit;
+				++nbFound;
 			}
 		});
+
+		if (!nbFound) {
+			// Try: contains...
+			player.unitsData.forEach(function(unit) {
+				if (unit.combatType===ct && unit.name.indexOf(strToLookFor)>=0) {
+					matchingNames.push(unit.name);
+					if (!nbFound) foundUnit = unit;
+					++nbFound;
+				}
+			});
+		}
 	}
 
-	if (!foundUnit) {
-		// Try: contains...
-		player.unitsData.forEach(function(unit) {
-			if (!foundUnit && unit.combatType===ct && unit.name.indexOf(strToLookFor)>=0) {
-				color = "GREEN";
-				foundUnit = unit;
-			}
-		});
-	}
-
+	color = nbFound===1? "GREEN": "ORANGE";
 	let richMsg = new RichEmbed().setTimestamp(player.updated).setColor(color)
 		.setFooter(config.footer.message, config.footer.iconUrl);
 
 	unitName = locutus.ucwords(unitName);
-	if (!foundUnit) {
-		lines = ["Did not find a unit named '"+unitName+"' in this roster!"];
+	msg = nbFound+" units with '"+unitName+"' found in this roster";
+	console.log(logPrefix()+msg);
+	if (nbFound!==1) {
+		lines = [msg+"!"];
+		if (nbFound) lines.push("Matching names: "+matchingNames.join(', '));
 		richMsg.setDescription(lines).setTitle(player.name+"'s "+unitName);
 		message.reply(richMsg);
 		return;

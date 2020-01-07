@@ -196,9 +196,10 @@ exports.getPlayerGuild = async function(allycodes, message, callback) {
 		if ( typeof(allycodes)!=="object" || ! (allycodes instanceof Array) )
 			allycodes = [allycodes];
 
-		let allycode = allycodes[0];
+		let allycode = allycodes[0]; // keep only the first one: 1 guild at once
 		let msg = "";
 		let input  = { "allycodes": allycodes }; // payload
+		let locale = config.discord.locale; // shortcut
 		let { result, error, warning } = await swapi.fetchGuild(input); // <--
 		let richMsg = null;
 		let roster = null;
@@ -238,20 +239,28 @@ exports.getPlayerGuild = async function(allycodes, message, callback) {
 		/*
 		guild.roster = "departed";
 		console.log(logPrefix()+"Guild:");
-		console.dir(result);
+		console.dir(result); // id (G1582274...), name, desc, members (int), status (2),
+			// required (85), bannerColor (white_red), bannerLogo (guild_icon_senate),
+			// message (current yellow banner content), gp,
+			// raid: { rancor: 'HEROIC80', aat: 'HEROIC80', sith_raid: 'HEROIC85' }
+			// roster, updated
 
 		console.log("-----");
 		console.log(logPrefix()+"First player found in the guild:");
 		console.dir(roster[0]);
-		// id, guildMemberLevel (3), level (85), allyCode, gp, gpChar, gpShip, updated (bigint)
+		// id, guildMemberLevel (3), name, level (85), allyCode, gp, gpChar, gpShip, updated (bigint)
 		console.log("====="); // */
 
 		guild.biggestPlayer = {gp: 0};
+		guild.gpChar = 0;
+		guild.gpShip = 0;
 		guild.leader = {};
 		guild.players = {}; // allycode => (IG nick) name
 		guild.officerNames = [];
 
 		roster.forEach(function(player) {
+			guild.gpChar+= player.gpChar;
+			guild.gpShip+= player.gpShip;
 			guild.players[player.allyCode] = player.name;
 
 			if (player.gp > guild.biggestPlayer.gp) guild.biggestPlayer = player;
@@ -273,6 +282,8 @@ exports.getPlayerGuild = async function(allycodes, message, callback) {
 					console.warn(msg, player.guildMemberLevel, player);
 			}
 		});
+		console.log(logPrefix()+"Ship GP before fix: %s", guild.gpShip.toLocaleString(locale));
+		guild.gpShip = guild.gp - guild.gpChar; // fix
 
 		console.log(logPrefix()+"Found %d players in guild:", Object.keys(guild.players).length, guild.name);
 
