@@ -23,8 +23,9 @@ const config = require("./config.json");
 
 // Load other module(s):
 const locutus = require("./locutus"); // Functions from locutus.io
-const swgoh   = require("./swgoh");  // SWGoH API
-//const view  = require("./view");  // Functions used to display results
+const tools   = require("./tools");   // Several functions
+const swgoh   = require("./swgoh");   // SWGoH API
+//const view  = require("./view");    // Functions used to display results
 
 // Shortcut(s):
 var logPrefix = exports.logPrefix;
@@ -191,7 +192,7 @@ exports.getGuildStats = function(allycode, message) {
 					.setFooter(config.footer.message, config.footer.iconUrl);
 
 				if (guild.required)
-					richMsg.addField("Required min level:", guild.required, true)
+					richMsg.addField("Required level:", "≥ "+guild.required, true)
 
 				if (guild.message)
 					richMsg.addField("Yellow banner:", guild.message, true)
@@ -199,7 +200,7 @@ exports.getGuildStats = function(allycode, message) {
 				message.reply(richMsg);
 
 				// Remember stats of the guild:
-				exports.rememberGuildStats(guild);
+				tools.rememberGuildStats(guild);
 			});
 		})
 		.catch(console.error);
@@ -269,7 +270,7 @@ exports.guildPlayerStats = function(player, message) {
 					.setFooter(config.footer.message, config.footer.iconUrl);
 
 				if (guild.required)
-					richMsg.addField("Required min level:", guild.required, true)
+					richMsg.addField("Required level:", "≥ "+guild.required, true)
 
 				if (guild.message)
 					richMsg.addField("Yellow banner:", guild.message, true)
@@ -277,7 +278,7 @@ exports.guildPlayerStats = function(player, message) {
 				message.reply(richMsg);
 
 				// Remember stats of the guild:
-				exports.rememberGuildStats(guild);
+				tools.rememberGuildStats(guild);
 			});
 		})
 		.catch(console.error);
