@@ -48,7 +48,7 @@ exports.checkPlayerMods = function(player, message) {
 		return;
 	}
 
-	exports.updatePlayerDataInDb(player, message);
+	tools.updatePlayerDataInDb(player, message);
 
 	let color = "GREEN";
 	let lines = [];
@@ -100,7 +100,7 @@ exports.checkUnitsGp = function(player, message, limit) {
 		return;
 	}
 
-	exports.updatePlayerDataInDb(player, message);
+	tools.updatePlayerDataInDb(player, message);
 
 	let color = "GREEN";
 	let minit = limit-1;
@@ -206,27 +206,6 @@ exports.getGuildStats = function(allycode, message) {
 		.catch(console.error);
 };
 
-exports.getPlayerStats = function(allycode, message, callback) {
-	if (!allycode) {
-		message.reply(":red_circle: Invalid or missing allycode! Try 'register' command.");
-		return;
-	}
-
-	message.channel.send("Looking for "+allycode+"'s stats...")
-		.then(msg => {
-			swgoh.getPlayerData(allycode, message, function(arg1, arg2, arg3) {
-				if (typeof(msg.delete)==="function") msg.delete();
-
-				if (typeof(callback)==="function") callback(arg1, arg2, arg3);
-			});
-		})
-		.catch(function(exc) {
-			if (msg && typeof(msg.delete)==="function") msg.delete();
-
-			console.error(exc);
-		});
-};
-
 exports.guildPlayerStats = function(player, message) {
 	let allycode = player.allycode;
 	let locale = config.discord.locale; // shortcut
@@ -307,7 +286,7 @@ exports.showUnitInfo = function(player, message, unitName, ct) {
 		return;
 	}
 
-	exports.updatePlayerDataInDb(player, message);
+	tools.updatePlayerDataInDb(player, message);
 
 	console.log(logPrefix()+"Name to look for: '%s'", strToLookFor);
 	pattern = new RegExp("^"+strToLookFor);
@@ -495,7 +474,7 @@ exports.showPlayerRelics = function(player, message) {
 		return;
 	}
 
-	exports.updatePlayerDataInDb(player, message);
+	tools.updatePlayerDataInDb(player, message);
 
 	let color = "GREEN";
 	let lines = [];
@@ -548,7 +527,7 @@ exports.showPlayerStats = function(player, message) {
 		return;
 	}
 
-	exports.updatePlayerDataInDb(player, message);
+	tools.updatePlayerDataInDb(player, message);
 
 	let richMsg = new RichEmbed().setTitle(player.name+"'s profile").setColor("GREEN")
 		.setDescription([
@@ -582,7 +561,7 @@ exports.showWhoIs = function(user, nick, message) {
 		];
 	let logPrefix = exports.logPrefix; // shortcut
 
-	exports.getPlayerFromDiscordId(user.id, message, function(player) {
+	tools.getPlayerFromDiscordId(user.id, message, function(player) {
 		if (player) {
 			lines.push("**"+nick+" allycode is:** "+player.allycode);
 		}
