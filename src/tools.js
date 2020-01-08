@@ -22,8 +22,9 @@ const config = require("./config.json");
 const mysql = require("mysql");
 
 // Load other module(s):
-const locutus = require("./locutus"); // Functions from locutus.io
+//const locutus = require("./locutus"); // Functions from locutus.io
 const swgoh   = require("./swgoh");  // SWGoH API
+//const tools = require("./tools");   // Several functions
 const view    = require("./view");  // Functions used to display results
 
 // Shortcut(s):
@@ -371,63 +372,6 @@ exports.getUnregPlayers = function(allycode, message) {
 					}
 					message.channel.send(msg);
 				});
-			});
-		})
-		.catch(console.error);
-};
-
-exports.guildPlayerStats = function(player, message) {
-	let allycode = player.allycode;
-	let locale = config.discord.locale; // shortcut
-	let logPrefix = exports.logPrefix; // shortcut
-
-	if (!allycode) {
-		message.reply(":red_circle: Invalid or missing allycode!");
-		return;
-	}
-
-	message.channel.send("Looking for stats of guild with ally: "+allycode+"...")
-		.then(msg => {
-			swgoh.getPlayerGuild(allycode, message, function(guild) {
-				if (typeof(msg.delete)==="function") msg.delete();
-
-				if (!guild.gp) {
-					msg = "GPS: Invalid guild GP: "+guild.gp;
-					console.warn(logPrefix()+msg);
-					message.reply(msg);
-					return;
-				}
-
-				richMsg = new RichEmbed().setTitle(guild.name).setColor("GREEN")
-					.setAuthor(config.discord.username)
-					.setDescription([
-						"**Guild description:** "+guild.desc,
-						"**Officers ("+guild.officerNames.length+"):** "+
-							guild.officerNames.sort().join(", ")
-					])
-					.addField("GP:", guild.gp.toLocaleString(locale), true)
-					.addField("Toon GP:", guild.gpChar.toLocaleString(locale), true)
-					.addField("Ship GP:", guild.gpShip.toLocaleString(locale), true)
-					.addField("Member count:", guild.members, true)
-					.addField("GP average:",
-						Math.round(guild.gp/guild.members).toLocaleString(locale), true)
-					.addField("Leader:", guild.leader.name+
-						" (GP: "+ guild.leader.gp.toLocaleString(locale)+")", true)
-					.addField("Biggest GP:", guild.biggestPlayer.name+
-						" (GP: "+guild.biggestPlayer.gp.toLocaleString(locale)+")", true)
-					.setTimestamp(guild.updated)
-					.setFooter(config.footer.message, config.footer.iconUrl);
-
-				if (guild.required)
-					richMsg.addField("Required min level:", guild.required, true)
-
-				if (guild.message)
-					richMsg.addField("Yellow banner:", guild.message, true)
-
-				message.reply(richMsg);
-
-				// Remember stats of the guild:
-				exports.rememberGuildStats(guild);
 			});
 		})
 		.catch(console.error);

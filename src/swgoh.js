@@ -22,7 +22,8 @@ const config = require("./config.json");
 //const mysql = require("mysql");
 
 // Load other modules:
-//const swgoh = require("./swgoh"); // SWGoH API
+//const locutus = require("./locutus"); // Functions from locutus.io
+//const swgoh   = require("./swgoh"); // SWGoH API
 const tools   = require("./tools"); // Several functions
 const view    = require("./view");  // Functions used to display results
 

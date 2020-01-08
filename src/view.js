@@ -30,15 +30,6 @@ const swgoh   = require("./swgoh");   // SWGoH API
 // Shortcut(s):
 var logPrefix = exports.logPrefix;
 
-/* Prepare DB connection pool:
-const db_pool = mysql.createPool({
-	connectionLimit: config.db.conMaxCount,
-	database       : config.db.name,
-	host           : config.db.host,
-	password       : config.db.pw,
-	user           : config.db.user
-}); // */
-
 exports.checkPlayerMods = function(player, message) {
 	let logPrefix = exports.logPrefix; // shortcut
 	let maxLines = 5;

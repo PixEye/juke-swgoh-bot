@@ -324,11 +324,11 @@ client.on("message", (message) => {
 
 			allycode = tools.getFirstAllycodeInWords(args);
 			if (allycode) {
-				tools.getPlayerFromDatabase(allycode, message, tools.guildPlayerStats);
+				tools.getPlayerFromDatabase(allycode, message, view.guildPlayerStats);
 			} else {
 				console.log(logPrefix()+"Try with user ID:", user.id);
 				tools.getPlayerFromDiscordId(user.id, message, function(player) {
-					if (player) tools.getPlayerFromDatabase(player.allycode, message, tools.guildPlayerStats);
+					if (player) tools.getPlayerFromDatabase(player.allycode, message, view.guildPlayerStats);
 				});
 			}
 			break;
