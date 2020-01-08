@@ -23,7 +23,8 @@ const config = require("./config.json");
 
 // Load other modules:
 //const swgoh = require("./swgoh"); // SWGoH API
-const tools = require("./tools"); // Several functions
+const tools   = require("./tools"); // Several functions
+const view    = require("./view");  // Functions used to display results
 
 // Shortcut(s):
 let logPrefix = tools.logPrefix;

@@ -23,8 +23,9 @@ const mysql = require("mysql");
 
 // Load other modules:
 const locutus = require("./locutus"); // Functions from locutus.io
-const swgoh  = require("./swgoh");  // SWGoH API
-const tools = require("./tools"); // Several functions
+const swgoh   = require("./swgoh");  // SWGoH API
+const tools   = require("./tools"); // Several functions
+const view    = require("./view"); // Functions used to display results
 
 // Shortcut(s):
 let logPrefix = tools.logPrefix;
@@ -194,13 +195,13 @@ client.on("message", (message) => {
 			console.log(logPrefix()+"Character to look for is:", msg);
 			if (allycode) {
 				tools.getPlayerStats(allycode, message, function(player, message) {
-					return tools.showUnitInfo(player, message, msg, 1);
+					return view.showUnitInfo(player, message, msg, 1);
 				});
 			} else {
 				console.log(logPrefix()+"Try with user ID:", user.id);
 				tools.getPlayerFromDiscordId(user.id, message, function(player) {
 					if (player) tools.getPlayerStats(player.allycode, message, function(player, message) {
-						return tools.showUnitInfo(player, message, msg, 1);
+						return view.showUnitInfo(player, message, msg, 1);
 					});
 				});
 			}
@@ -301,11 +302,11 @@ client.on("message", (message) => {
 
 			allycode = tools.getFirstAllycodeInWords(args);
 			if (allycode) {
-				tools.getGuildStats(allycode, message);
+				view.getGuildStats(allycode, message);
 			} else {
 				console.log(logPrefix()+"Try with user ID:", user.id);
 				tools.getPlayerFromDiscordId(user.id, message, function(player) {
-					if (player) tools.getGuildStats(player.allycode, message);
+					if (player) view.getGuildStats(player.allycode, message);
 				});
 			}
 			break;
@@ -416,11 +417,11 @@ client.on("message", (message) => {
 
 			allycode = tools.getFirstAllycodeInWords(args);
 			if (allycode) {
-				tools.getPlayerStats(allycode, message, tools.showPlayerStats);
+				tools.getPlayerStats(allycode, message, view.showPlayerStats);
 			} else {
 				console.log(logPrefix()+"Try with user ID:", user.id);
 				tools.getPlayerFromDiscordId(user.id, message, function(player) {
-					if (player) tools.getPlayerStats(player.allycode, message, tools.showPlayerStats);
+					if (player) tools.getPlayerStats(player.allycode, message, view.showPlayerStats);
 				});
 			}
 			break;
@@ -514,13 +515,13 @@ client.on("message", (message) => {
 			console.log(logPrefix()+"Ship to look for is:", msg);
 			if (allycode) {
 				tools.getPlayerStats(allycode, message, function(player, message) {
-					return tools.showUnitInfo(player, message, msg, 2);
+					return view.showUnitInfo(player, message, msg, 2);
 				});
 			} else {
 				console.log(logPrefix()+"Try with user ID:", user.id);
 				tools.getPlayerFromDiscordId(user.id, message, function(player) {
 					if (player) tools.getPlayerStats(player.allycode, message, function(player, message) {
-						return tools.showUnitInfo(player, message, msg, 2);
+						return view.showUnitInfo(player, message, msg, 2);
 					});
 				});
 			}
@@ -540,11 +541,11 @@ client.on("message", (message) => {
 
 			allycode = tools.getFirstAllycodeInWords(args);
 			if (allycode) {
-				tools.getPlayerStats(allycode, message, tools.showPlayerRelics);
+				tools.getPlayerStats(allycode, message, view.showPlayerRelics);
 			} else {
 				console.log(logPrefix()+"Try with user ID:", user.id);
 				tools.getPlayerFromDiscordId(user.id, message, function(player) {
-					if (player) tools.getPlayerStats(player.allycode, message, tools.showPlayerRelics);
+					if (player) tools.getPlayerStats(player.allycode, message, view.showPlayerRelics);
 				});
 			}
 			break;
@@ -717,7 +718,7 @@ client.on("message", (message) => {
 		case "selfy":
 			user = client.user;
 			nick = "My";
-			tools.showWhoIs(user, nick, message);
+			view.showWhoIs(user, nick, message);
 			break;
 
 		case "whois":
@@ -736,12 +737,12 @@ client.on("message", (message) => {
 				message.reply("No user specified!");
 				return;
 			}
-			tools.showWhoIs(user, nick, message);
+			view.showWhoIs(user, nick, message);
 			break;
 
 		case "whoami":
 			nick = (nick==="My")? nick: (nick+"'s");
-			tools.showWhoIs(user, nick, message);
+			view.showWhoIs(user, nick, message);
 			break;
 
 		default:
