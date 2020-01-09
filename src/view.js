@@ -32,6 +32,7 @@ exports.guildPlayerStats = function(allycode, message, guild) {
 	let lines = ["``##/  min  /  avg  /  max  / name``"];
 	let locale = config.discord.locale; // shortcut
 	let logPrefix = exports.logPrefix; // shortcut
+	let minStars = 5;
 	let players = {};
 
 	if (!guild.players || typeof(guild.players)!=="object") {
@@ -63,7 +64,7 @@ exports.guildPlayerStats = function(allycode, message, guild) {
 			}
 
 			let unit = player.unitsData[unitKey];
-			if (!unit || unit.stars<7) return;
+			if (!unit || (unit.combatType===1 && unit.stars<minStars)) return;
 
 			stat.count++;
 			stat.gp += unit.gp;
@@ -87,10 +88,10 @@ exports.guildPlayerStats = function(allycode, message, guild) {
 			statStr.push(val);
 		});
 
-		let icon = ct>1? ":rocket:": ":man_standing:";
+		let icon = ct>1? ":rocket:": ":man_standing:"+minStars+":star:+";
 
 		if (stat.count)
-			lines.push("``"+statStr.join("/ ")+"/`` **7:star:"+icon+" "+unitName+"**");
+			lines.push("``"+statStr.join("/ ")+"/`` **"+icon+" "+unitName+"**");
 	});
 
 	// Display the result:
