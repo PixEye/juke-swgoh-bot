@@ -1,9 +1,9 @@
 {
   "custom": {
     "unitsOfInterest": [
-      "DARTHMALAK", "DARTHREVAN", "DARTHTRAYA",
-      "GENERALSKYWALKER", "GEONOSIANBROODALPHA", "GRIEVOUS", "JEDIKNIGHTREVAN",
-      "CAPITALMALEVOLENCE", "CAPITALNEGOTIATOR", "HOUNDSTOOTH", "MILLENNIUMFALCON"
+      "Capital Malevolence", "Capital Negotiator", "Hounds Tooth", "Millennium Falcon",
+      "Darth Malak", "Darth Revan", "Darth Traya",
+      "General Skywalker", "Geonosian Brood Alpha", "Grievous", "Jedi Knight Revan"
     ]
   },
   "db": {
@@ -16,7 +16,7 @@
   "discord": {
     "locale": "en-EN",
     "ownerID": "012345678901234567",
-    "prefix": "jsb.",
+    "prefix": "jb.",
     "token": "<your long bot token. See: https://discordapp.com/developers/applications/ >",
     "username": "JsB"
   },

@@ -27,237 +27,126 @@ const tools   = require("./tools");   // Several functions
 const swgoh   = require("./swgoh");   // SWGoH API
 //const view  = require("./view");    // Functions used to display results
 
-// Shortcut(s):
-var logPrefix = exports.logPrefix;
-
-exports.checkPlayerMods = function(player, message) {
+exports.guildPlayerStats = function(allycode, message, guild) {
+	let allycodes = [allycode];
+	let lines = ["``##/  min  /  avg  /  max  / name``"];
+	let locale = config.discord.locale; // shortcut
 	let logPrefix = exports.logPrefix; // shortcut
-	let maxLines = 5;
+	let players = {};
 
-	if (!player.gp) {
-		console.log(logPrefix()+"invalid GP for user:", player);
+	if (!guild.players || typeof(guild.players)!=="object") {
+		msg = "GPS: Invalid guild players: "+guild.players;
+		console.warn(logPrefix()+msg);
+		message.reply(msg);
 		return;
 	}
 
-	tools.updatePlayerDataInDb(player, message);
+	allycodes = Object.keys(guild.players);
+	console.log(logPrefix()+"%d players to get...", allycodes.length);
 
-	let color = "GREEN";
-	let lines = [];
-	let maxModsCount = 6;
-	let minCharLevel = 50;
-	let n = 0;
-	let unitsWithoutAllModules = player.unitsData.filter(function(unit) {
-			// Main filter:
-			return unit.combatType===1 && unit.level>=minCharLevel && unit.mods.length<maxModsCount;
-		}).sort(function(a, b) {
-			return b.gp-a.gp; // sort by galactic power (descending GP)
-		});
-	let tpmmc = 0; // total player's missing modules count
+	players = guild.players;
+	console.log(logPrefix()+"Got %d players' data.", Object.keys(players).length);
 
-	n = unitsWithoutAllModules.length;
-	console.log(logPrefix()+"%d unit(s) with missing modules found.", n);
-	// console.dir(player.unitsData);
+	// Compute statitics:
+	config.custom.unitsOfInterest.forEach(function(unitName) {
+		let ct = 0;
+		let stat = {count: 0, gp: 0, gpMin: 999999, gpAvg: 0, gpMax: 0};
+		let unitKey = unitName.replace(/ /g, '').toUpperCase();
 
-	if (n === 0) {
-		let msg = "";
+		console.log(logPrefix()+"Fetching for: %s (%s)...", unitName, unitKey);
 
-		console.log(logPrefix()+"There is 0 known units with missing modules in this roster.");
-		lines = ["All player's level 50+ characters have "+maxModsCount+" modules."];
-	} else {
-		color = "ORANGE";
-		unitsWithoutAllModules.forEach(function(unit, i) {
-			tpmmc += maxModsCount - unit.mods.length;
-			if (i<maxLines)
-				lines.push((maxModsCount-unit.mods.length)+" missing module(s) on: (GP="+unit.gp+") "+unit.name);
-			else if (i===maxLines)
-				lines.push("And "+(n-maxLines)+" more...");
-		});
-		console.log(logPrefix()+"%d total character(s) with %d total missing modules found.", tpmmc, maxModsCount);
-	}
+		allycodes.forEach(function(allycode, i) {
+			let player = players[allycode];
+			if (!player) {
+				console.warn(logPrefix()+"Did not find player with allycode: "+allycode);
+				return;
+			}
 
-	richMsg = new RichEmbed()
-		.setTitle(player.name+" has "+n+" unit(s) with "+tpmmc+" missing module(s)")
-		.setDescription(lines).setColor(color)
-		.setTimestamp(player.updated)
-		.setFooter(config.footer.message, config.footer.iconUrl);
-	message.channel.send(richMsg);
-};
+			let unit = player.unitsData[unitKey];
+			if (!unit || unit.stars<7) return;
 
-exports.checkUnitsGp = function(player, message, limit) {
-	let logPrefix = exports.logPrefix; // shortcut
-
-	if (!player.gp) {
-		console.log(logPrefix()+"invalid GP for user:", player);
-		return;
-	}
-
-	tools.updatePlayerDataInDb(player, message);
-
-	let color = "GREEN";
-	let minit = limit-1;
-	let lines = [];
-	let maxGp = limit*1000;
-	let maxLines = 10;
-	let minGp = minit*1000;
-	let n = 0;
-	let units = player.unitsData.filter(function(unit) {
-			// Main filter:
-			return unit.combatType===1 && unit.gp>minGp && unit.gp<maxGp;
-		}).sort(function(a, b) {
-			return b.gp-a.gp; // sort by galactic power (descending GP)
+			stat.count++;
+			stat.gp += unit.gp;
+			ct = unit.combatType;
+			if (unit.gp>stat.gpMax) stat.gpMax = unit.gp;
+			if (unit.gp<stat.gpMin) stat.gpMin = unit.gp;
 		});
 
-	n = units.length;
-	console.log(logPrefix()+"%d unit(s) on the border-line.", n);
-	// console.dir(player.unitsData);
+		stat.gpAvg = stat.count? Math.round(stat.gp / stat.count): 0;
+		delete stat.gp;
 
-	if (n === 0) {
-		let msg = "";
+		let statStr = [];
+		Object.keys(stat).forEach(function(k) {
+			let v = stat[k], val = v;
 
-		console.log(logPrefix()+"There is 0 known units on the border line in this roster.");
-		lines = ["There is no player's characters between "+minGp+" and "+maxGp+" of GP."];
-	} else {
-		color = "ORANGE";
-		units.forEach(function(u, i) {
-			if (i<maxLines)
-				lines.push("(GP="+u.gp+"; G"+u.gear+"; "+u.zetaCount+"z) "+u.name);
-			else if (i===maxLines)
-				lines.push("And "+(n-maxLines)+" more...");
+			if (k==="count")
+				val = v<10? " "+v: v;
+			else
+				val = v<10000? " "+v.toLocaleString(locale): v.toLocaleString(locale);
+
+			statStr.push(val);
 		});
-		console.log(logPrefix()+"%d total character(s) with GP between %dk & %dk.", n, minit, limit);
-	}
 
-	richMsg = new RichEmbed()
-		.setTitle(player.name+" has "+n+" unit(s) with GP between "+minit+"k and "+limit+"k")
-		.setDescription(lines).setColor(color)
-		.setTimestamp(player.updated)
-		.setFooter(config.footer.message, config.footer.iconUrl);
-	message.channel.send(richMsg);
+		let icon = ct>1? ":rocket:": ":man_standing:";
 
-	player.unitsData.forEach(function(u) { // u = current unit
-		lines.push(
-			[u.allycode, u.name, u.combatType, u.gear, u.gp, u.relic, u.zetaCount]
-		);
+		if (stat.count)
+			lines.push("``"+statStr.join("/ ")+"/`` **7:star:"+icon+" "+unitName+"**");
 	});
-};
 
-exports.getGuildStats = function(allycode, message) {
-	let locale = config.discord.locale; // shortcut
-	let logPrefix = exports.logPrefix; // shortcut
+	// Display the result:
+	richMsg = new RichEmbed().setTitle(guild.name).setColor("GREEN")
+		.setAuthor(config.discord.username)
+		.setDescription(lines)
+		.setTimestamp(guild.updated)
+		.setFooter(config.footer.message, config.footer.iconUrl);
 
-	if (!allycode) {
-		message.reply(":red_circle: Invalid or missing allycode!");
-		return;
-	}
-
-	message.channel.send("Looking for stats of guild with ally: "+allycode+"...")
-		.then(msg => {
-			swgoh.getPlayerGuild(allycode, message, function(guild) {
-				if (typeof(msg.delete)==="function") msg.delete();
-
-				if (!guild.gp) {
-					msg = "GGS: Invalid guild GP: "+guild.gp;
-					console.warn(logPrefix()+msg);
-					message.reply(msg);
-					return;
-				}
-
-				richMsg = new RichEmbed().setTitle(guild.name).setColor("GREEN")
-					.setAuthor(config.discord.username)
-					.setDescription([
-						"**Guild description:** "+guild.desc,
-						"**Officers ("+guild.officerNames.length+"):** "+
-							guild.officerNames.sort().join(", ")
-					])
-					.addField("GP:", guild.gp.toLocaleString(locale), true)
-					.addField("Toon GP:", guild.gpChar.toLocaleString(locale), true)
-					.addField("Ship GP:", guild.gpShip.toLocaleString(locale), true)
-					.addField("Member count:", guild.members, true)
-					.addField("GP average:",
-						Math.round(guild.gp/guild.members).toLocaleString(locale), true)
-					.addField("Leader:", guild.leader.name+
-						" (GP: "+ guild.leader.gp.toLocaleString(locale)+")", true)
-					.addField("Biggest GP:", guild.biggestPlayer.name+
-						" (GP: "+guild.biggestPlayer.gp.toLocaleString(locale)+")", true)
-					.setTimestamp(guild.updated)
-					.setFooter(config.footer.message, config.footer.iconUrl);
-
-				if (guild.required)
-					richMsg.addField("Required level:", "≥ "+guild.required, true)
-
-				if (guild.message)
-					richMsg.addField("Yellow banner:", guild.message, true)
-
-				message.reply(richMsg);
-
-				// Remember stats of the guild:
-				tools.rememberGuildStats(guild);
-			});
-		})
-		.catch(console.error);
-};
-
-exports.guildPlayerStats = function(player, message) {
-	let allycode = player.allycode;
-	let locale = config.discord.locale; // shortcut
-	let logPrefix = exports.logPrefix; // shortcut
-
-	if (!allycode) {
-		message.reply(":red_circle: Invalid or missing allycode!");
-		return;
-	}
-
-	message.channel.send("Looking for stats of guild with ally: "+allycode+"...")
-		.then(msg => {
-			swgoh.getPlayerGuild(allycode, message, function(guild) {
-				if (typeof(msg.delete)==="function") msg.delete();
-
-				if (!guild.gp) {
-					msg = "GPS: Invalid guild GP: "+guild.gp;
-					console.warn(logPrefix()+msg);
-					message.reply(msg);
-					return;
-				}
-
-				richMsg = new RichEmbed().setTitle(guild.name).setColor("GREEN")
-					.setAuthor(config.discord.username)
-					.setDescription([
-						"**Guild description:** "+guild.desc,
-						"**Officers ("+guild.officerNames.length+"):** "+
-							guild.officerNames.sort().join(", ")
-					])
-					.addField("GP:", guild.gp.toLocaleString(locale), true)
-					.addField("Toon GP:", guild.gpChar.toLocaleString(locale), true)
-					.addField("Ship GP:", guild.gpShip.toLocaleString(locale), true)
-					.addField("Member count:", guild.members, true)
-					.addField("GP average:",
-						Math.round(guild.gp/guild.members).toLocaleString(locale), true)
-					.addField("Leader:", guild.leader.name+
-						" (GP: "+ guild.leader.gp.toLocaleString(locale)+")", true)
-					.addField("Biggest GP:", guild.biggestPlayer.name+
-						" (GP: "+guild.biggestPlayer.gp.toLocaleString(locale)+")", true)
-					.setTimestamp(guild.updated)
-					.setFooter(config.footer.message, config.footer.iconUrl);
-
-				if (guild.required)
-					richMsg.addField("Required level:", "≥ "+guild.required, true)
-
-				if (guild.message)
-					richMsg.addField("Yellow banner:", guild.message, true)
-
-				message.reply(richMsg);
-
-				// Remember stats of the guild:
-				tools.rememberGuildStats(guild);
-			});
-		})
-		.catch(console.error);
+	message.reply(richMsg);
 };
 
 exports.logPrefix = function () {
 	let dt = new Date();
 
 	return dt.toString().replace(/ GMT.*$$/, "")+" - ";
+};
+
+exports.showGuildStats = function(guild, message) {
+	let locale = config.discord.locale; // shortcut
+	let logPrefix = exports.logPrefix; // shortcut
+
+	if (!guild.gp) {
+		msg = "GGS: Invalid guild GP: "+guild.gp;
+		console.warn(logPrefix()+msg);
+		message.reply(msg);
+		return;
+	}
+
+	richMsg = new RichEmbed().setTitle(guild.name).setColor("GREEN")
+		.setAuthor(config.discord.username)
+		.setDescription([
+			"**Guild description:** "+guild.desc,
+			"**Officers ("+guild.officerNames.length+"):** "+
+				guild.officerNames.sort().join(", ")
+		])
+		.addField("GP:", guild.gp.toLocaleString(locale), true)
+		.addField("Toon GP:", guild.gpChar.toLocaleString(locale), true)
+		.addField("Ship GP:", guild.gpShip.toLocaleString(locale), true)
+		.addField("Member count:", guild.members, true)
+		.addField("GP average:",
+			Math.round(guild.gp/guild.members).toLocaleString(locale), true)
+		.addField("Leader:", guild.leader.name+
+			" (GP: "+ guild.leader.gp.toLocaleString(locale)+")", true)
+		.addField("Biggest GP:", guild.biggestPlayer.name+
+			" (GP: "+guild.biggestPlayer.gp.toLocaleString(locale)+")", true)
+		.setTimestamp(guild.updated)
+		.setFooter(config.footer.message, config.footer.iconUrl);
+
+	if (guild.required)
+		richMsg.addField("Required level:", "≥ "+guild.required, true)
+
+	if (guild.message)
+		richMsg.addField("Yellow banner:", guild.message, true)
+
+	message.reply(richMsg);
 };
 
 exports.showUnitInfo = function(player, message, unitName, ct) {
@@ -276,8 +165,6 @@ exports.showUnitInfo = function(player, message, unitName, ct) {
 		console.log(logPrefix()+"invalid GP for user:", player);
 		return;
 	}
-
-	tools.updatePlayerDataInDb(player, message);
 
 	console.log(logPrefix()+"Name to look for: '%s'", strToLookFor);
 	pattern = new RegExp("^"+strToLookFor);
@@ -465,8 +352,6 @@ exports.showPlayerRelics = function(player, message) {
 		return;
 	}
 
-	tools.updatePlayerDataInDb(player, message);
-
 	let color = "GREEN";
 	let lines = [];
 	let n = 0;
@@ -511,14 +396,13 @@ exports.showPlayerRelics = function(player, message) {
 };
 
 exports.showPlayerStats = function(player, message) {
+	let locale = config.discord.locale; // shortcut
 	let logPrefix = exports.logPrefix; // shortcut
 
 	if (!player.gp) {
 		console.log(logPrefix()+"invalid GP for user:", player);
 		return;
 	}
-
-	tools.updatePlayerDataInDb(player, message);
 
 	let richMsg = new RichEmbed().setTitle(player.name+"'s profile").setColor("GREEN")
 		.setDescription([

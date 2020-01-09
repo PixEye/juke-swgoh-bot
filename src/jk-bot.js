@@ -27,9 +27,6 @@ const swgoh   = require("./swgoh");  // SWGoH API
 const tools   = require("./tools"); // Several functions
 const view    = require("./view"); // Functions used to display results
 
-// Shortcut(s):
-let logPrefix = tools.logPrefix;
-
 // Prepare DB connection pool:
 const db_pool = mysql.createPool({
 	connectionLimit: config.db.conMaxCount,
@@ -38,6 +35,9 @@ const db_pool = mysql.createPool({
 	password       : config.db.pw,
 	user           : config.db.user
 });
+
+// Shortcut(s):
+let logPrefix = tools.logPrefix;
 
 console.log(logPrefix()+"Loading...");
 
@@ -302,11 +302,11 @@ client.on("message", (message) => {
 
 			allycode = tools.getFirstAllycodeInWords(args);
 			if (allycode) {
-				view.getGuildStats(allycode, message);
+				tools.getGuildStats(allycode, message, view.showGuildStats);
 			} else {
 				console.log(logPrefix()+"Try with user ID:", user.id);
 				tools.getPlayerFromDiscordId(user.id, message, function(player) {
-					if (player) view.getGuildStats(player.allycode, message);
+					if (player) tools.getGuildStats(player.allycode, message, view.showGuildStats);
 				});
 			}
 			break;
@@ -324,11 +324,11 @@ client.on("message", (message) => {
 
 			allycode = tools.getFirstAllycodeInWords(args);
 			if (allycode) {
-				tools.getPlayerFromDatabase(allycode, message, view.guildPlayerStats);
+				tools.getGuildDbStats(allycode, message, view.guildPlayerStats);
 			} else {
 				console.log(logPrefix()+"Try with user ID:", user.id);
 				tools.getPlayerFromDiscordId(user.id, message, function(player) {
-					if (player) tools.getPlayerFromDatabase(player.allycode, message, view.guildPlayerStats);
+					if (player) tools.getGuildDbStats(player.allycode, message, view.guildPlayerStats);
 				});
 			}
 			break;
