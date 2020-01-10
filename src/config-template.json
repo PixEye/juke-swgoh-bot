@@ -1,6 +1,7 @@
 {
   "custom": {
-    "minStars": 5,
+    "shipMinStars": 5,
+    "toonMinStars": 7,
     "unitsOfInterest": [
       "Capital Malevolence", "Capital Negotiator", "Hounds Tooth", "Millennium Falcon",
       "Darth Malak", "Darth Revan", "Darth Traya",

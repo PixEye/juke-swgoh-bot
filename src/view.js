@@ -33,8 +33,9 @@ exports.guildPlayerStats = function(allycode, message, guild) {
 	let lines = [];
 	let locale = config.discord.locale; // shortcut
 	let logPrefix = exports.logPrefix; // shortcut
-	let minStars = config.custom.minStars;
 	let players = {};
+	let shipMinStars = config.custom.shipMinStars;
+	let toonMinStars = config.custom.toonMinStars;
 
 	if (!guild || !guild.players || typeof(guild.players)!=="object") {
 		msg = "GPS: Invalid guild: "+JSON.stringify(guild);
@@ -56,16 +57,19 @@ exports.guildPlayerStats = function(allycode, message, guild) {
 	line+= "/"+guild.memberCount;
 	lines.push(line);
 
-	line = "**Total relics:** "+guild.relics+"; ";
-	line+= "Units < "+minStars+":star: are ignored.";
+	// line.push("**Total relics:** "+guild.relics);
+	line = "Toons <"+toonMinStars+":star: & ships <"+shipMinStars+":star: are ignored.";
 	lines.push(line);
-
-	lines.push("``##/  avg  /  max  / Relics``");
+	// lines.push("``##/  avg  /  max``");
 
 	// Compute statitics:
 	config.custom.unitsOfInterest.forEach(function(unitName) {
+		let cpg = {}; // count per gears
+		let cpr = {}; // count per relics
+		let cps = {}; // count per stars
 		let ct = 0;
-		let stat = {count: 0, gp: 0, gpMin: 999999, gpAvg: 0, gpMax: 0, relics: 0};
+		let stat = {count: 0, gp: 0, gpMin: 999999, gpAvg: 0, gpMax: 0};
+		let uc = 0;
 		let unitKey = unitName.replace(/ /g, '').toUpperCase();
 
 		console.log(logPrefix()+"Fetching for: %s (%s)...", unitName, unitKey);
@@ -77,19 +81,30 @@ exports.guildPlayerStats = function(allycode, message, guild) {
 				return;
 			}
 
-			let unit = player.unitsData[unitKey];
-			if (!unit || (unit.combatType===1 && unit.stars<minStars)) return;
+			let u = player.unitsData[unitKey];
+			if (!u) return;
 
+			ct = u.combatType;
+			if (u.ct<2 && u.stars<toonMinStars) return;
+			if (u.ct>1 && u.stars<shipMinStars) return;
+
+			uc++;
 			stat.count++;
-			stat.gp += unit.gp;
-			ct = unit.combatType;
-			stat.relics += unit.relic;
-			if (unit.gp>stat.gpMax) stat.gpMax = unit.gp;
-			if (unit.gp<stat.gpMin) stat.gpMin = unit.gp;
+			stat.gp += u.gp;
+			if (u.gp>stat.gpMax) stat.gpMax = u.gp;
+			if (u.gp<stat.gpMin) stat.gpMin = u.gp;
+
+			if (!cpg[u.gear ]) cpg[u.gear ] = 1; else cpg[u.gear ]++;
+			if (!cps[u.stars]) cps[u.stars] = 1; else cps[u.stars]++;
+			if (!cpr[u.relic]) cpr[u.relic] = 1; else cpr[u.relic]++;
 		});
 
 		stat.gpAvg = stat.count? Math.round(stat.gp / stat.count): 0;
-		if (ct>1) stat.relics = '-';
+		if (ct<2) {
+			console.log(logPrefix()+"Count per relic:", cpr);
+			console.log(logPrefix()+"Count per stars:", cps);
+		}
+
 		delete stat.gp;
 		delete stat.gpMin;
 
@@ -100,20 +115,31 @@ exports.guildPlayerStats = function(allycode, message, guild) {
 			if (k==="count")
 				val = v<10? "0"+v: v;
 			else
-			if (typeof(v)==="number" && k==="relics")
-				val = v<10? " "+v: v;
-			else
 			if (typeof(v)==="number")
 				val = v<10000? " "+v.toLocaleString(locale): v.toLocaleString(locale);
 
 			statStr.push(val);
 		});
 
-		let icon = ct>1? ":rocket:": ":man_standing:"; // +minStars+":star:+";
+		let icon = ct>1? ":rocket:": ":man_standing:";
 
 		if (stat.count) {
+			statStr = statStr.join("/ ");
+			stat = [];
+			statStr = '';
+			Object.keys(cps).forEach(function(stars) {
+				let cnt = cps[stars];
+				if (cnt) stat.push(cnt+" "+stars+"*");
+			});
+			if (ct<2) {
+				Object.keys(cpr).forEach(function(relics) {
+					let cnt = cpr[relics];
+					if (cnt && parseInt(relics)) stat.push(cnt+" R"+relics);
+				});
+			}
+			statStr = stat.join("; ");
 			unitName = unitName.replace('Brood ', '');
-			richMsg.addField(icon+" **"+unitName+"**", "``"+statStr.join("/ ")+"``", true);
+			richMsg.addField(icon+" "+uc+" "+unitName, "``"+statStr+"``", true);
 		}
 	});
 
