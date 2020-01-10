@@ -487,6 +487,32 @@ client.on("message", (message) => {
 			});
 			break;
 
+		case "rg":
+		case "rgs":
+		case "refreshGuildStats":
+			if(message.author.id !== config.discord.ownerID) {
+				message.reply("You're not my master! :imp:");
+				return;
+			}
+
+			// Extract user's tag (if any):
+			if (message.mentions && message.mentions.users && message.mentions.users.first()) {
+				user = message.mentions.users.first();
+				nick = user.username;
+			}
+
+			allycode = tools.getFirstAllycodeInWords(args);
+			if (allycode) {
+				tools.refreshGuildStats(allycode, message, view.guildPlayerStats);
+			} else {
+				console.log(logPrefix()+"Try with user ID:", user.id);
+				tools.getPlayerFromDiscordId(user.id, message, function(player) {
+					if (player)
+						tools.refreshGuildStats(player.allycode, message, view.guildPlayerStats);
+				});
+			}
+			break;
+
 		case "si":
 		case "shipinfo":
 			// Extract user's tag (if any):

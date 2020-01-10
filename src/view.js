@@ -38,7 +38,7 @@ exports.guildPlayerStats = function(allycode, message, guild) {
 	let toonMinStars = config.custom.toonMinStars;
 
 	if (!guild || !guild.players || typeof(guild.players)!=="object") {
-		msg = "GPS: Invalid guild: "+JSON.stringify(guild);
+		msg = "GPS: Invalid guild: "+JSON.stringify(guild); // TODO: fix this
 		console.warn(logPrefix()+msg);
 		message.reply(msg);
 		return;
