@@ -29,14 +29,14 @@ const swgoh   = require("./swgoh");   // SWGoH API
 
 exports.guildPlayerStats = function(allycode, message, guild) {
 	let allycodes = [allycode];
-	let lines = ["``##/  min  /  avg  /  max  / name``"];
+	let lines = [];
 	let locale = config.discord.locale; // shortcut
 	let logPrefix = exports.logPrefix; // shortcut
 	let minStars = 5;
 	let players = {};
 
-	if (!guild.players || typeof(guild.players)!=="object") {
-		msg = "GPS: Invalid guild players: "+guild.players;
+	if (!guild || !guild.players || typeof(guild.players)!=="object") {
+		msg = "GPS: Invalid guild: "+JSON.stringify(guild);
 		console.warn(logPrefix()+msg);
 		message.reply(msg);
 		return;
@@ -47,6 +47,9 @@ exports.guildPlayerStats = function(allycode, message, guild) {
 
 	players = guild.players;
 	console.log(logPrefix()+"Got %d players' data.", Object.keys(players).length);
+
+	lines.push("GP: "+guild.gp.toLocaleString(locale));
+	lines.push("``##/  avg  /  max  / Rl / name``");
 
 	// Compute statitics:
 	config.custom.unitsOfInterest.forEach(function(unitName) {
@@ -69,18 +72,23 @@ exports.guildPlayerStats = function(allycode, message, guild) {
 			stat.count++;
 			stat.gp += unit.gp;
 			ct = unit.combatType;
+			stat.relics += unit.relic;
 			if (unit.gp>stat.gpMax) stat.gpMax = unit.gp;
 			if (unit.gp<stat.gpMin) stat.gpMin = unit.gp;
 		});
 
 		stat.gpAvg = stat.count? Math.round(stat.gp / stat.count): 0;
 		delete stat.gp;
+		delete stat.gpMin;
 
 		let statStr = [];
 		Object.keys(stat).forEach(function(k) {
 			let v = stat[k], val = v;
 
 			if (k==="count")
+				val = v<10? "0"+v: v;
+			else
+			if (k==="relics")
 				val = v<10? " "+v: v;
 			else
 				val = v<10000? " "+v.toLocaleString(locale): v.toLocaleString(locale);
@@ -96,9 +104,7 @@ exports.guildPlayerStats = function(allycode, message, guild) {
 
 	// Display the result:
 	richMsg = new RichEmbed().setTitle(guild.name).setColor("GREEN")
-		.setAuthor(config.discord.username)
-		.setDescription(lines)
-		.setTimestamp(guild.updated)
+		.setDescription(lines).setTimestamp(guild.updated)
 		.setFooter(config.footer.message, config.footer.iconUrl);
 
 	message.reply(richMsg);

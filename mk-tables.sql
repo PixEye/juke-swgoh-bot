@@ -16,7 +16,6 @@ SET time_zone = "+00:00";
 -- Structure of table `evols`
 --
 
-DROP TABLE IF EXISTS `evols`;
 CREATE TABLE IF NOT EXISTS `evols` (
   `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `ts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -26,6 +25,7 @@ CREATE TABLE IF NOT EXISTS `evols` (
   `new_value` tinyint(1) UNSIGNED NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
 ALTER TABLE `evols` ADD INDEX(`allycode`);
 
 -- --------------------------------------------------------
@@ -34,7 +34,6 @@ ALTER TABLE `evols` ADD INDEX(`allycode`);
 -- Structure of table `guilds`
 --
 
-DROP TABLE IF EXISTS `guilds`;
 CREATE TABLE IF NOT EXISTS `guilds` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `swgoh_id` varchar(16) COLLATE utf8_unicode_ci NOT NULL,
@@ -50,7 +49,6 @@ CREATE TABLE IF NOT EXISTS `guilds` (
 -- Structure of table `units`
 --
 
-DROP TABLE IF EXISTS `units`;
 CREATE TABLE IF NOT EXISTS `units` (
   `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `allycode` int(10) UNSIGNED NOT NULL,
@@ -64,7 +62,9 @@ CREATE TABLE IF NOT EXISTS `units` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `playerUnitId` (`allycode`,`name`) USING BTREE
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
 ALTER TABLE `units` ADD INDEX(`combatType`);
+
 ALTER TABLE `units` ADD `stars` TINYINT(1) NULL AFTER `relic`;
 
 -- --------------------------------------------------------
@@ -73,7 +73,6 @@ ALTER TABLE `units` ADD `stars` TINYINT(1) NULL AFTER `relic`;
 -- Structure of table `users`
 --
 
-DROP TABLE IF EXISTS `users`;
 CREATE TABLE IF NOT EXISTS `users` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `allycode` int(11) NOT NULL,
@@ -90,7 +89,9 @@ CREATE TABLE IF NOT EXISTS `users` (
   UNIQUE KEY `allycode` (`allycode`) USING BTREE,
   KEY `discord_id` (`discord_id`) USING BTREE
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
 ALTER TABLE `users` ADD INDEX(`guildRefId`);
+
 ALTER TABLE `users` CHANGE `game_name`
  `game_name` VARCHAR(32) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL;
 

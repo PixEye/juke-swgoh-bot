@@ -210,6 +210,7 @@ exports.getGuildDbStats = function(allycode, message, callback) {
 				}
 
 				let guild = result[0];
+				guild.gp = 0;
 				guild.guildRefId = guild.swgoh_id;
 				console.log(logPrefix()+"Guild ref ID:", guild.guildRefId);
 
@@ -228,13 +229,18 @@ exports.getGuildDbStats = function(allycode, message, callback) {
 
 					guild.players = {};
 					result.forEach(function(player) {
+						guild.gp += player.gp;
 						allycodes.push(player.allycode);
 						guild.players[player.allycode] = player;
 					});
 
 					guild.memberCount = result.length;
-					msg = "Get %d players in DB for this guild.";
+					msg = "%d players in DB guild: "+guild.name;
 					console.log(logPrefix()+msg, result.length);
+
+					msg = "PG: %s; avg PG: %s";
+					guild.gpAvg = Math.round(guild.gp/result.length);
+					console.log(logPrefix()+msg, result.gp, guild.gpAvg);
 
 					sql = "SELECT * from `units` WHERE allycode IN (?)"; // get units
 					db_pool.query(sql, [allycodes], function(exc, result) {
