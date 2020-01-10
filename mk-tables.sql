@@ -23,10 +23,9 @@ CREATE TABLE IF NOT EXISTS `evols` (
   `unit_id` varchar(32) COLLATE utf8_unicode_ci NOT NULL,
   `type` varchar(5) COLLATE utf8_unicode_ci NOT NULL,
   `new_value` tinyint(1) UNSIGNED NOT NULL,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  KEY `allycode` (`allycode`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-
-ALTER TABLE `evols` ADD INDEX(`allycode`);
 
 -- --------------------------------------------------------
 
@@ -38,6 +37,9 @@ CREATE TABLE IF NOT EXISTS `guilds` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `swgoh_id` varchar(16) COLLATE utf8_unicode_ci NOT NULL,
   `name` varchar(64) COLLATE utf8_unicode_ci NOT NULL,
+  `gp` int(10) UNSIGNED NOT NULL,
+  `memberCount` tinyint(1) UNSIGNED NOT NULL DEFAULT '0',
+  `ts` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   UNIQUE KEY `swgoh_id` (`swgoh_id`),
   KEY `name` (`name`)
@@ -53,19 +55,18 @@ CREATE TABLE IF NOT EXISTS `units` (
   `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `allycode` int(10) UNSIGNED NOT NULL,
   `name` varchar(32) COLLATE utf8_unicode_ci NOT NULL,
-  `combatType` tinyint(1) UNSIGNED DEFAULT NULL,
+  `combatType` tinyint(1) UNSIGNED NOT NULL,
   `gear` tinyint(1) UNSIGNED DEFAULT NULL,
   `relic` tinyint(1) UNSIGNED DEFAULT NULL,
+  `stars` tinyint(1) DEFAULT NULL,
   `zetaCount` tinyint(1) UNSIGNED DEFAULT NULL,
   `gp` int(10) UNSIGNED DEFAULT NULL,
   `ts` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `playerUnitId` (`allycode`,`name`) USING BTREE
+  UNIQUE KEY `playerUnitId` (`allycode`,`name`) USING BTREE,
+  KEY `allycode` (`allycode`),
+  KEY `combatType` (`combatType`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-
-ALTER TABLE `units` ADD INDEX(`combatType`);
-
-ALTER TABLE `units` ADD `stars` TINYINT(1) NULL AFTER `relic`;
 
 -- --------------------------------------------------------
 
@@ -78,7 +79,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   `allycode` int(11) NOT NULL,
   `discord_id` varchar(32) COLLATE utf8_unicode_ci DEFAULT NULL,
   `discord_name` varchar(32) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `game_name` varchar(32) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `game_name` varchar(32) COLLATE utf8_unicode_ci NOT NULL,
   `guildRefId` varchar(16) COLLATE utf8_unicode_ci DEFAULT NULL,
   `gp` int(11) UNSIGNED DEFAULT NULL,
   `g12Count` tinyint(1) UNSIGNED DEFAULT NULL,
@@ -87,12 +88,8 @@ CREATE TABLE IF NOT EXISTS `users` (
   `ts` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   UNIQUE KEY `allycode` (`allycode`) USING BTREE,
-  KEY `discord_id` (`discord_id`) USING BTREE
+  KEY `discord_id` (`discord_id`) USING BTREE,
+  KEY `guildRefId` (`guildRefId`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-
-ALTER TABLE `users` ADD INDEX(`guildRefId`);
-
-ALTER TABLE `users` CHANGE `game_name`
- `game_name` VARCHAR(32) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL;
 
 COMMIT;

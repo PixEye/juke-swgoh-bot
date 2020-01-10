@@ -29,10 +29,11 @@ const swgoh   = require("./swgoh");   // SWGoH API
 
 exports.guildPlayerStats = function(allycode, message, guild) {
 	let allycodes = [allycode];
+	let line = '';
 	let lines = [];
 	let locale = config.discord.locale; // shortcut
 	let logPrefix = exports.logPrefix; // shortcut
-	let minStars = 5;
+	let minStars = config.custom.minStars;
 	let players = {};
 
 	if (!guild || !guild.players || typeof(guild.players)!=="object") {
@@ -42,19 +43,29 @@ exports.guildPlayerStats = function(allycode, message, guild) {
 		return;
 	}
 
+	richMsg = new RichEmbed().setTitle(guild.name);
+
 	allycodes = Object.keys(guild.players);
 	console.log(logPrefix()+"%d players to get...", allycodes.length);
 
 	players = guild.players;
 	console.log(logPrefix()+"Got %d players' data.", Object.keys(players).length);
 
-	lines.push("GP: "+guild.gp.toLocaleString(locale));
-	lines.push("``##/  avg  /  max  / Rl / name``");
+	line = "**GP:** "+guild.gp.toLocaleString(locale)+"; ";
+	line+= "**Known members:** "+Object.keys(guild.players).length;
+	line+= "/"+guild.memberCount;
+	lines.push(line);
+
+	line = "**Total relics:** "+guild.relics+"; ";
+	line+= "Units < "+minStars+":star: are ignored.";
+	lines.push(line);
+
+	lines.push("``##/  avg  /  max  / Relics``");
 
 	// Compute statitics:
 	config.custom.unitsOfInterest.forEach(function(unitName) {
 		let ct = 0;
-		let stat = {count: 0, gp: 0, gpMin: 999999, gpAvg: 0, gpMax: 0};
+		let stat = {count: 0, gp: 0, gpMin: 999999, gpAvg: 0, gpMax: 0, relics: 0};
 		let unitKey = unitName.replace(/ /g, '').toUpperCase();
 
 		console.log(logPrefix()+"Fetching for: %s (%s)...", unitName, unitKey);
@@ -78,6 +89,7 @@ exports.guildPlayerStats = function(allycode, message, guild) {
 		});
 
 		stat.gpAvg = stat.count? Math.round(stat.gp / stat.count): 0;
+		if (ct>1) stat.relics = '-';
 		delete stat.gp;
 		delete stat.gpMin;
 
@@ -88,25 +100,27 @@ exports.guildPlayerStats = function(allycode, message, guild) {
 			if (k==="count")
 				val = v<10? "0"+v: v;
 			else
-			if (k==="relics")
+			if (typeof(v)==="number" && k==="relics")
 				val = v<10? " "+v: v;
 			else
+			if (typeof(v)==="number")
 				val = v<10000? " "+v.toLocaleString(locale): v.toLocaleString(locale);
 
 			statStr.push(val);
 		});
 
-		let icon = ct>1? ":rocket:": ":man_standing:"+minStars+":star:+";
+		let icon = ct>1? ":rocket:": ":man_standing:"; // +minStars+":star:+";
 
-		if (stat.count)
-			lines.push("``"+statStr.join("/ ")+"/`` **"+icon+" "+unitName+"**");
+		if (stat.count) {
+			unitName = unitName.replace('Brood ', '');
+			richMsg.addField(icon+" **"+unitName+"**", "``"+statStr.join("/ ")+"``", true);
+		}
 	});
 
-	// Display the result:
-	richMsg = new RichEmbed().setTitle(guild.name).setColor("GREEN")
-		.setDescription(lines).setTimestamp(guild.updated)
+	richMsg.setColor("GREEN").setDescription(lines).setTimestamp(guild.updated)
 		.setFooter(config.footer.message, config.footer.iconUrl);
 
+	// Display the result:
 	message.reply(richMsg);
 };
 
@@ -128,7 +142,7 @@ exports.showGuildStats = function(guild, message) {
 	}
 
 	richMsg = new RichEmbed().setTitle(guild.name).setColor("GREEN")
-		.setAuthor(config.discord.username)
+		// .setAuthor(config.discord.username)
 		.setDescription([
 			"**Guild description:** "+guild.desc,
 			"**Officers ("+guild.officerNames.length+"):** "+
@@ -137,9 +151,9 @@ exports.showGuildStats = function(guild, message) {
 		.addField("GP:", guild.gp.toLocaleString(locale), true)
 		.addField("Toon GP:", guild.gpChar.toLocaleString(locale), true)
 		.addField("Ship GP:", guild.gpShip.toLocaleString(locale), true)
-		.addField("Member count:", guild.members, true)
+		.addField("Member count:", guild.memberCount, true)
 		.addField("GP average:",
-			Math.round(guild.gp/guild.members).toLocaleString(locale), true)
+			Math.round(guild.gp/guild.memberCount).toLocaleString(locale), true)
 		.addField("Leader:", guild.leader.name+
 			" (GP: "+ guild.leader.gp.toLocaleString(locale)+")", true)
 		.addField("Biggest GP:", guild.biggestPlayer.name+

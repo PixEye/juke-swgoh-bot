@@ -174,6 +174,7 @@ exports.getFirstAllycodeInWords = function(words) {
 };
 
 exports.getGuildDbStats = function(allycode, message, callback) {
+	let locale = config.discord.locale; // shortcut
 	let logPrefix = exports.logPrefix; // shortcut
 
 	if (!allycode) {
@@ -210,9 +211,10 @@ exports.getGuildDbStats = function(allycode, message, callback) {
 				}
 
 				let guild = result[0];
-				guild.gp = 0;
+				// guild.gp = 0; // Old computation, useless now
+				msg = "Matching guild: %s (%s)";
 				guild.guildRefId = guild.swgoh_id;
-				console.log(logPrefix()+"Guild ref ID:", guild.guildRefId);
+				console.log(logPrefix()+msg, guild.name, guild.guildRefId);
 
 				sql = "SELECT * from `users` WHERE guildRefId=?"; // get players
 				db_pool.query(sql, [guild.guildRefId], function(exc, result) {
@@ -229,19 +231,19 @@ exports.getGuildDbStats = function(allycode, message, callback) {
 
 					guild.players = {};
 					result.forEach(function(player) {
-						guild.gp += player.gp;
+						// guild.gp += player.gp;
 						allycodes.push(player.allycode);
 						guild.players[player.allycode] = player;
 					});
 
-					guild.memberCount = result.length;
 					msg = "%d players in DB guild: "+guild.name;
 					console.log(logPrefix()+msg, result.length);
 
-					msg = "PG: %s; avg PG: %s";
 					guild.gpAvg = Math.round(guild.gp/result.length);
-					console.log(logPrefix()+msg, result.gp, guild.gpAvg);
+					msg = "PG: %s; Average PG: "+guild.gpAvg.toLocaleString(locale);
+					console.log(logPrefix()+msg, guild.gp.toLocaleString(locale));
 
+					guild.relics = 0;
 					sql = "SELECT * from `units` WHERE allycode IN (?)"; // get units
 					db_pool.query(sql, [allycodes], function(exc, result) {
 						if (exc) {
@@ -254,15 +256,18 @@ exports.getGuildDbStats = function(allycode, message, callback) {
 						}
 
 						n = result.length;
-						msg = n+" matching units found";
+						msg = n.toLocaleString(locale)+" matching units found";
 						if (!n) {
-							console.warn(logPrefix()+msg);
-							message.reply("Error: "+msg+"!");
+							console.warn(logPrefix()+msg+"!");
+							message.reply("Error: " +msg+"!");
 							return;
 						}
 
+						console.log(logPrefix()+msg);
 						result.forEach(function(u) {
-							if (!guild.players[u.allycode].unitsData)
+							guild.relics += u.relic;
+
+							if(!guild.players[u.allycode].unitsData)
 								guild.players[u.allycode].unitsData = {};
 
 							guild.players[u.allycode].unitsData[u.name] = u;
@@ -437,6 +442,9 @@ exports.getUnregPlayers = function(allycode, message) {
 			swgoh.getPlayerGuild(allycode, message, function(guild) {
 				if (typeof(msg.delete)==="function") msg.delete();
 
+				// Remember stats of the guild:
+				exports.rememberGuildStats(guild);
+
 				if (!guild.gp) {
 					msg = "GUP: invalid guild GP: "+guild.gp;
 					console.warn(logPrefix()+msg);
@@ -504,8 +512,9 @@ exports.logPrefix = function () {
 
 /** Remember stats of the guild */
 exports.rememberGuildStats = function(guild) {
-	let sql = "REPLACE INTO `guilds` (swgoh_id, name) VALUES ?";
-	let values = [[guild.id, guild.name]];
+	let logPrefix = exports.logPrefix; // shortcut
+	let sql = "INSERT INTO `guilds` (swgoh_id, name, gp, memberCount) VALUES ?";
+	let values = [[guild.id, guild.name, guild.gp, guild.memberCount]];
 
 	db_pool.query(sql, [values], function(exc, result) {
 		if (exc) {
@@ -513,11 +522,29 @@ exports.rememberGuildStats = function(guild) {
 
 			console.log("SQL:", sql);
 			console.log(logPrefix()+"GS Exception:", otd);
+
+			// Retry with an UPDATE:
+			sql = "UPDATE `guilds` SET name=?, gp=?, memberCount=? WHERE swgoh_id=?";
+			values = [guild.name, guild.gp, guild.memberCount, guild.id];
+
+			db_pool.query(sql, values, function(exc, result) {
+				if (exc) {
+					otd = exc.sqlMessage? exc.sqlMessage: exc; // obj to display
+
+					console.log("SQL:", sql);
+					console.log(logPrefix()+"GS Exception:", otd);
+					message.reply("GS exception: "+otd);
+					return;
+				}
+
+				let n = result.affectedRows;
+				console.log(logPrefix()+"%d guild records updated (UPDATE).", n);
+			});
 			return;
 		}
 
 		let n = result.affectedRows;
-		console.log(exports.logPrefix()+"%d guild records updated (DEL+ADD).", n);
+		console.log(logPrefix()+"%d guild records updated (DEL+ADD).", n);
 	});
 };
 

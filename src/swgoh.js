@@ -257,8 +257,10 @@ exports.getPlayerGuild = async function(allycodes, message, callback) {
 		guild.gpChar = 0;
 		guild.gpShip = 0;
 		guild.leader = {};
-		guild.players = {}; // allycode => (IG nick) name
+		guild.memberCount = guild.members;
 		guild.officerNames = [];
+		guild.players = {}; // allycode => (IG nick) name
+		delete guild.members;
 
 		roster.forEach(function(player) {
 			guild.gpChar+= player.gpChar;
