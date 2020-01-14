@@ -342,12 +342,11 @@ exports.getPlayerFromDatabase = function(allycode, message, callback) {
 		if ( ! result.length ) {
 			console.log(logPrefix()+"User with allycode "+allycode+" not registered.");
 			message.channel.send("I don't know this player yet. You may use the 'register' command.");
-
-			return;
+			player = {discord_name: allycode};
+		} else {
+			player = result[result.length - 1]; // take last match
+			console.log(logPrefix()+"Ally w/ code "+allycode+" is:", player.discord_name);
 		}
-
-		player = result[result.length - 1]; // take last match
-		console.log(logPrefix()+"Ally w/ code "+allycode+" is:", player.discord_name);
 
 		// Get player's units:
 		sql = "SELECT * FROM `units` WHERE allycode="+parseInt(allycode);
@@ -453,12 +452,12 @@ exports.getUnregPlayers = function(allycode, message) {
 				}
 
 				let sql = "SELECT * FROM `users` WHERE allycode IN (?)";
-				let values = Object.keys(guild.players);
-				let n = values.length;
+				let allycodes = Object.keys(guild.players);
+				let n = allycodes.length;
 
 				console.log(logPrefix()+"GUP: received %d user(s).", n);
 
-				db_pool.query(sql, [values], function(exc, regPlayers) {
+				db_pool.query(sql, [allycodes], function(exc, regPlayers) {
 					let dbRegByAc = {};
 					let msg = "%d registered users out of %d.";
 					let nbReg = 0;
@@ -487,7 +486,7 @@ exports.getUnregPlayers = function(allycode, message) {
 					console.log(logPrefix()+msg);
 
 					if (!n) {
-						msg = "All "+values.length+
+						msg = "All "+allycodes.length+
 							" players in this guild are registered. :white_check_mark:";
 					} else {
 						Object.keys(guild.players).forEach(function(allycode, i) {

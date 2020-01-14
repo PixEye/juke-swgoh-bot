@@ -198,7 +198,7 @@ client.on("message", (message) => {
 					return view.showUnitInfo(player, message, msg, 1);
 				});
 			} else {
-				console.log(logPrefix()+"Try with user ID:", user.id);
+				console.log(logPrefix()+"Try with Discord ID:", user.id);
 				tools.getPlayerFromDiscordId(user.id, message, function(player) {
 					if (player) tools.getPlayerStats(player.allycode, message, function(player, message) {
 						return view.showUnitInfo(player, message, msg, 1);
@@ -440,11 +440,10 @@ client.on("message", (message) => {
 				return;
 			}
 
-			sql = "INSERT INTO `users` (discord_id, discord_name, allycode)"+
-				" VALUES ("+user.id+", "+mysql.escape(nick)+", "+allycode+")";
+			sql = "INSERT INTO `users` (discord_id, discord_name, allycode) VALUES (?, ?, ?)";
 
 			// Register:
-			db_pool.query(sql, function(exc, result) {
+			db_pool.query(sql, [user.id, nick, allycode], function(exc, result) {
 				if (exc) {
 					console.log("SQL:", sql);
 					if (exc.sqlMessage) {
@@ -464,12 +463,10 @@ client.on("message", (message) => {
 					return;
 				}
 
-				sql = "UPDATE users"+
-					" SET discord_id="+user.id+", discord_name="+mysql.escape(nick)+
-					" WHERE allycode="+allycode;
+				sql = "UPDATE `users` SET discord_id=?, discord_name=? WHERE allycode=?";
 
 				// Update an existing registration:
-				db_pool.query(sql, function(exc, result) {
+				db_pool.query(sql, [user.id, nick, allycode], function(exc, result) {
 					if (exc) {
 						console.log("SQL:", sql);
 						if (exc.sqlMessage) {

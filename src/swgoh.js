@@ -97,7 +97,7 @@ exports.getPlayerData = async function(allycodes, message, callback) {
 			// console.log("First unit of the player's roster:");
 			// console.dir(roster[0]);
 			// console.log("First unit's crew of the player's roster:", roster[0].crew); // []
-			// console.dir(roster[0]);
+			//
 			// id (random string), defId 'MAGMATROOPER', nameKey 'UNIT_MAGMATROOPER_NAME',
 			// rarity (7), level (85), xp (int: 883025), gear (8), combatType (1)
 			// Array: equipped
@@ -108,7 +108,16 @@ exports.getPlayerData = async function(allycodes, message, callback) {
 			// Array: mods
 			// { id: 'nsdQon_cSIy44yjeGQVVXw', level: 15, tier: 4, slot: 1, set: 5,
 			//	pips: 4, primaryStat: [Object], secondaryStat: [Array] }
-			// Array: crew (empty for chars)
+			console.log(logPrefix()+"First unit (%s) first mod:\n ",
+				roster[0].defId, roster[0].mods[0]); // ?
+			if (roster[0].mods[0]) console.log(logPrefix()+"First unit (%s) first mod/primaryStat:\n ",
+				roster[0].defId, roster[0].mods[0].primaryStat); // { unitStat: 48, value: 4 }
+			// secondaryStat: [ // example:
+			// { unitStat: 56, value: 1.384, roll: 1 },
+			// { unitStat: 53, value: 3.179, roll: 2 },
+			// { unitStat: 5 , value: 11   , roll: 3 },
+			// { unitStat: 28, value: 438  , roll: 1 } ]
+			// Array: crew ([])
 			// Others: gp (int), primaryUnitStat (null), relic {currentTier: 1}
 
 			let i = 0;
