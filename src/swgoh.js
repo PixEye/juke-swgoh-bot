@@ -108,10 +108,10 @@ exports.getPlayerData = async function(allycodes, message, callback) {
 			// Array: mods
 			// { id: 'nsdQon_cSIy44yjeGQVVXw', level: 15, tier: 4, slot: 1, set: 5,
 			//	pips: 4, primaryStat: [Object], secondaryStat: [Array] }
-			console.log(logPrefix()+"First unit (%s) first mod:\n ",
-				roster[0].defId, roster[0].mods[0]); // ?
-			if (roster[0].mods[0]) console.log(logPrefix()+"First unit (%s) first mod/primaryStat:\n ",
-				roster[0].defId, roster[0].mods[0].primaryStat); // { unitStat: 48, value: 4 }
+			// console.log(logPrefix()+"First unit (%s) first mod:\n ",
+			//	roster[0].defId, roster[0].mods[0]); // ?
+			// if (roster[0].mods[0]) console.log(logPrefix()+"First unit (%s) first mod/primaryStat:\n ",
+			//	roster[0].defId, roster[0].mods[0].primaryStat); // { unitStat: 48, value: 4 }
 			// secondaryStat: [ // example:
 			// { unitStat: 56, value: 1.384, roll: 1 },
 			// { unitStat: 53, value: 3.179, roll: 2 },
