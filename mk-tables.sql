@@ -92,4 +92,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   KEY `guildRefId` (`guildRefId`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
+ALTER TABLE `users` CHANGE `game_name`
+ `game_name` VARCHAR(32) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT '';
+
 COMMIT;
