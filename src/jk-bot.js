@@ -66,7 +66,7 @@ client.on("message", (message) => {
 	var user = message.author;
 
 	// Filter with the prefix & ignore bots:
-	if ( message.author.bot ||
+	if ( user.bot ||
 		(message.channel.type!=="dm" && !message.content.toLowerCase().startsWith(config.discord.prefix))) {
 		return; // stop parsing the message
 	}
@@ -79,7 +79,7 @@ client.on("message", (message) => {
 	command = args.shift().toLowerCase();
 	nick = user.username;
 
-	console.log(logPrefix()+"/ \""+user.username+"\" sent command: "+message.content);
+	console.log(logPrefix()+"/ \""+nick+"\" sent command: "+message.content);
 
 	// public commands:
 	switch (command) {
@@ -771,6 +771,9 @@ client.on("message", (message) => {
 		default:
 			message.reply("I don't get it. :thinking:");
 			console.log(logPrefix()+"Unknown command was: "+command);
+			if (message.channel.type==="dm") {
+				console.log(logPrefix()+"Direct message was: "+message.content);
+			}
 	}
 });
 
@@ -778,6 +781,6 @@ client.on("message", (message) => {
 client.login(config.discord.token);
 
 // SQL query to request for orphelin players:
-// SELECT * FROM `users` WHERE guildRefId NOT IN (SELECT swgoh_id FROM `guilds`)
+// SELECT * FROM `users` WHERE guildRefId NOT IN (SELECT DISTINCT swgoh_id FROM `guilds`)
 
 // vim: noexpandtab shiftwidth=4 softtabstop=4 tabstop=4
