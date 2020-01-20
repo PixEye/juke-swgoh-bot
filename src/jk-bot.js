@@ -72,10 +72,11 @@ client.on("message", (message) => {
 	}
 
 	if (message.channel.type==="dm") {
-		args = message.content.trim().replace(config.discord.prefix, "").trim().split(/ +/g);
+		args = message.content.trim().toLowerCase().replace(config.discord.prefix, "");
 	} else {
-		args = message.content.slice(config.discord.prefix.length).trim().split(/ +/g);
+		args = message.content.slice(config.discord.prefix.length);
 	}
+	args = args.trim().split(/ +/g);
 	command = args.shift().toLowerCase();
 	nick = user.username;
 
@@ -687,7 +688,7 @@ client.on("message", (message) => {
 				}
 
 				nbg = result[0].nbg; // nbg = number of guilds
-				console.log(logPrefix()+"%d guild(s) registered.", nbg);
+				console.log(logPrefix()+"   %d guild(s) registered", nbg);
 
 				sql = "SELECT COUNT(`id`) AS nbp FROM `users`"; // nbp = number of players
 				db_pool.query(sql, countPlayers);
@@ -709,7 +710,7 @@ client.on("message", (message) => {
 
 				nbp = result[0].nbp; // nbp = number of players
 				let avg = nbg? Math.round(nbp/nbg): nbp; // average per guild
-				console.log(logPrefix()+"%d user(s) registered (~%d per guild).", nbp, avg);
+				console.log(logPrefix()+"  %d  user(s) registered (average = %d per guild)", nbp, avg);
 
 				sql = "SELECT COUNT(`id`) AS nbu FROM `units`"; // nbp = number of units
 				db_pool.query(sql, countUnits);
@@ -731,7 +732,7 @@ client.on("message", (message) => {
 
 				let nbu = result[0].nbu; // nbu = number of units
 				let avg = nbp? Math.round(nbu/nbp): nbu; // average per player
-				console.log(logPrefix()+"%d unit(s) registered (~%d per user).", nbu, avg);
+				console.log(logPrefix()+"%d  unit(s) registered (average = %d per user)", nbu, avg);
 
 				message.channel.send(nbg+" guilds, "+nbp+" players & "+nbu+" units registered.");
 			}
