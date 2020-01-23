@@ -670,8 +670,16 @@ exports.updatePlayerDataInDb = function(player, message, callback) {
 					return;
 				}
 
+				// Look for new relics:
+				if (u.relic>3 && u.relic>prevUnit.relic) {
+					msg += "'s "+u.name+" is now R"+u.relic;
+					console.log(logPrefix()+msg);
+
+					// Add new evolution in the database ("evols" table):
+					lines.push([allycode, u.name, "relic", u.relic]);
+				} else 
 				// Look for new gears:
-				if (u.gear > 11 && u.gear > prevUnit.gear) {
+				if (u.gear>11 && u.gear>prevUnit.gear) {
 					msg += "'s "+u.name+" is now G"+u.gear;
 					console.log(logPrefix()+msg);
 
@@ -680,7 +688,7 @@ exports.updatePlayerDataInDb = function(player, message, callback) {
 				}
 
 				// Look for new stars:
-				if (prevUnit.stars > 0 && u.stars > 6 && u.stars > prevUnit.stars) {
+				if (prevUnit.stars>0 && u.stars>6 && u.stars>prevUnit.stars) {
 					msg += "'s "+u.name+" is now "+u.stars+"*";
 					console.log(logPrefix()+msg);
 
@@ -689,23 +697,15 @@ exports.updatePlayerDataInDb = function(player, message, callback) {
 				}
 
 				// Look for new zetas:
-				if (u.zetaCount > prevUnit.zetaCount) {
+				if (u.zetaCount>prevUnit.zetaCount) {
 					msg += "'s "+u.name+" has now "+u.zetaCount+" zeta(s)";
 					console.log(logPrefix()+msg);
 
 					// Add new evolution in the database ("evols" table):
 					lines.push([allycode, u.name, "zeta", u.zetaCount]);
 				}
+			}); // end of unit loop
 
-				// Look for new relics:
-				if (u.relic>3 && u.relic>prevUnit.relic) {
-					msg += "'s "+u.name+" is now R"+u.relic;
-					console.log(logPrefix()+msg);
-
-					// Add new evolution in the database ("evols" table):
-					lines.push([allycode, u.name, "relic", u.relic]);
-				}
-			});
 			if (newUnitCount) {
 				msg = "There is %d new unit(s) in %s's roster.";
 				console.log(logPrefix()+msg, newUnitCount, player.name);
@@ -785,7 +785,7 @@ exports.updatePlayerDataInDb = function(player, message, callback) {
 				lines.push(
 					[u.allycode, u.name, u.combatType, u.gear, u.gp, u.relic, u.stars, u.zetaCount]
 				);
-			});
+			}); // end of unit loop
 
 			db_pool.query(sql, [lines], function(exc, result) {
 				if (exc) {
