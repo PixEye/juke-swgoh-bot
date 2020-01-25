@@ -12,9 +12,6 @@ const { Client, RichEmbed } = require("discord.js");
 // Create an instance of a Discord client:
 const client = new Client();
 
-// Get the configuration from a separated JSON file:
-const config = require("./config.json");
-
 // Remember when this program started:
 const start = Date();
 
@@ -27,8 +24,12 @@ const swgoh   = require("./swgoh");  // SWGoH API
 const tools   = require("./tools"); // Several functions
 const view    = require("./view"); // Functions used to display results
 
+// Get the configuration from a separated JSON file:
+let config = require("./config.json");
+let tplCfg = require("./config-template.json");
+
 // Prepare DB connection pool:
-const db_pool = mysql.createPool({
+let db_pool = mysql.createPool({
 	connectionLimit: config.db.conMaxCount,
 	database       : config.db.name,
 	host           : config.db.host,
@@ -40,6 +41,15 @@ const db_pool = mysql.createPool({
 let logPrefix = tools.logPrefix;
 
 console.log(logPrefix()+"Loading...");
+
+// Check config:
+try {
+	checkConfig();
+} catch(exc) {
+	console.warn("Configuration check:");
+	console.warn(exc);
+	console.warn("Compare 'config-template.json' & 'config.json' to find the mistake.");
+}
 
 // Start listening:
 client.on("ready", () => {
@@ -111,7 +121,7 @@ client.on("message", (message) => {
 					", dis, getUnregisteredPlayers (gup), guildStats (gs), help, invite"+
 					", (last)evols (le), playerStats (ps), register (reg), relics"+
 					", repete, self(y), shipInfo (si), start, stats, status, whoami, whois",
-					"**Commandes pour l'administrateur :** admin, query/req(uest), stop/stoppe",
+					"**Commandes pour l'administrateur :** admin, configCheck (cc), query/req(uest), stop/stoppe",
 					"**NB1 :** en mp, le préfixe est optionnel.",
 					"**NB2 :** la plupart des commandes accepte un tag ou un code allié (9 chiffres).",
 					"**NB3 :** la \"cible\" par défaut est la personne qui tape la commande (\"me\" inutile).",
@@ -165,6 +175,31 @@ client.on("message", (message) => {
 				.setDescription(lines).setTimestamp(message.createdTimestamp)
 				.setFooter(config.footer.message, config.footer.iconUrl);
 			message.channel.send(richMsg);
+			break;
+
+		case "cc":
+		case "checkconfig":
+		case "configcheck":
+			if(message.author.id !== config.discord.ownerID) {
+				message.reply("You're not my master! :imp:");
+				return;
+			}
+
+			message.channel.send("Configuration check:");
+
+			config = require("./config.json");
+			tplCfg = require("./config-template.json");
+
+			// Check config:
+			try {
+				checkConfig();
+				message.channel.send(":white_check_mark: This bot configuration seems all right.");
+			} catch(exc) {
+				message.channel.send(exc);
+
+				msg = "Compare 'config-template.json' & 'config.json' to find the mistake.";
+				message.channel.send(msg);
+			}
 			break;
 
 		case "ci":
@@ -364,7 +399,7 @@ client.on("message", (message) => {
 					", getUnregisteredPlayers (gup), guildStats (gs), help, invite, (last)evols (le)"+
 					", playerStat (ps), register (reg), relics, repeat, say"+
 					", self(y), shipInfo (si), start, stats, status, whoami, whois",
-					"**Admin commands:** admin, destroy/leave/shutdown/stop, query/req(uest)",
+					"**Admin commands:** admin, configCheck (cc), destroy/leave/shutdown/stop, query/req(uest)",
 					"**NB1:** in DM, prefix is optional.",
 					"**NB2:** most of commands accept a user's tag or an ally code (9 digits).",
 					"**NB3:** the default target is the command writer (\"me\" is useless).",
@@ -777,6 +812,46 @@ client.on("message", (message) => {
 			}
 	}
 });
+
+/** Compare tplCfg & config keys
+ * @throws String exception in case of problem
+ */
+function checkConfig() {
+	let n = 0;
+	let msg = '';
+
+	if (typeof(tplCfg)!=='object') {
+		throw 'Did not find a valid template configuration ("config-template.json" file)!';
+	}
+	if (typeof(config)!=='object') {
+		throw 'Did not find a valid configuration ("config.json" file)!';
+	}
+
+	n = 2;
+	msg = 'Invalid type in bot configuration for key: ';
+	Object.keys(tplCfg).forEach(function(key) {
+		let tplVal = tplCfg[key];
+
+		++n;
+		if (typeof(config[key])!==typeof(tplVal)) {
+			throw msg+key;
+		}
+
+		if (typeof(tplVal)==='object') {
+			Object.keys(tplVal).forEach(function(k) {
+				let tplSubVal = tplVal[k];
+
+				++n;
+				if (typeof(config[key][k])!==typeof(tplSubVal)) {
+					config[key][k] = tplSubVal;
+					throw msg+key+'.'+k+'!\n (default value: '+tplSubVal+')';
+				}
+			});
+		}
+	});
+
+	console.log(logPrefix()+n+" configuration checks done successfully.");
+}
 
 // Main:
 client.login(config.discord.token);

@@ -94,6 +94,11 @@ exports.getPlayerData = async function(allycodes, message, callback) {
 			player.titles    = "departed"; // { selected: string, unlocked: [strings] }
 			console.log(logPrefix()+"Player:");
 			console.dir(player); // */
+			/* { id: 'P2763...', name: '...', level: 85, allyCode (number),
+			  titles: 'departed', guildRefId: 'G15...', guildName, guildBannerColor: 'white_red',
+			  guildBannerLogo: 'guild_icon_senate', guildTypeId: 'NORMAL' */
+			if (player.guildRefId==='G1582274835')
+				player.guildName = 'Force Francophone'; // Custom hack
 
 			// console.log("-----");
 			// console.log("First unit of the player's roster:");
@@ -265,6 +270,8 @@ exports.getPlayerGuild = async function(allycodes, message, callback) {
 		console.dir(roster[0]);
 		// id, guildMemberLevel (3), name, level (85), allyCode, gp, gpChar, gpShip, updated (bigint)
 		console.log("====="); // */
+
+		if (guild.id==='G1582274835') guild.name = 'Force Francophone'; // Custom hack
 
 		guild.biggestPlayer = {gp: 0};
 		guild.gpChar = 0;
