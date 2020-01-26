@@ -230,13 +230,13 @@ client.on("message", (message) => {
 			msg = msg.trim();
 			console.log(logPrefix()+"Character to look for is:", msg);
 			if (allycode) {
-				tools.getPlayerStats(allycode, message, function(player, message) {
+				tools.getPlayerStats({allycode: allycode}, message, function(player, message) {
 					return view.showUnitInfo(player, message, msg, 1);
 				});
 			} else {
 				console.log(logPrefix()+"Try with Discord ID:", user.id);
-				tools.getPlayerFromDiscordId(user.id, message, function(player) {
-					if (player) tools.getPlayerStats(player.allycode, message, function(player, message) {
+				tools.getPlayerFromDiscordId(user, message, function(player) {
+					tools.getPlayerStats(player, message, function(player, message) {
 						return view.showUnitInfo(player, message, msg, 1);
 					});
 				});
@@ -257,17 +257,15 @@ client.on("message", (message) => {
 			let limit = 21;
 			allycode = tools.getFirstAllycodeInWords(args);
 			if (allycode) {
-				tools.getPlayerStats(allycode, message, function(player, message) {
+				tools.getPlayerStats({allycode: allycode}, message, function(player, message) {
 					return tools.checkUnitsGp(player, message, limit);
 				});
 			} else {
 				console.log(logPrefix()+"Try with user ID:", user.id);
-				tools.getPlayerFromDiscordId(user.id, message, function(player) {
-					if (player) {
-						tools.getPlayerStats(player.allycode, message, function(player, message) {
-							return tools.checkUnitsGp(player, message, limit);
-						});
-					}
+				tools.getPlayerFromDiscordId(user, message, function(player) {
+					tools.getPlayerStats(player, message, function(player, message) {
+						return tools.checkUnitsGp(player, message, limit);
+					});
 				});
 			}
 			break;
@@ -285,11 +283,11 @@ client.on("message", (message) => {
 
 			allycode = tools.getFirstAllycodeInWords(args);
 			if (allycode) {
-				tools.getPlayerStats(allycode, message, tools.checkPlayerMods);
+				tools.getPlayerStats({allycode: allycode}, message, tools.checkPlayerMods);
 			} else {
 				console.log(logPrefix()+"Try with user ID:", user.id);
-				tools.getPlayerFromDiscordId(user.id, message, function(player) {
-					if (player) tools.getPlayerStats(player.allycode, message, tools.checkPlayerMods);
+				tools.getPlayerFromDiscordId(user, message, function(player) {
+					tools.getPlayerStats(player, message, tools.checkPlayerMods);
 				});
 			}
 			break;
@@ -341,8 +339,8 @@ client.on("message", (message) => {
 				tools.getGuildStats(allycode, message, view.showGuildStats);
 			} else {
 				console.log(logPrefix()+"Try with user ID:", user.id);
-				tools.getPlayerFromDiscordId(user.id, message, function(player) {
-					if (player) tools.getGuildStats(player.allycode, message, view.showGuildStats);
+				tools.getPlayerFromDiscordId(user, message, function(player) {
+					tools.getGuildStats(player.allycode, message, view.showGuildStats);
 				});
 			}
 			break;
@@ -363,8 +361,8 @@ client.on("message", (message) => {
 				tools.getGuildDbStats(allycode, message, view.guildPlayerStats);
 			} else {
 				console.log(logPrefix()+"Try with user ID:", user.id);
-				tools.getPlayerFromDiscordId(user.id, message, function(player) {
-					if (player) tools.getGuildDbStats(player.allycode, message, view.guildPlayerStats);
+				tools.getPlayerFromDiscordId(user, message, function(player) {
+					tools.getGuildDbStats(player.allycode, message, view.guildPlayerStats);
 				});
 			}
 			break;
@@ -385,8 +383,8 @@ client.on("message", (message) => {
 				tools.getUnregPlayers(allycode, message);
 			} else {
 				console.log(logPrefix()+"Try with user ID:", user.id);
-				tools.getPlayerFromDiscordId(user.id, message, function(player) {
-					if (player) tools.getUnregPlayers(player.allycode, message);
+				tools.getPlayerFromDiscordId(user, message, function(player) {
+					tools.getUnregPlayers(player.allycode, message);
 				});
 			}
 			break;
@@ -431,11 +429,11 @@ client.on("message", (message) => {
 
 			allycode = tools.getFirstAllycodeInWords(args);
 			if (allycode) {
-				tools.getPlayerStats(allycode, message, tools.getLastEvols);
+				tools.getPlayerStats({allycode: allycode}, message, tools.getLastEvols);
 			} else {
 				console.log(logPrefix()+"Try with user ID:", user.id);
-				tools.getPlayerFromDiscordId(user.id, message, function(player) {
-					if (player) tools.getPlayerStats(player.allycode, message, tools.getLastEvols);
+				tools.getPlayerFromDiscordId(user, message, function(player) {
+					tools.getPlayerStats(player, message, tools.getLastEvols);
 				});
 			}
 			break;
@@ -453,11 +451,11 @@ client.on("message", (message) => {
 
 			allycode = tools.getFirstAllycodeInWords(args);
 			if (allycode) {
-				tools.getPlayerStats(allycode, message, view.showPlayerStats);
+				tools.getPlayerStats({allycode: allycode}, message, view.showPlayerStats);
 			} else {
 				console.log(logPrefix()+"Try with user ID:", user.id);
-				tools.getPlayerFromDiscordId(user.id, message, function(player) {
-					if (player) tools.getPlayerStats(player.allycode, message, view.showPlayerStats);
+				tools.getPlayerFromDiscordId(user, message, function(player) {
+					tools.getPlayerStats(player, message, view.showPlayerStats);
 				});
 			}
 			break;
@@ -539,9 +537,8 @@ client.on("message", (message) => {
 				tools.refreshGuildStats(allycode, message, view.guildPlayerStats);
 			} else {
 				console.log(logPrefix()+"Try with user ID:", user.id);
-				tools.getPlayerFromDiscordId(user.id, message, function(player) {
-					if (player)
-						tools.refreshGuildStats(player.allycode, message, view.guildPlayerStats);
+				tools.getPlayerFromDiscordId(user, message, function(player) {
+					tools.refreshGuildStats(player.allycode, message, view.guildPlayerStats);
 				});
 			}
 			break;
@@ -573,13 +570,13 @@ client.on("message", (message) => {
 			msg = msg.trim();
 			console.log(logPrefix()+"Ship to look for is:", msg);
 			if (allycode) {
-				tools.getPlayerStats(allycode, message, function(player, message) {
+				tools.getPlayerStats({allyccode: allycode}, message, function(player, message) {
 					return view.showUnitInfo(player, message, msg, 2);
 				});
 			} else {
 				console.log(logPrefix()+"Try with user ID:", user.id);
-				tools.getPlayerFromDiscordId(user.id, message, function(player) {
-					if (player) tools.getPlayerStats(player.allycode, message, function(player, message) {
+				tools.getPlayerFromDiscordId(user, message, function(player) {
+					tools.getPlayerStats(player, message, function(player, message) {
 						return view.showUnitInfo(player, message, msg, 2);
 					});
 				});
@@ -600,11 +597,11 @@ client.on("message", (message) => {
 
 			allycode = tools.getFirstAllycodeInWords(args);
 			if (allycode) {
-				tools.getPlayerStats(allycode, message, view.showPlayerRelics);
+				tools.getPlayerStats({allycode: allycode}, message, view.showPlayerRelics);
 			} else {
 				console.log(logPrefix()+"Try with user ID:", user.id);
-				tools.getPlayerFromDiscordId(user.id, message, function(player) {
-					if (player) tools.getPlayerStats(player.allycode, message, view.showPlayerRelics);
+				tools.getPlayerFromDiscordId(user, message, function(player) {
+					tools.getPlayerStats(player, message, view.showPlayerRelics);
 				});
 			}
 			break;

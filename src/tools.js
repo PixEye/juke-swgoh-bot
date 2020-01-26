@@ -374,7 +374,8 @@ exports.getPlayerFromDatabase = function(allycode, message, callback) {
 	});
 };
 
-exports.getPlayerFromDiscordId = function(discord_id, message, callback) {
+exports.getPlayerFromDiscordId = function(user, message, callback) {
+	let discord_id = user.id;
 	let logPrefix = exports.logPrefix; // shortcut
 	let sql = "SELECT * FROM `users` WHERE discord_id="+parseInt(discord_id);
 
@@ -382,28 +383,38 @@ exports.getPlayerFromDiscordId = function(discord_id, message, callback) {
 		if (exc) {
 			console.log("SQL:", sql);
 			console.log(logPrefix()+"GPFDI Exception:", exc.sqlMessage? exc.sqlMessage: exc);
-
-			if (typeof(callback)==="function") callback(null);
 			return;
 		}
 
 		console.log(logPrefix()+result.length+" record(s) match(es) user's ID:", discord_id);
 		// console.dir(result);
 		if (result.length === 1) {
-			console.log(logPrefix()+"Found allycode:", result[0].allycode);
+			let player = result[0];
 
-			if (typeof(callback)==="function") callback(result[0]);
+			player.displayAvatarURL = user.displayAvatarURL;
+			console.log(logPrefix()+"Found allycode:", player.allycode);
+			// console.log(logPrefix()+"Avatar URL:", user.displayAvatarURL);
+
+			if (typeof(callback)==="function") callback(player);
 			return;
 		}
 
 		console.log(logPrefix()+"Allycode not found"); // Normal for "self(y)" command
 		message.reply("This user has no player ID. You may try: "+config.discord.prefix+"register ally-code");
-
-		if (typeof(callback)==="function") callback(null);
 	});
 };
 
-exports.getPlayerStats = function(allycodes, message, callback) {
+exports.getPlayerStats = function(users, message, callback) {
+	let allycodes = [];
+	let playersByAllycode = {};
+
+	if (!(users instanceof Array)) users = [users];
+
+	users.forEach(function(user) {
+		allycodes.push(user.allycode);
+		playersByAllycode[user.allycode] = user;
+	});
+
 	if (!allycodes || ["number", "object"].indexOf(typeof(allycodes))<0) {
 		message.reply(":red_circle: Invalid or missing allycode(s)! Try 'register' command.");
 		return;
@@ -413,9 +424,11 @@ exports.getPlayerStats = function(allycodes, message, callback) {
 
 	message.channel.send("Looking for "+str+" stats...")
 		.then(msg => {
-			swgoh.getPlayerData(allycodes, message, function(player, message) {
+			swgoh.getPlayerData(users, message, function(player, message) {
 				if (typeof(msg.delete)==="function") msg.delete();
 
+				player.displayAvatarURL =
+					playersByAllycode[player.allycode].displayAvatarURL;
 				exports.updatePlayerDataInDb(player, message);
 
 				if (typeof(callback)==="function") callback(player, message);
@@ -562,7 +575,7 @@ exports.refreshGuildStats = function(allycode, message, callback) {
 						return;
 					}
 
-					let allycodes = [];
+					let players = [];
 
 					msg = "%d players in DB guild: "+guild.name;
 					console.log(logPrefix()+msg, result.length);
@@ -573,11 +586,11 @@ exports.refreshGuildStats = function(allycode, message, callback) {
 
 					guild.players = {};
 					result.forEach(function(player) {
-						allycodes.push(player.allycode);
+						players.push(player);
 						guild.players[player.allycode] = player;
 					});
 
-					exports.getPlayerStats(allycodes, message, callback);
+					exports.getPlayerStats(players, message, callback);
 				});
 			});
 		})

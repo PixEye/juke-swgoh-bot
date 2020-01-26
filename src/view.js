@@ -472,6 +472,7 @@ exports.showPlayerStats = function(player, message) {
 		])
 		.setTimestamp(player.updated)
 		.setFooter(config.footer.message, config.footer.iconUrl);
+	if (player.displayAvatarURL) richMsg.setThumbnail(player.displayAvatarURL);
 	message.reply(richMsg);
 };
 
@@ -483,7 +484,7 @@ exports.showWhoIs = function(user, nick, message) {
 		];
 	let logPrefix = exports.logPrefix; // shortcut
 
-	tools.getPlayerFromDiscordId(user.id, message, function(player) {
+	tools.getPlayerFromDiscordId(user, message, function(player) {
 		if (player) {
 			lines.push("**"+nick+" allycode is:** "+player.allycode);
 		}

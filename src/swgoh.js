@@ -38,18 +38,31 @@ const swapi = new ApiSwgohHelp({
 });
 
 /** Get player(s)' data from the SWGoH Help API
- * @param {Array|number} allycodes - An allycode (as number) or an array of numbers
+ * @param {Array} users - An array of users' objects with: [allycode & displayAvatarURL] each
  * @param {Object} message - The user's message to reply to
  * @param {function} callback - Function to call once the data is retrieved
  */
-exports.getPlayerData = async function(allycodes, message, callback) {
+exports.getPlayerData = async function(users, message, callback) {
 	try {
 		// let acquiredToken = await swapi.connect();
 		// console.log(logPrefix()+"Token: ", acquiredToken);
 
-		if ( ! (allycodes instanceof Array) ) allycodes = [allycodes];
+		if ( ! (users instanceof Array) ) users = [users];
+
+		let allycodes = [];
+		let playersByAllycode = {};
+
+		users.forEach(function(user) {
+			allycodes.push(user.allycode);
+			playersByAllycode[user.allycode] = user;
+		});
 
 		let input  = { "allycodes": allycodes }; // payload
+		if (allycodes.length<1) {
+			console.warn(logPrefix()+allycodes.length+" allycodes found!");
+			return;
+		}
+
 		let { result, error, warning } = await swapi.fetchPlayer(input); // <--
 		let richMsg = null;
 		let roster = null;
@@ -69,7 +82,7 @@ exports.getPlayerData = async function(allycodes, message, callback) {
 			return;
 		}
 
-		let allycode = allycodes[0];
+		let allycode = allycodes[0]; // TODO: a loop to handle multiple players
 
 		if (!result) {
 			// Fail:
@@ -81,11 +94,15 @@ exports.getPlayerData = async function(allycodes, message, callback) {
 			return;
 		}
 
+		// console.log(logPrefix()+"Players by allycode: ", playersByAllycode);
+
 		result.forEach(function(player) {
 			let clean_stats = null;
 
 			roster = player.roster;
 			stats  = player.stats;
+
+			player.displayAvatarURL = playersByAllycode[allycode].displayAvatarURL;
 
 			/*
 			player.portraits = "departed"; // { selected: string, unlocked: [strings] }
