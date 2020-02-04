@@ -119,7 +119,7 @@ client.on("message", (message) => {
 					"**Commandes utilisateur :**",
 					" aide, allycode (ac), auteur, charInfo (ci), checkMods (cm), checkUnitsGp (cugp)"+
 					", dis, getUnregisteredPlayers (gup), guildStats (gs), help, invite"+
-					", (last)evols (le), playerStats (ps), register (reg), relics"+
+					", (last)evols (le), listGuildMembers (lgm), playerStats (ps), register (reg), relics"+
 					", repete, self(y), shipInfo (si), start, stats, status, whoami, whois",
 					"**Commandes pour l'administrateur :** admin, configCheck (cc), query/req(uest), stop/stoppe",
 					"**NB1 :** en mp, le préfixe est optionnel.",
@@ -395,7 +395,7 @@ client.on("message", (message) => {
 					"**User commands:**",
 					" about, aide, allycode (ac), charInfo (ci), checkMods (cm), checkUnitsGp (cugp)"+
 					", getUnregisteredPlayers (gup), guildStats (gs), help, invite, (last)evols (le)"+
-					", playerStat (ps), register (reg), relics, repeat, say"+
+					", listGuildMembers (lgm), playerStat (ps), register (reg), relics, repeat, say"+
 					", self(y), shipInfo (si), start, stats, status, whoami, whois",
 					"**Admin commands:** admin, configCheck (cc), destroy/leave/shutdown/stop, query/req(uest)",
 					"**NB1:** in DM, prefix is optional.",
@@ -434,6 +434,25 @@ client.on("message", (message) => {
 				console.log(logPrefix()+"Try with user ID:", user.id);
 				tools.getPlayerFromDiscordId(user, message, function(player) {
 					tools.getPlayerStats(player, message, tools.getLastEvols);
+				});
+			}
+			break;
+
+		case "lgm":
+		case "listguildmembers":
+			// Extract user's tag (if any):
+			if (message.mentions && message.mentions.users && message.mentions.users.first()) {
+				user = message.mentions.users.first();
+				nick = user.username;
+			}
+
+			allycode = tools.getFirstAllycodeInWords(args);
+			if (allycode) {
+				tools.getGuildDbStats(allycode, message, view.listGuildMembers);
+			} else {
+				console.log(logPrefix()+"Try with user ID:", user.id);
+				tools.getPlayerFromDiscordId(user, message, function(player) {
+					tools.getGuildDbStats(player.allycode, message, view.listGuildMembers);
 				});
 			}
 			break;

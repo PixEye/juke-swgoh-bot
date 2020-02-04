@@ -27,6 +27,11 @@ const tools   = require("./tools");   // Several functions
 const swgoh   = require("./swgoh");   // SWGoH API
 //const view  = require("./view");    // Functions used to display results
 
+/** List guild members
+ * @param {Number} allycode - An allycode
+ * @param {Object} message - The user's message to reply to
+ * @param {Object} guild - The user's guild
+ */
 exports.guildPlayerStats = function(allycode, message, guild) {
 	let allycodes = [allycode];
 	let line = '';
@@ -85,8 +90,8 @@ exports.guildPlayerStats = function(allycode, message, guild) {
 			if (!u) return;
 
 			ct = u.combatType;
-			if (u.ct<2 && u.stars<toonMinStars) return;
-			if (u.ct>1 && u.stars<shipMinStars) return;
+			if ((u.ct<2 && u.stars<toonMinStars) || (u.ct>1 && u.stars<shipMinStars))
+				return;
 
 			uc++;
 			stat.count++;
@@ -95,7 +100,9 @@ exports.guildPlayerStats = function(allycode, message, guild) {
 			if (u.gp<stat.gpMin) stat.gpMin = u.gp;
 
 			if (!cpg[u.gear ]) cpg[u.gear ] = 1; else cpg[u.gear ]++;
+			if (u.stars<5) return;
 			if (!cps[u.stars]) cps[u.stars] = 1; else cps[u.stars]++;
+			if (u.relic<4) return;
 			if (!cpr[u.relic]) cpr[u.relic] = 1; else cpr[u.relic]++;
 		});
 
@@ -150,12 +157,71 @@ exports.guildPlayerStats = function(allycode, message, guild) {
 	message.reply(richMsg);
 };
 
+/** List guild members (LGM command)
+ * @param {Number} allycode - An allycode
+ * @param {Object} message - The user's message to reply to
+ * @param {Object} guild - The user's guild
+ */
+exports.listGuildMembers = function(allycode, message, guild) {
+	let logPrefix = exports.logPrefix; // shortcut
+	let msg = "";
+
+	if (!allycode) {
+		message.reply(":red_circle: Invalid or missing allycode!");
+		return;
+	}
+
+	if (!guild.gp) {
+		msg = "LGM: invalid guild GP: "+guild.gp;
+		console.warn(logPrefix()+msg);
+		message.reply(msg);
+		return;
+	}
+
+	let allycodes = Object.keys(guild.players);
+	let dbRegByAc = {};
+	let listToDisplay = [];
+	let n = allycodes.length;
+	let regPlayers = Object.values(guild.players);
+	let nbReg = regPlayers.length;
+
+	console.log(logPrefix()+"LGM: found %d user(s).", nbReg);
+
+	msg = "%d registered users out of %d.";
+	console.log(logPrefix()+msg, regPlayers.length, n);
+
+	regPlayers.forEach(function(regPlayer) {
+		if (guild.players[regPlayer.allycode]) {
+			dbRegByAc[regPlayer.allycode] = regPlayer;
+		}
+	});
+
+	msg = (n-nbReg)+" not registered player(s) found in this guild";
+	console.log(logPrefix()+msg);
+
+	if (!nbReg) {
+		msg = "No players in this guild are registered! (see GUP command)";
+	} else {
+		msg = nbReg+" registered player(s) found in this guild";
+		Object.keys(guild.players).forEach(function(allycode, i) {
+			listToDisplay.push(guild.players[allycode].game_name+" ("+allycode+")");
+		});
+
+		msg = "**"+msg+":** "+listToDisplay.sort().join(", ")+".";
+	}
+	message.channel.send(msg);
+};
+
 exports.logPrefix = function () {
 	let dt = new Date();
 
 	return dt.toString().replace(/ GMT.*$$/, "")+" - ";
 };
 
+/** Show guild statistics (GS command)
+ * @param {Object} guild - The user's guild
+ * @param {Object} message - The user's message to reply to
+ */
 exports.showGuildStats = function(guild, message) {
 	let locale = config.discord.locale; // shortcut
 	let logPrefix = exports.logPrefix; // shortcut
@@ -196,6 +262,12 @@ exports.showGuildStats = function(guild, message) {
 	message.reply(richMsg);
 };
 
+/** Show information about a specified unit (CI/SI commands)
+ * @param {Object} player - The user's profile as an object
+ * @param {Object} message - The user's message to reply to
+ * @param {String} unitName - The unit name as one or several word(s)
+ * @param {Number} ct - Combat type: 1 for characters & 2 for ships
+ */
 exports.showUnitInfo = function(player, message, unitName, ct) {
 	let color = "RED";
 	let foundUnit = null;
@@ -318,6 +390,11 @@ exports.showUnitInfo = function(player, message, unitName, ct) {
 	message.channel.send(richMsg);
 };
 
+/** Show player's last evolutions (LE command)
+ * @param {Object} player - The user's profile as an object
+ * @param {Object} message - The user's message to reply to
+ * @param {Object[]} evols - Player's evolutions
+ */
 exports.showLastEvols = function(player, message, evols) {
 	let allycode = player.allycode;
 	let color = "GREEN";
@@ -390,6 +467,10 @@ exports.showLastEvols = function(player, message, evols) {
 	message.channel.send(richMsg);
 };
 
+/** Show player's relics (relics command)
+ * @param {Object} player - The user's profile as an object
+ * @param {Object} message - The user's message to reply to
+ */
 exports.showPlayerRelics = function(player, message) {
 	let logPrefix = exports.logPrefix; // shortcut
 	let maxLines = 10;
@@ -442,6 +523,10 @@ exports.showPlayerRelics = function(player, message) {
 	message.channel.send(richMsg);
 };
 
+/** Show player's statistics (PS command)
+ * @param {Object} player - The user's profile as an object
+ * @param {Object} message - The user's message to reply to
+ */
 exports.showPlayerStats = function(player, message) {
 	let locale = config.discord.locale; // shortcut
 	let logPrefix = exports.logPrefix; // shortcut
@@ -476,6 +561,11 @@ exports.showPlayerStats = function(player, message) {
 	message.reply(richMsg);
 };
 
+/** Show Discord user's profile (whois command)
+ * @param {Object} user - The Discord user's profile as an object
+ * @param {String} nick - The Discord user's nickname
+ * @param {Object} message - The user's message to reply to
+ */
 exports.showWhoIs = function(user, nick, message) {
 	let lines = [
 			"**"+nick+" ID is:** "+user.id,
