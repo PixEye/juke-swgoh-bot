@@ -322,7 +322,11 @@ client.on("message", (message) => {
 		case "repeat":
 		case "repete":
 		case "say":
-			message.channel.send(args.join(" "));
+			if (args.length) {
+				message.channel.send(args.join(" "));
+			} else {
+				message.reply("what can I say for you?");
+			}
 			break;
 
 		case "gs":
