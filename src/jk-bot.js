@@ -292,6 +292,17 @@ client.on("message", (message) => {
 			}
 			break;
 
+		case "contest":
+			// Extract user's tag (if any):
+			if (message.mentions && message.mentions.users && message.mentions.users.first()) {
+				user = message.mentions.users.first();
+				nick = user.username;
+			}
+
+			allycode = tools.getFirstAllycodeInWords(args);
+			// TODO
+			break;
+
 		case "licence":
 		case "license":
 			lines.push("This free software is published under the Apache License 2.0");
