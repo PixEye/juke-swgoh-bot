@@ -292,7 +292,13 @@ client.on("message", (message) => {
 			}
 			break;
 
-		case "contest":
+		case "contest": // same as contest top
+		case "contestadd":
+		case "contestrem":
+		case "contestremove":
+		case "contestreset":
+		case "contestset":
+		case "contesttop":
 			// Extract user's tag (if any):
 			if (message.mentions && message.mentions.users && message.mentions.users.first()) {
 				user = message.mentions.users.first();
@@ -300,7 +306,14 @@ client.on("message", (message) => {
 			}
 
 			allycode = tools.getFirstAllycodeInWords(args);
-			// TODO
+			if (allycode) {
+				tools.getGuildStats({allycode: allycode}, message, tools.getContestTop);
+			} else {
+				console.log(logPrefix()+"Try with user ID:", user.id);
+				tools.getPlayerFromDiscordId(user, message, function(player) {
+					tools.getGuildStats(player, message, tools.getContestTop);
+				});
+			}
 			break;
 
 		case "licence":
@@ -351,11 +364,11 @@ client.on("message", (message) => {
 
 			allycode = tools.getFirstAllycodeInWords(args);
 			if (allycode) {
-				tools.getGuildStats(allycode, message, view.showGuildStats);
+				tools.getGuildStats({allycode: allycode}, message, view.showGuildStats);
 			} else {
 				console.log(logPrefix()+"Try with user ID:", user.id);
 				tools.getPlayerFromDiscordId(user, message, function(player) {
-					tools.getGuildStats(player.allycode, message, view.showGuildStats);
+					tools.getGuildStats(player, message, view.showGuildStats);
 				});
 			}
 			break;

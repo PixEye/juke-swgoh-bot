@@ -325,6 +325,7 @@ exports.getPlayerGuild = async function(allycodes, message, callback) {
 		});
 		console.log(logPrefix()+"Ship GP before fix: %s", guild.gpShip.toLocaleString(locale));
 		guild.gpShip = guild.gp - guild.gpChar; // fix
+		console.log(logPrefix()+"Ship GP after  fix: %s", guild.gpShip.toLocaleString(locale));
 
 		console.log(logPrefix()+"Found %d players in guild:", Object.keys(guild.players).length, guild.name);
 

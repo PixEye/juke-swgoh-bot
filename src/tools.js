@@ -155,6 +155,65 @@ exports.checkUnitsGp = function(player, message, limit) {
 	});
 };
 
+/** Get top players of a guild contest */
+exports.getContestTop = function(guild, message, target) {
+	let allycodes = Object.keys(guild.players);
+	let authorAllycode = 0;
+	let authorFound = false;
+	let targetFound = false;
+	let limit = 10;
+
+	// Get author's allycode
+	exports.getPlayerFromDiscordId(message.author, message, function(author) {
+		let sql = "";
+
+		authorAllycode = author.allycode;
+		if (target.allycode !== authorAllycode) {
+			// Check if author & target are players from the same guild:
+			allycodes.forEach(function(allycode) {
+				if (authorFound && targetFound) return;
+				if (0+allycode === authorAllycode ) authorFound = true;
+				if (0+allycode === target.allycode) targetFound = true;
+			});
+			if (!authorFound || !targetFound) {
+				console.warn("authorAllycode="+authorAllycode+" / targetAllycode="+target.allycode);
+				console.warn("authorFound="+(authorFound? 'Y': 'N')+" / targetFound="+(targetFound? 'Y': 'N'));
+				message.reply("You are NOT part of the same guild!");
+				return;
+			}
+		}
+
+		sql = "SELECT * FROM `users` WHERE guildRefId=?";
+		sql+= " ORDER BY contestPoints DESC LIMIT ?";
+		db_pool.query(sql, [guild.id, limit], function(exc, result) {
+			let logPrefix = exports.logPrefix; // shortcut
+
+			if (exc) {
+				let otd = exc.sqlMessage? exc.sqlMessage: exc; // obj to display
+
+				console.log("SQL:", sql);
+				console.log(logPrefix()+"GCT Exception:", otd);
+				return;
+			}
+
+			console.log(logPrefix()+"%d matches found", result.length);
+			// message.reply('Coming soon...');
+
+			let color = "GREEN";
+			let lines = [];
+			result.forEach(function(player) {
+				lines.push(player.contestPoints+" pts for: **"+player.discord_name+"**");
+			});
+			richMsg = new RichEmbed()
+				.setTitle("Top "+limit+" of contest for: "+guild.name)
+				.setDescription(lines).setColor(color)
+				.setTimestamp(author.updated)
+				.setFooter(config.footer.message, config.footer.iconUrl);
+			message.channel.send(richMsg);
+		});
+	});
+};
+
 /** Try to find an ally code in the words of the user's message */
 exports.getFirstAllycodeInWords = function(words) {
 	var allycode = 0;
@@ -280,7 +339,9 @@ exports.getGuildDbStats = function(allycode, message, callback) {
 		.catch(console.error);
 };
 
-exports.getGuildStats = function(allycode, message, callback) {
+exports.getGuildStats = function(player, message, callback) {
+	let allycode = player.allycode;
+
 	if (!allycode) {
 		message.reply(":red_circle: Invalid or missing allycode!");
 		return;
@@ -294,7 +355,7 @@ exports.getGuildStats = function(allycode, message, callback) {
 				// Remember stats of the guild:
 				exports.rememberGuildStats(guild);
 
-				if (typeof(callback)==="function") callback(guild, message);
+				if (typeof(callback)==="function") callback(guild, message, player);
 			});
 		})
 		.catch(console.error);
