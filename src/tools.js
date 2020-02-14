@@ -155,65 +155,6 @@ exports.checkUnitsGp = function(player, message, limit) {
 	});
 };
 
-/** Get top players of a guild contest */
-exports.getContestTop = function(guild, message, target) {
-	let allycodes = Object.keys(guild.players);
-	let authorAllycode = 0;
-	let authorFound = false;
-	let targetFound = false;
-	let limit = 10;
-
-	// Get author's allycode
-	exports.getPlayerFromDiscordId(message.author, message, function(author) {
-		let sql = "";
-
-		authorAllycode = author.allycode;
-		if (target.allycode !== authorAllycode) {
-			// Check if author & target are players from the same guild:
-			allycodes.forEach(function(allycode) {
-				if (authorFound && targetFound) return;
-				if (0+allycode === authorAllycode ) authorFound = true;
-				if (0+allycode === target.allycode) targetFound = true;
-			});
-			if (!authorFound || !targetFound) {
-				console.warn("authorAllycode="+authorAllycode+" / targetAllycode="+target.allycode);
-				console.warn("authorFound="+(authorFound? 'Y': 'N')+" / targetFound="+(targetFound? 'Y': 'N'));
-				message.reply("You are NOT part of the same guild!");
-				return;
-			}
-		}
-
-		sql = "SELECT * FROM `users` WHERE guildRefId=?";
-		sql+= " ORDER BY contestPoints DESC LIMIT ?";
-		db_pool.query(sql, [guild.id, limit], function(exc, result) {
-			let logPrefix = exports.logPrefix; // shortcut
-
-			if (exc) {
-				let otd = exc.sqlMessage? exc.sqlMessage: exc; // obj to display
-
-				console.log("SQL:", sql);
-				console.log(logPrefix()+"GCT Exception:", otd);
-				return;
-			}
-
-			console.log(logPrefix()+"%d matches found", result.length);
-			// message.reply('Coming soon...');
-
-			let color = "GREEN";
-			let lines = [];
-			result.forEach(function(player) {
-				lines.push(player.contestPoints+" pts for: **"+player.discord_name+"**");
-			});
-			richMsg = new RichEmbed()
-				.setTitle("Top "+limit+" of contest for: "+guild.name)
-				.setDescription(lines).setColor(color)
-				.setTimestamp(author.updated)
-				.setFooter(config.footer.message, config.footer.iconUrl);
-			message.channel.send(richMsg);
-		});
-	});
-};
-
 /** Try to find an ally code in the words of the user's message */
 exports.getFirstAllycodeInWords = function(words) {
 	var allycode = 0;
@@ -271,11 +212,11 @@ exports.getGuildDbStats = function(allycode, message, callback) {
 
 				let guild = result[0];
 				msg = "Matching guild: %s (%s)";
-				guild.guildRefId = guild.swgoh_id;
-				console.log(logPrefix()+msg, guild.name, guild.guildRefId);
+				guild.refId = guild.swgoh_id;
+				console.log(logPrefix()+msg, guild.name, guild.refId);
 
 				sql = "SELECT * from `users` WHERE guildRefId=?"; // get players
-				db_pool.query(sql, [guild.guildRefId], function(exc, result) {
+				db_pool.query(sql, [guild.refId], function(exc, result) {
 					if (exc) {
 						let otd = exc.sqlMessage? exc.sqlMessage: exc; // obj to display
 
@@ -403,10 +344,10 @@ exports.getPlayerFromDatabase = function(allycode, message, callback) {
 		if ( ! result.length ) {
 			console.log(logPrefix()+"User with allycode "+allycode+" not registered.");
 			message.channel.send("I don't know this player yet. You may use the 'register' command.");
-			player = {discord_name: allycode};
+			player = {game_name: allycode};
 		} else {
 			player = result[result.length - 1]; // take last match
-			console.log(logPrefix()+"Ally w/ code "+allycode+" is:", player.discord_name);
+			console.log(logPrefix()+"Ally w/ code "+allycode+" is:", player.game_name);
 		}
 
 		// Get player's units:
@@ -421,7 +362,7 @@ exports.getPlayerFromDatabase = function(allycode, message, callback) {
 			}
 
 			if (!result.length)
-				console.warn(logPrefix()+"GPFDB get %d characters for:", result.length, player.discord_name);
+				console.warn(logPrefix()+"GPFDB get %d characters for:", result.length, player.game_name);
 
 			// Add units to the player object:
 			player.unitsData = {length: 0};
@@ -435,7 +376,7 @@ exports.getPlayerFromDatabase = function(allycode, message, callback) {
 	});
 };
 
-exports.getPlayerFromDiscordId = function(user, message, callback) {
+exports.getPlayerFromDiscordUser = function(user, message, callback) {
 	let discord_id = user.id;
 	let logPrefix = exports.logPrefix; // shortcut
 	let sql = "SELECT * FROM `users` WHERE discord_id="+parseInt(discord_id);
@@ -577,6 +518,94 @@ exports.getUnregPlayers = function(allycode, message) {
 		.catch(console.error);
 };
 
+/** Get top players of a guild contest */
+exports.handleContest = function(guild, message, target) {
+	let allycodes = Object.keys(guild.players);
+	let authorFound = false;
+	let targetFound = false;
+	let limit = 10;
+	let logPrefix = exports.logPrefix; // shortcut
+
+	let args = message.unparsedArgs;
+	let cmd = message.contestCommand;
+	let delta = message.contestDelta;
+
+	console.log(logPrefix()+"Contest command:", cmd);
+
+	// Get author's allycode
+	exports.getPlayerFromDiscordUser(message.author, message, function(author) {
+		let sql = "";
+
+		if (cmd!=='top' || target.allycode!==author.allycode) {
+			// SECURITY checks:
+
+			if ( ! author.isContestAdmin ) {
+				message.reply("You are NOT a contest admin!");
+				return;
+			}
+			console.log(logPrefix()+message.author.name+" is a contest admin.");
+
+			if (allycodes.length)
+				console.log(logPrefix()+"Type of allycodes[0]: "+typeof(allycodes[0])); // string
+
+			if (target.allycode!==author.allycode) {
+				// Check if author & target are players from the same guild:
+				allycodes.forEach(function(allycode) {
+					if (authorFound && targetFound) return;
+
+					allycode = parseInt(allycode); // Convert string to number
+					if (allycode === author.allycode) authorFound = true;
+					if (allycode === target.allycode) targetFound = true;
+				});
+				if (!authorFound || !targetFound) {
+					console.log(logPrefix()+"Author:\n "+JSON.stringify(author));
+					console.log(logPrefix()+"Target:\n "+JSON.stringify(target));
+					console.warn("Author's allycode="+author.allycode+" / target's allycode="+target.allycode);
+					console.warn("Author found="+(authorFound? 'Y': 'N')+" / target found="+(targetFound? 'Y': 'N'));
+					message.reply("You are NOT part of the same guild!");
+					return;
+				}
+			}
+		}
+
+		if (cmd!=='top') {
+			message.reply('Coming soon...');
+			console.log(logPrefix()+args.length+" unparsed arg(s):", args.join(' '));
+			return;
+		}
+
+		sql = "SELECT * FROM `users` WHERE guildRefId=?";
+		sql+= " ORDER BY contestPoints DESC LIMIT ?";
+		db_pool.query(sql, [guild.refId, limit], function(exc, result) {
+			let logPrefix = exports.logPrefix; // shortcut
+
+			if (exc) {
+				let otd = exc.sqlMessage? exc.sqlMessage: exc; // obj to display
+
+				console.log("SQL:", sql);
+				console.warn(logPrefix()+"GCT Exception:", otd);
+				return;
+			}
+
+			let color = "GREEN";
+			let lines = [];
+
+			console.log(logPrefix()+"%d matches found", result.length);
+			result.forEach(function(player) {
+				lines.push(player.contestPoints+" pts for: **"+player.game_name+"**");
+			});
+
+			console.log(logPrefix()+"%d lines done", lines.length);
+			richMsg = new RichEmbed()
+				.setTitle("Top "+limit+" of contest for: "+guild.name)
+				.setDescription(lines).setColor(color)
+				.setTimestamp(author.updated)
+				.setFooter(config.footer.message, config.footer.iconUrl);
+			message.channel.send(richMsg);
+		});
+	});
+};
+
 exports.logPrefix = function () {
 	let dt = new Date();
 
@@ -622,11 +651,11 @@ exports.refreshGuildStats = function(allycode, message, callback) {
 
 				let guild = result[0];
 				msg = "Matching guild: %s (%s)";
-				guild.guildRefId = guild.swgoh_id;
-				console.log(logPrefix()+msg, guild.name, guild.guildRefId);
+				guild.refId = guild.swgoh_id;
+				console.log(logPrefix()+msg, guild.name, guild.refId);
 
 				sql = "SELECT * from `users` WHERE guildRefId=?"; // get players
-				db_pool.query(sql, [guild.guildRefId], function(exc, result) {
+				db_pool.query(sql, [guild.refId], function(exc, result) {
 					if (exc) {
 						let otd = exc.sqlMessage? exc.sqlMessage: exc; // obj to display
 
