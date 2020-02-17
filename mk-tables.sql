@@ -63,7 +63,7 @@ CREATE TABLE IF NOT EXISTS `units` (
   `gp` int(10) UNSIGNED DEFAULT NULL,
   `ts` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `playerUnitId` (`allycode`,`name`) USING BTREE,
+  UNIQUE KEY `ACAndUnitName` (`allycode`,`name`),
   KEY `allycode` (`allycode`),
   KEY `combatType` (`combatType`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
@@ -77,25 +77,20 @@ CREATE TABLE IF NOT EXISTS `units` (
 CREATE TABLE IF NOT EXISTS `users` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `allycode` int(11) NOT NULL,
+  `contestPoints` int(10) NOT NULL DEFAULT '0',
   `discord_id` varchar(32) COLLATE utf8_unicode_ci DEFAULT NULL,
   `discord_name` varchar(32) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `game_name` varchar(32) COLLATE utf8_unicode_ci NOT NULL,
+  `game_name` varchar(32) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
   `guildRefId` varchar(16) COLLATE utf8_unicode_ci DEFAULT NULL,
   `gp` int(11) UNSIGNED DEFAULT NULL,
   `g12Count` tinyint(1) UNSIGNED DEFAULT NULL,
   `g13Count` tinyint(1) UNSIGNED DEFAULT NULL,
+  `isContestAdmin` tinyint(1) NOT NULL DEFAULT '0',
   `zetaCount` tinyint(1) UNSIGNED DEFAULT NULL,
-  `ts` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+  `ts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   UNIQUE KEY `allycode` (`allycode`) USING BTREE,
   KEY `discord_id` (`discord_id`) USING BTREE,
   KEY `guildRefId` (`guildRefId`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-
-ALTER TABLE `users` CHANGE `game_name`
- `game_name` VARCHAR(32) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT '';
-
-ALTER TABLE `users` CHANGE `ts`
- `ts` TIMESTAMP on update CURRENT_TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP;
-
 COMMIT;
