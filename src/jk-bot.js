@@ -315,6 +315,14 @@ client.on("message", (message) => {
 				return;
 			}
 
+			// Extract user's tag (if any):
+			if (message.mentions && message.mentions.users && message.mentions.users.first()) {
+				user = message.mentions.users.first();
+				nick = user.username;
+			}
+
+			allycode = tools.getFirstAllycodeInWords(args);
+
 			if (cmd!=='top') {
 				delta = parseInt(args.shift());
 				if (delta<=0) {
@@ -331,13 +339,6 @@ client.on("message", (message) => {
 			message.contestDelta = delta;
 			message.unparsedArgs = args;
 
-			// Extract user's tag (if any):
-			if (message.mentions && message.mentions.users && message.mentions.users.first()) {
-				user = message.mentions.users.first();
-				nick = user.username;
-			}
-
-			allycode = tools.getFirstAllycodeInWords(args);
 			if (allycode) {
 				if (cmd==='top') {
 					tools.getGuildDbStats(allycode, message, function(allycode, message, guild) {

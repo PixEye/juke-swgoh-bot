@@ -158,16 +158,20 @@ exports.checkUnitsGp = function(player, message, limit) {
 /** Try to find an ally code in the words of the user's message */
 exports.getFirstAllycodeInWords = function(words) {
 	var allycode = 0;
+	var foundAt = -1;
 	let logPrefix = exports.logPrefix; // shortcut
 
 	if (words.join("").trim().length>0) {
-		words.forEach(function(word) {
+		words.forEach(function(word, i) {
 			// ignore too short words, tags/mentions & not numeric words:
 			if (word.length>8 && word.indexOf("<")<0 && !word.match(/[a-z]/i) && word.match(/[0-9]{3,}/)) {
 				allycode = parseInt(word.replace(/[^0-9]/g, ""));
-				console.log(logPrefix()+"Found allycode:", allycode);
+				foundAt = i;
+				console.log(logPrefix()+"Found allycode %d at position %d", allycode, i);
 			}
 		});
+		if (foundAt>=0)
+			words.splice(foundAt, 1); // remove the allycode word from the command
 	}
 
 	return allycode;
@@ -534,7 +538,7 @@ exports.handleContest = function(guild, message, target) {
 
 	// Get author's allycode
 	exports.getPlayerFromDiscordUser(message.author, message, function(author) {
-		let sql = "";
+		let sql = '';
 
 		if (cmd!=='top' || target.allycode!==author.allycode) {
 			// SECURITY checks:
@@ -543,7 +547,7 @@ exports.handleContest = function(guild, message, target) {
 				message.reply("You are NOT a contest admin!");
 				return;
 			}
-			console.log(logPrefix()+message.author.name+" is a contest admin.");
+			console.log(logPrefix()+author.game_name+" is a contest admin.");
 
 			if (allycodes.length)
 				console.log(logPrefix()+"Type of allycodes[0]: "+typeof(allycodes[0])); // string
@@ -566,6 +570,34 @@ exports.handleContest = function(guild, message, target) {
 					return;
 				}
 			}
+		}
+
+		if (cmd==='add') {
+			sql = "UPDATE `users` SET `contestPoints`=`contestPoints`+? WHERE `allycode`=?";
+		} else if (['rem', 'remove'].indexOf(cmd)>=0) {
+			sql = "UPDATE `users` SET `contestPoints`=`contestPoints`-? WHERE `allycode`=?";
+		} else if (cmd==='set') {
+			sql = "UPDATE `users` SET `contestPoints`=? WHERE `allycode`=?";
+		}
+
+		if (sql) {
+			db_pool.query(sql, [delta, target.allycode], function(exc, result) {
+				let logPrefix = exports.logPrefix; // shortcut
+
+				if (exc) {
+					let otd = exc.sqlMessage? exc.sqlMessage: exc; // obj to display
+
+					console.log("SQL:", sql);
+					console.warn(logPrefix()+"GCT Exception:", otd);
+					return;
+				}
+
+				msg = result.affectedRows+" user(s) updated";
+				console.log(logPrefix()+msg);
+				message.reply(msg);
+				return;
+			});
+			return;
 		}
 
 		if (cmd!=='top') {
