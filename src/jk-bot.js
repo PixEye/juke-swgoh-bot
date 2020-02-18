@@ -123,7 +123,7 @@ client.on("message", (message) => {
 					", repete, self(y), shipInfo (si), start, stats, status, whoami, whois",
 					"**Commandes du concours :** *Ordre : contest (sous-commande) (points) (user)*",
 					" contest, contest( )add, contest( )get, contest( )rank, contest( )rem(ove),",
-					" contest( )reset, contest( )top",
+					" contest( )reset, contest( )top, rank",
 					"**Commandes pour l'administrateur :**",
 					" admin, configCheck (cc), query/req(uest), stop/stoppe",
 					"**NB1 :** en mp, le préfixe est optionnel.",
@@ -307,12 +307,13 @@ client.on("message", (message) => {
 		case "contestreset": // TODO
 		case "contestset":
 		case "contesttop":
+		case "rank":
 			let cmd = command.replace('contest', '');
 			let delta = 0;
 			let readCommands = ['get', 'getrank', 'getscore', 'rank', 'top'];
 
 			if (!cmd && args.length && isNaN(parseInt(args[0])))
-				cmd = args.shift().toLowerCase();
+				cmd = args.shift().toLowerCase(); // read sub-command
 			else if (!cmd)
 				cmd = 'top'; // default command
 			console.log(logPrefix()+"Contest command:", cmd);
@@ -483,7 +484,7 @@ client.on("message", (message) => {
 					", self(y), shipInfo (si), start, stats, status, whoami, whois",
 					"**Contest commands:** *Order: contest (subCommand) (points) (user)*",
 					" contest, contest( )add, contest( )get, contest( )rank, contest( )rem(ove),",
-					" contest( )reset, contest( )top",
+					" contest( )reset, contest( )top, rank",
 					"**Admin commands:**",
 					" admin, configCheck (cc), destroy/leave/shutdown/stop, query/req(uest)",
 					"**NB1:** in DM, prefix is optional.",

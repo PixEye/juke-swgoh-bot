@@ -541,7 +541,7 @@ exports.handleContest = function(guild, message, target) {
 	exports.getPlayerFromDiscordUser(message.author, message, function(author) {
 		let sql = '';
 
-		if (readCommands.indexOf(cmd)<0 || target.allycode!==author.allycode) {
+		if (readCommands.indexOf(cmd)<0 && target.allycode!==author.allycode) {
 			// SECURITY checks:
 
 			if ( ! author.isContestAdmin ) {
@@ -609,11 +609,14 @@ exports.handleContest = function(guild, message, target) {
 			return;
 		}
 
-		let rank = 0;
+		let title = "Top "+limit+" of contest for: "+guild.name;
 
-		if (cmd!=='top') limit = 50;
+		if (cmd!=='top') {
+			limit = 50;
+			title = target.game_name+"'s contest rank in: "+guild.name;
+		}
 		sql = "SELECT * FROM `users` WHERE guildRefId=?";
-		sql+= " ORDER BY contestPoints DESC LIMIT ?";
+		sql+= " ORDER BY contestPoints DESC, game_name ASC LIMIT ?";
 		db_pool.query(sql, [guild.refId, limit], function(exc, result) {
 			let logPrefix = exports.logPrefix; // shortcut
 
@@ -628,20 +631,19 @@ exports.handleContest = function(guild, message, target) {
 			let color = "GREEN";
 			let lastScore = 0;
 			let lines = [];
+			let rank = 0;
 
 			console.log(logPrefix()+"%d matches found", result.length);
 			result.forEach(function(player) {
 				if (player.contestPoints!==lastScore) ++rank;
 				if (cmd==='top' || player.allycode===target.allycode)
-					lines.push(rank+"/ "+player.contestPoints+" pts for: **"+player.game_name+"**");
+					lines.push("**"+rank+"/** "+player.contestPoints+" pts for: **"+player.game_name+"**");
 				lastScore = player.contestPoints;
 			});
 
 			console.log(logPrefix()+"%d lines done", lines.length);
-			richMsg = new RichEmbed()
-				.setTitle("Top "+limit+" of contest for: "+guild.name)
-				.setDescription(lines).setColor(color)
-				.setTimestamp(author.updated)
+			richMsg = new RichEmbed().setColor(color).setTitle(title)
+				.setDescription(lines).setTimestamp(author.updated)
 				.setFooter(config.footer.message, config.footer.iconUrl);
 			message.channel.send(richMsg);
 		});
