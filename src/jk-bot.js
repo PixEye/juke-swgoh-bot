@@ -121,11 +121,15 @@ client.on("message", (message) => {
 					", dis, getUnregisteredPlayers (gup), guildStats (gs), help, invite"+
 					", (last)evols (le), listGuildMembers (lgm), playerStats (ps), register (reg), relics"+
 					", repete, self(y), shipInfo (si), start, stats, status, whoami, whois",
-					"**Commandes pour l'administrateur :** admin, configCheck (cc), query/req(uest), stop/stoppe",
+					"**Commandes du concours :** *Ordre : contest (sous-commande) (points) (user)*",
+					" contest, contest( )add, contest( )get, contest( )rank, contest( )rem(ove),",
+					" contest( )reset, contest( )top",
+					"**Commandes pour l'administrateur :**",
+					" admin, configCheck (cc), query/req(uest), stop/stoppe",
 					"**NB1 :** en mp, le préfixe est optionnel.",
 					"**NB2 :** la plupart des commandes accepte un tag ou un code allié (9 chiffres).",
 					"**NB3 :** la \"cible\" par défaut est la personne qui tape la commande (\"me\" inutile).",
-					"**NB4 :** l'ordre des arguments n'importe pas."])
+					"**NB4 :** l'ordre des arguments n'importe pas (sauf pour 'contest')."])
 				.setTimestamp(message.createdTimestamp)
 				.setFooter(config.footer.message, config.footer.iconUrl);
 			message.channel.send(richMsg);
@@ -294,13 +298,18 @@ client.on("message", (message) => {
 
 		case "contest": // same as contest top
 		case "contestadd":
+		case "contestget":
+		case "contestgetrank":
+		case "contestgetscore":
+		case "contestrank":
 		case "contestrem":
 		case "contestremove":
-		case "contestreset":
+		case "contestreset": // TODO
 		case "contestset":
 		case "contesttop":
 			let cmd = command.replace('contest', '');
 			let delta = 0;
+			let readCommands = ['get', 'getrank', 'getscore', 'rank', 'top'];
 
 			if (!cmd && args.length && isNaN(parseInt(args[0])))
 				cmd = args.shift().toLowerCase();
@@ -308,7 +317,7 @@ client.on("message", (message) => {
 				cmd = 'top'; // default command
 			console.log(logPrefix()+"Contest command:", cmd);
 
-			if (cmd!=='top' && (!args.length || isNaN(args[0]))) {
+			if (readCommands.indexOf(cmd)<0 && (!args.length || isNaN(args[0]))) {
 				msg = "Invalid contest command! (missing a number)";
 				console.warn(logPrefix()+msg);
 				message.reply(msg);
@@ -323,7 +332,7 @@ client.on("message", (message) => {
 
 			allycode = tools.getFirstAllycodeInWords(args);
 
-			if (cmd!=='top') {
+			if (readCommands.indexOf(cmd)<0) {
 				delta = parseInt(args.shift());
 				if (delta<=0) {
 					message.reply("Negative numbers are not allowed!");
@@ -472,11 +481,15 @@ client.on("message", (message) => {
 					", getUnregisteredPlayers (gup), guildStats (gs), help, invite, (last)evols (le)"+
 					", listGuildMembers (lgm), playerStat (ps), register (reg), relics, repeat, say"+
 					", self(y), shipInfo (si), start, stats, status, whoami, whois",
-					"**Admin commands:** admin, configCheck (cc), destroy/leave/shutdown/stop, query/req(uest)",
+					"**Contest commands:** *Order: contest (subCommand) (points) (user)*",
+					" contest, contest( )add, contest( )get, contest( )rank, contest( )rem(ove),",
+					" contest( )reset, contest( )top",
+					"**Admin commands:**",
+					" admin, configCheck (cc), destroy/leave/shutdown/stop, query/req(uest)",
 					"**NB1:** in DM, prefix is optional.",
 					"**NB2:** most of commands accept a user's tag or an ally code (9 digits).",
 					"**NB3:** the default target is the command writer (\"me\" is useless).",
-					"**NB4:** order of arguments is up to you (whatever the one you choose)."])
+					"**NB4:** order of arguments is up to you (except for contest commands)."])
 				.setTimestamp(message.createdTimestamp)
 				.setFooter(config.footer.message, config.footer.iconUrl);
 			message.channel.send(richMsg);

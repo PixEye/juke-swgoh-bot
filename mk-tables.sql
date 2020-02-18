@@ -52,7 +52,7 @@ CREATE TABLE IF NOT EXISTS `guilds` (
 --
 
 CREATE TABLE IF NOT EXISTS `units` (
-  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
   `allycode` int(10) UNSIGNED NOT NULL,
   `name` varchar(32) COLLATE utf8_unicode_ci NOT NULL,
   `combatType` tinyint(1) UNSIGNED NOT NULL,
@@ -75,8 +75,8 @@ CREATE TABLE IF NOT EXISTS `units` (
 --
 
 CREATE TABLE IF NOT EXISTS `users` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `allycode` int(11) NOT NULL,
+  `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `allycode` int(11) UNSIGNED NOT NULL,
   `contestPoints` int(10) NOT NULL DEFAULT '0',
   `discord_id` varchar(32) COLLATE utf8_unicode_ci DEFAULT NULL,
   `discord_name` varchar(32) COLLATE utf8_unicode_ci DEFAULT NULL,

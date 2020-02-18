@@ -529,6 +529,7 @@ exports.handleContest = function(guild, message, target) {
 	let targetFound = false;
 	let limit = 10;
 	let logPrefix = exports.logPrefix; // shortcut
+	let readCommands = ['get', 'getrank', 'getscore', 'rank', 'top'];
 
 	let args = message.unparsedArgs;
 	let cmd = message.contestCommand;
@@ -540,7 +541,7 @@ exports.handleContest = function(guild, message, target) {
 	exports.getPlayerFromDiscordUser(message.author, message, function(author) {
 		let sql = '';
 
-		if (cmd!=='top' || target.allycode!==author.allycode) {
+		if (readCommands.indexOf(cmd)<0 || target.allycode!==author.allycode) {
 			// SECURITY checks:
 
 			if ( ! author.isContestAdmin ) {
@@ -564,8 +565,10 @@ exports.handleContest = function(guild, message, target) {
 				if (!authorFound || !targetFound) {
 					console.log(logPrefix()+"Author:\n "+JSON.stringify(author));
 					console.log(logPrefix()+"Target:\n "+JSON.stringify(target));
-					console.warn("Author's allycode="+author.allycode+" / target's allycode="+target.allycode);
-					console.warn("Author found="+(authorFound? 'Y': 'N')+" / target found="+(targetFound? 'Y': 'N'));
+					console.warn(logPrefix()+
+						"Author's allycode="+author.allycode+" / target's allycode="+target.allycode);
+					console.warn(logPrefix()+
+						"Author found="+(authorFound? 'Y': 'N')+" / target found="+(targetFound? 'Y': 'N'));
 					message.reply("You are NOT part of the same guild!");
 					return;
 				}
@@ -600,12 +603,15 @@ exports.handleContest = function(guild, message, target) {
 			return;
 		}
 
-		if (cmd!=='top') {
-			message.reply('Coming soon...');
+		if (readCommands.indexOf(cmd)<0) {
+			message.reply('Coming soon...'); // TODO: "reset" support
 			console.log(logPrefix()+args.length+" unparsed arg(s):", args.join(' '));
 			return;
 		}
 
+		let rank = 0;
+
+		if (cmd!=='top') limit = 50;
 		sql = "SELECT * FROM `users` WHERE guildRefId=?";
 		sql+= " ORDER BY contestPoints DESC LIMIT ?";
 		db_pool.query(sql, [guild.refId, limit], function(exc, result) {
@@ -620,11 +626,15 @@ exports.handleContest = function(guild, message, target) {
 			}
 
 			let color = "GREEN";
+			let lastScore = 0;
 			let lines = [];
 
 			console.log(logPrefix()+"%d matches found", result.length);
 			result.forEach(function(player) {
-				lines.push(player.contestPoints+" pts for: **"+player.game_name+"**");
+				if (player.contestPoints!==lastScore) ++rank;
+				if (cmd==='top' || player.allycode===target.allycode)
+					lines.push(rank+"/ "+player.contestPoints+" pts for: **"+player.game_name+"**");
+				lastScore = player.contestPoints;
 			});
 
 			console.log(logPrefix()+"%d lines done", lines.length);
