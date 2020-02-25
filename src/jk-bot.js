@@ -678,7 +678,7 @@ client.on("message", (message) => {
 			msg = msg.trim();
 			console.log(logPrefix()+"Ship to look for is:", msg);
 			if (allycode) {
-				tools.getPlayerStats({allyccode: allycode}, message, function(player, message) {
+				tools.getPlayerStats({allycode: allycode}, message, function(player, message) {
 					return view.showUnitInfo(player, message, msg, 2);
 				});
 			} else {
