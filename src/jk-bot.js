@@ -350,7 +350,7 @@ client.on("message", (message) => {
 			message.unparsedArgs = args;
 
 			if (allycode) {
-				if (cmd==='top') {
+				if (readCommands.indexOf(cmd) >= 0) {
 					tools.getGuildDbStats(allycode, message, function(allycode, message, guild) {
 						tools.handleContest(guild, message, {allycode: allycode});
 					});
@@ -359,7 +359,7 @@ client.on("message", (message) => {
 				}
 			} else {
 				console.log(logPrefix()+"Try with user ID:", user.id);
-				if (cmd==='top') {
+				if (readCommands.indexOf(cmd) >= 0) {
 					tools.getPlayerFromDiscordUser(user, message, function(player) {
 						tools.getGuildDbStats(player.allycode, message, function(allycode, message, guild) {
 							tools.handleContest(guild, message, player);
