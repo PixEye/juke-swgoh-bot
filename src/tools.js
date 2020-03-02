@@ -595,7 +595,14 @@ exports.handleContest = function(guild, message, target) {
 					return;
 				}
 
-				msg = result.affectedRows+" user(s) updated";
+				if (result.affectedRows !== 1) {
+					msg = result.affectedRows+" user(s) updated!";
+					console.log(logPrefix()+msg);
+					message.reply(msg);
+					return;
+				}
+
+				msg = target.game_name + ' successfully updated.';
 				console.log(logPrefix()+msg);
 				message.reply(msg);
 				return;

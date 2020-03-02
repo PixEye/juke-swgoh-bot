@@ -336,8 +336,8 @@ client.on("message", (message) => {
 			if (readCommands.indexOf(cmd)<0) {
 				delta = parseInt(args.shift());
 				if (delta<=0) {
-					message.reply("Negative numbers are not allowed!");
-					console.warn(logPrefix()+"Negative delta detected (%d)!", delta);
+					message.reply("Invalid delta detected!");
+					console.warn(logPrefix()+"Invalid delta (%s)!", delta);
 					return;
 				}
 
