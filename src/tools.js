@@ -602,9 +602,9 @@ exports.handleContest = function(guild, message, target) {
 					return;
 				}
 
-				msg = ':white_check_mark: '+target.game_name+' successfully updated.';
+				msg = target.game_name+' successfully updated.';
 				console.log(logPrefix()+msg);
-				message.reply(msg);
+				message.reply(':white_check_mark: '+msg);
 				return;
 			});
 			return;
