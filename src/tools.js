@@ -505,8 +505,8 @@ exports.getUnregPlayers = function(allycode, message) {
 					console.log(logPrefix()+msg);
 
 					if (!n) {
-						msg = "All "+allycodes.length+
-							" players in this guild are registered. :white_check_mark:";
+						msg = ":white_check_mark: All "+allycodes.length+
+							" players in this guild are registered.";
 					} else {
 						Object.keys(guild.players).forEach(function(allycode, i) {
 							if (!dbRegByAc[allycode])
@@ -602,7 +602,7 @@ exports.handleContest = function(guild, message, target) {
 					return;
 				}
 
-				msg = target.game_name + ' successfully updated.';
+				msg = ':white_check_mark: '+target.game_name+' successfully updated.';
 				console.log(logPrefix()+msg);
 				message.reply(msg);
 				return;
