@@ -622,7 +622,7 @@ exports.handleContest = function(guild, message, target) {
 			limit = 50;
 			title = target.game_name+"'s contest rank in: "+guild.name;
 		}
-		sql = "SELECT * FROM `users` WHERE guildRefId=?";
+		sql = "SELECT * FROM `users` WHERE guildRefId=? AND contestPoints!=0";
 		sql+= " ORDER BY contestPoints DESC, game_name ASC LIMIT ?";
 		db_pool.query(sql, [guild.refId, limit], function(exc, result) {
 			let logPrefix = exports.logPrefix; // shortcut
