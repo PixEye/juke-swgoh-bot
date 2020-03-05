@@ -279,6 +279,7 @@ client.on("message", (message) => {
 		case "chkmods":
 		case "checkmod":
 		case "checkmods":
+		case "checkmodules":
 			// Extract user's tag (if any):
 			if (message.mentions && message.mentions.users && message.mentions.users.first()) {
 				user = message.mentions.users.first();
