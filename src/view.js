@@ -146,7 +146,9 @@ exports.guildPlayerStats = function(allycode, message, guild) {
 			}
 			statStr = stat.join("; ");
 			unitName = unitName.replace('Brood ', '');
-			richMsg.addField(icon+" "+uc+" "+unitName, "``"+statStr+"``", true);
+			if (statStr) {
+				richMsg.addField(icon+" "+uc+" "+unitName, "``"+statStr+"``", true);
+			}
 		}
 	});
 
