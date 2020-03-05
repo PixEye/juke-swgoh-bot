@@ -3,7 +3,9 @@
     "shipMinStars": 5,
     "toonMinStars": 7,
     "unitsOfInterest": [
-      "Capital Malevolence", "Capital Negotiator", "Hounds Tooth", "Millennium Falcon",
+      "Capital Finalizer", "Capital Malevolence", "Capital Negotiator", "Capital Raddus",
+      "Hounds Tooth", "Millennium Falcon",
+
       "Darth Malak", "Darth Revan", "Darth Traya",
       "General Skywalker", "Geonosian Brood Alpha", "Grievous", "Jedi Knight Revan"
     ]
