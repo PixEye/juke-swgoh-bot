@@ -501,12 +501,12 @@ exports.getUnregPlayers = function(allycode, message) {
 					});
 
 					n-= nbReg;
-					msg = n+" not registered player(s) found in this guild";
+					msg = n+' unknown player(s) found in guild "'+guild.name+'"';
 					console.log(logPrefix()+msg);
 
 					if (!n) {
 						msg = ":white_check_mark: All "+allycodes.length+
-							" players in this guild are registered.";
+							' players in guild "'+guild.name+'" are registered.';
 					} else {
 						Object.keys(guild.players).forEach(function(allycode, i) {
 							if (!dbRegByAc[allycode])
