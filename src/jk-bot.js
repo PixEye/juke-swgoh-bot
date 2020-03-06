@@ -88,7 +88,7 @@ client.on("message", (message) => {
 	}
 	args = args.trim().split(/ +/g);
 	command = args.shift().toLowerCase();
-	nick = user.username;
+	nick = locutus.utf8_decode(user.username);
 
 	console.log(logPrefix()+"/ \""+nick+"\" sent command: "+message.content);
 
@@ -212,7 +212,7 @@ client.on("message", (message) => {
 			// Extract user's tag (if any):
 			if (message.mentions && message.mentions.users && message.mentions.users.first()) {
 				user = message.mentions.users.first();
-				nick = user.username;
+				nick = locutus.utf8_decode(user.username);
 			}
 
 			allycode = tools.getFirstAllycodeInWords(args);
@@ -255,7 +255,7 @@ client.on("message", (message) => {
 			// Extract user's tag (if any):
 			if (message.mentions && message.mentions.users && message.mentions.users.first()) {
 				user = message.mentions.users.first();
-				nick = user.username;
+				nick = locutus.utf8_decode(user.username);
 			}
 
 			let limit = 21;
@@ -283,7 +283,7 @@ client.on("message", (message) => {
 			// Extract user's tag (if any):
 			if (message.mentions && message.mentions.users && message.mentions.users.first()) {
 				user = message.mentions.users.first();
-				nick = user.username;
+				nick = locutus.utf8_decode(user.username);
 			}
 
 			allycode = tools.getFirstAllycodeInWords(args);
@@ -329,7 +329,7 @@ client.on("message", (message) => {
 			// Extract user's tag (if any):
 			if (message.mentions && message.mentions.users && message.mentions.users.first()) {
 				user = message.mentions.users.first();
-				nick = user.username;
+				nick = locutus.utf8_decode(user.username);
 			}
 
 			allycode = tools.getFirstAllycodeInWords(args);
@@ -417,7 +417,7 @@ client.on("message", (message) => {
 			// Extract user's tag (if any):
 			if (message.mentions && message.mentions.users && message.mentions.users.first()) {
 				user = message.mentions.users.first();
-				nick = user.username;
+				nick = locutus.utf8_decode(user.username);
 			}
 
 			allycode = tools.getFirstAllycodeInWords(args);
@@ -439,7 +439,7 @@ client.on("message", (message) => {
 			// Extract user's tag (if any):
 			if (message.mentions && message.mentions.users && message.mentions.users.first()) {
 				user = message.mentions.users.first();
-				nick = user.username;
+				nick = locutus.utf8_decode(user.username);
 			}
 
 			allycode = tools.getFirstAllycodeInWords(args);
@@ -461,7 +461,7 @@ client.on("message", (message) => {
 			// Extract user's tag (if any):
 			if (message.mentions && message.mentions.users && message.mentions.users.first()) {
 				user = message.mentions.users.first();
-				nick = user.username;
+				nick = locutus.utf8_decode(user.username);
 			}
 
 			allycode = tools.getFirstAllycodeInWords(args);
@@ -514,7 +514,7 @@ client.on("message", (message) => {
 			// Extract user's tag (if any):
 			if (message.mentions && message.mentions.users && message.mentions.users.first()) {
 				user = message.mentions.users.first();
-				nick = user.username;
+				nick = locutus.utf8_decode(user.username);
 			}
 
 			allycode = tools.getFirstAllycodeInWords(args);
@@ -533,7 +533,7 @@ client.on("message", (message) => {
 			// Extract user's tag (if any):
 			if (message.mentions && message.mentions.users && message.mentions.users.first()) {
 				user = message.mentions.users.first();
-				nick = user.username;
+				nick = locutus.utf8_decode(user.username);
 			}
 
 			allycode = tools.getFirstAllycodeInWords(args);
@@ -555,7 +555,7 @@ client.on("message", (message) => {
 			// Extract user's tag (if any):
 			if (message.mentions && message.mentions.users && message.mentions.users.first()) {
 				user = message.mentions.users.first();
-				nick = user.username;
+				nick = locutus.utf8_decode(user.username);
 			}
 
 			allycode = tools.getFirstAllycodeInWords(args);
@@ -574,12 +574,14 @@ client.on("message", (message) => {
 			// Extract user's tag (if any):
 			if (message.mentions && message.mentions.users && message.mentions.users.first()) {
 				user = message.mentions.users.first();
-				nick = user.username;
+				nick = locutus.utf8_decode(user.username);
 			}
 
 			allycode = tools.getFirstAllycodeInWords(args);
 			if (!allycode) {
-				message.reply(":warning: Allycode is invalid or missing!");
+				msg = "Allycode is invalid or missing!";
+				console.warn(msg+" about: "+nick);
+				message.reply(":warning: "+msg);
 				return;
 			}
 
@@ -638,7 +640,7 @@ client.on("message", (message) => {
 			// Extract user's tag (if any):
 			if (message.mentions && message.mentions.users && message.mentions.users.first()) {
 				user = message.mentions.users.first();
-				nick = user.username;
+				nick = locutus.utf8_decode(user.username);
 			}
 
 			allycode = tools.getFirstAllycodeInWords(args);
@@ -657,7 +659,7 @@ client.on("message", (message) => {
 			// Extract user's tag (if any):
 			if (message.mentions && message.mentions.users && message.mentions.users.first()) {
 				user = message.mentions.users.first();
-				nick = user.username;
+				nick = locutus.utf8_decode(user.username);
 			}
 
 			allycode = tools.getFirstAllycodeInWords(args);
@@ -701,7 +703,7 @@ client.on("message", (message) => {
 			// Extract user's tag (if any):
 			if (message.mentions && message.mentions.users && message.mentions.users.first()) {
 				user = message.mentions.users.first();
-				nick = user.username;
+				nick = locutus.utf8_decode(user.username);
 			}
 
 			allycode = tools.getFirstAllycodeInWords(args);
@@ -889,7 +891,7 @@ client.on("message", (message) => {
 		case "whois":
 			if (message.mentions && message.mentions.users && message.mentions.users.first()) {
 				user = message.mentions.users.first();
-				nick = user.username;
+				nick = locutus.utf8_decode(user.username);
 			} else
 			if (command!=="self" && command!=="selfy" && message.mentions && message.mentions.users) {
 				message.reply("Cannot answer for the moment.");
