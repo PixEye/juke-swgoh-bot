@@ -745,7 +745,12 @@ client.on("message", (message) => {
 						lines = ["No match."];
 
 						n = result.affectedRows;
-						lines.push(n+" affected rows.");
+						if (n) {
+							col = "GREEN";
+							lines = [];
+						}
+						let s = n===1? '': 's';
+						lines.push(n+" affected row"+s);
 					} else {
 						let headers = [];
 						let col_sep = "\t";
@@ -757,7 +762,7 @@ client.on("message", (message) => {
 						});
 						lines.unshift("`"+headers.join(col_sep)+"`");
 
-						let s = result.length===1? '': 's';
+						let s = n===1? '': 's';
 						title+= " ("+n+" result"+s+")";
 					}
 				}
