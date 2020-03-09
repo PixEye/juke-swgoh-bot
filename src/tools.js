@@ -569,7 +569,9 @@ exports.handleContest = function(guild, message, target) {
 						"Author's allycode="+author.allycode+" / target's allycode="+target.allycode);
 					console.warn(logPrefix()+
 						"Author found="+(authorFound? 'Y': 'N')+" / target found="+(targetFound? 'Y': 'N'));
-					message.reply("You are NOT part of the same guild!");
+					let msg = "You are NOT part of the same guild!";
+					console.warn(msg);
+					message.reply(msg);
 					return;
 				}
 			}

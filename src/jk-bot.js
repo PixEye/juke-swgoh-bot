@@ -729,6 +729,7 @@ client.on("message", (message) => {
 			sql = args.join(" ");
 			db_pool.query(sql, function(exc, result) {
 				let col = "ORANGE";
+				let title = "DB request";
 
 				if (exc) {
 					console.log("SQL:", sql);
@@ -737,10 +738,14 @@ client.on("message", (message) => {
 					col = "RED";
 					lines = [exc.sqlMessage? exc.sqlMessage: exc.code];
 				} else {
-					console.log(logPrefix()+"%d record(s) in the result", result.length);
+					let n = result.length;
 
-					if (!result.length) {
+					console.log(logPrefix()+"%d record(s) in the result", n);
+					if (!n) {
 						lines = ["No match."];
+
+						n = result.affectedRows;
+						lines.push(n+" affected rows.");
 					} else {
 						let headers = [];
 						let col_sep = "\t";
@@ -751,13 +756,14 @@ client.on("message", (message) => {
 							lines.push("`"+Object.values(record).join(col_sep)+"`");
 						});
 						lines.unshift("`"+headers.join(col_sep)+"`");
+
+						let s = result.length===1? '': 's';
+						title+= " ("+n+" result"+s+")";
 					}
 				}
 
-				richMsg = new RichEmbed()
-					.setTitle("DB request").setColor(col)
-					.setDescription(lines)
-					.setTimestamp(message.createdTimestamp)
+				richMsg = new RichEmbed().setTitle(title).setColor(col)
+					.setDescription(lines).setTimestamp(message.createdTimestamp)
 					.setFooter(config.footer.message, config.footer.iconUrl);
 				message.channel.send(richMsg);
 			});
