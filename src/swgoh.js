@@ -271,7 +271,6 @@ exports.getPlayerGuild = async function(allycodes, message, callback) {
 		let guild = result[0];
 
 		roster = guild.roster;
-		// delete guild.roster;
 
 		/*
 		guild.roster = "departed";
@@ -299,6 +298,7 @@ exports.getPlayerGuild = async function(allycodes, message, callback) {
 		guild.players = {}; // allycode => (IG nick) name
 		guild.refId = guild.id;
 		delete guild.members; // better named: memberCount
+		delete guild.roster; // better named: players
 
 		roster.forEach(function(player) {
 			guild.gpChar+= player.gpChar;
