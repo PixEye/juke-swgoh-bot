@@ -36,8 +36,7 @@ const db_pool = mysql.createPool({
 	user           : config.db.user
 });
 
-// Behaviour colors (about players):
-const behaveColors  = ['green', 'orange', 'red'];
+// Behaviour icons (about players):
 const behaveIcons   = [':green_heart:', ':large_orange_diamond:', ':red_circle:'];
 
 exports.db_close = function(exc) {
