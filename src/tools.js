@@ -622,13 +622,14 @@ exports.handleBehaviour = function(guild, message, target) {
 			return;
 		}
 
-		let title = limit+" worst player(s): "+guild.name;
+		let title = '';
 
 		if (cmd!=='worst') {
 			limit = 50;
 			title = target.game_name+"'s behavior rank in: "+guild.name;
 		}
-		sql = "SELECT * FROM `users` WHERE guildRefId=? AND warnLevel>0";
+		sql = "SELECT * FROM `users` WHERE guildRefId=?";
+		if (cmd==='worst') sql+= " AND warnLevel>0";
 		sql+= " ORDER BY warnLevel DESC, game_name ASC LIMIT ?";
 		db_pool.query(sql, [guild.refId, limit], function(exc, result) {
 			let logPrefix = exports.logPrefix; // shortcut
@@ -644,21 +645,27 @@ exports.handleBehaviour = function(guild, message, target) {
 			let color = "GREEN";
 			let lastScore = 0;
 			let lines = [];
+			let n = 0;
 			let rank = 0;
 
 			console.log(logPrefix()+"%d matches found", result.length);
-			if (!result.length) lines = [':white_check_mark: No problem registered.'];
-			result.forEach(function(player) {
-				let playerIcon = behaveIcons[player.warnLevel];
-				let addon = player.warnLevel? "**": "";
+			if (!result.length) {
+				lines = [':white_check_mark: No behaviour problem registered.'];
+			} else {
+				result.forEach(function(player) {
+					let playerIcon = behaveIcons[player.warnLevel];
+					let addon = player.warnLevel? "**": "";
 
-				if (player.warnLevel!==lastScore) ++rank;
-				if (cmd==='worst' || player.allycode===target.allycode)
-					lines.push(playerIcon+" "+addon+player.game_name+addon);
-				lastScore = player.warnLevel;
-			});
+					if (player.warnLevel!==lastScore) ++rank;
+					if (cmd==='worst' || player.allycode===target.allycode)
+						lines.push(playerIcon+" "+addon+player.game_name+addon);
+					lastScore = player.warnLevel;
+				});
+				n = Math.min(limit, lines.length);
+			}
 
-			let s = lines.length===1? '': 's';
+			let s = n===1? '': 's';
+			title = n+" player"+s+" behaviour in: "+guild.name;
 			console.log(logPrefix()+"%d line%s displayed", lines.length, s);
 			richMsg = new RichEmbed().setColor(color).setTitle(title)
 				.setDescription(lines).setTimestamp(author.updated)
