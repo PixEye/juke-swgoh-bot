@@ -36,6 +36,10 @@ const db_pool = mysql.createPool({
 	user           : config.db.user
 });
 
+// Behaviour colors (about players):
+const behaveColors  = ['green', 'orange', 'red'];
+const behaveIcons   = [':green_heart:', ':large_orange_diamond:', ':red_circle:'];
+
 exports.db_close = function(exc) {
 	let logPrefix = exports.logPrefix; // shortcut
 
@@ -522,14 +526,156 @@ exports.getUnregPlayers = function(allycode, message) {
 		.catch(console.error);
 };
 
-/** Get top players of a guild contest */
+/** Manage players' behaviour notation (with colors) */
+exports.handleBehaviour = function(guild, message, target) {
+	let allycodes = Object.keys(guild.players);
+	let authorFound = false;
+	let targetFound = false;
+	let limit = 10;
+	let logPrefix = exports.logPrefix; // shortcut
+	let readCommands = message.readCommands;
+
+	let args = message.unparsedArgs;
+	let cmd = message.behaveCommand;
+	let delta = message.behaveDelta;
+
+	console.log(logPrefix()+"Behaviour command:", cmd);
+
+	// Get author's allycode
+	exports.getPlayerFromDiscordUser(message.author, message, function(author) {
+		let sql = '';
+
+		if (readCommands.indexOf(cmd)<0 && target.allycode!==author.allycode) {
+			// SECURITY checks:
+
+			if ( ! author.isContestAdmin ) {
+				message.reply("You are NOT a contest admin!");
+				return;
+			}
+			console.log(logPrefix()+author.game_name+" is a contest admin.");
+
+			if (allycodes.length)
+				console.log(logPrefix()+"Type of allycodes[0]: "+typeof(allycodes[0])); // string
+
+			if (target.allycode!==author.allycode) {
+				// Check if author & target are players from the same guild:
+				allycodes.forEach(function(allycode) {
+					if (authorFound && targetFound) return;
+
+					allycode = parseInt(allycode); // Convert string to number
+					if (allycode === author.allycode) authorFound = true;
+					if (allycode === target.allycode) targetFound = true;
+				});
+				if (!authorFound || !targetFound) {
+					console.log(logPrefix()+"Author:\n "+JSON.stringify(author));
+					console.log(logPrefix()+"Target:\n "+JSON.stringify(target));
+					console.warn(logPrefix()+
+						"Author's allycode="+author.allycode+" / target's allycode="+target.allycode);
+					console.warn(logPrefix()+
+						"Author found="+(authorFound? 'Y': 'N')+" / target found="+(targetFound? 'Y': 'N'));
+					let msg = "You are NOT part of the same guild!";
+					console.warn(msg);
+					message.reply(msg);
+					return;
+				}
+			}
+		}
+
+		if (cmd==='add') {
+			sql = "UPDATE `users` SET `warnLevel`=`warnLevel`+? WHERE `allycode`=?";
+		} else if (['rem', 'remove'].indexOf(cmd)>=0) {
+			sql = "UPDATE `users` SET `warnLevel`=`warnLevel`-? WHERE `allycode`=?";
+		} else if (cmd==='set') {
+			sql = "UPDATE `users` SET `warnLevel`=? WHERE `allycode`=?";
+		}
+
+		if (sql) {
+			db_pool.query(sql, [delta, target.allycode], function(exc, result) {
+				let logPrefix = exports.logPrefix; // shortcut
+
+				if (exc) {
+					let otd = exc.sqlMessage? exc.sqlMessage: exc; // obj to display
+
+					console.log("SQL:", sql);
+					console.warn(logPrefix()+"GCT Exception:", otd);
+					return;
+				}
+
+				if (result.affectedRows !== 1) {
+					msg = result.affectedRows+" user(s) updated!";
+					console.log(logPrefix()+msg);
+					message.reply(msg);
+					return;
+				}
+
+				msg = target.game_name+' successfully updated.';
+				console.log(logPrefix()+msg);
+				message.reply(':white_check_mark: '+msg);
+				return;
+			});
+			return;
+		}
+
+		if (readCommands.indexOf(cmd)<0) {
+			message.reply('Coming soon...'); // TODO: "reset" support
+			console.log(logPrefix()+args.length+" unparsed arg(s):", args.join(' '));
+			return;
+		}
+
+		let title = limit+" worst player(s): "+guild.name;
+
+		if (cmd!=='worst') {
+			limit = 50;
+			title = target.game_name+"'s behavior rank in: "+guild.name;
+		}
+		sql = "SELECT * FROM `users` WHERE guildRefId=? AND warnLevel>0";
+		sql+= " ORDER BY warnLevel DESC, game_name ASC LIMIT ?";
+		db_pool.query(sql, [guild.refId, limit], function(exc, result) {
+			let logPrefix = exports.logPrefix; // shortcut
+
+			if (exc) {
+				let otd = exc.sqlMessage? exc.sqlMessage: exc; // obj to display
+
+				console.log("SQL:", sql);
+				console.warn(logPrefix()+"GCT Exception:", otd);
+				return;
+			}
+
+			let color = "GREEN";
+			let lastScore = 0;
+			let lines = [];
+			let rank = 0;
+
+			console.log(logPrefix()+"%d matches found", result.length);
+			if (!result.length) lines = [':white_check_mark: No problem registered.'];
+			result.forEach(function(player) {
+				let playerIcon = behaveIcons[player.warnLevel];
+				let addon = player.warnLevel? "**": "";
+
+				if (player.warnLevel!==lastScore) ++rank;
+				if (cmd==='worst' || player.allycode===target.allycode)
+					lines.push(playerIcon+" "+addon+player.game_name+addon);
+				lastScore = player.warnLevel;
+			});
+
+			let s = lines.length===1? '': 's';
+			console.log(logPrefix()+"%d line%s displayed", lines.length, s);
+			richMsg = new RichEmbed().setColor(color).setTitle(title)
+				.setDescription(lines).setTimestamp(author.updated)
+				.setFooter(config.footer.message, config.footer.iconUrl);
+			message.channel.send(richMsg);
+		});
+	});
+};
+
+/** Handle guild contest commands */
 exports.handleContest = function(guild, message, target) {
 	let allycodes = Object.keys(guild.players);
 	let authorFound = false;
 	let targetFound = false;
 	let limit = 10;
 	let logPrefix = exports.logPrefix; // shortcut
-	let readCommands = ['get', 'getrank', 'getscore', 'rank', 'top'];
+	let readCommands = message.readCommands;
 
 	let args = message.unparsedArgs;
 	let cmd = message.contestCommand;
@@ -650,7 +796,8 @@ exports.handleContest = function(guild, message, target) {
 				lastScore = player.contestPoints;
 			});
 
-			console.log(logPrefix()+"%d lines done", lines.length);
+			let s = lines.length===1? '': 's';
+			console.log(logPrefix()+"%d line%s displayed", lines.length, s);
 			richMsg = new RichEmbed().setColor(color).setTitle(title)
 				.setDescription(lines).setTimestamp(author.updated)
 				.setFooter(config.footer.message, config.footer.iconUrl);

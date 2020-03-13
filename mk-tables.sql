@@ -93,4 +93,8 @@ CREATE TABLE IF NOT EXISTS `users` (
   KEY `discord_id` (`discord_id`) USING BTREE,
   KEY `guildRefId` (`guildRefId`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+ALTER TABLE `users` ADD
+ `warnLevel` TINYINT(1) UNSIGNED NOT NULL DEFAULT '0' AFTER `isContestAdmin`;
+
 COMMIT;

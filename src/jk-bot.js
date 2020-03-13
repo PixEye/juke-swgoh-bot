@@ -67,10 +67,13 @@ client.on("error", (exc) => {
 client.on("message", (message) => {
 	var allycode = 0;
 	var args = [];
+	var cmd = "";
 	var command = "";
+	var delta = 0;
 	var lines = [];
 	var msg = "";
 	var nick = "";
+	var readCommands = ['behave', 'get', 'getrank', 'getscore', 'rank', 'top', 'worst'];
 	var richMsg = {};
 	var sql = "";
 	var user = message.author;
@@ -179,6 +182,95 @@ client.on("message", (message) => {
 				.setDescription(lines).setTimestamp(message.createdTimestamp)
 				.setFooter(config.footer.message, config.footer.iconUrl);
 			message.channel.send(richMsg);
+			break;
+
+		case "behave": // same as behave worst
+		case "behaveadd":
+		case "behaveget":
+		case "behaverank":
+		case "behaverem":
+		case "behaveremove":
+
+		case "behaviour": // same as behaviour worst
+		case "behaviouradd":
+		case "behaviourget":
+		case "behaviourgetrank":
+		case "behaviourgetscore":
+		case "behaviourrank":
+		case "behaviourrem":
+		case "behaviourremove":
+		case "behaviourreset": // TODO
+		case "behaviourset":
+		case "behaviourtop":
+			// console.log(logPrefix()+"command: '%s'", command);
+			// console.log(logPrefix()+"args length:", args.length);
+
+			cmd = command;
+			cmd = cmd.replace('behave', '');
+			cmd = cmd.replace('behaviour', '');
+			cmd = cmd.trim();
+
+			console.log(logPrefix()+"Behaviour cmd:", cmd);
+			if (!cmd && args.length && isNaN(parseInt(args[0])))
+				cmd = args.shift().toLowerCase(); // read sub-command
+			else if (!cmd)
+				cmd = 'worst'; // default command
+
+			console.log(logPrefix()+"Behaviour cmd:", cmd);
+			if (readCommands.indexOf(cmd)<0 && (!args.length || isNaN(args[0]))) {
+				msg = "Invalid behaviour command! (missing a number)";
+				console.warn(logPrefix()+msg);
+				message.reply(msg);
+				return;
+			}
+
+			// Extract user's tag (if any):
+			if (message.mentions && message.mentions.users && message.mentions.users.first()) {
+				user = message.mentions.users.first();
+				nick = locutus.utf8_decode(user.username);
+			}
+
+			allycode = tools.getFirstAllycodeInWords(args);
+
+			if (readCommands.indexOf(cmd)<0) {
+				delta = parseInt(args.shift());
+				if (delta<=0) {
+					message.reply("Invalid delta detected!");
+					console.warn(logPrefix()+"Invalid delta (%s)!", delta);
+					return;
+				}
+
+				console.log(logPrefix()+"Delta = %d", delta);
+			}
+
+			// Remember what was parsed:
+			message.behaveCommand = cmd;
+			message.behaveDelta = delta;
+			message.readCommands = readCommands;
+			message.unparsedArgs = args;
+
+			if (allycode) {
+				if (readCommands.indexOf(cmd) >= 0) {
+					tools.getGuildDbStats(allycode, message, function(allycode, message, guild) {
+						tools.handleBehaviour(guild, message, {allycode: allycode});
+					});
+				} else {
+					tools.getGuildStats({allycode: allycode}, message, tools.handleBehaviour);
+				}
+			} else {
+				console.log(logPrefix()+"Try with user ID:", user.id);
+				if (readCommands.indexOf(cmd) >= 0) {
+					tools.getPlayerFromDiscordUser(user, message, function(player) {
+						tools.getGuildDbStats(player.allycode, message, function(allycode, message, guild) {
+							tools.handleBehaviour(guild, message, player);
+						});
+					});
+				} else {
+					tools.getPlayerFromDiscordUser(user, message, function(player) {
+						tools.getGuildStats(player, message, tools.handleBehaviour);
+					});
+				}
+			}
 			break;
 
 		case "cc":
@@ -309,9 +401,7 @@ client.on("message", (message) => {
 		case "contestset":
 		case "contesttop":
 		case "rank":
-			let cmd = command.replace('contest', '');
-			let delta = 0;
-			let readCommands = ['get', 'getrank', 'getscore', 'rank', 'top'];
+			cmd = command.replace('contest', '');
 
 			if (!cmd && args.length && isNaN(parseInt(args[0])))
 				cmd = args.shift().toLowerCase(); // read sub-command
@@ -348,6 +438,7 @@ client.on("message", (message) => {
 			// Remember what was parsed:
 			message.contestCommand = cmd;
 			message.contestDelta = delta;
+			message.readCommands = readCommands;
 			message.unparsedArgs = args;
 
 			if (allycode) {
