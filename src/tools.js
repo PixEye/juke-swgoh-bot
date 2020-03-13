@@ -665,7 +665,8 @@ exports.handleBehaviour = function(guild, message, target) {
 			}
 
 			let s = n===1? '': 's';
-			title = n+" player"+s+" behaviour in: "+guild.name;
+			let as = n===1? "'s": "s'";
+			title = n+" player"+as+" behaviour"+s+" in: "+guild.name;
 			console.log(logPrefix()+"%d line%s displayed", lines.length, s);
 			richMsg = new RichEmbed().setColor(color).setTitle(title)
 				.setDescription(lines).setTimestamp(author.updated)

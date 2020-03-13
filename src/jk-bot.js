@@ -120,19 +120,23 @@ client.on("message", (message) => {
 			richMsg = new RichEmbed().setTitle("Liste des commandes")
 				.setDescription([
 					"**Commandes utilisateur :**",
-					" aide, allycode (ac), auteur, charInfo (ci), checkMods (cm), checkUnitsGp (cugp)"+
-					", dis, getUnregisteredPlayers (gup), guildStats (gs), help, invite"+
-					", (last)evols (le), listGuildMembers (lgm), playerStats (ps), register (reg), relics"+
-					", repete, self(y), shipInfo (si), start, stats, status, whoami, whois",
+					" aide, allycode (ac), auteur, charInfo (ci), checkMods (cm), checkUnitsGp (cugp),"+
+					" dis, getUnregisteredPlayers (gup), guildStats (gs), help, invite,"+
+					" (last)evols (le), listGuildMembers (lgm), playerStats (ps), register (reg), relics,"+
+					" repete, self(y), shipInfo (si), start, stats, status, whoami, whois",
+					"**Commandes de comportement :**",
+					"*Ordre : behave|behaviour (sous-commande) (points) (user)*",
+					" behave, behave( )add, behave( )get, behave( )rank, behave( )rem(ove),",
+					" behave( )rank, behave( )worst",
 					"**Commandes du concours :** *Ordre : contest (sous-commande) (points) (user)*",
 					" contest, contest( )add, contest( )get, contest( )rank, contest( )rem(ove),",
-					" contest( )reset, contest( )top, rank",
+					" contest( )top, rank",
 					"**Commandes pour l'administrateur :**",
 					" admin, configCheck (cc), query/req(uest), stop/stoppe",
 					"**NB1 :** en mp, le préfixe est optionnel.",
 					"**NB2 :** la plupart des commandes accepte un tag ou un code allié (9 chiffres).",
 					"**NB3 :** la \"cible\" par défaut est la personne qui tape la commande (\"me\" inutile).",
-					"**NB4 :** l'ordre des arguments n'importe pas (sauf pour 'contest')."])
+					"**NB4 :** l'ordre des arguments n'importe pas (sauf pour 'contest' et 'behave')."])
 				.setTimestamp(message.createdTimestamp)
 				.setFooter(config.footer.message, config.footer.iconUrl);
 			message.channel.send(richMsg);
@@ -190,6 +194,9 @@ client.on("message", (message) => {
 		case "behaverank":
 		case "behaverem":
 		case "behaveremove":
+		// case "behavereset": // TODO
+		case "behaveset":
+		case "behaveworst":
 
 		case "behaviour": // same as behaviour worst
 		case "behaviouradd":
@@ -199,9 +206,9 @@ client.on("message", (message) => {
 		case "behaviourrank":
 		case "behaviourrem":
 		case "behaviourremove":
-		case "behaviourreset": // TODO
+		// case "behaviourreset": // TODO
 		case "behaviourset":
-		case "behaviourtop":
+		case "behaviourworst":
 			// console.log(logPrefix()+"command: '%s'", command);
 			// console.log(logPrefix()+"args length:", args.length);
 
@@ -397,7 +404,7 @@ client.on("message", (message) => {
 		case "contestrank":
 		case "contestrem":
 		case "contestremove":
-		case "contestreset": // TODO
+		// case "contestreset": // TODO
 		case "contestset":
 		case "contesttop":
 		case "rank":
@@ -570,19 +577,23 @@ client.on("message", (message) => {
 			richMsg = new RichEmbed().setTitle("Avialable commands")
 				.setDescription([
 					"**User commands:**",
-					" about, aide, allycode (ac), charInfo (ci), checkMods (cm), checkUnitsGp (cugp)"+
-					", getUnregisteredPlayers (gup), guildStats (gs), help, invite, (last)evols (le)"+
-					", listGuildMembers (lgm), playerStat (ps), register (reg), relics, repeat, say"+
-					", self(y), shipInfo (si), start, stats, status, whoami, whois",
+					" about, aide, allycode (ac), charInfo (ci), checkMods (cm), checkUnitsGp (cugp),"+
+					" getUnregisteredPlayers (gup), guildStats (gs), help, invite, (last)evols (le),"+
+					" listGuildMembers (lgm), playerStat (ps), register (reg), relics, repeat, say,"+
+					" self(y), shipInfo (si), start, stats, status, whoami, whois",
+					"**Behaviour commands:**",
+					"*Order : behave|behaviour (subcommand) (points) (user)*",
+					" behave, behave( )add, behave( )get, behave( )rank, behave( )rem(ove),",
+					" behave( )rank, behave( )worst",
 					"**Contest commands:** *Order: contest (subCommand) (points) (user)*",
 					" contest, contest( )add, contest( )get, contest( )rank, contest( )rem(ove),",
-					" contest( )reset, contest( )top, rank",
+					" contest( )top, rank",
 					"**Admin commands:**",
 					" admin, configCheck (cc), destroy/leave/shutdown/stop, query/req(uest)",
 					"**NB1:** in DM, prefix is optional.",
 					"**NB2:** most of commands accept a user's tag or an ally code (9 digits).",
 					"**NB3:** the default target is the command writer (\"me\" is useless).",
-					"**NB4:** order of arguments is up to you (except for contest commands)."])
+					"**NB4:** order of arguments is up to you (except for contest and behave commands)."])
 				.setTimestamp(message.createdTimestamp)
 				.setFooter(config.footer.message, config.footer.iconUrl);
 			message.channel.send(richMsg);
