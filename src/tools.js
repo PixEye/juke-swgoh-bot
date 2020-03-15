@@ -180,17 +180,18 @@ exports.getFirstAllycodeInWords = function(words) {
 	return allycode;
 };
 
-exports.getGuildDbStats = function(allycode, message, callback) {
+exports.getGuildDbStats = function(player1, message, callback) {
+	let allycode = player1.allycode;
 	let locale = config.discord.locale; // shortcut
 	let logPrefix = exports.logPrefix; // shortcut
+	let sql = "";
 
 	if (!allycode) {
 		message.reply(":red_circle: Invalid or missing allycode!");
 		return;
 	}
 
-	let sql = "SELECT * FROM `guilds` g"; // get guild
-
+	sql = "SELECT * FROM `guilds` g"; // get guild
 	sql+= " WHERE swgoh_id IN (SELECT guildRefId from `users` WHERE allycode=?)";
 
 	message.channel.send("Looking for DB stats of guild with ally: "+allycode+"...")
@@ -246,6 +247,7 @@ exports.getGuildDbStats = function(allycode, message, callback) {
 					result.forEach(function(player) {
 						allycodes.push(player.allycode);
 						guild.players[player.allycode] = player;
+						if (player.allycode === player1.allycode) player1 = player;
 					});
 
 					guild.relics = 0;
@@ -278,7 +280,7 @@ exports.getGuildDbStats = function(allycode, message, callback) {
 							guild.players[u.allycode].unitsData[u.name] = u;
 						});
 
-						if (typeof(callback)==="function")
+						if (typeof(callback)==="function") // TODO: change allycode to player
 							callback(allycode, message, guild);
 					});
 				});
@@ -551,6 +553,10 @@ exports.handleBehaviour = function(guild, message, target) {
 				message.reply("You are NOT a contest admin!");
 				return;
 			}
+
+			if (!author.game_name) {
+				author.game_name = locutus.utf8_decode(user.username);
+			}
 			console.log(logPrefix()+author.game_name+" is a contest admin.");
 
 			if (allycodes.length)
@@ -587,6 +593,8 @@ exports.handleBehaviour = function(guild, message, target) {
 		} else if (cmd==='set') {
 			sql = "UPDATE `users` SET `warnLevel`=? WHERE `allycode`=?";
 		}
+
+		if (!target.game_name) target.game_name = guild.players[target.allycode];
 
 		if (sql) {
 			db_pool.query(sql, [delta, target.allycode], function(exc, result) {

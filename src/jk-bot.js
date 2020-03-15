@@ -241,7 +241,7 @@ client.on("message", (message) => {
 
 			if (readCommands.indexOf(cmd)<0) {
 				delta = parseInt(args.shift());
-				if (delta<=0) {
+				if (delta<0) {
 					message.reply("Invalid delta detected!");
 					console.warn(logPrefix()+"Invalid delta (%s)!", delta);
 					return;
@@ -258,7 +258,7 @@ client.on("message", (message) => {
 
 			if (allycode) {
 				if (readCommands.indexOf(cmd) >= 0) {
-					tools.getGuildDbStats(allycode, message, function(allycode, message, guild) {
+					tools.getGuildDbStats({allycode: allycode}, message, function(allycode, message, guild) {
 						tools.handleBehaviour(guild, message, {allycode: allycode});
 					});
 				} else {
@@ -268,7 +268,7 @@ client.on("message", (message) => {
 				console.log(logPrefix()+"Try with user ID:", user.id);
 				if (readCommands.indexOf(cmd) >= 0) {
 					tools.getPlayerFromDiscordUser(user, message, function(player) {
-						tools.getGuildDbStats(player.allycode, message, function(allycode, message, guild) {
+						tools.getGuildDbStats(player, message, function(allycode, message, guild) {
 							tools.handleBehaviour(guild, message, player);
 						});
 					});
@@ -433,7 +433,7 @@ client.on("message", (message) => {
 
 			if (readCommands.indexOf(cmd)<0) {
 				delta = parseInt(args.shift());
-				if (delta<=0) {
+				if (delta<0) {
 					message.reply("Invalid delta detected!");
 					console.warn(logPrefix()+"Invalid delta (%s)!", delta);
 					return;
@@ -450,7 +450,7 @@ client.on("message", (message) => {
 
 			if (allycode) {
 				if (readCommands.indexOf(cmd) >= 0) {
-					tools.getGuildDbStats(allycode, message, function(allycode, message, guild) {
+					tools.getGuildDbStats({allycode: allycode}, message, function(allycode, message, guild) {
 						tools.handleContest(guild, message, {allycode: allycode});
 					});
 				} else {
@@ -460,7 +460,7 @@ client.on("message", (message) => {
 				console.log(logPrefix()+"Try with user ID:", user.id);
 				if (readCommands.indexOf(cmd) >= 0) {
 					tools.getPlayerFromDiscordUser(user, message, function(player) {
-						tools.getGuildDbStats(player.allycode, message, function(allycode, message, guild) {
+						tools.getGuildDbStats(player, message, function(allycode, message, guild) {
 							tools.handleContest(guild, message, player);
 						});
 					});
@@ -542,11 +542,11 @@ client.on("message", (message) => {
 
 			allycode = tools.getFirstAllycodeInWords(args);
 			if (allycode) {
-				tools.getGuildDbStats(allycode, message, view.guildPlayerStats);
+				tools.getGuildDbStats({allycode: allycode}, message, view.guildPlayerStats);
 			} else {
 				console.log(logPrefix()+"Try with user ID:", user.id);
 				tools.getPlayerFromDiscordUser(user, message, function(player) {
-					tools.getGuildDbStats(player.allycode, message, view.guildPlayerStats);
+					tools.getGuildDbStats(player, message, view.guildPlayerStats);
 				});
 			}
 			break;
@@ -640,11 +640,11 @@ client.on("message", (message) => {
 
 			allycode = tools.getFirstAllycodeInWords(args);
 			if (allycode) {
-				tools.getGuildDbStats(allycode, message, view.listGuildMembers);
+				tools.getGuildDbStats({allycode: allycode}, message, view.listGuildMembers);
 			} else {
 				console.log(logPrefix()+"Try with user ID:", user.id);
 				tools.getPlayerFromDiscordUser(user, message, function(player) {
-					tools.getGuildDbStats(player.allycode, message, view.listGuildMembers);
+					tools.getGuildDbStats(player, message, view.listGuildMembers);
 				});
 			}
 			break;
