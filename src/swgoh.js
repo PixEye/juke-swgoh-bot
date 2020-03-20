@@ -219,7 +219,7 @@ exports.getPlayerData = async function(users, message, callback) {
 
 			  TOTAL_GALACTIC_WON_NAME_TU07_2: 12635,
 			  TOTAL_GUILD_CONTRIBUTION_NAME_TU07_2: 1413352,
-			  TOTAL_GUILD_EXCHANGE_DONATIONS_TU07_2: 2103,
+			  TOTAL_GUILD_EXCHANGE_DONATIONS_TU07_2: 2103, <<<<<<<<<<<<<<<<<
 			} */
 
 			// console.log("-----");
@@ -237,6 +237,7 @@ exports.getPlayerData = async function(users, message, callback) {
 			player.shipCount = unitsByCombaType[2];
 			player.title = player.titles.selected?
 				player.titles.selected.replace('PLAYERTITLE_', '').replace(/_/g, ' '): 'Default';
+			player.totalGiftCount = clean_stats.TOTAL_GUILD_EXCHANGE_DONATIONS_TU07_2;
 			player.zetaCount = zetaCount;
 
 			if (typeof(callback)==="function") callback(player, message);

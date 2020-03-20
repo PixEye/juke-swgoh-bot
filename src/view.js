@@ -530,6 +530,7 @@ exports.showPlayerRelics = function(player, message) {
  * @param {Object} message - The user's message to reply to
  */
 exports.showPlayerStats = function(player, message) {
+	let lines = [];
 	let locale = config.discord.locale; // shortcut
 	let logPrefix = exports.logPrefix; // shortcut
 
@@ -538,28 +539,35 @@ exports.showPlayerStats = function(player, message) {
 		return;
 	}
 
+	lines = [
+		"**Level:** "+player.level+" - "+
+		"**GP:** "+(player.gp.toLocaleString(config.discord.locale)),
+		"**Title:** "+locutus.ucwords(player.title.toLowerCase()),
+		"**Guild name:** "+player.guildName,
+		"",
+		"**Zeta count:** "+player.zetaCount+" - "+
+		"**G13 count:** "+player.g13Count,
+		"**G12 count:** "+player.g12Count+" - "+
+		"**G11 count:** "+player.g11Count,
+		"",
+		"**Ground arena rank:** "+player.arena.char.rank+" - "+
+		"**Ship rank:** "+player.arena.ship.rank,
+		"",
+		"**Number of chars:** "+player.charCount+" - "+
+		"**Number of ships:** "+player.shipCount,
+		"**Total number of unlocked units:** "+player.unitCount
+	];
+
+	if (player.totalGiftCount)
+		lines.push("**Total gift count:** "+(player.totalGiftCount.toLocaleString(config.discord.locale)));
+
 	let richMsg = new RichEmbed().setTitle(player.name+"'s profile").setColor("GREEN")
-		.setDescription([
-			"**Level:** "+player.level+" - "+
-			"**GP:** "+(player.gp.toLocaleString(config.discord.locale)),
-			"**Title:** "+locutus.ucwords(player.title.toLowerCase()),
-			"**Guild name:** "+player.guildName,
-			"",
-			"**Zeta count:** "+player.zetaCount+" - "+
-			"**G13 count:** "+player.g13Count,
-			"**G12 count:** "+player.g12Count+" - "+
-			"**G11 count:** "+player.g11Count,
-			"",
-			"**Ground arena rank:** "+player.arena.char.rank+" - "+
-			"**Ship rank:** "+player.arena.ship.rank,
-			"",
-			"**Number of chars:** "+player.charCount+" - "+
-			"**Number of ships:** "+player.shipCount,
-			"**Total number of unlocked units:** "+player.unitCount
-		])
-		.setTimestamp(player.updated)
+		.setDescription(lines).setTimestamp(player.updated)
 		.setFooter(config.footer.message, config.footer.iconUrl);
-	if (player.displayAvatarURL) richMsg.setThumbnail(player.displayAvatarURL);
+
+	if (player.displayAvatarURL)
+		richMsg.setThumbnail(player.displayAvatarURL);
+
 	message.reply(richMsg);
 };
 
