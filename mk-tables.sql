@@ -21,7 +21,7 @@ CREATE TABLE IF NOT EXISTS `evols` (
   `ts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `allycode` int(10) UNSIGNED NOT NULL,
   `unit_id` varchar(32) COLLATE utf8_unicode_ci NOT NULL,
-  `type` varchar(5) COLLATE utf8_unicode_ci NOT NULL,
+  `type` varchar(15) COLLATE utf8_unicode_ci NOT NULL,
   `new_value` tinyint(1) UNSIGNED NOT NULL,
   PRIMARY KEY (`id`),
   KEY `allycode` (`allycode`)
@@ -77,7 +77,6 @@ CREATE TABLE IF NOT EXISTS `units` (
 CREATE TABLE IF NOT EXISTS `users` (
   `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
   `allycode` int(11) UNSIGNED NOT NULL,
-  `contestPoints` int(10) NOT NULL DEFAULT '0',
   `discord_id` varchar(32) COLLATE utf8_unicode_ci DEFAULT NULL,
   `discord_name` varchar(32) COLLATE utf8_unicode_ci DEFAULT NULL,
   `game_name` varchar(32) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
@@ -85,21 +84,16 @@ CREATE TABLE IF NOT EXISTS `users` (
   `gp` int(11) UNSIGNED DEFAULT NULL,
   `g12Count` tinyint(1) UNSIGNED DEFAULT NULL,
   `g13Count` tinyint(1) UNSIGNED DEFAULT NULL,
-  `isContestAdmin` tinyint(1) NOT NULL DEFAULT '0',
+  `giftCount` int(10) UNSIGNED NOT NULL,
   `zetaCount` tinyint(1) UNSIGNED DEFAULT NULL,
+  `contestPoints` int(10) NOT NULL DEFAULT '0',
+  `isContestAdmin` tinyint(1) NOT NULL DEFAULT '0',
   `ts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `warnLevel` tinyint(1) UNSIGNED NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   UNIQUE KEY `allycode` (`allycode`) USING BTREE,
   KEY `discord_id` (`discord_id`) USING BTREE,
   KEY `guildRefId` (`guildRefId`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-
-ALTER TABLE `users` ADD
- `warnLevel` TINYINT(1) UNSIGNED NOT NULL DEFAULT '0'
- AFTER `isContestAdmin`;
-
-ALTER TABLE `users` ADD
- `giftCount` INT UNSIGNED NOT NULL
- AFTER `game_name`;
 
 COMMIT;

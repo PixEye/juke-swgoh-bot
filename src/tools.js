@@ -311,7 +311,7 @@ exports.getGuildStats = function(player, message, callback) {
 		.catch(console.error);
 };
 
-exports.getLastEvols = function(player, message) {
+exports.getLastEvolsFromDb = function(player, message) {
 	let allycode = player.allycode;
 	let logPrefix = exports.logPrefix; // shortcut
 	let sql = "SELECT * FROM `evols`"+

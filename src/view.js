@@ -438,6 +438,9 @@ exports.showLastEvols = function(player, message, evols) {
 				case "new":
 					msg+= " unlocked";
 					break;
+				case "newGifts":
+					msg+= " made "+e.new_value+" new gift(s)";
+					break;
 				case "relic":
 					msg+= " turned R"+e.new_value;
 					break;

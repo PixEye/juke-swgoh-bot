@@ -559,11 +559,11 @@ client.on("message", (message) => {
 		case "lastevol":
 		case "lastevols":
 			if (allycode) {
-				tools.getPlayerStats({allycode: allycode}, message, tools.getLastEvols);
+				tools.getPlayerStats({allycode: allycode}, message, tools.getLastEvolsFromDb);
 			} else {
 				console.log(logPrefix()+"Try with user ID:", user.id);
 				tools.getPlayerFromDiscordUser(user, message, function(player) {
-					tools.getPlayerStats(player, message, tools.getLastEvols);
+					tools.getPlayerStats(player, message, tools.getLastEvolsFromDb);
 				});
 			}
 			break;
