@@ -75,6 +75,8 @@ client.on("message", (message) => {
 	var nick = "";
 	var readCommands = ['behave', 'get', 'getrank', 'getscore', 'rank', 'top', 'worst'];
 	var richMsg = {};
+	let search = "";
+	let searchStr = "";
 	var sql = "";
 	var user = message.author;
 
@@ -94,6 +96,21 @@ client.on("message", (message) => {
 	nick = locutus.utf8_decode(user.username);
 
 	console.log(logPrefix()+"/ \""+nick+"\" sent command: "+message.content);
+
+	search = args.join(" ").replace("'", "");
+	searchStr = "users.discord_name LIKE '%"+search+"%' OR users.game_name LIKE '%"+search+"%'";
+
+	// Extract user's tag (if any):
+	if (message.mentions && message.mentions.users && message.mentions.users.first()) {
+		user = message.mentions.users.first();
+		nick = locutus.utf8_decode(user.username);
+		search = user.id;
+		searchStr = "users.discord_id="+search;
+	} else if (args.join("").trim()==="") {
+		search = user.id;
+		searchStr = "users.discord_id="+search;
+	}
+	allycode = tools.getFirstAllycodeInWords(args);
 
 	// public commands:
 	switch (command) {
@@ -144,19 +161,6 @@ client.on("message", (message) => {
 
 		case "ac":
 		case "allycode":
-			let search = args.join(" ").replace("'", "");
-			let searchStr = "users.discord_name LIKE '%"+search+"%' OR users.game_name LIKE '%"+search+"%'";
-
-			// Extract user's tag (if any):
-			if (message.mentions && message.mentions.users && message.mentions.users.first()) {
-				user = message.mentions.users.first();
-				search = user.id;
-				searchStr = "users.discord_id="+search;
-			} else if (args.join("").trim()==="") {
-				search = user.id;
-				searchStr = "users.discord_id="+search;
-			}
-
 			sql = "SELECT * FROM `users` WHERE "+searchStr;
 			db_pool.query(sql, function(exc, result) {
 				if (exc) {
@@ -231,14 +235,6 @@ client.on("message", (message) => {
 				return;
 			}
 
-			// Extract user's tag (if any):
-			if (message.mentions && message.mentions.users && message.mentions.users.first()) {
-				user = message.mentions.users.first();
-				nick = locutus.utf8_decode(user.username);
-			}
-
-			allycode = tools.getFirstAllycodeInWords(args);
-
 			if (readCommands.indexOf(cmd)<0) {
 				delta = parseInt(args.shift());
 				if (delta<0) {
@@ -308,14 +304,6 @@ client.on("message", (message) => {
 		case "ci":
 		case "charinfo":
 		case "characterinfo":
-			// Extract user's tag (if any):
-			if (message.mentions && message.mentions.users && message.mentions.users.first()) {
-				user = message.mentions.users.first();
-				nick = locutus.utf8_decode(user.username);
-			}
-
-			allycode = tools.getFirstAllycodeInWords(args);
-
 			// Look for a character name:
 			args.forEach(function(word) {
 				// ignore tags/mentions & allycodes:
@@ -351,14 +339,7 @@ client.on("message", (message) => {
 		case "chkgp":
 		case "checkgp":
 		case "checkunitsgp":
-			// Extract user's tag (if any):
-			if (message.mentions && message.mentions.users && message.mentions.users.first()) {
-				user = message.mentions.users.first();
-				nick = locutus.utf8_decode(user.username);
-			}
-
 			let limit = 21;
-			allycode = tools.getFirstAllycodeInWords(args);
 			if (allycode) {
 				tools.getPlayerStats({allycode: allycode}, message, function(player, message) {
 					return tools.checkUnitsGp(player, message, limit);
@@ -379,13 +360,6 @@ client.on("message", (message) => {
 		case "checkmod":
 		case "checkmods":
 		case "checkmodules":
-			// Extract user's tag (if any):
-			if (message.mentions && message.mentions.users && message.mentions.users.first()) {
-				user = message.mentions.users.first();
-				nick = locutus.utf8_decode(user.username);
-			}
-
-			allycode = tools.getFirstAllycodeInWords(args);
 			if (allycode) {
 				tools.getPlayerStats({allycode: allycode}, message, tools.checkPlayerMods);
 			} else {
@@ -422,14 +396,6 @@ client.on("message", (message) => {
 				message.reply(msg);
 				return;
 			}
-
-			// Extract user's tag (if any):
-			if (message.mentions && message.mentions.users && message.mentions.users.first()) {
-				user = message.mentions.users.first();
-				nick = locutus.utf8_decode(user.username);
-			}
-
-			allycode = tools.getFirstAllycodeInWords(args);
 
 			if (readCommands.indexOf(cmd)<0) {
 				delta = parseInt(args.shift());
@@ -512,13 +478,6 @@ client.on("message", (message) => {
 		case "gs":
 		case "guildstat":
 		case "guildstats":
-			// Extract user's tag (if any):
-			if (message.mentions && message.mentions.users && message.mentions.users.first()) {
-				user = message.mentions.users.first();
-				nick = locutus.utf8_decode(user.username);
-			}
-
-			allycode = tools.getFirstAllycodeInWords(args);
 			if (allycode) {
 				tools.getGuildStats({allycode: allycode}, message, view.showGuildStats);
 			} else {
@@ -534,13 +493,6 @@ client.on("message", (message) => {
 		case "getGuildStats":
 		case "guildPlayersStat":
 		case "guildPlayersStats":
-			// Extract user's tag (if any):
-			if (message.mentions && message.mentions.users && message.mentions.users.first()) {
-				user = message.mentions.users.first();
-				nick = locutus.utf8_decode(user.username);
-			}
-
-			allycode = tools.getFirstAllycodeInWords(args);
 			if (allycode) {
 				tools.getGuildDbStats({allycode: allycode}, message, view.guildPlayerStats);
 			} else {
@@ -556,13 +508,6 @@ client.on("message", (message) => {
 		case "getunregistered":
 		case "getunregplayers":
 		case "getunregisteredplayers":
-			// Extract user's tag (if any):
-			if (message.mentions && message.mentions.users && message.mentions.users.first()) {
-				user = message.mentions.users.first();
-				nick = locutus.utf8_decode(user.username);
-			}
-
-			allycode = tools.getFirstAllycodeInWords(args);
 			if (allycode) {
 				tools.getUnregPlayers(allycode, message);
 			} else {
@@ -613,13 +558,6 @@ client.on("message", (message) => {
 		case "evols":
 		case "lastevol":
 		case "lastevols":
-			// Extract user's tag (if any):
-			if (message.mentions && message.mentions.users && message.mentions.users.first()) {
-				user = message.mentions.users.first();
-				nick = locutus.utf8_decode(user.username);
-			}
-
-			allycode = tools.getFirstAllycodeInWords(args);
 			if (allycode) {
 				tools.getPlayerStats({allycode: allycode}, message, tools.getLastEvols);
 			} else {
@@ -632,13 +570,6 @@ client.on("message", (message) => {
 
 		case "lgm":
 		case "listguildmembers":
-			// Extract user's tag (if any):
-			if (message.mentions && message.mentions.users && message.mentions.users.first()) {
-				user = message.mentions.users.first();
-				nick = locutus.utf8_decode(user.username);
-			}
-
-			allycode = tools.getFirstAllycodeInWords(args);
 			if (allycode) {
 				tools.getGuildDbStats({allycode: allycode}, message, view.listGuildMembers);
 			} else {
@@ -654,13 +585,6 @@ client.on("message", (message) => {
 		case "playerinfo":
 		case "playerstat":
 		case "playerstats":
-			// Extract user's tag (if any):
-			if (message.mentions && message.mentions.users && message.mentions.users.first()) {
-				user = message.mentions.users.first();
-				nick = locutus.utf8_decode(user.username);
-			}
-
-			allycode = tools.getFirstAllycodeInWords(args);
 			if (allycode) {
 				tools.getPlayerStats({allycode: allycode}, message, view.showPlayerStats);
 			} else {
@@ -673,13 +597,6 @@ client.on("message", (message) => {
 
 		case "reg":
 		case "register":
-			// Extract user's tag (if any):
-			if (message.mentions && message.mentions.users && message.mentions.users.first()) {
-				user = message.mentions.users.first();
-				nick = locutus.utf8_decode(user.username);
-			}
-
-			allycode = tools.getFirstAllycodeInWords(args);
 			if (!allycode) {
 				msg = "Allycode is invalid or missing!";
 				console.warn(msg+" about: "+nick);
@@ -739,13 +656,6 @@ client.on("message", (message) => {
 				return;
 			}
 
-			// Extract user's tag (if any):
-			if (message.mentions && message.mentions.users && message.mentions.users.first()) {
-				user = message.mentions.users.first();
-				nick = locutus.utf8_decode(user.username);
-			}
-
-			allycode = tools.getFirstAllycodeInWords(args);
 			if (allycode) {
 				tools.refreshGuildStats(allycode, message, view.guildPlayerStats);
 			} else {
@@ -758,14 +668,6 @@ client.on("message", (message) => {
 
 		case "si":
 		case "shipinfo":
-			// Extract user's tag (if any):
-			if (message.mentions && message.mentions.users && message.mentions.users.first()) {
-				user = message.mentions.users.first();
-				nick = locutus.utf8_decode(user.username);
-			}
-
-			allycode = tools.getFirstAllycodeInWords(args);
-
 			// Look for a ship name:
 			args.forEach(function(word) {
 				// ignore tags/mentions & allycodes:
@@ -802,13 +704,6 @@ client.on("message", (message) => {
 		case "relics":
 		case "topchar":
 		case "topchars":
-			// Extract user's tag (if any):
-			if (message.mentions && message.mentions.users && message.mentions.users.first()) {
-				user = message.mentions.users.first();
-				nick = locutus.utf8_decode(user.username);
-			}
-
-			allycode = tools.getFirstAllycodeInWords(args);
 			if (allycode) {
 				tools.getPlayerStats({allycode: allycode}, message, view.showPlayerRelics);
 			} else {
