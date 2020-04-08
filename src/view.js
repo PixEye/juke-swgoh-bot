@@ -558,8 +558,8 @@ exports.showPlayerStats = function(player, message) {
 		"**Total number of unlocked units:** "+player.unitCount
 	];
 
-	if (player.totalGiftCount)
-		lines.push("**Total gift count:** "+(player.totalGiftCount.toLocaleString(config.discord.locale)));
+	if (player.giftCount)
+		lines.push("**Gift count:** "+(player.giftCount.toLocaleString(config.discord.locale)));
 
 	let richMsg = new RichEmbed().setTitle(player.name+"'s profile").setColor("GREEN")
 		.setDescription(lines).setTimestamp(player.updated)

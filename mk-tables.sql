@@ -95,6 +95,11 @@ CREATE TABLE IF NOT EXISTS `users` (
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 ALTER TABLE `users` ADD
- `warnLevel` TINYINT(1) UNSIGNED NOT NULL DEFAULT '0' AFTER `isContestAdmin`;
+ `warnLevel` TINYINT(1) UNSIGNED NOT NULL DEFAULT '0'
+ AFTER `isContestAdmin`;
+
+ALTER TABLE `users` ADD
+ `giftCount` INT UNSIGNED NOT NULL
+ AFTER `game_name`;
 
 COMMIT;

@@ -335,6 +335,7 @@ exports.getLastEvols = function(player, message) {
 
 exports.getPlayerFromDatabase = function(allycode, message, callback) {
 	let logPrefix = exports.logPrefix; // shortcut
+	let msg = "";
 	let player = null;
 	let sql = "SELECT * FROM `users` WHERE allycode="+parseInt(allycode);
 
@@ -347,15 +348,18 @@ exports.getPlayerFromDatabase = function(allycode, message, callback) {
 			return;
 		}
 
-		if (result.length!==1)
-			console.log(logPrefix()+result.length+" record(s) match(es) allycode:", allycode);
+		if (result.length!==1) {
+			msg = result.length+" record(s) match(es) allycode: "+allycode+"!";
+			console.warn(logPrefix()+msg);
+			message.reply(msg);
+		}
 
-		if ( ! result.length ) {
+		if ( ! result.length ) { // no result
 			console.log(logPrefix()+"User with allycode "+allycode+" not registered.");
 			message.channel.send("I don't know this player yet. You may use the 'register' command.");
 			player = {game_name: allycode};
-		} else {
-			player = result[result.length - 1]; // take last match
+		} else { // One or more result(s):
+			player = result[result.length - 1]; // take last match <-----
 			console.log(logPrefix()+"Ally w/ code "+allycode+" is:", player.game_name);
 		}
 
@@ -942,6 +946,7 @@ exports.rememberGuildStats = function(guild) {
 
 exports.updatePlayerDataInDb = function(player, message, callback) {
 	let allycode = player.allycode;
+	let begin = "";
 	let logPrefix = exports.logPrefix; // shortcut
 
 	if (!player.gp) {
@@ -950,6 +955,7 @@ exports.updatePlayerDataInDb = function(player, message, callback) {
 	}
 
 	// Try to find the same user in the database:
+	begin = "Evolution: "+player.name;
 	exports.getPlayerFromDatabase(allycode, message, function(prevPlayerVersion) {
 		let lines = [];
 		let msg = "";
@@ -959,15 +965,23 @@ exports.updatePlayerDataInDb = function(player, message, callback) {
 		if (prevPlayerVersion && prevPlayerVersion.gp) {
 			// Check for evolutions:
 			let newUnitCount = 0;
+			let giftCount = prevPlayerVersion.giftCount;
 			let nbChars = 0;
 			let nbShips = 0;
 			let prevUnitsCount = prevPlayerVersion.unitsData.length;
 
 			console.log(logPrefix()+"Old chars count:", prevUnitsCount);
+
+			// Look for new gifts:
+			if (giftCount && giftCount<player.giftCount) {
+				msg = begin + " did "+(player.giftCount - giftCount)+" new gift(s)";
+				console.log(logPrefix()+msg);
+
+				lines.push([allycode, "", "newGifts", player.giftCount - giftCount]);
+			}
+
 			player.unitsData.forEach(function(u) {
 				let prevUnit = prevPlayerVersion.unitsData[u.name];
-
-				msg = "Evolution: "+player.name;
 
 				if (u.combatType===1)
 					++nbChars;
@@ -979,7 +993,7 @@ exports.updatePlayerDataInDb = function(player, message, callback) {
 				if (typeof(prevUnit)==="undefined") {
 					if (prevUnitsCount) { // New unit:
 						++newUnitCount;
-						msg += " unlocked "+u.name;
+						msg = begin + " unlocked "+u.name;
 						console.log(logPrefix()+msg);
 
 						lines.push([allycode, u.name, "new", 1]);
@@ -990,7 +1004,7 @@ exports.updatePlayerDataInDb = function(player, message, callback) {
 
 				// Look for new relics:
 				if (u.relic>3 && u.relic>prevUnit.relic) {
-					msg += "'s "+u.name+" is now R"+u.relic;
+					msg = begin+"'s "+u.name+" is now R"+u.relic;
 					console.log(logPrefix()+msg);
 
 					// Add new evolution in the database ("evols" table):
@@ -998,7 +1012,7 @@ exports.updatePlayerDataInDb = function(player, message, callback) {
 				} else 
 				// Look for new gears:
 				if (u.gear>11 && u.gear>prevUnit.gear) {
-					msg += "'s "+u.name+" is now G"+u.gear;
+					msg = begin+"'s "+u.name+" is now G"+u.gear;
 					console.log(logPrefix()+msg);
 
 					// Add new evolution in the database ("evols" table):
@@ -1007,7 +1021,7 @@ exports.updatePlayerDataInDb = function(player, message, callback) {
 
 				// Look for new stars:
 				if (prevUnit.stars>0 && u.stars>6 && u.stars>prevUnit.stars) {
-					msg += "'s "+u.name+" is now "+u.stars+"*";
+					msg = begin+"'s "+u.name+" is now "+u.stars+"*";
 					console.log(logPrefix()+msg);
 
 					// Add new evolution in the database ("evols" table):
@@ -1016,7 +1030,7 @@ exports.updatePlayerDataInDb = function(player, message, callback) {
 
 				// Look for new zetas:
 				if (u.zetaCount>prevUnit.zetaCount) {
-					msg += "'s "+u.name+" has now "+u.zetaCount+" zeta(s)";
+					msg = begin+"'s "+u.name+" has now "+u.zetaCount+" zeta(s)";
 					console.log(logPrefix()+msg);
 
 					// Add new evolution in the database ("evols" table):
@@ -1054,6 +1068,7 @@ exports.updatePlayerDataInDb = function(player, message, callback) {
 
 		sql = "UPDATE users SET"+
 			" game_name="+mysql.escape(player.name)+","+
+			" giftCount="+player.giftCount+","+
 			" gp="+player.gp+","+
 			" g12Count="+player.g12Count+","+
 			" g13Count="+player.g13Count+","+
