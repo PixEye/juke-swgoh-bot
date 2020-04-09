@@ -84,7 +84,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   `gp` int(11) UNSIGNED DEFAULT NULL,
   `g12Count` tinyint(1) UNSIGNED DEFAULT NULL,
   `g13Count` tinyint(1) UNSIGNED DEFAULT NULL,
-  `giftCount` int(10) UNSIGNED NOT NULL,
+  `giftCount` int(10) UNSIGNED NOT NULL DEFAULT '0',
   `zetaCount` tinyint(1) UNSIGNED DEFAULT NULL,
   `contestPoints` int(10) NOT NULL DEFAULT '0',
   `isContestAdmin` tinyint(1) NOT NULL DEFAULT '0',
