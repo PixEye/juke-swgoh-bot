@@ -439,7 +439,7 @@ exports.showLastEvols = function(player, message, evols) {
 					msg+= " unlocked";
 					break;
 				case "newGifts":
-					msg = dt+": "+player.name+" did "+e.new_value+" donation(s)";
+					msg = dt+": player gave "+e.new_value+" item"+(e.new_value===1? '': 's');
 					break;
 				case "relic":
 					msg+= " turned R"+e.new_value;
