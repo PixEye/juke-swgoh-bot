@@ -169,10 +169,16 @@ client.on("message", (message) => {
 				} else {
 					console.log(logPrefix()+""+result.length+" record(s) match(es):", search);
 					// console.dir(result);
-					if (result.length !== 1) {
-						console.log(logPrefix()+"%d result(s) match allycode: %s", result.length, allycode);
-						message.channel.send(result.length+" match(es)! Please be more specific.");
-					} else {
+					if (result.length <= 0) {
+						console.log(logPrefix()+"0 matches about: %s!", allycode);
+					} else if (result.length > 1) {
+						lines.push("There are "+result.length+" matches:");
+						result.forEach(function(user) {
+							lines.push("``"+user.allycode+"`` is allycode of: "+user.game_name);
+							console.log(logPrefix()+user.allycode+" is allycode of: "+user.game_name);
+						});
+						message.reply(lines);
+					} else { // 1 result here
 						user = result[0];
 						console.log(logPrefix()+"%s's allycode is:", user.game_name, user.allycode);
 						message.channel.send(user.game_name+"'s allycode is: "+user.allycode);
