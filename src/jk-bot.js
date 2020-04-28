@@ -170,7 +170,9 @@ client.on("message", (message) => {
 					console.log(logPrefix()+""+result.length+" record(s) match(es):", search);
 					// console.dir(result);
 					if (result.length <= 0) {
-						console.log(logPrefix()+"0 matches about: %s!", allycode);
+						msg = "No match found!";
+						console.log(logPrefix()+msg);
+						message.reply(msg);
 					} else if (result.length > 1) {
 						lines.push("There are "+result.length+" matches:");
 						result.forEach(function(user) {
