@@ -407,7 +407,7 @@ exports.getPlayerFromDiscordUser = function(user, message, callback) {
 			let player = result[0];
 
 			player.displayAvatarURL = user.displayAvatarURL;
-			console.log(logPrefix()+"Found allycode:", player.allycode);
+			console.log(logPrefix()+"Found allycode: %d (%s)", player.allycode, player.discord_name);
 			// console.log(logPrefix()+"Avatar URL:", user.displayAvatarURL);
 
 			if (typeof(callback)==="function") callback(player);

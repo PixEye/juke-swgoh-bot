@@ -66,7 +66,6 @@ client.on("error", (exc) => {
 // Check for input messages:
 client.on("message", (message) => {
 	var allycode = 0;
-	var args = [];
 	var cmd = "";
 	var command = "";
 	var delta = 0;
@@ -79,6 +78,7 @@ client.on("message", (message) => {
 	let searchStr = "";
 	var sql = "";
 	var user = message.author;
+	var words = [];
 
 	// Filter with the prefix & ignore bots:
 	if ( user.bot ||
@@ -87,17 +87,17 @@ client.on("message", (message) => {
 	}
 
 	if (message.channel.type==="dm") {
-		args = message.content.trim().toLowerCase().replace(config.discord.prefix, "");
+		words = message.content.trim().toLowerCase().replace(config.discord.prefix, "");
 	} else {
-		args = message.content.slice(config.discord.prefix.length);
+		words = message.content.slice(config.discord.prefix.length);
 	}
-	args = args.trim().split(/ +/g);
-	command = args.shift().toLowerCase();
+	words = words.trim().split(/ +/g);
+	command = words.shift().toLowerCase();
 	nick = locutus.utf8_decode(user.username);
 
 	console.log(logPrefix()+"/ \""+nick+"\" sent command: "+message.content);
 
-	search = args.join(" ").replace("'", "");
+	search = words.join(" ").replace("'", "");
 	searchStr = "users.discord_name LIKE '%"+search+"%' OR users.game_name LIKE '%"+search+"%'";
 
 	// Extract user's tag (if any):
@@ -106,11 +106,11 @@ client.on("message", (message) => {
 		nick = locutus.utf8_decode(user.username);
 		search = user.id;
 		searchStr = "users.discord_id="+search;
-	} else if (args.join("").trim()==="") {
+	} else if (words.join("").trim()==="") {
 		search = user.id;
 		searchStr = "users.discord_id="+search;
 	}
-	allycode = tools.getFirstAllycodeInWords(args);
+	allycode = tools.getFirstAllycodeInWords(words);
 
 	// public commands:
 	switch (command) {
@@ -222,7 +222,7 @@ client.on("message", (message) => {
 		case "behaviourset":
 		case "behaviourworst":
 			// console.log(logPrefix()+"command: '%s'", command);
-			// console.log(logPrefix()+"args length:", args.length);
+			// console.log(logPrefix()+"word count:", words.length);
 
 			cmd = command;
 			cmd = cmd.replace('behave', '');
@@ -230,13 +230,13 @@ client.on("message", (message) => {
 			cmd = cmd.trim();
 
 			console.log(logPrefix()+"Behaviour cmd:", cmd);
-			if (!cmd && args.length && isNaN(parseInt(args[0])))
-				cmd = args.shift().toLowerCase(); // read sub-command
+			if (!cmd && words.length && isNaN(parseInt(words[0])))
+				cmd = words.shift().toLowerCase(); // read sub-command
 			else if (!cmd)
 				cmd = 'worst'; // default command
 
 			console.log(logPrefix()+"Behaviour cmd:", cmd);
-			if (readCommands.indexOf(cmd)<0 && (!args.length || isNaN(args[0]))) {
+			if (readCommands.indexOf(cmd)<0 && (!words.length || isNaN(words[0]))) {
 				msg = "Invalid behaviour command! (missing a number)";
 				console.warn(logPrefix()+msg);
 				message.reply(msg);
@@ -244,7 +244,7 @@ client.on("message", (message) => {
 			}
 
 			if (readCommands.indexOf(cmd)<0) {
-				delta = parseInt(args.shift());
+				delta = parseInt(words.shift());
 				if (delta<0) {
 					message.reply("Invalid delta detected!");
 					console.warn(logPrefix()+"Invalid delta (%s)!", delta);
@@ -258,7 +258,7 @@ client.on("message", (message) => {
 			message.behaveCommand = cmd;
 			message.behaveDelta = delta;
 			message.readCommands = readCommands;
-			message.unparsedArgs = args;
+			message.unparsedArgs = words;
 
 			if (allycode) {
 				if (readCommands.indexOf(cmd) >= 0) {
@@ -313,7 +313,7 @@ client.on("message", (message) => {
 		case "charinfo":
 		case "characterinfo":
 			// Look for a character name:
-			args.forEach(function(word) {
+			words.forEach(function(word) {
 				// ignore tags/mentions & allycodes:
 				if (word.indexOf("<")<0 && word.match(/[a-z]/i)) {
 					msg+= " "+locutus.ucfirst(word);
@@ -321,8 +321,9 @@ client.on("message", (message) => {
 			});
 
 			if (!msg) {
-				console.warn(logPrefix()+"No character name found in the message!" );
-				message.reply("No character name found in your message!");
+				msg = "No character name found in your message!";
+				console.warn(logPrefix()+msg);
+				message.reply(msg);
 				return;
 			}
 
@@ -392,13 +393,13 @@ client.on("message", (message) => {
 		case "rank":
 			cmd = command.replace('contest', '');
 
-			if (!cmd && args.length && isNaN(parseInt(args[0])))
-				cmd = args.shift().toLowerCase(); // read sub-command
+			if (!cmd && words.length && isNaN(parseInt(words[0])))
+				cmd = words.shift().toLowerCase(); // read sub-command
 			else if (!cmd)
 				cmd = 'top'; // default command
 			console.log(logPrefix()+"Contest command:", cmd);
 
-			if (readCommands.indexOf(cmd)<0 && (!args.length || isNaN(args[0]))) {
+			if (readCommands.indexOf(cmd)<0 && (!words.length || isNaN(words[0]))) {
 				msg = "Invalid contest command! (missing a number)";
 				console.warn(logPrefix()+msg);
 				message.reply(msg);
@@ -406,7 +407,7 @@ client.on("message", (message) => {
 			}
 
 			if (readCommands.indexOf(cmd)<0) {
-				delta = parseInt(args.shift());
+				delta = parseInt(words.shift());
 				if (delta<0) {
 					message.reply("Invalid delta detected!");
 					console.warn(logPrefix()+"Invalid delta (%s)!", delta);
@@ -420,7 +421,7 @@ client.on("message", (message) => {
 			message.contestCommand = cmd;
 			message.contestDelta = delta;
 			message.readCommands = readCommands;
-			message.unparsedArgs = args;
+			message.unparsedArgs = words;
 
 			if (allycode) {
 				if (readCommands.indexOf(cmd) >= 0) {
@@ -476,8 +477,8 @@ client.on("message", (message) => {
 		case "repeat":
 		case "repete":
 		case "say":
-			if (args.length) {
-				message.channel.send(args.join(" "));
+			if (words.length) {
+				message.channel.send(words.join(" "));
 			} else {
 				message.reply("what can I say for you?");
 			}
@@ -677,7 +678,7 @@ client.on("message", (message) => {
 		case "si":
 		case "shipinfo":
 			// Look for a ship name:
-			args.forEach(function(word) {
+			words.forEach(function(word) {
 				// ignore tags/mentions & allycodes:
 				if (word.indexOf("<")<0 && word.match(/[a-z]/i)) {
 					msg+= " "+locutus.ucfirst(word);
@@ -731,7 +732,7 @@ client.on("message", (message) => {
 				return;
 			}
 
-			sql = args.join(" ");
+			sql = words.join(" ");
 			db_pool.query(sql, function(exc, result) {
 				let col = "ORANGE";
 				let title = "DB request";

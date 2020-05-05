@@ -226,7 +226,7 @@ exports.getPlayerData = async function(users, message, callback) {
 			// console.log("Units by combat type: ", unitsByCombaType);
 
 			// console.log("=====");
-			console.log(logPrefix()+"Found user: "+player.name);
+			console.log(logPrefix()+'User "%s" fetched', player.name);
 
 			player.allycode = allycode;
 			player.charCount = unitsByCombaType[1];
