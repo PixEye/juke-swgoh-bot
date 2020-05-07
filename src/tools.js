@@ -39,18 +39,7 @@ const db_pool = mysql.createPool({
 // Behaviour icons (about players):
 const behaveIcons   = [':green_heart:', ':large_orange_diamond:', ':red_circle:'];
 
-exports.db_close = function(exc) {
-	let logPrefix = exports.logPrefix; // shortcut
-
-	if (exc) {
-		console.warn(logPrefix()+"DB closing exception:", exc);
-	}
-
-	if (db_pool && typeof(db_pool.end)==='function') db_pool.end();
-
-	console.log(logPrefix()+"DB connections stopped.");
-};
-
+/** Check for missing modules in a player's roster */
 exports.checkPlayerMods = function(player, message) {
 	let logPrefix = exports.logPrefix; // shortcut
 	let maxLines = 5;
@@ -102,6 +91,7 @@ exports.checkPlayerMods = function(player, message) {
 	message.channel.send(richMsg);
 };
 
+/** Check units GP against a threshold */
 exports.checkUnitsGp = function(player, message, limit) {
 	let logPrefix = exports.logPrefix; // shortcut
 
@@ -158,6 +148,24 @@ exports.checkUnitsGp = function(player, message, limit) {
 	});
 };
 
+/** Cloner (mainly for objects) */
+exports.clone = function(x) {
+	return JSON.parse(JSON.stringify(x));
+}
+
+/** Clode database connexion */
+exports.db_close = function(exc) {
+	let logPrefix = exports.logPrefix; // shortcut
+
+	if (exc) {
+		console.warn(logPrefix()+"DB closing exception:", exc);
+	}
+
+	if (db_pool && typeof(db_pool.end)==='function') db_pool.end();
+
+	console.log(logPrefix()+"DB connections stopped.");
+};
+
 /** Try to find an ally code in the words of the user's message */
 exports.getFirstAllycodeInWords = function(words) {
 	var allycode = 0;
@@ -180,6 +188,7 @@ exports.getFirstAllycodeInWords = function(words) {
 	return allycode;
 };
 
+/** Get guild data from the database */
 exports.getGuildDbStats = function(player1, message, callback) {
 	let allycode = player1.allycode;
 	let locale = config.discord.locale; // shortcut
@@ -289,6 +298,7 @@ exports.getGuildDbStats = function(player1, message, callback) {
 		.catch(console.error);
 };
 
+/** Get guild data from the SWGoH-help API */
 exports.getGuildStats = function(player, message, callback) {
 	let allycode = player.allycode;
 
@@ -311,6 +321,7 @@ exports.getGuildStats = function(player, message, callback) {
 		.catch(console.error);
 };
 
+/** Get a specified player's last evolutions */
 exports.getLastEvolsFromDb = function(player, message) {
 	let allycode = player.allycode;
 	let logPrefix = exports.logPrefix; // shortcut
@@ -333,6 +344,7 @@ exports.getLastEvolsFromDb = function(player, message) {
 	});
 };
 
+/** Get player's data from our database */
 exports.getPlayerFromDatabase = function(allycode, message, callback) {
 	let logPrefix = exports.logPrefix; // shortcut
 	let msg = "";
@@ -389,6 +401,7 @@ exports.getPlayerFromDatabase = function(allycode, message, callback) {
 	});
 };
 
+/** Get player's data from a Discord user object (Discord tag) */
 exports.getPlayerFromDiscordUser = function(user, message, callback) {
 	let discord_id = user.id;
 	let logPrefix = exports.logPrefix; // shortcut
@@ -456,6 +469,7 @@ exports.getPlayerStats = function(users, message, callback) {
 		});
 };
 
+/** Look for unregistered players in a specified guild */
 exports.getUnregPlayers = function(allycode, message) {
 	let logPrefix = exports.logPrefix; // shortcut
 
@@ -825,12 +839,14 @@ exports.handleContest = function(guild, message, target) {
 	});
 };
 
+/** Compute log prefix */
 exports.logPrefix = function () {
 	let dt = new Date();
 
 	return dt.toString().replace(/ GMT.*$$/, "")+" - ";
 };
 
+/** Store guild data in our database */
 exports.refreshGuildStats = function(allycode, message, callback) {
 	let locale = config.discord.locale; // shortcut
 	let logPrefix = exports.logPrefix; // shortcut
@@ -944,10 +960,25 @@ exports.rememberGuildStats = function(guild) {
 	});
 };
 
+/** Generate a date string in MySQL format (if no date is given, now is used) */
+exports.toMySQLdate = function(d) {
+	if (typeof(d)!=="object" || !(d instanceof Date)) {
+		d = new Date();
+	}
+
+	d = d.toISOString("en-ZA");
+	// toISOString("en-ZA") : 2020/05/07, 16:13:45
+	// target format example: 2020-05-07 16:13:45
+
+	return d.replace(/\//g, "-").replace(",", "").substr(0, 19);
+};
+
+/** Store a player's data in our database */
 exports.updatePlayerDataInDb = function(player, message, callback) {
 	let allycode = player.allycode;
 	let begin = "";
 	let logPrefix = exports.logPrefix; // shortcut
+	let now = new Date();
 
 	if (!player.gp) {
 		console.log(logPrefix()+"invalid GP for user:", player);
@@ -957,9 +988,16 @@ exports.updatePlayerDataInDb = function(player, message, callback) {
 	// Try to find the same user in the database:
 	begin = "Evolution: "+player.name;
 	exports.getPlayerFromDatabase(allycode, message, function(prevPlayerVersion) {
+		let evols = [];
 		let lines = [];
 		let msg = "";
-		let sql = "INSERT INTO `evols` (allycode, unit_id, type, new_value) VALUES ?";
+		let newEvol = {
+			"allycode": allycode,
+			"unit_id": "",
+			"type": "",
+			"new_value": 0,
+			"ts": exports.toMySQLdate(now)
+		};
 
 		// If the user was unknown, do no look for any evolution:
 		if (prevPlayerVersion && prevPlayerVersion.gp) {
@@ -974,10 +1012,11 @@ exports.updatePlayerDataInDb = function(player, message, callback) {
 
 			// Look for new gifts:
 			if (giftCount && giftCount<player.giftCount) {
-				msg = begin + " did "+(player.giftCount - giftCount)+" new gift(s)";
+				newEvol.type = "newGifts";
+				newEvol.new_value = player.giftCount - giftCount;
+				evols.push(exports.clone(newEvol));
+				msg = begin + " did "+newEvol.new_value+" new gift(s)";
 				console.log(logPrefix()+msg);
-
-				lines.push([allycode, "", "newGifts", player.giftCount - giftCount]);
 			}
 
 			player.unitsData.forEach(function(u) {
@@ -988,15 +1027,19 @@ exports.updatePlayerDataInDb = function(player, message, callback) {
 				else
 					++nbShips;
 
-				// Compare old & new units:
+				newEvol.unit_id = u.name;
+				// Compare old & new units...
+
 				// Look for new units:
 				if (typeof(prevUnit)==="undefined") {
 					if (prevUnitsCount) { // New unit:
-						++newUnitCount;
+						newEvol.new_value = 1;
+						newEvol.type = "new";
+						evols.push(exports.clone(newEvol));
+
 						msg = begin + " unlocked "+u.name;
 						console.log(logPrefix()+msg);
-
-						lines.push([allycode, u.name, "new", 1]);
+						++newUnitCount;
 					}
 
 					return;
@@ -1004,39 +1047,47 @@ exports.updatePlayerDataInDb = function(player, message, callback) {
 
 				// Look for new relics:
 				if (u.relic>3 && u.relic>prevUnit.relic) {
+					newEvol.new_value = u.relic;
+					newEvol.type = "relic";
+					evols.push(exports.clone(newEvol));
+
 					msg = begin+"'s "+u.name+" is now R"+u.relic;
 					console.log(logPrefix()+msg);
-
-					// Add new evolution in the database ("evols" table):
-					lines.push([allycode, u.name, "relic", u.relic]);
 				} else 
 				// Look for new gears:
 				if (u.gear>11 && u.gear>prevUnit.gear) {
+					newEvol.new_value = u.gear;
+					newEvol.type = "gear";
+					evols.push(exports.clone(newEvol));
+
 					msg = begin+"'s "+u.name+" is now G"+u.gear;
 					console.log(logPrefix()+msg);
-
-					// Add new evolution in the database ("evols" table):
-					lines.push([allycode, u.name, "gear", u.gear]);
 				}
 
 				// Look for new stars:
 				if (prevUnit.stars>0 && u.stars>6 && u.stars>prevUnit.stars) {
+					newEvol.new_value = u.stars;
+					newEvol.type = "star";
+					evols.push(exports.clone(newEvol));
+
 					msg = begin+"'s "+u.name+" is now "+u.stars+"*";
 					console.log(logPrefix()+msg);
-
-					// Add new evolution in the database ("evols" table):
-					lines.push([allycode, u.name, "star", u.stars]);
 				}
 
 				// Look for new zetas:
 				if (u.zetaCount>prevUnit.zetaCount) {
+					newEvol.new_value = u.zetaCount;
+					newEvol.type = "zeta";
+					evols.push(exports.clone(newEvol));
+
 					msg = begin+"'s "+u.name+" has now "+u.zetaCount+" zeta(s)";
 					console.log(logPrefix()+msg);
-
-					// Add new evolution in the database ("evols" table):
-					lines.push([allycode, u.name, "zeta", u.zetaCount]);
 				}
 			}); // end of unit loop
+
+			evols.forEach(function(newEvol) {
+				lines.push(Object.values(newEvol));
+			});
 
 			if (newUnitCount) {
 				msg = "There is %d new unit(s) in %s's roster.";
@@ -1044,19 +1095,22 @@ exports.updatePlayerDataInDb = function(player, message, callback) {
 			}
 			console.log(logPrefix()+"%s owns %d ships", player.name, nbShips);
 
-			msg = lines.length+" evolution(s) detected for: "+player.name;
+			msg = lines.length+" new evolution(s) detected for: "+player.name;
 			console.log(logPrefix()+msg);
 			if (lines.length) message.channel.send(msg);
 
 			if (lines.length) {
-				db_pool.query(sql, [lines], function(exc, result) {
+				let sql1 = "INSERT INTO `evols` (allycode, unit_id, type, new_value, ts) VALUES ?";
+				db_pool.query(sql1, [lines], function(exc, result) {
 					if (exc) {
-						console.log("SQL:", sql);
-						console.log(logPrefix()+"UC Exception:", exc.sqlMessage? exc.sqlMessage: exc);
+						console.log("SQL:", sql1);
+						console.warn(logPrefix()+"UC Exception:", exc.sqlMessage? exc.sqlMessage: exc);
+						message.reply("Failed to save evolution(s)!");
 						return;
 					}
 
 					console.log(logPrefix()+"%d evolution(s) inserted.", result.affectedRows);
+					view.showLastEvols(player, message, evols);
 				});
 			}
 		}
@@ -1066,7 +1120,7 @@ exports.updatePlayerDataInDb = function(player, message, callback) {
 
 		update = update.toISOString().replace("T", " ").replace(/z$/i, "");
 
-		sql = "UPDATE users SET"+
+		let sql2 = "UPDATE users SET"+
 			" game_name="+mysql.escape(player.name)+","+
 			" giftCount="+player.giftCount+","+
 			" gp="+player.gp+","+
@@ -1077,9 +1131,9 @@ exports.updatePlayerDataInDb = function(player, message, callback) {
 			" ts="+mysql.escape(update)+" "+
 			"WHERE allycode="+allycode;
 
-		db_pool.query(sql, function(exc, result) {
+		db_pool.query(sql2, function(exc, result) {
 			if (exc) {
-				console.log("SQL:", sql);
+				console.log("SQL:", sql2);
 				console.log(logPrefix()+"UC Exception:", exc.sqlMessage? exc.sqlMessage: exc);
 				return;
 			}
@@ -1087,15 +1141,15 @@ exports.updatePlayerDataInDb = function(player, message, callback) {
 			console.log(logPrefix()+"%d user updated:", result.affectedRows, player.name);
 
 			if (!result.affectedRows) {
-				sql = "INSERT INTO `users`\n"+
+				let sql3 = "INSERT INTO `users`\n"+
 					"(allycode, game_name, gp, g12Count, g13Count, guildRefId, zetaCount)\n"+
 					"VALUES ("+allycode+", "+mysql.escape(player.name)+
 					", "+player.gp+", "+player.g12Count+", "+player.g13Count+
 					", "+mysql.escape(player.guildRefId)+", "+player.zetaCount+")";
 
-				db_pool.query(sql, function(exc, result) {
+				db_pool.query(sql3, function(exc, result) {
 					if (exc) {
-						console.log("SQL:", sql);
+						console.log("SQL:", sql3);
 						console.log(logPrefix()+"GC Exception:", exc.sqlMessage? exc.sqlMessage: exc);
 						return;
 					}
@@ -1110,7 +1164,7 @@ exports.updatePlayerDataInDb = function(player, message, callback) {
 
 			// See:
 			// https://www.w3schools.com/nodejs/shownodejs_cmd.asp?filename=demo_db_insert_multiple
-			sql = "REPLACE `units` (allycode, name, combatType, gear, gp, relic, stars, zetaCount) VALUES ?";
+			let sql4 = "REPLACE `units` (allycode, name, combatType, gear, gp, relic, stars, zetaCount) VALUES ?";
 			player.unitsData.forEach(function(u) { // u = current unit
 				if (!u.stars) {
 					console.warn(logPrefix()+"Invalid star count for unit:\n ", JSON.stringify(u));
@@ -1120,9 +1174,9 @@ exports.updatePlayerDataInDb = function(player, message, callback) {
 				);
 			}); // end of unit loop
 
-			db_pool.query(sql, [lines], function(exc, result) {
+			db_pool.query(sql4, [lines], function(exc, result) {
 				if (exc) {
-					console.log("SQL:", sql);
+					console.log("SQL:", sql4);
 					console.log(logPrefix()+"RU Exception:", exc.sqlMessage? exc.sqlMessage: exc);
 					return;
 				}

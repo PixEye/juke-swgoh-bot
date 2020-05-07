@@ -409,9 +409,17 @@ exports.showLastEvols = function(player, message, evols) {
 	let n = 0;
 	let now = new Date();
 	let lastEvols = evols.filter(function(evol) {
-			return (now.getTime() - evol.ts)<maxPeriod;
-		});
+		if (typeof(evol.ts)==="string") {
+			evol.ts = new Date(evol.ts);
+			++n;
+		}
+		return (now.getTime() - evol.ts)<maxPeriod;
+	});
 	let logPrefix = exports.logPrefix; // shortcut
+
+	if (n) {
+		console.warn(logPrefix()+"Had to transform %d string(s) to date(s)", n);
+	}
 
 	n = lastEvols.length;
 	console.log(logPrefix()+"%d evol(s) found.", n);
@@ -421,46 +429,47 @@ exports.showLastEvols = function(player, message, evols) {
 		let msg = "";
 
 		color = "ORANGE";
-		msg = "No evolution in this roster for the last "+maxDays+" days";
+		msg = "No evolution registered in this roster for the last "+maxDays+" days";
 		console.log(logPrefix()+msg);
-		lines = [msg];
-	} else {
-		lastEvols.forEach(function(e, i) {
-			let dt = e.ts.toString().replace(/ \(.*\)$/, "");
-			let msg = dt+": "+e.unit_id;
-
-			maxDt = (e.ts>maxDt)? e.ts: maxDt;
-
-			switch(e.type) {
-				case "gear":
-					msg+= " turned G"+e.new_value;
-					break;
-				case "new":
-					msg+= " unlocked";
-					break;
-				case "newGifts":
-					msg = dt+": player gave "+e.new_value+" item"+(e.new_value===1? '': 's');
-					break;
-				case "relic":
-					msg+= " turned R"+e.new_value;
-					break;
-				case "star":
-					msg+= " turned "+e.new_value+"*";
-					break;
-				case "zeta":
-					msg+= " get "+e.type+" #"+e.new_value;
-					break;
-				default:
-					msg+= " turned "+e.type+" to: "+e.new_value;
-					console.warn("Unexpected evolution type '%s' at ID %d", e.type, e.id);
-			}
-
-			if (i<maxLines)
-				lines.push("`"+msg+"`");
-			else if (i===maxLines)
-				lines.push("And some more...");
-		});
+		message.channel.send(msg+".");
+		return;
 	}
+
+	lastEvols.forEach(function(e, i) {
+		let dt = e.ts.toString().replace(/ \(.*\)$/, "");
+		let msg = dt+": "+e.unit_id;
+
+		maxDt = (e.ts>maxDt)? e.ts: maxDt;
+
+		switch(e.type) {
+			case "gear":
+				msg+= " turned G"+e.new_value;
+				break;
+			case "new":
+				msg+= " unlocked";
+				break;
+			case "newGifts":
+				msg = dt+": player gave "+e.new_value+" item"+(e.new_value===1? '': 's');
+				break;
+			case "relic":
+				msg+= " turned R"+e.new_value;
+				break;
+			case "star":
+				msg+= " turned "+e.new_value+"*";
+				break;
+			case "zeta":
+				msg+= " get "+e.type+" #"+e.new_value;
+				break;
+			default:
+				msg+= " turned "+e.type+" to: "+e.new_value;
+				console.warn("Unexpected evolution type '%s' at ID %d", e.type, e.id);
+		}
+
+		if (i<maxLines)
+			lines.push("`"+msg+"`");
+		else if (i===maxLines)
+			lines.push("And some more...");
+	});
 
 	if (!maxDt) maxDt = message.createdTimestamp;
 	else maxDt = new Date(maxDt);
