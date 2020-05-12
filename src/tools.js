@@ -966,11 +966,14 @@ exports.toMySQLdate = function(d) {
 		d = new Date();
 	}
 
-	d = d.toISOString("en-ZA");
-	// toISOString("en-ZA") : 2020/05/07, 16:13:45
-	// target format example: 2020-05-07 16:13:45
+	// d = d.toISOString("en-ZA").replace(/\//g, "-").replace(",", "").substr(0, 19);
+	// toLocaleString("en-ZA"):
+	//	2020/05/07, 16:13:45
+	// target format example:
+	//	2020-05-07 16:13:45
+	d = d.toISOString().replace("T", " ").replace(/z$/i, "");
 
-	return d.replace(/\//g, "-").replace(",", "").substr(0, 19);
+	return d;
 };
 
 /** Store a player's data in our database */

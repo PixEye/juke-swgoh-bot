@@ -410,7 +410,7 @@ exports.showLastEvols = function(player, message, evols) {
 	let now = new Date();
 	let lastEvols = evols.filter(function(evol) {
 		if (typeof(evol.ts)==="string") {
-			evol.ts = new Date(evol.ts);
+			evol.ts = new Date(); // was: (evol.ts)
 			++n;
 		}
 		return (now.getTime() - evol.ts)<maxPeriod;
