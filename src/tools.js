@@ -766,8 +766,6 @@ exports.handleContest = function(guild, message, target) {
 
 		if (sql) {
 			db_pool.query(sql, [delta, target.allycode], function(exc, result) {
-				let logPrefix = exports.logPrefix; // shortcut
-
 				if (exc) {
 					let otd = exc.sqlMessage? exc.sqlMessage: exc; // obj to display
 
@@ -791,9 +789,38 @@ exports.handleContest = function(guild, message, target) {
 			return;
 		}
 
-		if (readCommands.indexOf(cmd)<0) {
-			message.reply('Coming soon...'); // TODO: "reset" support
+		// if (readCommands.indexOf(cmd)<0)
+		if (cmd==='reset') {
 			console.log(logPrefix()+args.length+" unparsed arg(s):", args.join(' '));
+
+			sql = "UPDATE `users` SET `contestPoints`=0 WHERE `guildRefId`=?";
+			db_pool.query(sql, [guild.refId], function(exc, result) {
+				let color = "GREEN";
+				let lastScore = 0;
+				let lines = [];
+
+				if (exc) {
+					let otd = exc.sqlMessage? exc.sqlMessage: exc; // obj to display
+
+					color = "RED";
+					console.log("SQL:", sql);
+					console.warn(logPrefix()+"GCT Exception:", otd);
+					message.reply("GCT Exception:"+otd);
+					return;
+				}
+
+				let n = result.affectedRows;
+				let s = n===1? '': 's';
+				let msg = n+" updated player"+s;
+				let title = "Contest reset";
+
+				console.log(logPrefix()+msg);
+				lines = [msg];
+				richMsg = new RichEmbed().setColor(color).setTitle(title)
+					.setDescription(lines).setTimestamp(author.updated)
+					.setFooter(config.footer.message, config.footer.iconUrl);
+				message.channel.send(richMsg);
+			});
 			return;
 		}
 
@@ -806,8 +833,6 @@ exports.handleContest = function(guild, message, target) {
 		sql = "SELECT * FROM `users` WHERE guildRefId=? AND contestPoints!=0";
 		sql+= " ORDER BY contestPoints DESC, game_name ASC LIMIT ?";
 		db_pool.query(sql, [guild.refId, limit], function(exc, result) {
-			let logPrefix = exports.logPrefix; // shortcut
-
 			if (exc) {
 				let otd = exc.sqlMessage? exc.sqlMessage: exc; // obj to display
 
@@ -1049,7 +1074,7 @@ exports.updatePlayerDataInDb = function(player, message, callback) {
 				}
 
 				// Look for new relics:
-				if (u.relic>3 && u.relic>prevUnit.relic) {
+				if (u.relic>2 && u.relic>prevUnit.relic) {
 					newEvol.new_value = u.relic;
 					newEvol.type = "relic";
 					evols.push(exports.clone(newEvol));
