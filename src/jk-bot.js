@@ -635,7 +635,7 @@ client.on("message", (message) => {
 				}
 
 				if (result.affectedRows) {
-					message.reply(":white_check_mark: Done.");
+					message.reply(":white_check_mark: "+nick+" registered.");
 					console.log(logPrefix()+"%d user inserted:", result.affectedRows, nick);
 					return;
 				}
@@ -654,7 +654,7 @@ client.on("message", (message) => {
 							message.reply(":red_circle: Error!");
 						}
 					} else {
-						message.reply(":white_check_mark: Done.");
+						message.reply(":white_check_mark: "+nick+" registered.");
 						console.log(logPrefix()+"%d user updated:", result.affectedRows, nick);
 					}
 				});
