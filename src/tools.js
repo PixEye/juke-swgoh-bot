@@ -88,7 +88,11 @@ exports.checkPlayerMods = function(player, message) {
 		.setDescription(lines).setColor(color)
 		.setTimestamp(player.updated)
 		.setFooter(config.footer.message, config.footer.iconUrl);
-	message.channel.send(richMsg);
+	message.channel.send(richMsg).catch(function(ex) {
+		console.warn(ex);
+		message.reply(ex.message);
+		message.channel.send(lines);
+	});
 };
 
 /** Check units GP against a threshold */
@@ -139,7 +143,11 @@ exports.checkUnitsGp = function(player, message, limit) {
 		.setDescription(lines).setColor(color)
 		.setTimestamp(player.updated)
 		.setFooter(config.footer.message, config.footer.iconUrl);
-	message.channel.send(richMsg);
+	message.channel.send(richMsg).catch(function(ex) {
+		console.warn(ex);
+		message.reply(ex.message);
+		message.channel.send(lines);
+	});
 
 	player.unitsData.forEach(function(u) { // u = current unit
 		lines.push(
@@ -668,7 +676,11 @@ exports.handleBehaviour = function(guild, message, target) {
 				richMsg = new RichEmbed().setColor(color).setTitle(title)
 					.setDescription(lines).setTimestamp(author.updated)
 					.setFooter(config.footer.message, config.footer.iconUrl);
-				message.channel.send(richMsg);
+				message.channel.send(richMsg).catch(function(ex) {
+					console.warn(ex);
+					message.reply(ex.message);
+					message.channel.send(lines);
+				});
 			});
 			return;
 		}
@@ -722,7 +734,11 @@ exports.handleBehaviour = function(guild, message, target) {
 			richMsg = new RichEmbed().setColor(color).setTitle(title)
 				.setDescription(lines).setTimestamp(author.updated)
 				.setFooter(config.footer.message, config.footer.iconUrl);
-			message.channel.send(richMsg);
+			message.channel.send(richMsg).catch(function(ex) {
+				console.warn(ex);
+				message.reply(ex.message);
+				message.channel.send(lines);
+			});
 		});
 	});
 };
@@ -844,7 +860,11 @@ exports.handleContest = function(guild, message, target) {
 				richMsg = new RichEmbed().setColor(color).setTitle(title)
 					.setDescription(lines).setTimestamp(author.updated)
 					.setFooter(config.footer.message, config.footer.iconUrl);
-				message.channel.send(richMsg);
+				message.channel.send(richMsg).catch(function(ex) {
+					console.warn(ex);
+					message.reply(ex.message);
+					message.channel.send(lines);
+				});
 			});
 			return;
 		}
@@ -880,11 +900,18 @@ exports.handleContest = function(guild, message, target) {
 			});
 
 			let s = lines.length===1? '': 's';
-			console.log(logPrefix()+"%d line%s displayed", lines.length, s);
+			console.log(logPrefix()+"%d line%s to display", lines.length, s);
+			if (!lines.length) {
+				lines = ["Every member of this guild has a contest score at zero."];
+			}
 			richMsg = new RichEmbed().setColor(color).setTitle(title)
 				.setDescription(lines).setTimestamp(author.updated)
 				.setFooter(config.footer.message, config.footer.iconUrl);
-			message.channel.send(richMsg);
+			message.channel.send(richMsg).catch(function(ex) {
+				console.warn(ex);
+				message.reply(ex.message);
+				message.channel.send(lines);
+			});
 		});
 	});
 };

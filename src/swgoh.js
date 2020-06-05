@@ -43,6 +43,8 @@ const swapi = new ApiSwgohHelp({
  * @param {function} callback - Function to call once the data is retrieved
  */
 exports.getPlayerData = async function(users, message, callback) {
+	let msg = "";
+
 	try {
 		// let acquiredToken = await swapi.connect();
 		// console.log(logPrefix()+"Token: ", acquiredToken);
@@ -87,10 +89,16 @@ exports.getPlayerData = async function(users, message, callback) {
 		if (!result) {
 			// Fail:
 			console.log(logPrefix()+"Player "+allycode+" not found!");
+
+			msg = "Ally " + allycode+" not found!";
 			richMsg = new RichEmbed().setTitle("Warning!").setColor("ORANGE")
-				.setDescription(["Ally " + allycode+" not found!"])
+				.setDescription([msg])
 				.setFooter(config.footer.message, config.footer.iconUrl);
-			message.channel.send(richMsg);
+			message.channel.send(richMsg).catch(function(ex) {
+				console.warn(ex);
+				message.reply(ex.message);
+				message.channel.send(msg);
+			});
 			return;
 		}
 
@@ -243,12 +251,18 @@ exports.getPlayerData = async function(users, message, callback) {
 			if (typeof(callback)==="function") callback(player, message);
 		});
 	} catch(ex) {
+		let msg = "Failed to get player with allycode: "+allycode;
+
 		console.log(logPrefix()+"Player exception: ", ex);
 		richMsg = new RichEmbed().setTitle("Error!").setColor("RED")
-			.setDescription(["Failed to get player with allycode: "+allycode])
+			.setDescription([msg])
 			.setFooter(config.footer.message, config.footer.iconUrl)
 			.setTimestamp(message.createdTimestamp);
-		message.channel.send(richMsg);
+		message.channel.send(richMsg).catch(function(ex) {
+			console.warn(ex);
+			message.reply(ex.message);
+			message.channel.send(msg);
+		});
 	}
 };
 
@@ -258,12 +272,13 @@ exports.getPlayerData = async function(users, message, callback) {
  * @param {function} callback - Function to call once the data is retrieved
  */
 exports.getPlayerGuild = async function(allycodes, message, callback) {
+	let msg = "";
+
 	try {
 		if ( typeof(allycodes)!=="object" || ! (allycodes instanceof Array) )
 			allycodes = [allycodes];
 
 		let allycode = allycodes[0]; // keep only the first one: 1 guild at once
-		let msg = "";
 		let input  = { "allycodes": allycodes }; // payload
 		let locale = config.discord.locale; // shortcut
 		let { result, error, warning } = await swapi.fetchGuild(input); // <--
@@ -277,12 +292,20 @@ exports.getPlayerGuild = async function(allycodes, message, callback) {
 		} // */
 
 		if (error) {
-			if (error.error && error.error===error.message) delete error.error;
+			if (error.error && error.error===error.message) {
+				delete error.error;
+			}
 			console.log(logPrefix()+"GPG ERR: ", error);
+
+			msg = error.message;
 			richMsg = new RichEmbed().setTitle("Error!").setColor("RED")
-				.setDescription(error.message)
+				.setDescription(msg)
 				.setFooter(config.footer.message, config.footer.iconUrl);
-			message.channel.send(richMsg);
+			message.channel.send(richMsg).catch(function(ex) {
+				console.warn(ex);
+				message.reply(ex.message);
+				message.channel.send(msg);
+			});
 			return;
 		}
 
@@ -293,7 +316,11 @@ exports.getPlayerGuild = async function(allycodes, message, callback) {
 			richMsg = new RichEmbed().setTitle("Warning!").setColor("ORANGE")
 				.setDescription([msg])
 				.setFooter(config.footer.message, config.footer.iconUrl);
-			message.channel.send(richMsg);
+			message.channel.send(richMsg).catch(function(ex) {
+				console.warn(ex);
+				message.reply(ex.message);
+				message.channel.send(msg);
+			});
 			return;
 		}
 
@@ -362,10 +389,15 @@ exports.getPlayerGuild = async function(allycodes, message, callback) {
 		if (typeof(callback)==="function") callback(guild);
 	} catch(ex) {
 		console.log(logPrefix()+"Guild exception: ", ex);
+		msg = "Failed to get guild with ally: "+allycode;
 		richMsg = new RichEmbed().setTitle("Error!").setColor("RED")
-			.setDescription(["Failed to get guild with ally: "+allycode])
+			.setDescription([msg])
 			.setFooter(config.footer.message, config.footer.iconUrl);
-		message.channel.send(richMsg);
+		message.channel.send(richMsg).catch(function(ex) {
+			console.warn(ex);
+			message.reply(ex.message);
+			message.channel.send(msg);
+		});
 	}
 };
 

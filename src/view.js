@@ -478,7 +478,11 @@ exports.showLastEvols = function(player, message, evols) {
 		.setTitle(player.name+"'s "+n+" evolution(s) in the last "+maxDays+" days")
 		.setDescription(lines).setColor(color).setTimestamp(maxDt)
 		.setFooter(config.footer.message, config.footer.iconUrl);
-	message.channel.send(richMsg);
+	message.channel.send(richMsg).catch(function(ex) {
+		console.warn(ex);
+		message.reply(ex.message);
+		message.channel.send(lines);
+	});
 };
 
 /** Show player's relics (relics command)
