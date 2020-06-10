@@ -470,7 +470,7 @@ client.on("message", (message) => {
 				message.reply("You're not my master! :imp:");
 			} else {
 				message.reply("Up to your will master. Leaving...");
-				console.log(logPrefix()+"Stopping!");
+				console.log(logPrefix()+"STOPPING!");
 
 				db_pool.end(tools.db_close);
 				client.destroy();

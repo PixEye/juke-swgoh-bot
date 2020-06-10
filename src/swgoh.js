@@ -79,8 +79,11 @@ exports.getPlayerData = async function(users, message, callback) {
 		if (error) {
 			if (error.error && error.error===error.message) delete error.error;
 			console.warn(logPrefix()+"GetPlayerData ERR: ", error);
-			message.channel.send(error.message);
-			// throw error.message;
+			if ( ! error.description ) {
+				message.channel.send(error.message);
+			} else {
+				message.channel.send("**"+error.message+":** "+error.description);
+			}
 			return;
 		}
 

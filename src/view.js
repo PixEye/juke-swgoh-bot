@@ -282,8 +282,8 @@ exports.showUnitInfo = function(player, message, unitName, ct) {
 	let pattern = null;
 	let strToLookFor = unitName.replace(/ /g, "").replace(/-/g, '_').toUpperCase();
 
-	if (!player.gp) {
-		console.log(logPrefix()+"invalid GP for user:", player);
+	if (!player.name) {
+		console.log(logPrefix()+"invalid name at V29 for user:", player);
 		return;
 	}
 
@@ -493,8 +493,8 @@ exports.showPlayerRelics = function(player, message) {
 	let logPrefix = exports.logPrefix; // shortcut
 	let maxLines = 10;
 
-	if (!player.gp) {
-		console.log(logPrefix()+"invalid GP for user:", player);
+	if (!player.name) {
+		console.log(logPrefix()+"invalid name at V50 for user:", player);
 		return;
 	}
 
@@ -550,8 +550,8 @@ exports.showPlayerStats = function(player, message) {
 	let locale = config.discord.locale; // shortcut
 	let logPrefix = exports.logPrefix; // shortcut
 
-	if (!player.gp) {
-		console.log(logPrefix()+"invalid GP for user:", player);
+	if (!player.name) {
+		console.log(logPrefix()+"invalid name at V55 for user:", player);
 		return;
 	}
 

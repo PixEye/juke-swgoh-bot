@@ -44,8 +44,8 @@ exports.checkPlayerMods = function(player, message) {
 	let logPrefix = exports.logPrefix; // shortcut
 	let maxLines = 5;
 
-	if (!player.gp) {
-		console.log(logPrefix()+"invalid GP for user:", player);
+	if (!player.name) {
+		console.log(logPrefix()+"invalid name at T50 for user:", player);
 		return;
 	}
 
@@ -99,8 +99,8 @@ exports.checkPlayerMods = function(player, message) {
 exports.checkUnitsGp = function(player, message, limit) {
 	let logPrefix = exports.logPrefix; // shortcut
 
-	if (!player.gp) {
-		console.log(logPrefix()+"invalid GP for user:", player);
+	if (!player.name) {
+		console.log(logPrefix()+"invalid name at T100 for user:", player);
 		return;
 	}
 
@@ -512,6 +512,7 @@ exports.getUnregPlayers = function(allycode, message) {
 					let msg = "%d registered users out of %d.";
 					let nbReg = 0;
 					let notRegPlayers = [];
+					let noProbePlayers = [];
 
 					if (exc) {
 						let otd = exc.sqlMessage? exc.sqlMessage: exc; // obj to display
@@ -527,6 +528,11 @@ exports.getUnregPlayers = function(allycode, message) {
 					regPlayers.forEach(function(regPlayer) {
 						if (guild.players[regPlayer.allycode]) {
 							dbRegByAc[regPlayer.allycode] = regPlayer;
+							if ( ! regPlayer.gp ) {
+								noProbePlayers.push(
+									regPlayer.name+" ("+regPlayer.allycode+")"
+								);
+							}
 							++nbReg;
 						}
 					});
@@ -546,6 +552,12 @@ exports.getUnregPlayers = function(allycode, message) {
 
 						msg = "**"+msg+":** "+notRegPlayers.sort().join(", ")+".";
 					}
+
+					console.log(logPrefix()+"Not probed users count: "+noProbePlayers.length);
+					if (noProbePlayers.length) {
+						msg = [msg, "**Not tested user(s):** "+noProbePlayers.join(", ")+"."];
+					}
+
 					message.channel.send(msg);
 				});
 			});
@@ -1060,8 +1072,8 @@ exports.updatePlayerDataInDb = function(player, message, callback) {
 	let logPrefix = exports.logPrefix; // shortcut
 	let now = new Date();
 
-	if (!player.gp) {
-		console.log(logPrefix()+"invalid GP for user:", player);
+	if (!player.name) {
+		console.log(logPrefix()+"invalid name at T1070 for user:", player);
 		return;
 	}
 
