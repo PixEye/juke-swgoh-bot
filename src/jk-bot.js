@@ -752,30 +752,35 @@ client.on("message", (message) => {
 
 					console.log(logPrefix()+"%d record(s) in the result", n);
 					if (!n) {
-						lines = ["No match."];
+						if (n===0) lines = ["No match."];
 
 						n = result.affectedRows;
 						if (n) {
 							col = "GREEN";
 							lines = [];
 						}
-						let s = n===1? '': 's';
-						lines.push(n+" affected row"+s);
+						if (typeof(n)==='number') {
+							let s = n===1? '': 's';
+							lines.push(n+" affected row"+s);
+						}
 					} else {
-						let headers = [];
 						let col_sep = "\t";
+						let headers = [];
+						let maxLen = 0;
 
 						col = "GREEN";
 						result.forEach(function(record, i) {
 							if (i>20) return;
+							if (!i) headers = Object.keys(record);
 
-							headers = Object.keys(record);
-							lines.push("`"+Object.values(record).join(col_sep)+"`");
+							let line = Object.values(record).join(col_sep);
+							lines.push("`"+line+"`");
+							if (line.length>maxLen) maxLen = line.length;
 						});
 
 						// Add headers:
 						let header = headers.join(col_sep);
-						lines.unshift("`"+'-'.repeat(header.length)+"`");
+						lines.unshift("`"+'-'.repeat(maxLen)+"`");
 						lines.unshift("`"+header+"`");
 
 						let s = n===1? '': 's';
