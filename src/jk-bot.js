@@ -766,21 +766,37 @@ client.on("message", (message) => {
 						let col_sep = "\t";
 
 						col = "GREEN";
-						result.forEach(function(record) {
+						result.forEach(function(record, i) {
+							if (i>20) return;
+
 							headers = Object.keys(record);
 							lines.push("`"+Object.values(record).join(col_sep)+"`");
 						});
-						lines.unshift("`"+headers.join(col_sep)+"`");
+
+						// Add headers:
+						let header = headers.join(col_sep);
+						lines.unshift("`"+'-'.repeat(header.length)+"`");
+						lines.unshift("`"+header+"`");
 
 						let s = n===1? '': 's';
-						title+= " ("+n+" result"+s+")";
+						title+= " ("+n+" total result"+s+")";
 					}
 				}
 
-				richMsg = new RichEmbed().setTitle(title).setColor(col)
-					.setDescription(lines).setTimestamp(message.createdTimestamp)
-					.setFooter(config.footer.message, config.footer.iconUrl);
-				message.channel.send(richMsg);
+				try {
+					richMsg = new RichEmbed().setTitle(title).setColor(col)
+						.setDescription(lines).setTimestamp(message.createdTimestamp)
+						.setFooter(config.footer.message, config.footer.iconUrl);
+					message.channel.send(richMsg).catch(function(ex) {
+						console.warn(ex);
+						message.reply(ex.message);
+						message.channel.send(lines);
+					});
+				} catch(ex) {
+					console.warn(ex);
+					message.reply(ex.message);
+					message.channel.send(lines);
+				}
 			});
 			break;
 
