@@ -189,8 +189,10 @@ exports.getFirstAllycodeInWords = function(words) {
 				console.log(logPrefix()+"Found allycode %d at position %d", allycode, i);
 			}
 		});
-		if (foundAt>=0)
+
+		if (foundAt>=0) {
 			words.splice(foundAt, 1); // remove the allycode word from the command
+		}
 	}
 
 	return allycode;

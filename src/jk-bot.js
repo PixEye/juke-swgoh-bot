@@ -141,8 +141,8 @@ client.on("message", (message) => {
 					"**Commandes utilisateur :**",
 					" aide, allycode (ac), auteur, charInfo (ci), checkMods (cm), checkUnitsGp (cugp),"+
 					" dis, getUnregisteredPlayers (gup), guildStats (gs), help, invite,"+
-					" (last)evols (le), listGuildMembers (lgm), playerStats (ps), register (reg), relics,"+
-					" repete, self(y), shipInfo (si), start, stats, status, whoami, whois",
+					" (last)evols (le), listGuildMembers (lgm), playerStats (ps), profile (gg), register (reg),"+
+					" relics, repete, self(y), shipInfo (si), start, stats, status, whoami, whois",
 					"**Commandes de comportement :**",
 					"*Ordre : behave|behaviour (sous-commande) (points) (user)*",
 					" behave, behave( )add, behave( )get, behave( )rank, behave( )rem(ove),",
@@ -184,8 +184,9 @@ client.on("message", (message) => {
 						message.reply(lines);
 					} else { // 1 result here
 						user = result[0];
-						console.log(logPrefix()+"%s's allycode is:", user.game_name, user.allycode);
-						message.channel.send(user.game_name+"'s allycode is: "+user.allycode);
+						msg = user.game_name+"'s allycode is: "+user.allycode;
+						console.log(logPrefix()+msg);
+						message.channel.send(msg);
 					}
 				}
 			});
@@ -473,6 +474,7 @@ client.on("message", (message) => {
 				console.log(logPrefix()+"STOPPING!");
 
 				db_pool.end(tools.db_close);
+				console.log(logPrefix()+"I'm OFF.");
 				client.destroy();
 			}
 			break;
@@ -499,6 +501,42 @@ client.on("message", (message) => {
 					tools.getGuildStats(player, message, view.showGuildStats);
 				});
 			}
+			break;
+
+		case "gg":
+		case "profile":
+			if (allycode) {
+				searchStr = "users.allycode="+allycode;
+			}
+			sql = "SELECT * FROM `users` WHERE "+searchStr;
+			db_pool.query(sql, function(exc, result) {
+				if (exc) {
+					console.log("SQL:", sql);
+					console.log(logPrefix()+"AC Exception:", exc.sqlMessage? exc.sqlMessage: exc);
+				} else {
+					console.log(logPrefix()+""+result.length+" record(s) match(es):", search);
+					// console.dir(result);
+					if (result.length <= 0) {
+						msg = "No match found!";
+						console.log(logPrefix()+msg);
+						message.reply(msg);
+					} else if (result.length > 1) {
+						lines.push("There are "+result.length+" matches:");
+						result.forEach(function(user) {
+							msg = user.allycode+" is allycode of: "+user.game_name;
+							console.log(logPrefix()+msg);
+							lines.push("``"+user.allycode+"`` is allycode of: "+user.game_name);
+						});
+						message.reply(lines);
+					} else { // 1 result here
+						user = result[0];
+						msg = user.game_name+"'s profile is: ";
+						msg+= "https://swgoh.gg/p/"+user.allycode+"/";
+						console.log(logPrefix()+msg);
+						message.channel.send(msg);
+					}
+				}
+			});
 			break;
 
 		case "ggs":
@@ -537,8 +575,8 @@ client.on("message", (message) => {
 					"**User commands:**",
 					" about, aide, allycode (ac), charInfo (ci), checkMods (cm), checkUnitsGp (cugp),"+
 					" getUnregisteredPlayers (gup), guildStats (gs), help, invite, (last)evols (le),"+
-					" listGuildMembers (lgm), playerStat (ps), register (reg), relics, repeat, say,"+
-					" self(y), shipInfo (si), start, stats, status, whoami, whois",
+					" listGuildMembers (lgm), playerStat (ps), profile (gg), register (reg), relics,"+
+					" repeat, say, self(y), shipInfo (si), start, stats, status, whoami, whois",
 					"**Behaviour commands:**",
 					"*Order : behave|behaviour (subcommand) (points) (user)*",
 					" behave, behave( )add, behave( )get, behave( )rank, behave( )rem(ove),",
