@@ -26,7 +26,7 @@
   },
   "footer": {
     "iconUrl": "http://cliparts.co/cliparts/5TR/X89/5TRX89egc.png",
-    "message": "This bot is still under construction. Data update:"
+    "message": "Beta version. Data update:"
   },
   "swapi": {
     "user": "<your api.swgoh.help login>",

@@ -156,7 +156,11 @@ exports.guildPlayerStats = function(allycode, message, guild) {
 		.setFooter(config.footer.message, config.footer.iconUrl);
 
 	// Display the result:
-	message.reply(richMsg);
+	message.reply(richMsg).catch(function(ex) {
+		console.warn(ex);
+		message.reply(ex.message);
+		message.channel.send(lines);
+	});
 };
 
 /** List guild members (LGM command)
@@ -261,7 +265,11 @@ exports.showGuildStats = function(guild, message) {
 	if (guild.message)
 		richMsg.addField("Yellow banner:", guild.message, true)
 
-	message.reply(richMsg);
+	message.reply(richMsg).catch(function(ex) {
+		console.warn(ex);
+		message.reply(ex.message);
+		message.channel.send(lines);
+	});
 };
 
 /** Show information about a specified unit (CI/SI commands)
@@ -330,10 +338,29 @@ exports.showUnitInfo = function(player, message, unitName, ct) {
 	msg = nbFound+" units with '"+unitName+"' found in this roster";
 	console.log(logPrefix()+msg);
 	if (nbFound!==1) {
+		let addon = '';
+		let maxUnitsToShow = 10;
+
 		lines = [msg+"!"];
-		if (nbFound) lines.push("Matching names: "+matchingNames.join(', '));
+		if (nbFound>maxUnitsToShow) { // security: limit the units to show
+			tools.arrayShuffle(matchingNames);
+			matchingNames = matchingNames.slice(0, maxUnitsToShow);
+			addon = matchingNames.length+" shown/";
+		}
+		if (nbFound) {
+			lines.push("**"+addon+nbFound+" total matching names:**");
+			matchingNames.sort();
+			matchingNames.forEach(function(matchingName, i) {
+				i = (i+1<=9 && nbFound>9)? "_"+(i+1): i+1;
+				lines.push("``"+i+"/ "+matchingName+"``");
+			});
+		}
 		richMsg.setDescription(lines).setTitle(player.name+"'s "+unitName);
-		message.reply(richMsg);
+		message.reply(richMsg).catch(function(ex) {
+			console.warn(ex);
+			message.reply(ex.message);
+			message.channel.send(lines);
+		});
 		return;
 	}
 
@@ -389,7 +416,11 @@ exports.showUnitInfo = function(player, message, unitName, ct) {
 
 	// Build the message & show it:
 	if (lines.length) richMsg.setDescription(lines);
-	message.channel.send(richMsg);
+	message.channel.send(richMsg).catch(function(ex) {
+		console.warn(ex);
+		message.reply(ex.message);
+		message.channel.send(lines);
+	});
 };
 
 /** Show player's last evolutions (LE command)
@@ -538,7 +569,11 @@ exports.showPlayerRelics = function(player, message) {
 		.setDescription(lines).setColor(color)
 		.setTimestamp(player.updated)
 		.setFooter(config.footer.message, config.footer.iconUrl);
-	message.channel.send(richMsg);
+	message.channel.send(richMsg).catch(function(ex) {
+		console.warn(ex);
+		message.reply(ex.message);
+		message.channel.send(lines);
+	});
 };
 
 /** Show player's statistics (PS command)
@@ -584,7 +619,11 @@ exports.showPlayerStats = function(player, message) {
 	if (player.displayAvatarURL)
 		richMsg.setThumbnail(player.displayAvatarURL);
 
-	message.reply(richMsg);
+	message.reply(richMsg).catch(function(ex) {
+		console.warn(ex);
+		message.reply(ex.message);
+		message.channel.send(lines);
+	});
 };
 
 /** Show Discord user's profile (whois command)
@@ -612,7 +651,11 @@ exports.showWhoIs = function(user, nick, message) {
 			.setThumbnail(user.displayAvatarURL).setDescription(lines)
 			.setTimestamp(message.createdTimestamp)
 			.setFooter(config.footer.message, config.footer.iconUrl);
-		message.channel.send(richMsg);
+		message.channel.send(richMsg).catch(function(ex) {
+			console.warn(ex);
+			message.reply(ex.message);
+			message.channel.send(lines);
+		});
 	});
 };
 

@@ -1051,6 +1051,20 @@ exports.rememberGuildStats = function(guild) {
 	});
 };
 
+/** Shuffle an array
+ * @see: https://www.w3schools.com/js/js_array_sort.asp
+ */
+exports.arrayShuffle = function(anArr) {
+	var i, j, k;
+
+	for (i = anArr.length -1; i > 0; i--) {
+		j = Math.floor(Math.random() * i);
+		k = anArr[i];
+		anArr[i] = anArr[j];
+		anArr[j] = k;
+	}
+};
+
 /** Generate a date string in MySQL format (if no date is given, now is used) */
 exports.toMySQLdate = function(d) {
 	if (typeof(d)!=="object" || !(d instanceof Date)) {

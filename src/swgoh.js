@@ -43,6 +43,7 @@ const swapi = new ApiSwgohHelp({
  * @param {function} callback - Function to call once the data is retrieved
  */
 exports.getPlayerData = async function(users, message, callback) {
+	let allycode = 0;
 	let msg = "";
 
 	try {
@@ -87,7 +88,7 @@ exports.getPlayerData = async function(users, message, callback) {
 			return;
 		}
 
-		let allycode = allycodes[0]; // TODO: a loop to handle multiple players
+		allycode = allycodes[0]; // TODO: a loop to handle multiple players
 
 		if (!result) {
 			// Fail:
@@ -124,7 +125,7 @@ exports.getPlayerData = async function(users, message, callback) {
 			console.dir(player); // */
 			/* { id: 'P2763...', name: '...', level: 85, allyCode (number),
 			  titles: 'departed', guildRefId: 'G15...', guildName, guildBannerColor: 'white_red',
-			  guildBannerLogo: 'guild_icon_senate', guildTypeId: 'NORMAL' */
+			  guildBannerLogo: 'guild_icon_senate', guildTypeId: 'NORMAL' } */
 			if (player.guildRefId==='G1582274835')
 				player.guildName = 'Force Francophone'; // Custom hack
 
@@ -150,7 +151,7 @@ exports.getPlayerData = async function(users, message, callback) {
 			// secondaryStat: [ // example:
 			// { unitStat: 56, value: 1.384, roll: 1 },
 			// { unitStat: 53, value: 3.179, roll: 2 },
-			// { unitStat: 5 , value: 11   , roll: 3 },
+			// { unitStat:  5, value: 11   , roll: 3 },
 			// { unitStat: 28, value: 438  , roll: 1 } ]
 			// Array: crew ([])
 			// Others: gp (int), primaryUnitStat (null), relic {currentTier: 1}
