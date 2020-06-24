@@ -19,10 +19,10 @@ const start = Date();
 const mysql = require("mysql");
 
 // Load other modules:
-const locutus = require("./locutus"); // Functions from locutus.io
-const swgoh   = require("./swgoh");  // SWGoH API
-const tools   = require("./tools"); // Several functions
-const view    = require("./view"); // Functions used to display results
+const locutus  = require("./locutus"); // Functions from locutus.io
+//nst swgohApi = require("./swgoh");  // SWGoH API of this bot
+const tools    = require("./tools"); // Several functions
+const view     = require("./view"); // Functions used to display results
 
 // Get the configuration from a separated JSON file:
 let config = require("./config.json");
@@ -113,6 +113,7 @@ client.on("message", (message) => {
 	}
 	allycode = tools.getFirstAllycodeInWords(words);
 	player = {"allycode": allycode};
+	message.words = words;
 
 	// public commands:
 	switch (command) {
@@ -176,10 +177,17 @@ client.on("message", (message) => {
 						console.log(logPrefix()+msg);
 						message.reply(msg);
 					} else if (result.length > 1) {
+						let guilds = {};
+
 						lines.push("There are "+result.length+" matches:");
 						result.forEach(function(user) {
-							lines.push("``"+user.allycode+"`` is allycode of: "+user.game_name);
-							console.log(logPrefix()+user.allycode+" is allycode of: "+user.game_name);
+							msg = " is allycode of: "+user.game_name;
+							if (user.guildRefId) {
+								msg+= " (from guild ID: "+user.guildRefId+")";
+								guilds[user.guildRefId] = user.guildRefId;
+							}
+							lines.push("``"+user.allycode+"``"+msg);
+							console.log(logPrefix()+user.allycode+msg);
 						});
 						message.reply(lines);
 					} else { // 1 result here
@@ -487,6 +495,17 @@ client.on("message", (message) => {
 				message.channel.send(words.join(" "));
 			} else {
 				message.reply("what can I say for you?");
+			}
+			break;
+
+		case "fetch":
+			if (allycode) {
+				tools.fetchSwgohData(player, message, view.showGuildStats);
+			} else {
+				console.log(logPrefix()+"Try with user ID:", user.id);
+				tools.getPlayerFromDiscordUser(user, message, function(player) {
+					tools.fetchSwgohData(player, message, view.showGuildStats);
+				});
 			}
 			break;
 

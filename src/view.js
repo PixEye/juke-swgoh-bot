@@ -23,9 +23,9 @@ const config = require("./config.json");
 
 // Load other module(s):
 const locutus = require("./locutus"); // Functions from locutus.io
-const tools   = require("./tools");   // Several functions
-const swgoh   = require("./swgoh");   // SWGoH API
-//const view  = require("./view");    // Functions used to display results
+const tools   = require("./tools");  // Several functions
+const swgoh   = require("./swgoh"); // SWGoH API of this bot
+//nst view  = require("./view");   // Functions used to display results (self file)
 
 /** List guild members
  * @param {Number} allycode - An allycode
@@ -244,7 +244,7 @@ exports.showGuildStats = function(guild, message) {
 		.setDescription([
 			"**Guild description:** "+guild.desc,
 			"**Officers ("+guild.officerNames.length+"):** "+
-				guild.officerNames.sort().join(", ")
+				guild.officerNames.sort(tools.stringsCompare).join(", ")
 		])
 		.addField("GP:", guild.gp.toLocaleString(locale), true)
 		.addField("Toon GP:", guild.gpChar.toLocaleString(locale), true)
@@ -467,8 +467,8 @@ exports.showLastEvols = function(player, message, evols) {
 	}
 
 	lastEvols.forEach(function(e, i) {
-		let dt = e.ts.toString().replace(/ \(.*\)$/, "");
-		let msg = dt+": "+e.unit_id;
+		let dt = e.ts.toString().replace(/ \(.*\)$/, "").replace(/:\d\d /, " ");
+		let msg = "`"+dt+"`: "+e.unit_id;
 
 		maxDt = (e.ts>maxDt)? e.ts: maxDt;
 
@@ -480,7 +480,7 @@ exports.showLastEvols = function(player, message, evols) {
 				msg+= " unlocked";
 				break;
 			case "newGifts":
-				msg = dt+": player gave "+e.new_value+" item"+(e.new_value===1? '': 's');
+				msg = "`"+dt+"`: player gave "+e.new_value+" item"+(e.new_value===1? '': 's');
 				break;
 			case "relic":
 				msg+= " turned R"+e.new_value;
@@ -496,10 +496,11 @@ exports.showLastEvols = function(player, message, evols) {
 				console.warn("Unexpected evolution type '%s' at ID %d", e.type, e.id);
 		}
 
-		if (i<maxLines)
-			lines.push("`"+msg+"`");
-		else if (i===maxLines)
+		if (i<maxLines) {
+			lines.push(msg);
+		} else if (i===maxLines) {
 			lines.push("And some more...");
+		}
 	});
 
 	if (!maxDt) maxDt = message.createdTimestamp;

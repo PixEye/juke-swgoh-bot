@@ -22,13 +22,12 @@ const config = require("./config.json");
 //const mysql = require("mysql");
 
 // Load other modules:
-//const locutus = require("./locutus"); // Functions from locutus.io
-//const swgoh   = require("./swgoh"); // SWGoH API
+//nst locutus = require("./locutus"); // Functions from locutus.io
+//nst swgoh   = require("./swgoh");  // SWGoH API of this bot (self file)
 const tools   = require("./tools"); // Several functions
-const view    = require("./view");  // Functions used to display results
+const view    = require("./view"); // Functions used to display results
 
 // Shortcut(s):
-let logPrefix = tools.logPrefix;
 
 // SWGoH Help API connection:
 const ApiSwgohHelp = require("api-swgoh-help");
@@ -44,6 +43,7 @@ const swapi = new ApiSwgohHelp({
  */
 exports.getPlayerData = async function(users, message, callback) {
 	let allycode = 0;
+	let logPrefix = tools.logPrefix;
 	let msg = "";
 
 	try {
@@ -276,11 +276,13 @@ exports.getPlayerData = async function(users, message, callback) {
  * @param {function} callback - Function to call once the data is retrieved
  */
 exports.getPlayerGuild = async function(allycodes, message, callback) {
+	let logPrefix = tools.logPrefix;
 	let msg = "";
 
 	try {
-		if ( typeof(allycodes)!=="object" || ! (allycodes instanceof Array) )
+		if ( typeof(allycodes)!=="object" || ! (allycodes instanceof Array) ) {
 			allycodes = [allycodes];
+		}
 
 		let allycode = allycodes[0]; // keep only the first one: 1 guild at once
 		let input  = { "allycodes": allycodes }; // payload
@@ -391,6 +393,86 @@ exports.getPlayerGuild = async function(allycodes, message, callback) {
 		console.log(logPrefix()+"Found %d players in guild:", Object.keys(guild.players).length, guild.name);
 
 		if (typeof(callback)==="function") callback(guild);
+	} catch(ex) {
+		console.log(logPrefix()+"Guild exception: ", ex);
+		msg = "Failed to get guild with ally: "+allycode;
+		richMsg = new RichEmbed().setTitle("Error!").setColor("RED")
+			.setDescription([msg])
+			.setFooter(config.footer.message, config.footer.iconUrl);
+		message.channel.send(richMsg).catch(function(ex) {
+			console.warn(ex);
+			message.reply(ex.message);
+			message.channel.send(msg);
+		});
+	}
+};
+
+/** Fetch data from the SWGoH Help API
+ * @param {Array} users - An array of users' objects with: [allycode & displayAvatarURL] each
+ * @param {Object} message - The user's message to reply to
+ * @param {function} callback - Function to call once the data is retrieved
+ */
+exports.fetch = async function(users, message, callback) {
+	let allowedEndpoints = "player, guild, units, data, zetas, squads, events, battles".split(", ");
+	let logPrefix = tools.logPrefix;
+	let endpoint = 'units';
+	let msg = "";
+
+	try {
+		if ( ! (users instanceof Array) ) users = [users];
+
+		let allycodes = [];
+		let playersByAllycode = {};
+
+		users.forEach(function(user) {
+			allycodes.push(user.allycode);
+			playersByAllycode[user.allycode] = user;
+		});
+
+		let input  = { "allycodes": allycodes }; // payload
+		if ( typeof(allycodes)!=="object" || ! (allycodes instanceof Array) ) {
+			allycodes = [allycodes];
+		}
+
+		let allycode = allycodes[0]; // keep only the first one: 1 guild at once
+		let locale = config.discord.locale; // shortcut
+		let { result, error, warning } = await swapi.fetch(endpoint, input); // <--
+		let richMsg = null;
+		let roster = null;
+
+		if (error) {
+			if (error.error && error.error===error.message) {
+				delete error.error;
+			}
+			console.log(logPrefix()+"GPG ERR: ", error);
+
+			msg = error.message;
+			richMsg = new RichEmbed().setTitle("Error!").setColor("RED")
+				.setDescription(msg)
+				.setFooter(config.footer.message, config.footer.iconUrl);
+			message.channel.send(richMsg).catch(function(ex) {
+				console.warn(ex);
+				message.reply(ex.message);
+				message.channel.send(msg);
+			});
+			return;
+		}
+
+		if (!result) {
+			// Fail:
+			msg = "Guild with ally "+allycode+" not found: "+typeof(player);
+			console.log(logPrefix()+msg);
+			richMsg = new RichEmbed().setTitle("Warning!").setColor("ORANGE")
+				.setDescription([msg])
+				.setFooter(config.footer.message, config.footer.iconUrl);
+			message.channel.send(richMsg).catch(function(ex) {
+				console.warn(ex);
+				message.reply(ex.message);
+				message.channel.send(msg);
+			});
+			return;
+		}
+		console.log('Result:', result);
 	} catch(ex) {
 		console.log(logPrefix()+"Guild exception: ", ex);
 		msg = "Failed to get guild with ally: "+allycode;

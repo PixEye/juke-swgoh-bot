@@ -22,10 +22,10 @@ const config = require("./config.json");
 const mysql = require("mysql");
 
 // Load other module(s):
-//const locutus = require("./locutus"); // Functions from locutus.io
+//nst locutus = require("./locutus"); // Functions from locutus.io
 const swgoh   = require("./swgoh");  // SWGoH API
-//const tools = require("./tools");   // Several functions
-const view    = require("./view");  // Functions used to display results
+//nst tools   = require("./tools");   // Several functions (self file)
+const view    = require("./view"); // Functions used to display results
 
 // Prepare DB connection pool:
 const db_pool = mysql.createPool({
@@ -38,6 +38,21 @@ const db_pool = mysql.createPool({
 
 // Behaviour icons (about players):
 const behaveIcons   = [':green_heart:', ':large_orange_diamond:', ':red_circle:'];
+
+/** Shuffle an array
+ * @param {Array} anArr The array to shuffle
+ * @see: https://www.w3schools.com/js/js_array_sort.asp
+ */
+exports.arrayShuffle = function(anArr) {
+	var i, j, k;
+
+	for (i = anArr.length -1; i > 0; i--) {
+		j = Math.floor(Math.random() * i);
+		k = anArr[i];
+		anArr[i] = anArr[j];
+		anArr[j] = k;
+	}
+};
 
 /** Check for missing modules in a player's roster */
 exports.checkPlayerMods = function(player, message) {
@@ -172,6 +187,26 @@ exports.db_close = function(exc) {
 	if (db_pool && typeof(db_pool.end)==='function') db_pool.end();
 
 	console.log(logPrefix()+"DB connections stopped.");
+};
+
+/** Get data from the SWGoH-help API */
+exports.fetchSwgohData = function(player, message, callback) {
+	let allycode = player.allycode;
+
+	if (!allycode) {
+		message.reply(":red_circle: Invalid or missing allycode!");
+		return;
+	}
+
+	message.channel.send("Looking for stats about ally: "+allycode+"...")
+		.then(msg => {
+			swgoh.fetch(player, message, function(data) {
+				if (typeof(msg.delete)==="function") msg.delete();
+
+				if (typeof(callback)==="function") callback(data, message, player);
+			});
+		})
+		.catch(console.error);
 };
 
 /** Try to find an ally code in the words of the user's message */
@@ -1051,18 +1086,13 @@ exports.rememberGuildStats = function(guild) {
 	});
 };
 
-/** Shuffle an array
- * @see: https://www.w3schools.com/js/js_array_sort.asp
+/** Compare 2 strings ignoring case
+ * @param {string} a
+ * @param {string} b
+ * @return {number}
  */
-exports.arrayShuffle = function(anArr) {
-	var i, j, k;
-
-	for (i = anArr.length -1; i > 0; i--) {
-		j = Math.floor(Math.random() * i);
-		k = anArr[i];
-		anArr[i] = anArr[j];
-		anArr[j] = k;
-	}
+exports.stringsCompare = function(a, b) {
+	return a.localeCompare(b, undefined, {sensitivity: 'base'});
 };
 
 /** Generate a date string in MySQL format (if no date is given, now is used) */
