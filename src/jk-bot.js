@@ -500,11 +500,11 @@ client.on("message", (message) => {
 
 		case "fetch":
 			if (allycode) {
-				tools.fetchSwgohData(player, message, view.showGuildStats);
+				tools.fetchSwgohData(player, message, view.showSwgohData);
 			} else {
 				console.log(logPrefix()+"Try with user ID:", user.id);
 				tools.getPlayerFromDiscordUser(user, message, function(player) {
-					tools.fetchSwgohData(player, message, view.showGuildStats);
+					tools.fetchSwgohData(player, message, view.showSwgohData);
 				});
 			}
 			break;

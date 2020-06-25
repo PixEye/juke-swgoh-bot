@@ -272,6 +272,30 @@ exports.showGuildStats = function(guild, message) {
 	});
 };
 
+/** Show SWGoH data (fetch command)
+ * @param {Object} data - The fetched data
+ * @param {Object} message - The user's message to reply to
+ */
+exports.showSwgohData = function(data, message) {
+	let locale = config.discord.locale; // shortcut
+	let logPrefix = exports.logPrefix; // shortcut
+	let now = new Date();
+	let showableData = typeof(data)==="object"?
+		JSON.stringify(data).substr(0, 200): data;
+
+	richMsg = new RichEmbed().setTitle("SWGoH data").setColor("GREEN")
+		// .setAuthor(config.discord.username)
+		.setDescription(showableData)
+		.setTimestamp(typeof(data)==="object" && data.updated? data.updated: now)
+		.setFooter(config.footer.message, config.footer.iconUrl);
+
+	message.reply(richMsg).catch(function(ex) {
+		console.warn(ex);
+		message.reply(ex.message);
+		message.channel.send(showableData);
+	});
+};
+
 /** Show information about a specified unit (CI/SI commands)
  * @param {Object} player - The user's profile as an object
  * @param {Object} message - The user's message to reply to
@@ -467,8 +491,10 @@ exports.showLastEvols = function(player, message, evols) {
 	}
 
 	lastEvols.forEach(function(e, i) {
-		let dt = e.ts.toString().replace(/ \(.*\)$/, "").replace(/:\d\d /, " ");
-		let msg = "`"+dt+"`: "+e.unit_id;
+		let dt = e.ts.toString() // take timestamp from evolution e
+			.replace(/ \(.*\)$/, "") // remove useless duplicated time zone in parentheses
+			.replace(/:\d\d /, " "); // remove seconds
+		let msg = "`"+dt+":` "+e.unit_id;
 
 		maxDt = (e.ts>maxDt)? e.ts: maxDt;
 
@@ -480,7 +506,7 @@ exports.showLastEvols = function(player, message, evols) {
 				msg+= " unlocked";
 				break;
 			case "newGifts":
-				msg = "`"+dt+"`: player gave "+e.new_value+" item"+(e.new_value===1? '': 's');
+				msg = "`"+dt+":` player gave "+e.new_value+" item"+(e.new_value===1? '': 's');
 				break;
 			case "relic":
 				msg+= " turned R"+e.new_value;

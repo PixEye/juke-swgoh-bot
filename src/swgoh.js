@@ -22,7 +22,7 @@ const config = require("./config.json");
 //const mysql = require("mysql");
 
 // Load other modules:
-//nst locutus = require("./locutus"); // Functions from locutus.io
+const locutus = require("./locutus"); // Functions from locutus.io
 //nst swgoh   = require("./swgoh");  // SWGoH API of this bot (self file)
 const tools   = require("./tools"); // Several functions
 const view    = require("./view"); // Functions used to display results
@@ -60,7 +60,7 @@ exports.getPlayerData = async function(users, message, callback) {
 			playersByAllycode[user.allycode] = user;
 		});
 
-		let input  = { "allycodes": allycodes }; // payload
+		let input = { "allycodes": allycodes }; // payload
 		if (allycodes.length<1) {
 			console.warn(logPrefix()+allycodes.length+" allycodes found!");
 			return;
@@ -69,17 +69,22 @@ exports.getPlayerData = async function(users, message, callback) {
 		let { result, error, warning } = await swapi.fetchPlayer(input); // <--
 		let richMsg = null;
 		let roster = null;
-		let stats  = null;
+		let stats = null;
 
 		/* if (warning) { // useless
-			if (warning.error && warning.error===warning.message) delete warning.error;
+			if (warning.error && warning.error===warning.message) {
+				delete warning.error; // avoid to log duplicated data
+			}
 			console.warn(logPrefix()+"GetPlayerData WARN: ", warning);
 			message.channel.send(warning.message);
 		} // */
 
 		if (error) {
-			if (error.error && error.error===error.message) delete error.error;
+			if (error.error && error.error===error.message) {
+				delete error.error; // avoid to log duplicated data
+			}
 			console.warn(logPrefix()+"GetPlayerData ERR: ", error);
+
 			if ( ! error.description ) {
 				message.channel.send(error.message);
 			} else {
@@ -252,10 +257,13 @@ exports.getPlayerData = async function(users, message, callback) {
 			player.giftCount = clean_stats.TOTAL_GUILD_EXCHANGE_DONATIONS_TU07_2;
 			player.zetaCount = zetaCount;
 
-			if (typeof(callback)==="function") callback(player, message);
+			if (typeof(callback)==="function") {
+				callback(player, message);
+			}
 		});
 	} catch(ex) {
-		let msg = "Failed to get player with allycode: "+allycode;
+		allycode = allycode? allycode: user.allycode;
+		let msg = "Failed to get player's data with allycode: "+allycode;
 
 		console.log(logPrefix()+"Player exception: ", ex);
 		richMsg = new RichEmbed().setTitle("Error!").setColor("RED")
@@ -285,33 +293,31 @@ exports.getPlayerGuild = async function(allycodes, message, callback) {
 		}
 
 		let allycode = allycodes[0]; // keep only the first one: 1 guild at once
-		let input  = { "allycodes": allycodes }; // payload
+		let input = { "allycodes": allycodes }; // payload
 		let locale = config.discord.locale; // shortcut
 		let { result, error, warning } = await swapi.fetchGuild(input); // <--
 		let richMsg = null;
 		let roster = null;
 
 		/* if (warning) { // useless
-			if (warning.error && warning.error===warning.message) delete warning.error;
-			console.log(logPrefix()+"GPG WARN: ", warning);
+			if (warning.error && warning.error===warning.message) {
+				delete warning.error; // avoid to log duplicated data
+			}
+			console.warn(logPrefix()+"GPG WARN: ", warning);
 			message.channel.send(warning.message);
 		} // */
 
 		if (error) {
 			if (error.error && error.error===error.message) {
-				delete error.error;
+				delete error.error; // avoid to log duplicated data
 			}
-			console.log(logPrefix()+"GPG ERR: ", error);
+			console.warn(logPrefix()+"GPG ERR: ", error);
 
-			msg = error.message;
-			richMsg = new RichEmbed().setTitle("Error!").setColor("RED")
-				.setDescription(msg)
-				.setFooter(config.footer.message, config.footer.iconUrl);
-			message.channel.send(richMsg).catch(function(ex) {
-				console.warn(ex);
-				message.reply(ex.message);
-				message.channel.send(msg);
-			});
+			if ( ! error.description ) {
+				message.channel.send(error.message);
+			} else {
+				message.channel.send("**"+error.message+":** "+error.description);
+			}
 			return;
 		}
 
@@ -392,7 +398,9 @@ exports.getPlayerGuild = async function(allycodes, message, callback) {
 
 		console.log(logPrefix()+"Found %d players in guild:", Object.keys(guild.players).length, guild.name);
 
-		if (typeof(callback)==="function") callback(guild);
+		if (typeof(callback)==="function") {
+			callback(guild);
+		}
 	} catch(ex) {
 		console.log(logPrefix()+"Guild exception: ", ex);
 		msg = "Failed to get guild with ally: "+allycode;
@@ -413,6 +421,7 @@ exports.getPlayerGuild = async function(allycodes, message, callback) {
  * @param {function} callback - Function to call once the data is retrieved
  */
 exports.fetch = async function(users, message, callback) {
+	let allycode = 0;
 	let allowedEndpoints = "player, guild, units, data, zetas, squads, events, battles".split(", ");
 	let logPrefix = tools.logPrefix;
 	let endpoint = 'units';
@@ -429,20 +438,30 @@ exports.fetch = async function(users, message, callback) {
 			playersByAllycode[user.allycode] = user;
 		});
 
-		let input  = { "allycodes": allycodes }; // payload
+		let input = { "allycodes": allycodes }; // payload
 		if ( typeof(allycodes)!=="object" || ! (allycodes instanceof Array) ) {
 			allycodes = [allycodes];
 		}
+		allycode = allycodes[0]; // keep only the first one: 1 guild at once
 
-		let allycode = allycodes[0]; // keep only the first one: 1 guild at once
+		console.log(logPrefix()+"Fetchind from message with words:", message.words);
+		// Use first remaining word of the user's message to adapt endpoint:
+		let firstLCWord = message.words[0].toLowerCase();
+		if (allowedEndpoints.indexOf(firstLCWord)>=0) {
+			endpoint = firstLCWord;
+		}
+
 		let locale = config.discord.locale; // shortcut
-		let { result, error, warning } = await swapi.fetch(endpoint, input); // <--
+	//	let { result, error, warning } = await swapi.fetch(endpoint, input); // does not work
+		endpoint = 'fetch'+locutus.ucfirst(endpoint);
+		console.log(logPrefix()+"Fetchind SWGoH data with method:", endpoint);
+		let { result, error, warning } = await swapi[endpoint](input); // <--
 		let richMsg = null;
 		let roster = null;
 
 		if (error) {
 			if (error.error && error.error===error.message) {
-				delete error.error;
+				delete error.error; // avoid to log duplicated data
 			}
 			console.log(logPrefix()+"GPG ERR: ", error);
 
@@ -460,7 +479,7 @@ exports.fetch = async function(users, message, callback) {
 
 		if (!result) {
 			// Fail:
-			msg = "Guild with ally "+allycode+" not found: "+typeof(player);
+			msg = "Fetching from allycodes "+allycode+" failed. Result type: "+typeof(result);
 			console.log(logPrefix()+msg);
 			richMsg = new RichEmbed().setTitle("Warning!").setColor("ORANGE")
 				.setDescription([msg])
@@ -473,9 +492,13 @@ exports.fetch = async function(users, message, callback) {
 			return;
 		}
 		console.log('Result:', result);
+		if (typeof(callback)==="function") {
+			callback(result, message);
+		}
 	} catch(ex) {
-		console.log(logPrefix()+"Guild exception: ", ex);
-		msg = "Failed to get guild with ally: "+allycode;
+		console.log(logPrefix()+"Fetching exception: ", ex);
+		allycode = allycode? allycode: user.allycode;
+		msg = "Failed to fetch data from allycode: "+allycode;
 		richMsg = new RichEmbed().setTitle("Error!").setColor("RED")
 			.setDescription([msg])
 			.setFooter(config.footer.message, config.footer.iconUrl);
