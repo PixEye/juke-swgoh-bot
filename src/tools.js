@@ -543,6 +543,9 @@ exports.getUnregPlayers = function(allycode, message) {
 				let n = allycodes.length;
 
 				console.log(logPrefix()+"GUP: received %d user(s).", n);
+				if (n !== guild.memberCount) { // data check
+					console.warn("allycodes.length (%d) !== guild.memberCount (%d)!", n, guild.memberCount);
+				}
 
 				db_pool.query(sql, [allycodes], function(exc, regPlayers) {
 					let dbRegByAc = {};
@@ -562,7 +565,12 @@ exports.getUnregPlayers = function(allycode, message) {
 
 					console.log(logPrefix()+msg, regPlayers.length, n);
 
+					let gonePlayers = [];
 					regPlayers.forEach(function(regPlayer) {
+						if (regPlayer.guildRefId !== guild.swgoh_id) {
+							gonePlayers.push(regPlayer.game_name+" ("+regPlayer.allycode+")");
+						}
+
 						if (guild.players[regPlayer.allycode]) {
 							dbRegByAc[regPlayer.allycode] = regPlayer;
 							if ( ! regPlayer.gp ) {
@@ -573,6 +581,12 @@ exports.getUnregPlayers = function(allycode, message) {
 							++nbReg;
 						}
 					});
+
+					if (gonePlayers.length) {
+						msg = gonePlayers.length+" player(s) to update: "+gonePlayers.join(", ")+".";
+						console.warn(logPrefix()+msg);
+						message.reply(msg);
+					}
 
 					n-= nbReg;
 					msg = n+' unknown player(s) found in guild "'+guild.name+'"';

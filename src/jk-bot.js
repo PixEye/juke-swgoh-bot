@@ -166,6 +166,8 @@ client.on("message", (message) => {
 		case "allycode":
 			sql = "SELECT * FROM `users` WHERE "+searchStr;
 			db_pool.query(sql, function(exc, result) {
+				let guilds = {};
+
 				if (exc) {
 					console.log("SQL:", sql);
 					console.log(logPrefix()+"AC Exception:", exc.sqlMessage? exc.sqlMessage: exc);
@@ -177,8 +179,6 @@ client.on("message", (message) => {
 						console.log(logPrefix()+msg);
 						message.reply(msg);
 					} else if (result.length > 1) {
-						let guilds = {};
-
 						lines.push("There are "+result.length+" matches:");
 						result.forEach(function(user) {
 							msg = " is allycode of: "+user.game_name;
@@ -193,6 +193,10 @@ client.on("message", (message) => {
 					} else { // 1 result here
 						user = result[0];
 						msg = user.game_name+"'s allycode is: "+user.allycode;
+						if (user.guildRefId) {
+							msg+= " (from guild ID: "+user.guildRefId+")";
+							guilds[user.guildRefId] = user.guildRefId;
+						}
 						console.log(logPrefix()+msg);
 						message.channel.send(msg);
 					}

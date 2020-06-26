@@ -131,8 +131,9 @@ exports.getPlayerData = async function(users, message, callback) {
 			/* { id: 'P2763...', name: '...', level: 85, allyCode (number),
 			  titles: 'departed', guildRefId: 'G15...', guildName, guildBannerColor: 'white_red',
 			  guildBannerLogo: 'guild_icon_senate', guildTypeId: 'NORMAL' } */
-			if (player.guildRefId==='G1582274835')
+			if (player.guildRefId==='G1582274835') {
 				player.guildName = 'Force Francophone'; // Custom hack
+			}
 
 			// console.log("-----");
 			// console.log("First unit of the player's roster:");
@@ -355,8 +356,6 @@ exports.getPlayerGuild = async function(allycodes, message, callback) {
 		// id, guildMemberLevel (3), name, level (85), allyCode, gp, gpChar, gpShip, updated (bigint)
 		console.log("====="); // */
 
-		if (guild.id==='G1582274835') guild.name = 'Force Francophone'; // Custom hack
-
 		guild.biggestPlayer = {gp: 0};
 		guild.gpChar = 0;
 		guild.gpShip = 0;
@@ -365,8 +364,13 @@ exports.getPlayerGuild = async function(allycodes, message, callback) {
 		guild.officerNames = [];
 		guild.players = {}; // allycode => (IG nick) name
 		guild.refId = guild.id;
+		guild.swgoh_id = guild.id;
 		delete guild.members; // better named: memberCount
 		delete guild.roster; // better named: players
+
+		if (guild.swgoh_id==='G1582274835') { // Custom hack
+			guild.name = 'Force Francophone';
+		}
 
 		roster.forEach(function(player) {
 			guild.gpChar+= player.gpChar;
