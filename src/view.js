@@ -128,7 +128,7 @@ exports.guildPlayerStats = function(allycode, message, guild) {
 			statStr.push(val);
 		});
 
-		let icon = ct>1? ":rocket:": ":man_standing:";
+		let icon = ct>1? ":rocket:": ":fencer:"; // was: ":man_standing:";
 
 		if (stat.count) {
 			statStr = statStr.join("/ ");

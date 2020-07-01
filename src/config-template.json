@@ -4,10 +4,12 @@
     "toonMinStars": 7,
     "unitsOfInterest": [
       "Capital Finalizer", "Capital Malevolence", "Capital Negotiator", "Capital Raddus",
-      "Hounds Tooth", "Millennium Falcon",
+      "Hounds Tooth", "Millennium Falcon", "Ywing Clone Wars", "Ywing Rebel",
 
       "Darth Malak", "Darth Revan", "Darth Traya",
-      "General Skywalker", "Geonosian Brood Alpha", "Grievous", "Jedi Knight Revan"
+      "General Skywalker", "Geonosian Brood Alpha", "Grievous",
+      "Jedi Knight Luke Skywalker", "Jedi Knight Revan",
+      "Rey", "Supreme Leader Kylo Ren"
     ]
   },
   "db": {
