@@ -60,13 +60,14 @@ exports.getPlayerData = async function(users, message, callback) {
 			playersByAllycode[user.allycode] = user;
 		});
 
-		let input = { "allycodes": allycodes }; // payload
+		let payload = { "allycodes": allycodes };
 		if (allycodes.length<1) {
 			console.warn(logPrefix()+allycodes.length+" allycodes found!");
 			return;
 		}
 
-		let { result, error, warning } = await swapi.fetchPlayer(input); // <--
+		console.log(logPrefix()+"Payload:", payload);
+		let { result, error, warning } = await swapi.fetchPlayer(payload); // <--
 		let richMsg = null;
 		let roster = null;
 		let stats = null;
@@ -294,9 +295,10 @@ exports.getPlayerGuild = async function(allycodes, message, callback) {
 		}
 
 		let allycode = allycodes[0]; // keep only the first one: 1 guild at once
-		let input = { "allycodes": allycodes }; // payload
+		let payload = { "allycodes": allycodes };
 		let locale = config.discord.locale; // shortcut
-		let { result, error, warning } = await swapi.fetchGuild(input); // <--
+		console.log(logPrefix()+"Payload:", payload);
+		let { result, error, warning } = await swapi.fetchGuild(payload); // <--
 		let richMsg = null;
 		let roster = null;
 
@@ -442,7 +444,7 @@ exports.fetch = async function(users, message, callback) {
 			playersByAllycode[user.allycode] = user;
 		});
 
-		let input = { "allycodes": allycodes }; // payload
+		let payload = { "allycodes": allycodes };
 		if ( typeof(allycodes)!=="object" || ! (allycodes instanceof Array) ) {
 			allycodes = [allycodes];
 		}
@@ -456,10 +458,11 @@ exports.fetch = async function(users, message, callback) {
 		}
 
 		let locale = config.discord.locale; // shortcut
-	//	let { result, error, warning } = await swapi.fetch(endpoint, input); // does not work
+	//	let { result, error, warning } = await swapi.fetch(endpoint, payload); // does not work
 		endpoint = 'fetch'+locutus.ucfirst(endpoint);
+		console.log(logPrefix()+"Payload:", payload);
 		console.log(logPrefix()+"Fetchind SWGoH data with method:", endpoint);
-		let { result, error, warning } = await swapi[endpoint](input); // <--
+		let { result, error, warning } = await swapi[endpoint](payload); // <--
 		let richMsg = null;
 		let roster = null;
 
