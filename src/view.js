@@ -643,8 +643,42 @@ exports.showPlayerStats = function(player, message) {
 		.setDescription(lines).setTimestamp(player.updated)
 		.setFooter(config.footer.message, config.footer.iconUrl);
 
-	if (player.displayAvatarURL)
+	if (player.displayAvatarURL) {
 		richMsg.setThumbnail(player.displayAvatarURL);
+	}
+
+	message.reply(richMsg).catch(function(ex) {
+		console.warn(ex);
+		message.reply(ex.message);
+		message.channel.send(lines);
+	});
+};
+
+/** Show a player's random team (RAND command)
+ * @param {Object} player - The user's profile as an object
+ * @param {Object} message - The user's message to reply to
+ */
+exports.showRandomTeam = function(player, message) {
+	let lines = [];
+	let locale = config.discord.locale; // shortcut
+	let logPrefix = exports.logPrefix; // shortcut
+
+	if (!player.name) {
+		console.log(logPrefix()+"invalid name at V55 for user:", player);
+		return;
+	}
+
+	lines = [
+		"TODO"
+	];
+
+	let richMsg = new RichEmbed().setTitle(player.name+"'s profile").setColor("GREEN")
+		.setDescription(lines).setTimestamp(player.updated)
+		.setFooter(config.footer.message, config.footer.iconUrl);
+
+	if (player.displayAvatarURL) {
+		richMsg.setThumbnail(player.displayAvatarURL);
+	}
 
 	message.reply(richMsg).catch(function(ex) {
 		console.warn(ex);

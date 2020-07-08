@@ -669,6 +669,23 @@ client.on("message", (message) => {
 			}
 			break;
 
+		case "rf":
+		case "randomFleet":
+
+		case "rt":
+		case "rand":
+		case "random":
+		case "randomTeam":
+			if (allycode) {
+				tools.getPlayerStats(player, message, view.showRandomTeam);
+			} else {
+				console.log(logPrefix()+"Try with user ID:", user.id);
+				tools.getPlayerFromDiscordUser(user, message, function(player) {
+					tools.getPlayerStats(player, message, view.showRandomTeam);
+				});
+			}
+			break;
+
 		case "reg":
 		case "register":
 			if (!allycode) {
