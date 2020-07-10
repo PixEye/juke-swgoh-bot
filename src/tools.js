@@ -460,13 +460,13 @@ exports.getPlayerFromDiscordUser = function(user, message, callback) {
 		}
 
 		console.log(logPrefix()+result.length+" record(s) match(es) user's ID:", discord_id);
-		// console.dir(result);
 		if (result.length > 1) {
 			let color  = "ORANGE";
 			let guilds = {};
 			let lines  = [];
 			let title  = result.length+" record(s) match(es) this Discord ID!";
 
+			console.warn(title);
 			result.forEach(function(user) {
 				let msg = " is allycode of: "+user.game_name;
 
@@ -493,7 +493,6 @@ exports.getPlayerFromDiscordUser = function(user, message, callback) {
 
 			player.displayAvatarURL = user.displayAvatarURL;
 			console.log(logPrefix()+"Found allycode: %d (%s)", player.allycode, player.discord_name);
-			// console.log(logPrefix()+"Avatar URL:", user.displayAvatarURL);
 
 			if (typeof(callback)==="function") callback(player);
 		} else { // no match:
@@ -519,7 +518,7 @@ exports.getPlayerStats = function(users, message, callback) {
 		return;
 	}
 
-	let str = typeof(allycodes)==="number"? allycodes+"'s": allycodes.length+" allycodes";
+	let str = allycodes.length===1? allycodes[0]+"'s": allycodes.length+" allycodes";
 
 	message.channel.send("Looking for "+str+" stats...")
 		.then(msg => {
