@@ -84,7 +84,7 @@ exports.getPlayerData = async function(users, message, callback) {
 			if (error.error && error.error===error.message) {
 				delete error.error; // avoid to log duplicated data
 			}
-			console.warn(logPrefix()+"GetPlayerData ERR: ", error);
+			console.warn(logPrefix()+"SWGoH.help API GetPlayerData() ERR: ", error);
 
 			if ( ! error.description ) {
 				message.channel.send(error.message);
@@ -94,7 +94,7 @@ exports.getPlayerData = async function(users, message, callback) {
 			return;
 		}
 
-		allycode = allycodes[0]; // TODO: a loop to handle multiple players
+		allycode = allycodes[0];
 
 		if (!result) {
 			// Fail:
@@ -117,7 +117,8 @@ exports.getPlayerData = async function(users, message, callback) {
 		result.forEach(function(player) {
 			let clean_stats = null;
 
-			roster = player.roster;
+			allycode = player.allyCode;
+			roster  = player.roster;
 			stats  = player.stats;
 
 			player.displayAvatarURL = playersByAllycode[allycode].displayAvatarURL;

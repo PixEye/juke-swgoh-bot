@@ -450,7 +450,11 @@ exports.getPlayerFromDatabase = function(allycode, message, callback) {
 exports.getPlayerFromDiscordUser = function(user, message, callback) {
 	let discord_id = user.id;
 	let logPrefix = exports.logPrefix; // shortcut
-	let sql = "SELECT * FROM `users` WHERE discord_id="+parseInt(discord_id);
+	let sql =
+		"SELECT u.*, g.name AS guild_name"+
+		" FROM `users` u, `guilds` g"+
+		" WHERE u.discord_id="+parseInt(discord_id)+
+		" AND u.guildRefId=g.swgoh_id";
 
 	db_pool.query(sql, function(exc, result) {
 		if (exc) {
@@ -464,14 +468,15 @@ exports.getPlayerFromDiscordUser = function(user, message, callback) {
 			let color  = "ORANGE";
 			let guilds = {};
 			let lines  = [];
+			let now    = new Date();
 			let title  = result.length+" record(s) match(es) this Discord ID!";
 
-			console.warn(title);
+			console.warn(logPrefix()+title);
 			result.forEach(function(user) {
-				let msg = " is allycode of: "+user.game_name;
+				let msg = " is allycode of: **"+user.game_name+"**";
 
 				if (user.guildRefId) {
-					msg+= " (from guild ID: "+user.guildRefId+")";
+					msg+= " (from guild: "+user.guild_name+")";
 					guilds[user.guildRefId] = user.guildRefId;
 				}
 				console.log(logPrefix()+user.allycode+msg);
@@ -479,7 +484,7 @@ exports.getPlayerFromDiscordUser = function(user, message, callback) {
 			});
 
 			let richMsg = new RichEmbed().setColor(color).setTitle(title)
-				.setDescription(lines)
+				.setDescription(lines).setTimestamp(now)
 				.setFooter(config.footer.message, config.footer.iconUrl);
 
 			message.reply(richMsg).catch(function(ex) {

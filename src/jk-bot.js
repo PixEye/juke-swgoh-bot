@@ -99,17 +99,17 @@ client.on("message", (message) => {
 	console.log(logPrefix()+"/ \""+nick+"\" sent command: "+message.content);
 
 	search = words.join(" ").replace("'", "");
-	searchStr = "users.discord_name LIKE '%"+search+"%' OR users.game_name LIKE '%"+search+"%'";
+	searchStr = "u.discord_name LIKE '%"+search+"%' OR u.game_name LIKE '%"+search+"%'";
 
 	// Extract user's tag (if any):
 	if (message.mentions && message.mentions.users && message.mentions.users.first()) {
 		user = message.mentions.users.first();
 		nick = locutus.utf8_decode(user.username);
 		search = user.id;
-		searchStr = "users.discord_id="+search;
+		searchStr = "u.discord_id="+search;
 	} else if (words.join("").trim()==="") {
 		search = user.id;
-		searchStr = "users.discord_id="+search;
+		searchStr = "u.discord_id="+search;
 	}
 	allycode = tools.getFirstAllycodeInWords(words);
 	player = {"allycode": allycode};
@@ -164,7 +164,11 @@ client.on("message", (message) => {
 
 		case "ac":
 		case "allycode":
-			sql = "SELECT * FROM `users` WHERE "+searchStr;
+			sql =
+				"SELECT u.*, g.name AS guild_name"+
+				" FROM `users` u, `guilds` g"+
+				" WHERE u.guildRefId=g.swgoh_id AND ("+searchStr+")";
+
 			db_pool.query(sql, function(exc, result) {
 				let guilds = {};
 
@@ -183,7 +187,7 @@ client.on("message", (message) => {
 						result.forEach(function(user) {
 							msg = " is allycode of: "+user.game_name;
 							if (user.guildRefId) {
-								msg+= " (from guild ID: "+user.guildRefId+")";
+								msg+= " (from guild: "+user.guild_name+")";
 								guilds[user.guildRefId] = user.guildRefId;
 							}
 							lines.push("``"+user.allycode+"``"+msg);
@@ -194,7 +198,7 @@ client.on("message", (message) => {
 						user = result[0];
 						msg = user.game_name+"'s allycode is: "+user.allycode;
 						if (user.guildRefId) {
-							msg+= " (from guild ID: "+user.guildRefId+")";
+							msg+= " (from guild: "+user.guild_name+")";
 							guilds[user.guildRefId] = user.guildRefId;
 						}
 						console.log(logPrefix()+msg);
@@ -529,9 +533,9 @@ client.on("message", (message) => {
 		case "gg":
 		case "profile":
 			if (allycode) {
-				searchStr = "users.allycode="+allycode;
+				searchStr = "u.allycode="+allycode;
 			}
-			sql = "SELECT * FROM `users` WHERE "+searchStr;
+			sql = "SELECT u.* FROM `users` u WHERE "+searchStr;
 			db_pool.query(sql, function(exc, result) {
 				if (exc) {
 					console.log("SQL:", sql);
