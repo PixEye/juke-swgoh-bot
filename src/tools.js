@@ -211,8 +211,8 @@ exports.fetchSwgohData = function(player, message, callback) {
 
 /** Try to find an ally code in the words of the user's message */
 exports.getFirstAllycodeInWords = function(words) {
-	var allycode = 0;
-	var foundAt = -1;
+	let allycode = 0;
+	let foundAt = -1;
 	let logPrefix = exports.logPrefix; // shortcut
 
 	if (words.join("").trim().length>0) {
@@ -461,7 +461,34 @@ exports.getPlayerFromDiscordUser = function(user, message, callback) {
 
 		console.log(logPrefix()+result.length+" record(s) match(es) user's ID:", discord_id);
 		// console.dir(result);
-		if (result.length === 1) {
+		if (result.length > 1) {
+			let color  = "ORANGE";
+			let guilds = {};
+			let lines  = [];
+			let title  = result.length+" record(s) match(es) this Discord ID!";
+
+			result.forEach(function(user) {
+				let msg = " is allycode of: "+user.game_name;
+
+				if (user.guildRefId) {
+					msg+= " (from guild ID: "+user.guildRefId+")";
+					guilds[user.guildRefId] = user.guildRefId;
+				}
+				console.log(logPrefix()+user.allycode+msg);
+				lines.push("``"+user.allycode+"``"+msg);
+			});
+
+			let richMsg = new RichEmbed().setColor(color).setTitle(title)
+				.setDescription(lines)
+				.setFooter(config.footer.message, config.footer.iconUrl);
+
+			message.reply(richMsg).catch(function(ex) {
+				console.warn(ex);
+				message.reply(ex.message);
+				message.reply(title);
+				message.channel.send(lines);
+			});
+		} else if (result.length === 1) { // 1 match, perfect!
 			let player = result[0];
 
 			player.displayAvatarURL = user.displayAvatarURL;
@@ -469,11 +496,10 @@ exports.getPlayerFromDiscordUser = function(user, message, callback) {
 			// console.log(logPrefix()+"Avatar URL:", user.displayAvatarURL);
 
 			if (typeof(callback)==="function") callback(player);
-			return;
+		} else { // no match:
+			console.log(logPrefix()+"Allycode not found"); // Normal for "self(y)" command
+			message.reply("This user has no player ID. You may try: "+config.discord.prefix+"register ally-code");
 		}
-
-		console.log(logPrefix()+"Allycode not found"); // Normal for "self(y)" command
-		message.reply("This user has no player ID. You may try: "+config.discord.prefix+"register ally-code");
 	});
 };
 
