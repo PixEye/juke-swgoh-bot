@@ -88,7 +88,7 @@ client.on("message", (message) => {
 	}
 
 	if (message.channel.type==="dm") {
-		words = message.content.trim().toLowerCase().replace(config.discord.prefix, "");
+		words = message.content.trim().replace(config.discord.prefix, "");
 	} else {
 		words = message.content.slice(config.discord.prefix.length);
 	}
