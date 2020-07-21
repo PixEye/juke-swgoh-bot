@@ -935,7 +935,7 @@ client.on("message", (message) => {
 			let nbg = 0; // number of registered guilds
 			let nbp = 0; // number of registered players
 
-			message.channel.send("I am listening since: "+start);
+			message.channel.send("I am listening since: "+tools.toMySQLdate(start));
 
 			sql = "SELECT COUNT(`id`) AS nbg FROM `guilds`";
 			db_pool.query(sql, countGuilds);

@@ -1139,7 +1139,10 @@ exports.stringsCompare = function(a, b) {
 	return a.localeCompare(b, undefined, {sensitivity: 'base'});
 };
 
-/** Generate a date string in MySQL format (if no date is given, now is used) */
+/** Generate a date string in MySQL format (if no date is given, now is used)
+ * @param {Date} d
+ * @return {string} simplified date
+ */
 exports.toMySQLdate = function(d) {
 	if (typeof(d)!=="object" || !(d instanceof Date)) {
 		d = new Date();
@@ -1148,9 +1151,10 @@ exports.toMySQLdate = function(d) {
 	// d = d.toISOString("en-ZA").replace(/\//g, "-").replace(",", "").substr(0, 19);
 	// toLocaleString("en-ZA"):
 	//	2020/05/07, 16:13:45
-	// target format example:
+
+	// Target format example:
 	//	2020-05-07 16:13:45
-	d = d.toISOString().replace("T", " ").replace(/z$/i, "");
+	d = d.toISOString().replace("T", " ").replace(/z$/i, "").replace(/\..*$/, "");
 
 	return d;
 };
@@ -1300,7 +1304,7 @@ exports.updatePlayerDataInDb = function(player, message, callback) {
 		// Remember user's stats:
 		let update = new Date(player.updated);
 
-		update = update.toISOString().replace("T", " ").replace(/z$/i, "");
+		update = exports.toMySQLdate(update);
 
 		let sql2 = "UPDATE users SET"+
 			" game_name="+mysql.escape(player.name)+","+
