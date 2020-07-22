@@ -259,11 +259,17 @@ exports.showGuildStats = function(guild, message) {
 		.setTimestamp(guild.updated)
 		.setFooter(config.footer.message, config.footer.iconUrl);
 
-	if (guild.required)
-		richMsg.addField("Required level:", "≥ "+guild.required, true)
+	if (guild.bannerLogo) {
+		richMsg.setThumbnail("https://swgoh.gg/static/img/assets/tex."+guild.bannerLogo+".png");
+	}
 
-	if (guild.message)
+	if (guild.required) {
+		richMsg.addField("Required level:", "≥ "+guild.required, true)
+	}
+
+	if (guild.message) {
 		richMsg.addField("Yellow banner:", guild.message, true)
+	}
 
 	message.reply(richMsg).catch(function(ex) {
 		console.warn(ex);

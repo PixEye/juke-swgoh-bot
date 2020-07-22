@@ -347,7 +347,7 @@ exports.getPlayerGuild = async function(allycodes, message, callback) {
 		/*
 		guild.roster = "departed";
 		console.log(logPrefix()+"Guild:");
-		console.dir(result); // id (G1582274...), name, desc, members (int), status (2),
+		console.dir(guild); // id (G1582274...), name, desc, members (int), status (2),
 			// required (85), bannerColor (white_red), bannerLogo (guild_icon_senate),
 			// message (current yellow banner content), gp,
 			// raid: { rancor: 'HEROIC80', aat: 'HEROIC80', sith_raid: 'HEROIC85' }
