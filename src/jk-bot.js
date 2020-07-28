@@ -13,7 +13,7 @@ const { Client, RichEmbed } = require("discord.js");
 const client = new Client();
 
 // Remember when this program started:
-const start = Date();
+const start = new Date();
 
 // Database connection:
 const mysql = require("mysql");
