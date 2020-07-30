@@ -1095,8 +1095,9 @@ exports.refreshGuildStats = function(allycode, message, callback) {
 /** Remember stats of the guild */
 exports.rememberGuildStats = function(guild) {
 	let logPrefix = exports.logPrefix; // shortcut
-	let sql = "INSERT INTO `guilds` (swgoh_id, name, gp, memberCount) VALUES ?";
-	let values = [[guild.id, guild.name, guild.gp, guild.memberCount]];
+	let sql = "INSERT INTO `guilds` (swgoh_id, name, gp, memberCount, ts) VALUES ?";
+	let update = new Date(guild.updated);
+	let values = [[guild.id, guild.name, guild.gp, guild.memberCount, update]];
 
 	db_pool.query(sql, [values], function(exc, result) {
 		if (exc) {
@@ -1106,8 +1107,8 @@ exports.rememberGuildStats = function(guild) {
 			console.log(logPrefix()+"GS Exception:", otd);
 
 			// Retry with an UPDATE:
-			sql = "UPDATE `guilds` SET name=?, gp=?, memberCount=? WHERE swgoh_id=?";
-			values = [guild.name, guild.gp, guild.memberCount, guild.id];
+			sql = "UPDATE `guilds` SET name=?, gp=?, memberCount=?, ts=? WHERE swgoh_id=?";
+			values = [guild.name, guild.gp, guild.memberCount, update, guild.id];
 
 			db_pool.query(sql, values, function(exc, result) {
 				if (exc) {
