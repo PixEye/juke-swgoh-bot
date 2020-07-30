@@ -164,46 +164,68 @@ client.on("message", (message) => {
 
 		case "ac":
 		case "allycode":
-			sql =
-				"SELECT u.*, g.name AS guild_name"+
-				" FROM `users` u, `guilds` g"+
-				" WHERE u.guildRefId=g.swgoh_id AND ("+searchStr+")";
+			sql = "SELECT u.* FROM `users` u WHERE "+searchStr;
 
-			db_pool.query(sql, function(exc, result) {
-				let guilds = {};
+			/*	"SELECT u.*, g.name AS guild_name"+ // does not work if guild is unknown!
+				" FROM `users` u, `guilds` g"+
+				" WHERE u.guildRefId=g.swgoh_id AND ("+searchStr+")"; */
+
+			db_pool.query(sql, function(exc, users) {
+				let guildIds = {};
 
 				if (exc) {
 					console.log("SQL:", sql);
 					console.log(logPrefix()+"AC Exception:", exc.sqlMessage? exc.sqlMessage: exc);
-				} else {
-					console.log(logPrefix()+""+result.length+" record(s) match(es):", search);
-					// console.dir(result);
-					if (result.length <= 0) {
-						msg = "No match found!";
-						console.log(logPrefix()+msg);
-						message.reply(msg);
-					} else if (result.length > 1) {
-						lines.push("There are "+result.length+" matches:");
-						result.forEach(function(user) {
+					return;
+				}
+
+				console.log(logPrefix()+""+users.length+" record(s) match(es):", search);
+				// console.dir(users);
+				if (users.length <= 0) {
+					console.log(sql);
+
+					msg = "No match found!";
+					console.log(logPrefix()+msg);
+					message.reply(msg);
+				} else { // 1 or more results:
+					// lines.push("There are "+users.length+" matches:");
+					users.forEach(function(user) {
+						if (user.guildRefId) {
+							guildIds[user.guildRefId] = user.guildRefId;
+						}
+					});
+
+					sql = "SELECT * from `guilds` WHERE swgoh_id IN (?)";
+					guildIds = Object.keys(guildIds); // convert object to array
+					db_pool.query(sql, [guildIds], function(exc, dbGuilds) {
+						let guildDescr = {};
+
+						if (exc) {
+							console.log("SQL:", sql);
+							console.log(logPrefix()+"AC Exception:", exc.sqlMessage? exc.sqlMessage: exc);
+							return;
+						}
+
+						dbGuilds.forEach(function(guild) {
+							guildDescr[guild.swgoh_id] = guild.name.trim();
+							if (guild.memberCount) {
+								guildDescr[guild.swgoh_id]+= ' / '+guild.memberCount+' members';
+							}
+							if (guild.pg) {
+								guildDescr[guild.swgoh_id]+= ' [PG: '+guild.pg+']';
+							}
+						});
+
+						users.forEach(function(user) {
 							msg = " is allycode of: "+user.game_name;
-							if (user.guildRefId) {
-								msg+= " (from guild: "+user.guild_name+")";
-								guilds[user.guildRefId] = user.guildRefId;
+							if (user.guildRefId && typeof(guildDescr[user.guildRefId])==='string') {
+								msg+= " (from guild: "+guildDescr[user.guildRefId]+")";
 							}
 							lines.push("``"+user.allycode+"``"+msg);
 							console.log(logPrefix()+user.allycode+msg);
 						});
 						message.reply(lines);
-					} else { // 1 result here
-						user = result[0];
-						msg = user.game_name+"'s allycode is: "+user.allycode;
-						if (user.guildRefId) {
-							msg+= " (from guild: "+user.guild_name+")";
-							guilds[user.guildRefId] = user.guildRefId;
-						}
-						console.log(logPrefix()+msg);
-						message.channel.send(msg);
-					}
+					});
 				}
 			});
 			break;
