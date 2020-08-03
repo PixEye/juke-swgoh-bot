@@ -197,6 +197,9 @@ client.on("message", (message) => {
 
 					sql = "SELECT * from `guilds` WHERE swgoh_id IN (?)";
 					guildIds = Object.keys(guildIds); // convert object to array
+					if (!guildIds.length) {
+						guildIds = ['G1582274835']; // FF ID
+					}
 					db_pool.query(sql, [guildIds], function(exc, dbGuilds) {
 						let guildDescr = {};
 
