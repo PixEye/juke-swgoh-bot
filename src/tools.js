@@ -22,7 +22,7 @@ const config = require("./config.json");
 const mysql = require("mysql");
 
 // Load other module(s):
-//nst locutus = require("./locutus"); // Functions from locutus.io
+const locutus = require("./locutus"); // Functions from locutus.io
 const swgoh   = require("./swgoh");  // SWGoH API
 //nst tools   = require("./tools");   // Several functions (self file)
 const view    = require("./view"); // Functions used to display results
@@ -558,9 +558,6 @@ exports.getUnregPlayers = function(allycode, message) {
 			swgoh.getPlayerGuild(allycode, message, function(guild) {
 				if (typeof(msg.delete)==="function") msg.delete();
 
-				// Remember stats of the guild:
-				exports.rememberGuildStats(guild);
-
 				if (!guild.gp) {
 					msg = "GUP: invalid guild GP: "+guild.gp;
 					console.warn(logPrefix()+msg);
@@ -568,82 +565,104 @@ exports.getUnregPlayers = function(allycode, message) {
 					return;
 				}
 
-				let sql = "SELECT * FROM `users` WHERE allycode IN (?)";
-				let allycodes = Object.keys(guild.players);
-				let n = allycodes.length;
+				// Remember stats of the guild:
+				exports.rememberGuildStats(guild);
 
-				console.log(logPrefix()+"GUP: received %d user(s).", n);
-				if (n !== guild.memberCount) { // data check
-					console.warn("allycodes.length (%d) !== guild.memberCount (%d)!", n, guild.memberCount);
+				let sql = "SELECT * FROM `users` WHERE allycode IN (?)";
+				let guildAllycodes = Object.keys(guild.players);
+				let memberCnt = guildAllycodes.length;
+
+				console.log(logPrefix()+"GUP: %d guild member(s).", memberCnt);
+				if (memberCnt !== guild.memberCount) { // data check
+					// Should not happen
+					msg = "GUP: guildAllycodes.length (%d) !== guild.memberCount (%d)!";
+					console.warn(msg, memberCnt, guild.memberCount);
 				}
 
-				db_pool.query(sql, [allycodes], function(exc, regPlayers) {
+				let n = memberCnt;
+				db_pool.query(sql, [guildAllycodes], function(exc, regPlayers) {
 					let dbRegByAc = {};
-					let msg = "%d registered users out of %d.";
 					let nbReg = 0;
-					let notRegPlayers = [];
 					let noProbePlayers = [];
 
 					if (exc) {
 						let otd = exc.sqlMessage? exc.sqlMessage: exc; // obj to display
 
-						console.log(logPrefix()+"SQL:", sql);
-						console.log(logPrefix()+"GUP Exception:", otd);
-						message.reply("Failed!");
+						console.log(logPrefix()+"GUP SQL:", sql);
+						console.warn(logPrefix()+"GUP Exception:", otd);
+						message.reply("Failed! "+otd);
 						return;
 					}
 
-					console.log(logPrefix()+msg, regPlayers.length, n);
+					msg = "GUP: %d registered users out of %d.";
+					console.log(logPrefix()+msg, regPlayers.length, memberCnt);
 
-					let gonePlayers = [];
+					let gonePlayers = {};
 					regPlayers.forEach(function(regPlayer) {
+						dbRegByAc[regPlayer.allycode] =
+							locutus.utf8_decode(regPlayer.game_name)+" ("+regPlayer.allycode+")";
+
 						if (regPlayer.guildRefId !== guild.swgoh_id) {
-							gonePlayers.push(regPlayer.game_name+" ("+regPlayer.allycode+")");
+							gonePlayers[regPlayer.allycode] =
+								regPlayer.game_name+" ["+regPlayer.allycode+"]";
 						}
 
-						if (guild.players[regPlayer.allycode]) {
-							dbRegByAc[regPlayer.allycode] = regPlayer;
-							if ( ! regPlayer.gp ) {
-								noProbePlayers.push(
-									regPlayer.name+" ("+regPlayer.allycode+")"
-								);
-							}
-							++nbReg;
+						if ( ! regPlayer.gp ) {
+							noProbePlayers.push(
+								regPlayer.name+" ("+regPlayer.allycode+")"
+							);
+						}
+						++nbReg;
+
+						if ( ! guild.players[regPlayer.allycode] ) {
+							gonePlayers[regPlayer.allycode] =
+								regPlayer.game_name+" ("+regPlayer.allycode+")";
 						}
 					});
 
+					gonePlayers = Object.values(gonePlayers); // convert object to array
 					if (gonePlayers.length) {
 						msg = gonePlayers.length+" player(s) to update: "+gonePlayers.join(", ")+".";
 						console.warn(logPrefix()+msg);
 						message.reply(msg);
 					}
 
-					n-= nbReg;
-					msg = n+' unknown player(s) found in guild "'+guild.name+'"';
-					console.log(logPrefix()+msg);
+					n -= nbReg;
+					msg = ' unknown player(s) found in guild "'+guild.name+'"';
+					console.log(logPrefix()+n+msg);
 
 					if (!n) {
-						msg = ":white_check_mark: All "+allycodes.length+
-							' players in guild "'+guild.name+'" are registered.';
-					} else {
-						Object.keys(guild.players).forEach(function(allycode, i) {
-							if (!dbRegByAc[allycode])
-								notRegPlayers.push(guild.players[allycode]+" ("+allycode+")");
-						});
-
-						msg = "**"+msg+":** "+notRegPlayers.sort().join(", ")+".";
+						message.channel.send(":white_check_mark: All "+guildAllycodes.length+
+							' players in guild "'+guild.name+'" are registered.');
 					}
 
-					console.log(logPrefix()+"Not probed users count: "+noProbePlayers.length);
+					let notRegPlayers = [];
+					guildAllycodes.forEach(function(allycode) {
+						if (!dbRegByAc[allycode]) {
+							notRegPlayers.push(guild.players[allycode]+" ("+allycode+")");
+						}
+					});
+					dbRegByAc = Object.values(dbRegByAc).sort();
+					console.log(
+						logPrefix()+"GUP - "+dbRegByAc.length+" reg user(s): "+dbRegByAc.join(", ")
+					);
+
+					let userList = notRegPlayers.length? ": "+notRegPlayers.sort().join(", "): "";
+					msg = "**"+memberCnt+"**"+msg+userList+".";
+
+					console.log(logPrefix()+"GUP - Not probed users count: "+noProbePlayers.length);
 					if (noProbePlayers.length) {
 						msg = [msg, "**Not tested user(s):** "+noProbePlayers.join(", ")+"."];
 					}
 
 					message.channel.send(msg);
-				});
-			});
-		})
-		.catch(console.error);
+				}); // query
+			}); // get guild
+		}) // send msg
+		.catch(function(exc) {
+			console.error(exc);
+			message.reply(exc);
+		});
 };
 
 /** Manage players' behaviour notation (with colors) */

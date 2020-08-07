@@ -498,8 +498,9 @@ exports.showLastEvols = function(player, message, evols) {
 
 	lastEvols.forEach(function(e, i) {
 		let dt = e.ts.toString() // take timestamp from evolution e
-			.replace(/ \(.*\)$/, "") // remove useless duplicated time zone in parentheses
-			.replace(/:\d\d /, " "); // remove seconds
+			.replace(/ \(.*\)$/, "")  // remove useless duplicated time zone in parentheses
+			.replace(/:\d\d /, " ")  // remove seconds
+			.replace(/ \d{4}/, ""); // remove the year
 		let msg = "`"+dt+":` "+e.unit_id;
 
 		maxDt = (e.ts>maxDt)? e.ts: maxDt;
@@ -699,10 +700,13 @@ exports.showRandomTeam = function(player, message) {
  * @param {Object} message - The user's message to reply to
  */
 exports.showWhoIs = function(user, nick, message) {
+	let availability = user.presence.status.toUpperCase(); // DND, ONLINE, OFFLINE, ... (lowercase at first)
 	let lines = [
 			"**"+nick+" ID is:** "+user.id,
-			"**"+nick+" creation date is:**", " "+user.createdAt,
-			"**"+nick+" presence status is:** "+user.presence.status
+			"**"+nick+" creation date is:**", " "+(user.createdAt.toString()
+				.replace(/ \(.*\)$/, "")  // remove useless duplicated time zone in parentheses
+				.replace(/:\d\d /, " ")), // remove seconds
+			"**"+nick+" status is:** "+availability
 		];
 	let logPrefix = exports.logPrefix; // shortcut
 
