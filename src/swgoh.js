@@ -188,15 +188,30 @@ exports.getPlayerData = async function(users, message, callback) {
 
 				if (unit.gp) {
 					player.unitCount++;
+					unit.relics = (unit.relic && unit.relic.currentTier>1)? unit.relic.currentTier-2: 0;
+
+					// Fix: increase GP if relics:
+					switch(unit.relics) {
+						case 0: break;
+						case 1: unit.gp +=  255 +  504; break; //   9%
+						case 2: unit.gp +=  536 + 1059; break; //  20%
+						case 3: unit.gp +=  842 + 1664; break; //  31%
+						case 4: unit.gp += 1173 + 2319; break; //  43%
+						case 5: unit.gp += 1530 + 3024; break; //  57%
+						case 6: unit.gp += 2040 + 4032; break; //  76%
+						case 7: unit.gp += 2678 + 5292; break; // 100%
+						default: console.warn("Invalid relic level for %s:", unit.defId, unit.relics);
+					}
+
 					player.unitsData.push({
 						"allycode":   allycode,
 						"combatType": unit.combatType, // 1 = character, 2 = ship
 						"gear":       unit.gear,
 						"gp":         unit.gp,
-						"level":      unit.level,
+						"level":      unit.level, // 85
 						"mods":       unit.mods,
 						"name":       unit.defId,
-						"relic":      (unit.relic && unit.relic.currentTier>1)? unit.relic.currentTier-2: 0,
+						"relic":      unit.relics,
 						"stars":      unit.rarity,
 						"zetaCount":  unitZetas
 					});
