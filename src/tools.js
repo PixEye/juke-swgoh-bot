@@ -527,7 +527,7 @@ exports.getPlayerStats = function(users, message, callback) {
 
 	message.channel.send("Looking for "+str+" stats...")
 		.then(msg => {
-			swgoh.getPlayerData(users, message, function(player, message) {
+			swgoh.getPlayerData(users, function(player, message) {
 				if (typeof(msg.delete)==="function") msg.delete();
 
 				player.displayAvatarURL =
@@ -535,7 +535,7 @@ exports.getPlayerStats = function(users, message, callback) {
 				exports.updatePlayerDataInDb(player, message);
 
 				if (typeof(callback)==="function") callback(player, message);
-			});
+			}, message);
 		})
 		.catch(function(exc) {
 			if (msg && typeof(msg.delete)==="function") msg.delete();

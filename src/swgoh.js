@@ -38,10 +38,10 @@ const swapi = new ApiSwgohHelp({
 
 /** Get player(s)' data from the SWGoH Help API
  * @param {Array} users - An array of users' objects with: [allycode & displayAvatarURL] each
- * @param {Object} message - The user's message to reply to
  * @param {function} callback - Function to call once the data is retrieved
+ * @param {Object} [message] - The user's (optional) message to reply to
  */
-exports.getPlayerData = async function(users, message, callback) {
+exports.getPlayerData = async function(users, callback, message) {
 	let allycode = 0;
 	let logPrefix = tools.logPrefix;
 	let msg = "";
@@ -85,6 +85,7 @@ exports.getPlayerData = async function(users, message, callback) {
 				delete error.error; // avoid to log duplicated data
 			}
 			console.warn(logPrefix()+"SWGoH.help API GetPlayerData() ERR: ", error);
+			if (!message) return;
 
 			if ( ! error.description ) {
 				message.channel.send(error.message);
@@ -99,11 +100,13 @@ exports.getPlayerData = async function(users, message, callback) {
 		if (!result) {
 			// Fail:
 			console.log(logPrefix()+"Player "+allycode+" not found!");
+			if (!message) return;
 
 			msg = "Ally " + allycode+" not found!";
 			richMsg = new RichEmbed().setTitle("Warning!").setColor("ORANGE")
 				.setDescription([msg])
 				.setFooter(config.footer.message, config.footer.iconUrl);
+
 			message.channel.send(richMsg).catch(function(ex) {
 				console.warn(ex);
 				message.reply(ex.message);
@@ -280,10 +283,11 @@ exports.getPlayerData = async function(users, message, callback) {
 			}
 		});
 	} catch(ex) {
+		console.log(logPrefix()+"Player exception: ", ex);
+		if (!message) return;
+
 		allycode = allycode? allycode: user.allycode;
 		let msg = "Failed to get player's data with allycode: "+allycode;
-
-		console.log(logPrefix()+"Player exception: ", ex);
 		richMsg = new RichEmbed().setTitle("Error!").setColor("RED")
 			.setDescription([msg])
 			.setFooter(config.footer.message, config.footer.iconUrl)
