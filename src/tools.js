@@ -507,6 +507,11 @@ exports.getPlayerFromDiscordUser = function(user, message, callback) {
 	});
 };
 
+/** Get one or more players game stats
+ * @param {Object} users - An arry of users
+ * @param {Object} message - The message to reply to
+ * @param {Object} callback - The callback function
+ */
 exports.getPlayerStats = function(users, message, callback) {
 	let allycodes = [];
 	let playersByAllycode = {};
@@ -1035,6 +1040,47 @@ exports.logPrefix = function () {
 	return dt.toString().replace(/ GMT.*$$/, "")+" - ";
 };
 
+/** Run the periodical process */
+exports.periodicalProcess = function() {
+	let logPrefix = exports.logPrefix; // shortcut
+	let sql = "SELECT allycode, game_name, ts FROM users"+
+		" WHERE TIMESTAMPDIFF(DAY, ts, NOW())>1"+
+		" ORDER BY ts ASC LIMIT 1";
+
+	db_pool.query(sql, function(exc, users) {
+		if (exc) {
+			console.log("SQL:", sql);
+			console.log(logPrefix()+"Period Exception:", exc.sqlMessage? exc.sqlMessage: exc);
+			return;
+		}
+
+		console.log(logPrefix()+users.length+" record(s) match(es)"); // 1 match
+		if (users.length !== 1) return;
+
+		let u = users[0];
+		let msg = "Start periodical process on: %s (%s / %s)...";
+		console.log(logPrefix()+msg, u.game_name, u.allycode, exports.toMySQLdate(u.ts));
+		let message = {
+			author: {},
+			behaveCommand: '',
+			behaveDelta: 0,
+			channel: {
+				send: function() {}
+			},
+			reply: function() {},
+			unparsedArgs: []
+		};
+
+		swgoh.getPlayerData(users, function(player, message) {
+			exports.updatePlayerDataInDb(player, message, function() {
+				let msg = "Periodical process done for %s (%s).";
+
+				console.log(logPrefix()+msg, player.name, player.allycode);
+			});
+		});
+	});
+};
+
 /** Store guild data in our database */
 exports.refreshGuildStats = function(allycode, message, callback) {
 	let locale = config.discord.locale; // shortcut
@@ -1303,7 +1349,7 @@ exports.updatePlayerDataInDb = function(player, message, callback) {
 
 			msg = lines.length+" new evolution(s) detected for: "+player.name;
 			console.log(logPrefix()+msg);
-			if (lines.length) message.channel.send(msg);
+			if (message && lines.length) message.channel.send(msg);
 
 			if (lines.length) {
 				let sql1 = "INSERT INTO `evols` (allycode, unit_id, type, new_value, ts) VALUES ?";
@@ -1311,12 +1357,12 @@ exports.updatePlayerDataInDb = function(player, message, callback) {
 					if (exc) {
 						console.log("SQL:", sql1);
 						console.warn(logPrefix()+"UC Exception:", exc.sqlMessage? exc.sqlMessage: exc);
-						message.reply("Failed to save evolution(s)!");
+						if (message) message.reply("Failed to save evolution(s)!");
 						return;
 					}
 
 					console.log(logPrefix()+"%d evolution(s) inserted.", result.affectedRows);
-					view.showLastEvols(player, message, evols);
+					if (message) view.showLastEvols(player, message, evols);
 				});
 			}
 		}

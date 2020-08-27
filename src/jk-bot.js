@@ -56,6 +56,9 @@ client.on("ready", () => {
 	console.log(logPrefix()+"I am ready and listening.");
 	client.user.username = config.discord.username;
 	client.user.setPresence({game: {name: config.discord.prefix + "help", type: "listening"}});
+
+	tools.periodicalProcess(true);
+	setInterval(tools.periodicalProcess, 240000); // 240'000 ms = 4 minutes
 });
 
 // Get errors (if any):
@@ -181,7 +184,7 @@ client.on("message", (message) => {
 					return;
 				}
 
-				console.log(logPrefix()+""+users.length+" record(s) match(es):", search);
+				console.log(logPrefix()+users.length+" record(s) match(es):", search);
 				// console.dir(users);
 				if (users.length <= 0) {
 					console.log(sql);
@@ -568,7 +571,7 @@ client.on("message", (message) => {
 					console.log("SQL:", sql);
 					console.log(logPrefix()+"AC Exception:", exc.sqlMessage? exc.sqlMessage: exc);
 				} else {
-					console.log(logPrefix()+""+result.length+" record(s) match(es):", search);
+					console.log(logPrefix()+result.length+" record(s) match(es):", search);
 					// console.dir(result);
 					if (result.length <= 0) {
 						msg = "No match found!";
@@ -879,7 +882,7 @@ client.on("message", (message) => {
 
 						col = "GREEN";
 						result.forEach(function(record, i) {
-							if (i>20) return;
+							if (i>9) return; // LIMIT 10 (0 to 9)
 							if (!i) headers = Object.keys(record);
 
 							let line = Object.values(record).join(col_sep);
@@ -976,7 +979,7 @@ client.on("message", (message) => {
 				}
 
 				if (result.length !== 1) {
-					console.log(logPrefix()+""+result.length+" result(s) to count guilds!");
+					console.log(logPrefix()+result.length+" result(s) to count guilds!");
 					message.reply("Failed to count registered guilds!");
 					return;
 				}
@@ -997,7 +1000,7 @@ client.on("message", (message) => {
 				}
 
 				if (result.length !== 1) {
-					console.log(logPrefix()+""+result.length+" result(s) to count users!");
+					console.log(logPrefix()+result.length+" result(s) to count users!");
 					message.reply("Failed to count registered users!");
 					return;
 				}
@@ -1019,7 +1022,7 @@ client.on("message", (message) => {
 				}
 
 				if (result.length !== 1) {
-					console.log(logPrefix()+""+result.length+" result(s) to count users!");
+					console.log(logPrefix()+result.length+" result(s) to count users!");
 					message.reply("Failed to count registered units!");
 					return;
 				}
@@ -1115,7 +1118,8 @@ function checkConfig() {
 // Main:
 client.login(config.discord.token);
 
-// SQL query to request for orphelin players:
-// SELECT * FROM `users` WHERE guildRefId NOT IN (SELECT DISTINCT swgoh_id FROM `guilds`)
+/* SQL query to request for orphelin players:
+SELECT allycode, LEFT(ts, 19) AS last_update, game_name FROM `users`
+WHERE guildRefId NOT IN (SELECT DISTINCT swgoh_id FROM `guilds`) */
 
 // vim: noexpandtab shiftwidth=4 softtabstop=4 tabstop=4
