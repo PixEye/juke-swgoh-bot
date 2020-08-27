@@ -88,7 +88,9 @@ client.on("message", (message) => {
 	}
 
 	if (message.channel.type==="dm") {
-		words = message.content.trim().replace(config.discord.prefix, "");
+		words = message.content.trim();
+		let prefixRegExp = new RegExp("^"+config.discord.prefix, "i");
+		words = words.replace(prefixRegExp, "");
 	} else {
 		words = message.content.slice(config.discord.prefix.length);
 	}
