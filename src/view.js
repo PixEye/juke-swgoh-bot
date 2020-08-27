@@ -77,6 +77,8 @@ exports.guildPlayerStats = function(allycode, message, guild) {
 		let uc = 0;
 		let unitKey = unitName.replace(/ /g, '').toUpperCase();
 
+		unitName = unitName.replace('Brood ', '');
+		unitName = unitName.replace('Capital ', '');
 		console.log(logPrefix()+"Fetching for: %s (%s)...", unitName, unitKey);
 
 		allycodes.forEach(function(allycode, i) {
@@ -145,7 +147,6 @@ exports.guildPlayerStats = function(allycode, message, guild) {
 				});
 			}
 			statStr = stat.join("; ");
-			unitName = unitName.replace('Brood ', '');
 			if (statStr) {
 				richMsg.addField(icon+" "+uc+" "+unitName, "``"+statStr+"``", true);
 			}
