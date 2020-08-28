@@ -21,8 +21,8 @@ CREATE TABLE IF NOT EXISTS `evols` (
   `ts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `allycode` int(10) UNSIGNED NOT NULL,
   `unit_id` varchar(32) COLLATE utf8_unicode_ci NOT NULL,
+  `new_value` int(8) UNSIGNED NOT NULL,
   `type` varchar(15) COLLATE utf8_unicode_ci NOT NULL,
-  `new_value` tinyint(1) UNSIGNED NOT NULL,
   PRIMARY KEY (`id`),
   KEY `allycode` (`allycode`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
@@ -55,7 +55,7 @@ CREATE TABLE IF NOT EXISTS `units` (
   `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
   `allycode` int(10) UNSIGNED NOT NULL,
   `name` varchar(32) COLLATE utf8_unicode_ci NOT NULL,
-  `combatType` tinyint(1) UNSIGNED NOT NULL,
+  `combatType` tinyint(1) UNSIGNED NOT NULL DEFAULT '1',
   `gear` tinyint(1) UNSIGNED DEFAULT NULL,
   `relic` tinyint(1) UNSIGNED DEFAULT NULL,
   `stars` tinyint(1) DEFAULT NULL,
