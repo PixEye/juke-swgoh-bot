@@ -1044,8 +1044,8 @@ exports.logPrefix = function () {
 exports.periodicalProcess = function() {
 	let logPrefix = exports.logPrefix; // shortcut
 	let sql = "SELECT allycode, game_name, ts FROM users"+
-		" WHERE TIMESTAMPDIFF(DAY, ts, NOW())>1"+
-		" ORDER BY ts ASC LIMIT 1";
+		" WHERE TIMESTAMPDIFF(HOUR, ts, NOW())>12"+
+		" ORDER BY ts LIMIT 1";
 
 	db_pool.query(sql, function(exc, users) {
 		if (exc) {
@@ -1060,7 +1060,8 @@ exports.periodicalProcess = function() {
 		let u = users[0];
 		let msg = "Start periodical process on: %s (%s / %s)...";
 		console.log(logPrefix()+msg, u.game_name, u.allycode, exports.toMySQLdate(u.ts));
-		let message = {
+
+		let message = { // fake & empty message object
 			author: {},
 			behaveCommand: '',
 			behaveDelta: 0,

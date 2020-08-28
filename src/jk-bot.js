@@ -58,7 +58,7 @@ client.on("ready", () => {
 	client.user.setPresence({game: {name: config.discord.prefix + "help", type: "listening"}});
 
 	tools.periodicalProcess(true);
-	setInterval(tools.periodicalProcess, 240000); // 240'000 ms = 4 minutes
+	setInterval(tools.periodicalProcess, 213000); // 213'000 ms = 3 minutes 33
 });
 
 // Get errors (if any):
