@@ -372,7 +372,7 @@ exports.getLastEvolsFromDb = function(player, message) {
 	let logPrefix = exports.logPrefix; // shortcut
 	let sql = "SELECT * FROM `evols`"+
 		" WHERE allycode="+parseInt(allycode)+
-		" ORDER BY `id` DESC LIMIT 11";
+		" ORDER BY `ts` DESC LIMIT 50";
 
 	db_pool.query(sql, function(exc, result) {
 		if (exc) {
