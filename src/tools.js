@@ -1044,7 +1044,7 @@ exports.logPrefix = function () {
 exports.periodicalProcess = function() {
 	let logPrefix = exports.logPrefix; // shortcut
 	let sql = "SELECT allycode, game_name, ts FROM users"+
-		" WHERE TIMESTAMPDIFF(HOUR, ts, NOW())>12"+
+		" WHERE TIMESTAMPDIFF(HOUR, ts, NOW())>9"+
 		" ORDER BY ts LIMIT 1";
 
 	db_pool.query(sql, function(exc, users) {
@@ -1054,7 +1054,7 @@ exports.periodicalProcess = function() {
 			return;
 		}
 
-		console.log(logPrefix()+users.length+" record(s) match(es)"); // 1 match
+		console.log(logPrefix()+"Periodical check: "+users.length+" record(s) match(es)"); // 1 match
 		if (users.length !== 1) return;
 
 		let u = users[0];
