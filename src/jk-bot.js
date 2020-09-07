@@ -49,16 +49,18 @@ try {
 	console.warn("Configuration check:");
 	console.warn(exc);
 	console.warn("Compare 'config-template.json' & 'config.json' to find the mistake.");
+	throw exc; // Stop here
 }
+
+// Run the periodical process:
+tools.periodicalProcess(true); // true to identify the first time
+setInterval(tools.periodicalProcess, 213000); // 213'000 ms = 3 minutes 33
 
 // Start listening:
 client.on("ready", () => {
 	console.log(logPrefix()+"I am ready and listening.");
 	client.user.username = config.discord.username;
 	client.user.setPresence({game: {name: config.discord.prefix + "help", type: "listening"}});
-
-	tools.periodicalProcess(true);
-	setInterval(tools.periodicalProcess, 213000); // 213'000 ms = 3 minutes 33
 });
 
 // Get errors (if any):
@@ -361,6 +363,7 @@ client.on("message", (message) => {
 		case "ci":
 		case "charinfo":
 		case "characterinfo":
+		case "portrait":
 			// Look for a character name:
 			words.forEach(function(word) {
 				// ignore tags/mentions & allycodes:

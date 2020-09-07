@@ -1043,9 +1043,10 @@ exports.logPrefix = function () {
 /** Run the periodical process */
 exports.periodicalProcess = function() {
 	let logPrefix = exports.logPrefix; // shortcut
+	let deltaInHours = 18;
 	let sql = "SELECT allycode, game_name, ts FROM users"+
-		" WHERE TIMESTAMPDIFF(HOUR, ts, NOW())>9"+
-		" ORDER BY ts LIMIT 1";
+		" WHERE TIMESTAMPDIFF(HOUR, ts, NOW())>"+deltaInHours+
+		" ORDER BY ts"; // " LIMIT 1"
 
 	db_pool.query(sql, function(exc, users) {
 		if (exc) {
@@ -1054,8 +1055,8 @@ exports.periodicalProcess = function() {
 			return;
 		}
 
-		console.log(logPrefix()+"Periodical check: "+users.length+" record(s) match(es)"); // 1 match
-		if (users.length !== 1) return;
+		console.log(logPrefix()+"/ Periodical check: "+users.length+" users(s) with data > "+deltaInHours+"h");
+		if ( ! users.length ) return;
 
 		let u = users[0];
 		let msg = "Start periodical process on: %s (%s / %s)...";
@@ -1072,7 +1073,7 @@ exports.periodicalProcess = function() {
 			unparsedArgs: []
 		};
 
-		swgoh.getPlayerData(users, function(player, message) {
+		swgoh.getPlayerData([u], function(player, message) {
 			exports.updatePlayerDataInDb(player, message, function() {
 				let msg = "Periodical process done for %s (%s).";
 
