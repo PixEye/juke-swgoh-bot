@@ -1047,6 +1047,7 @@ exports.periodicalProcess = function() {
 	let sql = "SELECT allycode, game_name, ts FROM users"+
 		" WHERE TIMESTAMPDIFF(HOUR, ts, NOW())>"+deltaInHours+
 		" ORDER BY ts"; // " LIMIT 1"
+	let start = new Date();
 
 	db_pool.query(sql, function(exc, users) {
 		if (exc) {
@@ -1055,27 +1056,21 @@ exports.periodicalProcess = function() {
 			return;
 		}
 
-		console.log(logPrefix()+"/ Periodical check: "+users.length+" users(s) with data > "+deltaInHours+"h");
+		let now = new Date();
+		let delayInMs = now.getTime() - start.getTime();
+		let msg = "/ Periodical check: %d users(s) with data > %dh (in %d ms)";
+
+		console.log(logPrefix()+msg, users.length, deltaInHours, delayInMs);
 		if ( ! users.length ) return;
 
 		let u = users[0];
-		let msg = "Start periodical process on: %s (%s / %s)...";
+		msg = "Start periodical process on: %s (%s / %s)...";
 		console.log(logPrefix()+msg, u.game_name, u.allycode, exports.toMySQLdate(u.ts));
 
-		let message = { // fake & empty message object
-			author: {},
-			behaveCommand: '',
-			behaveDelta: 0,
-			channel: {
-				send: function() {}
-			},
-			reply: function() {},
-			unparsedArgs: []
-		};
-
+		let message = false;
 		swgoh.getPlayerData([u], function(player, message) {
 			exports.updatePlayerDataInDb(player, message, function() {
-				let msg = "Periodical process done for %s (%s).";
+				let msg = "\\ Periodical process done for %s (%s).";
 
 				console.log(logPrefix()+msg, player.name, player.allycode);
 			});
