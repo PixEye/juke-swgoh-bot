@@ -450,11 +450,9 @@ exports.getPlayerFromDatabase = function(allycode, message, callback) {
 exports.getPlayerFromDiscordUser = function(user, message, callback) {
 	let discord_id = user.id;
 	let logPrefix = exports.logPrefix; // shortcut
-	let sql =
-		"SELECT u.*, g.name AS guild_name"+
-		" FROM `users` u, `guilds` g"+
-		" WHERE u.discord_id="+parseInt(discord_id)+
-		" AND u.guildRefId=g.swgoh_id";
+	let sql = "SELECT u.* FROM `users` u WHERE u.discord_id='"+discord_id+"'";
+	/*	"SELECT u.*, g.name AS guild_name FROM `users` u, `guilds` g"+ // fails if guild is not known
+		" WHERE u.discord_id='"+discord_id+"' AND u.guildRefId=g.swgoh_id"; */
 
 	db_pool.query(sql, function(exc, result) {
 		if (exc) {
@@ -501,7 +499,8 @@ exports.getPlayerFromDiscordUser = function(user, message, callback) {
 
 			if (typeof(callback)==="function") callback(player);
 		} else { // no match:
-			console.log(logPrefix()+"Allycode not found"); // Normal for "self(y)" command
+			console.log( "SQL:\n"+sql); // Normal for "self(y)" command
+			console.warn(logPrefix()+"User not found"); // Normal for "self(y)" command
 			message.reply("This user has no player ID. You may try: "+config.discord.prefix+"register ally-code");
 		}
 	});
