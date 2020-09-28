@@ -1,5 +1,4 @@
 *.sw*
 *~
-data/
 error-logs/
 log

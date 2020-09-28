@@ -27,6 +27,11 @@ const tools   = require("./tools");  // Several functions
 const swgoh   = require("./swgoh"); // SWGoH API of this bot
 //nst view  = require("./view");   // Functions used to display results (self file)
 
+let fullUnitNames  = require("../data/units-with-spaces");
+Object.keys(fullUnitNames).forEach(function(k) {
+	fullUnitNames[k] = locutus.ucwords(fullUnitNames[k].toLowerCase());
+});
+
 /** List guild members
  * @param {Number} allycode - An allycode
  * @param {Object} message - The user's message to reply to
@@ -395,8 +400,10 @@ exports.showUnitInfo = function(player, message, unitName, ct) {
 		return;
 	}
 
+	unitName = foundUnit.name;
+	unitName = fullUnitNames[unitName] || unitName;
 	richMsg.setThumbnail("https://swgoh.gg/game-asset/u/"+foundUnit.name+"/")
-		.setTitle(player.name+"'s "+unitName+" ("+foundUnit.name+")");
+		.setTitle(player.name+"'s "+unitName);
 
 	// Start with stars:
 	key = 'stars';
@@ -419,6 +426,8 @@ exports.showUnitInfo = function(player, message, unitName, ct) {
 
 				case "mods":
 					if (ct===2) return; // ignore for ships
+
+					console.log("Modules:", val);
 					val = val.length;
 					break;
 
@@ -644,6 +653,9 @@ exports.showPlayerStats = function(player, message) {
 		"**Total number of unlocked units:** "+player.unitCount
 	];
 
+	if (player.guildMemberLevel===3) lines.unshift('**Role:** :cop: officer');
+	if (player.guildMemberLevel===4) lines.unshift('**Role:** :crown: leader');
+
 	if (player.giftCount)
 		lines.push("**Gift count:** "+(player.giftCount.toLocaleString(config.discord.locale)));
 
@@ -730,5 +742,8 @@ exports.showWhoIs = function(user, nick, message) {
 		});
 	});
 };
+
+let k = 'GRANDADMIRALTHRAWN';
+console.log(exports.logPrefix()+"Name with space check: %s => %s", k, fullUnitNames[k]);
 
 // vim: noexpandtab shiftwidth=4 softtabstop=4 tabstop=4
