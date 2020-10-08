@@ -116,6 +116,9 @@ exports.getPlayerData = async function(users, callback, message) {
 		}
 
 		// console.log(logPrefix()+"Players by allycode: ", playersByAllycode);
+		let numToSkill = [ // from 0 to 8 TODO: use it
+			'none', 'health', 'attack', 'defense', 'speed', 'crit chance', 'crit damage', 'potency', 'tenacity'
+		];
 
 		result.forEach(function(player) {
 			let clean_stats = null;
@@ -152,18 +155,21 @@ exports.getPlayerData = async function(users, callback, message) {
 			// Array: skills
 			// { id: 'specialskill_MAGMATROOPER01', tier: 7,
 			//	nameKey: 'SPECIALABILITY_MAGMATROOPER01_NAME', isZeta: false, tiers: 8 }
+			//
 			// Array: mods
 			// { id: 'nsdQon_cSIy44yjeGQVVXw', level: 15, tier: 4, slot: 1, set: 5,
 			//	pips: 4, primaryStat: [Object], secondaryStat: [Array] }
 			// console.log(logPrefix()+"First unit (%s) first mod:\n ",
 			//	roster[0].defId, roster[0].mods[0]); // ?
 			// if (roster[0].mods[0]) console.log(logPrefix()+"First unit (%s) first mod/primaryStat:\n ",
-			//	roster[0].defId, roster[0].mods[0].primaryStat); // { unitStat: 48, value: 4 }
-			// secondaryStat: [ // example:
+			//	roster[0].defId, roster[0].mods[0].primaryStat);
+			// { unitStat: 48, value: 4 }
+			// secondaryStat: [
 			// { unitStat: 56, value: 1.384, roll: 1 },
 			// { unitStat: 53, value: 3.179, roll: 2 },
 			// { unitStat:  5, value: 11   , roll: 3 },
 			// { unitStat: 28, value: 438  , roll: 1 } ]
+			//
 			// Array: crew ([])
 			// Others: gp (int), primaryUnitStat (null), relic {currentTier: 1}
 
@@ -203,7 +209,9 @@ exports.getPlayerData = async function(users, callback, message) {
 						case 5: unit.gp += 1530 + 3024; break; //  57%
 						case 6: unit.gp += 2040 + 4032; break; //  76%
 						case 7: unit.gp += 2678 + 5292; break; // 100%
-						default: console.warn("Invalid relic level for %s:", unit.defId, unit.relics);
+						default:
+							msg = "Invalid relic level for %s (ac=%d):";
+							console.warn(msg, unit.defId, allycode, unit.relics);
 					}
 
 					player.unitsData.push({
