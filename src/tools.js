@@ -1044,8 +1044,9 @@ exports.periodicalProcess = function() {
 	let logPrefix = exports.logPrefix; // shortcut
 	let deltaInHours = 18;
 	let sql = "SELECT allycode, game_name, ts FROM users"+
-		" WHERE TIMESTAMPDIFF(HOUR, ts, NOW())>"+deltaInHours+
-		" ORDER BY ts"; // " LIMIT 1"
+		" WHERE discord_id IS NOT NULL"+        // 63 users.discord_id are NULL on 2020-10-13
+		" AND TIMESTAMPDIFF(HOUR, ts, NOW())>"+deltaInHours+ // 158 users match on 2020-10-13
+		" ORDER BY ts LIMIT 5";             // count() was 178 before the LIMIT on 2020-10-13
 	let start = new Date();
 
 	db_pool.query(sql, function(exc, users) {
@@ -1057,7 +1058,7 @@ exports.periodicalProcess = function() {
 
 		let now = new Date();
 		let delayInMs = now.getTime() - start.getTime();
-		let msg = "/ Periodical check: %d users(s) with data > %dh (in %d ms)";
+		let msg = "/ Periodical check: %d users(s) match (data > %dh; in %d ms)";
 
 		console.log(logPrefix()+msg, users.length, deltaInHours, delayInMs);
 		if ( ! users.length ) return;
