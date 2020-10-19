@@ -177,7 +177,7 @@ client.on("message", (message) => {
 				" FROM `users` u, `guilds` g"+
 				" WHERE u.guildRefId=g.swgoh_id AND ("+searchStr+")"; */
 
-			db_pool.query(sql, function(exc, users) {
+			db_pool.query(sql, (exc, users) => {
 				let guildIds = {};
 
 				if (exc) {
@@ -196,7 +196,7 @@ client.on("message", (message) => {
 					message.reply(msg);
 				} else { // 1 or more results:
 					// lines.push("There are "+users.length+" matches:");
-					users.forEach(function(user) {
+					users.forEach(user => {
 						if (user.guildRefId) {
 							guildIds[user.guildRefId] = user.guildRefId;
 						}
@@ -207,7 +207,7 @@ client.on("message", (message) => {
 					if (!guildIds.length) {
 						guildIds = ['G1582274835']; // FF ID
 					}
-					db_pool.query(sql, [guildIds], function(exc, dbGuilds) {
+					db_pool.query(sql, [guildIds], (exc, dbGuilds) => {
 						let guildDescr = {};
 
 						if (exc) {
@@ -216,7 +216,7 @@ client.on("message", (message) => {
 							return;
 						}
 
-						dbGuilds.forEach(function(guild) {
+						dbGuilds.forEach(guild => {
 							guildDescr[guild.swgoh_id] = guild.name.trim();
 							if (guild.memberCount) {
 								guildDescr[guild.swgoh_id]+= ' / '+guild.memberCount+' members';
@@ -226,7 +226,7 @@ client.on("message", (message) => {
 							}
 						});
 
-						users.forEach(function(user) {
+						users.forEach(user => {
 							msg = " is allycode of: "+user.game_name;
 							if (user.guildRefId && typeof(guildDescr[user.guildRefId])==='string') {
 								msg+= " (from guild: "+guildDescr[user.guildRefId]+")";
@@ -313,7 +313,7 @@ client.on("message", (message) => {
 
 			if (allycode) {
 				if (readCommands.indexOf(cmd) >= 0) {
-					tools.getGuildDbStats(player, message, function(allycode, message, guild) {
+					tools.getGuildDbStats(player, message, (allycode, message, guild) => {
 						tools.handleBehaviour(guild, message, player);
 					});
 				} else {
@@ -322,13 +322,13 @@ client.on("message", (message) => {
 			} else {
 				console.log(logPrefix()+"Try with user ID:", user.id);
 				if (readCommands.indexOf(cmd) >= 0) {
-					tools.getPlayerFromDiscordUser(user, message, function(player) {
-						tools.getGuildDbStats(player, message, function(allycode, message, guild) {
+					tools.getPlayerFromDiscordUser(user, message, player => {
+						tools.getGuildDbStats(player, message, (allycode, message, guild) => {
 							tools.handleBehaviour(guild, message, player);
 						});
 					});
 				} else {
-					tools.getPlayerFromDiscordUser(user, message, function(player) {
+					tools.getPlayerFromDiscordUser(user, message, player => {
 						tools.getGuildStats(player, message, tools.handleBehaviour);
 					});
 				}
@@ -365,8 +365,7 @@ client.on("message", (message) => {
 		case "characterinfo":
 		case "portrait":
 			// Look for a character name:
-			words.forEach(function(word) {
-				// ignore tags/mentions & allycodes:
+			words.forEach(word => { // ignore tags/mentions & allycodes:
 				if (word.indexOf("<")<0 && word.match(/[a-z]/i)) {
 					msg+= " "+locutus.ucfirst(word);
 				}
@@ -382,13 +381,13 @@ client.on("message", (message) => {
 			msg = msg.trim();
 			console.log(logPrefix()+"Character to look for is:", msg);
 			if (allycode) {
-				tools.getPlayerStats(player, message, function(player, message) {
+				tools.getPlayerStats(player, message, (player, message) => {
 					return view.showUnitInfo(player, message, msg, 1);
 				});
 			} else {
 				console.log(logPrefix()+"Try with Discord ID:", user.id);
-				tools.getPlayerFromDiscordUser(user, message, function(player) {
-					tools.getPlayerStats(player, message, function(player, message) {
+				tools.getPlayerFromDiscordUser(user, message, player => {
+					tools.getPlayerStats(player, message, (player, message) => {
 						return view.showUnitInfo(player, message, msg, 1);
 					});
 				});
@@ -402,13 +401,13 @@ client.on("message", (message) => {
 		case "checkunitsgp":
 			let limit = 21;
 			if (allycode) {
-				tools.getPlayerStats(player, message, function(player, message) {
+				tools.getPlayerStats(player, message, (player, message) => {
 					return tools.checkUnitsGp(player, message, limit);
 				});
 			} else {
 				console.log(logPrefix()+"Try with user ID:", user.id);
-				tools.getPlayerFromDiscordUser(user, message, function(player) {
-					tools.getPlayerStats(player, message, function(player, message) {
+				tools.getPlayerFromDiscordUser(user, message, player => {
+					tools.getPlayerStats(player, message, (player, message) => {
 						return tools.checkUnitsGp(player, message, limit);
 					});
 				});
@@ -425,7 +424,7 @@ client.on("message", (message) => {
 				tools.getPlayerStats(player, message, tools.checkPlayerMods);
 			} else {
 				console.log(logPrefix()+"Try with user ID:", user.id);
-				tools.getPlayerFromDiscordUser(user, message, function(player) {
+				tools.getPlayerFromDiscordUser(user, message, player => {
 					tools.getPlayerStats(player, message, tools.checkPlayerMods);
 				});
 			}
@@ -479,7 +478,7 @@ client.on("message", (message) => {
 
 			if (allycode) {
 				if (cmdIdx >= 0) {
-					tools.getGuildDbStats(player, message, function(allycode, message, guild) {
+					tools.getGuildDbStats(player, message, (allycode, message, guild) => {
 						tools.handleContest(guild, message, player);
 					});
 				} else {
@@ -488,13 +487,13 @@ client.on("message", (message) => {
 			} else {
 				console.log(logPrefix()+"Try with user ID:", user.id);
 				if (cmdIdx >= 0) {
-					tools.getPlayerFromDiscordUser(user, message, function(player) {
-						tools.getGuildDbStats(player, message, function(allycode, message, guild) {
+					tools.getPlayerFromDiscordUser(user, message, player => {
+						tools.getGuildDbStats(player, message, (allycode, message, guild) => {
 							tools.handleContest(guild, message, player);
 						});
 					});
 				} else {
-					tools.getPlayerFromDiscordUser(user, message, function(player) {
+					tools.getPlayerFromDiscordUser(user, message, player => {
 						tools.getGuildStats(player, message, tools.handleContest);
 					});
 				}
@@ -532,8 +531,23 @@ client.on("message", (message) => {
 		case "repeat":
 		case "repete":
 		case "say":
-			if (words.length) {
-				message.channel.send(words.join(" "));
+			let destChannel = [message.channel];
+			let msg = '';
+
+			words.forEach(word => { // ignore channels:
+				if (word.indexOf("<#")<0 && word.match(/[a-z]/i)) {
+					msg+= word+" ";
+				}
+			});
+
+			let n = message.mentions.channels.array().length;
+			if (n) {
+				destChannel = message.mentions.channels.array();
+				console.log(logPrefix()+"Found %d destination channel(s).", n);
+			}
+
+			if (msg) {
+				destChannel.forEach(channel => channel.send(msg));
 			} else {
 				message.reply("what can I say for you?");
 			}
@@ -544,7 +558,7 @@ client.on("message", (message) => {
 				tools.fetchSwgohData(player, message, view.showSwgohData);
 			} else {
 				console.log(logPrefix()+"Try with user ID:", user.id);
-				tools.getPlayerFromDiscordUser(user, message, function(player) {
+				tools.getPlayerFromDiscordUser(user, message, player => {
 					tools.fetchSwgohData(player, message, view.showSwgohData);
 				});
 			}
@@ -557,7 +571,7 @@ client.on("message", (message) => {
 				tools.getGuildStats(player, message, view.showGuildStats);
 			} else {
 				console.log(logPrefix()+"Try with user ID:", user.id);
-				tools.getPlayerFromDiscordUser(user, message, function(player) {
+				tools.getPlayerFromDiscordUser(user, message, player => {
 					tools.getGuildStats(player, message, view.showGuildStats);
 				});
 			}
@@ -569,7 +583,7 @@ client.on("message", (message) => {
 				searchStr = "u.allycode="+allycode;
 			}
 			sql = "SELECT u.* FROM `users` u WHERE "+searchStr;
-			db_pool.query(sql, function(exc, result) {
+			db_pool.query(sql, (exc, result) => {
 				if (exc) {
 					console.log("SQL:", sql);
 					console.log(logPrefix()+"AC Exception:", exc.sqlMessage? exc.sqlMessage: exc);
@@ -582,7 +596,7 @@ client.on("message", (message) => {
 						message.reply(msg);
 					} else if (result.length > 1) {
 						lines.push("There are "+result.length+" matches:");
-						result.forEach(function(user) {
+						result.forEach(user => {
 							msg = user.allycode+" is allycode of: "+user.game_name;
 							console.log(logPrefix()+msg);
 							lines.push("``"+user.allycode+"`` is allycode of: "+user.game_name);
@@ -608,7 +622,7 @@ client.on("message", (message) => {
 				tools.getGuildDbStats(player, message, view.guildPlayerStats);
 			} else {
 				console.log(logPrefix()+"Try with user ID:", user.id);
-				tools.getPlayerFromDiscordUser(user, message, function(player) {
+				tools.getPlayerFromDiscordUser(user, message, player => {
 					tools.getGuildDbStats(player, message, view.guildPlayerStats);
 				});
 			}
@@ -623,7 +637,7 @@ client.on("message", (message) => {
 				tools.getUnregPlayers(allycode, message);
 			} else {
 				console.log(logPrefix()+"Try with user ID:", user.id);
-				tools.getPlayerFromDiscordUser(user, message, function(player) {
+				tools.getPlayerFromDiscordUser(user, message, player => {
 					tools.getUnregPlayers(player.allycode, message);
 				});
 			}
@@ -673,7 +687,7 @@ client.on("message", (message) => {
 				tools.getPlayerStats(player, message, tools.getLastEvolsFromDb);
 			} else {
 				console.log(logPrefix()+"Try with user ID:", user.id);
-				tools.getPlayerFromDiscordUser(user, message, function(player) {
+				tools.getPlayerFromDiscordUser(user, message, player => {
 					tools.getPlayerStats(player, message, tools.getLastEvolsFromDb);
 				});
 			}
@@ -685,7 +699,7 @@ client.on("message", (message) => {
 				tools.getGuildDbStats(player, message, view.listGuildMembers);
 			} else {
 				console.log(logPrefix()+"Try with user ID:", user.id);
-				tools.getPlayerFromDiscordUser(user, message, function(player) {
+				tools.getPlayerFromDiscordUser(user, message, player => {
 					tools.getGuildDbStats(player, message, view.listGuildMembers);
 				});
 			}
@@ -700,7 +714,7 @@ client.on("message", (message) => {
 				tools.getPlayerStats(player, message, view.showPlayerStats);
 			} else {
 				console.log(logPrefix()+"Try with user ID:", user.id);
-				tools.getPlayerFromDiscordUser(user, message, function(player) {
+				tools.getPlayerFromDiscordUser(user, message, player => {
 					tools.getPlayerStats(player, message, view.showPlayerStats);
 				});
 			}
@@ -717,7 +731,7 @@ client.on("message", (message) => {
 				tools.getPlayerStats(player, message, view.showRandomTeam);
 			} else {
 				console.log(logPrefix()+"Try with user ID:", user.id);
-				tools.getPlayerFromDiscordUser(user, message, function(player) {
+				tools.getPlayerFromDiscordUser(user, message, player => {
 					tools.getPlayerStats(player, message, view.showRandomTeam);
 				});
 			}
@@ -735,7 +749,7 @@ client.on("message", (message) => {
 			sql = "INSERT INTO `users` (discord_id, discord_name, allycode, game_name) VALUES (?, ?, ?, ?)";
 
 			// Register:
-			db_pool.query(sql, [user.id, nick, allycode, nick], function(exc, result) {
+			db_pool.query(sql, [user.id, nick, allycode, nick], (exc, result) => {
 				if (exc) {
 					console.log("SQL:", sql);
 					if (exc.sqlMessage) {
@@ -758,7 +772,7 @@ client.on("message", (message) => {
 				sql = "UPDATE `users` SET discord_id=?, discord_name=? WHERE allycode=?";
 
 				// Update an existing registration:
-				db_pool.query(sql, [user.id, nick, allycode], function(exc, result) {
+				db_pool.query(sql, [user.id, nick, allycode], (exc, result) => {
 					if (exc) {
 						console.log("SQL:", sql);
 						if (exc.sqlMessage) {
@@ -788,7 +802,7 @@ client.on("message", (message) => {
 				tools.refreshGuildStats(allycode, message, view.guildPlayerStats);
 			} else {
 				console.log(logPrefix()+"Try with user ID:", user.id);
-				tools.getPlayerFromDiscordUser(user, message, function(player) {
+				tools.getPlayerFromDiscordUser(user, message, player => {
 					tools.refreshGuildStats(player.allycode, message, view.guildPlayerStats);
 				});
 			}
@@ -797,7 +811,7 @@ client.on("message", (message) => {
 		case "si":
 		case "shipinfo":
 			// Look for a ship name:
-			words.forEach(function(word) {
+			words.forEach(word => {
 				// ignore tags/mentions & allycodes:
 				if (word.indexOf("<")<0 && word.match(/[a-z]/i)) {
 					msg+= " "+locutus.ucfirst(word);
@@ -813,13 +827,13 @@ client.on("message", (message) => {
 			msg = msg.trim();
 			console.log(logPrefix()+"Ship to look for is:", msg);
 			if (allycode) {
-				tools.getPlayerStats(player, message, function(player, message) {
+				tools.getPlayerStats(player, message, (player, message) => {
 					return view.showUnitInfo(player, message, msg, 2);
 				});
 			} else {
 				console.log(logPrefix()+"Try with user ID:", user.id);
-				tools.getPlayerFromDiscordUser(user, message, function(player) {
-					tools.getPlayerStats(player, message, function(player, message) {
+				tools.getPlayerFromDiscordUser(user, message, player => {
+					tools.getPlayerStats(player, message, (player, message) => {
 						return view.showUnitInfo(player, message, msg, 2);
 					});
 				});
@@ -836,7 +850,7 @@ client.on("message", (message) => {
 				tools.getPlayerStats(player, message, view.showPlayerRelics);
 			} else {
 				console.log(logPrefix()+"Try with user ID:", user.id);
-				tools.getPlayerFromDiscordUser(user, message, function(player) {
+				tools.getPlayerFromDiscordUser(user, message, player => {
 					tools.getPlayerStats(player, message, view.showPlayerRelics);
 				});
 			}
@@ -852,7 +866,7 @@ client.on("message", (message) => {
 			}
 
 			sql = words.join(" ");
-			db_pool.query(sql, function(exc, result) {
+			db_pool.query(sql, (exc, result) => {
 				let col = "ORANGE";
 				let title = "DB request";
 
@@ -884,7 +898,7 @@ client.on("message", (message) => {
 						let maxLen = 0;
 
 						col = "GREEN";
-						result.forEach(function(record, i) {
+						result.forEach((record, i) => {
 							if (i>9) return; // LIMIT 10 (0 to 9)
 							if (!i) headers = Object.keys(record);
 
@@ -907,7 +921,7 @@ client.on("message", (message) => {
 					richMsg = new RichEmbed().setTitle(title).setColor(col)
 						.setDescription(lines).setTimestamp(message.createdTimestamp)
 						.setFooter(config.footer.message, config.footer.iconUrl);
-					message.channel.send(richMsg).catch(function(ex) {
+					message.channel.send(richMsg).catch(ex => {
 						console.warn(ex);
 						message.reply(ex.message);
 						message.channel.send(lines);
@@ -928,7 +942,7 @@ client.on("message", (message) => {
 			sql+= " GROUP BY guildRefId";
 			sql+= " ORDER BY cnt DESC, g.name ASC";
 
-			db_pool.query(sql, function(exc, result) {
+			db_pool.query(sql, (exc, result) => {
 				let maxLines = 10;
 				let tpc = 0; // total player count
 
@@ -942,7 +956,7 @@ client.on("message", (message) => {
 
 				if (result.length) {
 					lines.push("");
-					result.forEach(function(record, i) {
+					result.forEach((record, i) => {
 						tpc+= record.cnt;
 
 						if (i<maxLines)
@@ -1094,7 +1108,7 @@ function checkConfig() {
 
 	n = 2;
 	msg = 'Invalid type in bot configuration for key: ';
-	Object.keys(tplCfg).forEach(function(key) {
+	Object.keys(tplCfg).forEach(key => {
 		let tplVal = tplCfg[key];
 
 		++n;
@@ -1103,7 +1117,7 @@ function checkConfig() {
 		}
 
 		if (typeof(tplVal)==='object') {
-			Object.keys(tplVal).forEach(function(k) {
+			Object.keys(tplVal).forEach(k => {
 				let tplSubVal = tplVal[k];
 
 				++n;
