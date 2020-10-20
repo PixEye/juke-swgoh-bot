@@ -26,7 +26,7 @@ const view    = require("./view"); // Functions used to display results
 
 // Get the configuration & its template from a separated JSON files:
 let config = require("./config.json");
-let tplCfg = require("./config-template.json");
+// let tplCfg = require("./config-template.json");
 
 // Prepare DB connection pool:
 const db_pool = mysql.createPool({

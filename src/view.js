@@ -12,9 +12,6 @@ const { RichEmbed } = require("discord.js");
 // Create an instance of a Discord client:
 //const client = new Client();
 
-// Get the configuration from a separated JSON file:
-const config = require("./config.json");
-
 // Remember when this program started:
 //const start = Date();
 
@@ -26,6 +23,10 @@ const locutus = require("./locutus"); // Functions from locutus.io
 const tools   = require("./tools");  // Several functions
 const swgoh   = require("./swgoh"); // SWGoH API of this bot
 //const view  = require("./view"); // Functions used to display results (self file)
+
+// Get the configuration & its template from a separated JSON files:
+let config = require("./config.json");
+// let tplCfg = require("./config-template.json");
 
 let fullUnitNames  = require("../data/units-with-spaces");
 Object.keys(fullUnitNames).forEach(function(k) {
