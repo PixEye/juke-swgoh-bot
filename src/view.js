@@ -25,7 +25,7 @@ const config = require("./config.json");
 const locutus = require("./locutus"); // Functions from locutus.io
 const tools   = require("./tools");  // Several functions
 const swgoh   = require("./swgoh"); // SWGoH API of this bot
-//nst view  = require("./view");   // Functions used to display results (self file)
+//const view  = require("./view"); // Functions used to display results (self file)
 
 let fullUnitNames  = require("../data/units-with-spaces");
 Object.keys(fullUnitNames).forEach(function(k) {

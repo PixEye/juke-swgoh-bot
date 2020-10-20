@@ -24,7 +24,7 @@ const locutus  = require("./locutus"); // Functions from locutus.io
 const tools    = require("./tools"); // Several functions
 const view     = require("./view"); // Functions used to display results
 
-// Get the configuration from a separated JSON file:
+// Get the configuration & its template from a separated JSON files:
 let config = require("./config.json");
 let tplCfg = require("./config-template.json");
 
@@ -75,7 +75,6 @@ client.on("message", (message) => {
 	var command = "";
 	var delta = 0;
 	var lines = [];
-	var msg = "";
 	var nick = "";
 	let player = {};
 	var readCommands = ['behave', 'get', 'getrank', 'getscore', 'rank', 'top', 'worst'];
@@ -179,6 +178,7 @@ client.on("message", (message) => {
 
 			db_pool.query(sql, (exc, users) => {
 				let guildIds = {};
+				let msg = "";
 
 				if (exc) {
 					console.log("SQL:", sql);
@@ -227,7 +227,7 @@ client.on("message", (message) => {
 						});
 
 						users.forEach(user => {
-							msg = " is allycode of: "+user.game_name;
+							let msg = " is allycode of: "+user.game_name;
 							if (user.guildRefId && typeof(guildDescr[user.guildRefId])==='string') {
 								msg+= " (from guild: "+guildDescr[user.guildRefId]+")";
 							}
@@ -288,7 +288,7 @@ client.on("message", (message) => {
 
 			console.log(logPrefix()+"Behaviour cmd:", cmd);
 			if (readCommands.indexOf(cmd)<0 && (!words.length || isNaN(words[0]))) {
-				msg = "Invalid behaviour command! (missing a number)";
+				let msg = "Invalid behaviour command! (missing a number)";
 				console.warn(logPrefix()+msg);
 				message.reply(msg);
 				return;
@@ -355,8 +355,9 @@ client.on("message", (message) => {
 			} catch(exc) {
 				message.channel.send(exc);
 
-				msg = "Compare 'config-template.json' & 'config.json' to find the mistake.";
+				let msg = "Compare 'config-template.json' & 'config.json' to find the mistake.";
 				message.channel.send(msg);
+				delete msg;
 			}
 			break;
 
@@ -365,6 +366,7 @@ client.on("message", (message) => {
 		case "characterinfo":
 		case "portrait":
 			// Look for a character name:
+			let msg = '';
 			words.forEach(word => { // ignore tags/mentions & allycodes:
 				if (word.indexOf("<")<0 && word.match(/[a-z]/i)) {
 					msg+= " "+locutus.ucfirst(word);
@@ -392,6 +394,7 @@ client.on("message", (message) => {
 					});
 				});
 			}
+			delete msg;
 			break;
 
 		case "cgp":
@@ -453,7 +456,7 @@ client.on("message", (message) => {
 			let cmdIdx = readCommands.indexOf(cmd);
 
 			if (cmdIdx<0 && cmd!=="reset" && (!words.length || isNaN(words[0]))) {
-				msg = "Invalid contest command! (missing a number)";
+				let msg = "Invalid contest command! (missing a number)";
 				console.warn(logPrefix()+msg);
 				message.reply(msg);
 				return;
@@ -532,11 +535,11 @@ client.on("message", (message) => {
 		case "repete":
 		case "say":
 			let destChannel = [message.channel];
-			let msg = '';
+			let myMsg = '';
 
 			words.forEach(word => { // ignore channels:
 				if (word.indexOf("<#")<0 && word.match(/[a-z]/i)) {
-					msg+= word+" ";
+					myMsg+= word+" ";
 				}
 			});
 
@@ -546,11 +549,12 @@ client.on("message", (message) => {
 				console.log(logPrefix()+"Found %d destination channel(s).", n);
 			}
 
-			if (msg) {
-				destChannel.forEach(channel => channel.send(msg));
+			if (myMsg) {
+				destChannel.forEach(channel => channel.send(myMsg));
 			} else {
 				message.reply("what can I say for you?");
 			}
+			delete myMsg;
 			break;
 
 		case "fetch":
@@ -584,6 +588,8 @@ client.on("message", (message) => {
 			}
 			sql = "SELECT u.* FROM `users` u WHERE "+searchStr;
 			db_pool.query(sql, (exc, result) => {
+				let msg = '';
+
 				if (exc) {
 					console.log("SQL:", sql);
 					console.log(logPrefix()+"AC Exception:", exc.sqlMessage? exc.sqlMessage: exc);
@@ -740,7 +746,7 @@ client.on("message", (message) => {
 		case "reg":
 		case "register":
 			if (!allycode) {
-				msg = "Allycode is invalid or missing!";
+				let msg = "Allycode is invalid or missing!";
 				console.warn(msg+" about: "+nick);
 				message.reply(":warning: "+msg);
 				return;
@@ -811,33 +817,35 @@ client.on("message", (message) => {
 		case "si":
 		case "shipinfo":
 			// Look for a ship name:
-			words.forEach(word => {
+			let tmpMsg = '';
+			words.forEach(function(word) {
 				// ignore tags/mentions & allycodes:
 				if (word.indexOf("<")<0 && word.match(/[a-z]/i)) {
-					msg+= " "+locutus.ucfirst(word);
+					tmpMsg+= " "+locutus.ucfirst(word);
 				}
 			});
 
-			if (!msg) {
+			if (!tmpMsg) {
 				console.warn(logPrefix()+"No ship name found in the message!" );
 				message.reply("No ship name found in your message!");
 				return;
 			}
 
-			msg = msg.trim();
-			console.log(logPrefix()+"Ship to look for is:", msg);
+			tmpMsg = tmpMsg.trim();
+			console.log(logPrefix()+"Ship to look for is:", tmpMsg);
 			if (allycode) {
 				tools.getPlayerStats(player, message, (player, message) => {
-					return view.showUnitInfo(player, message, msg, 2);
+					return view.showUnitInfo(player, message, tmpMsg, 2);
 				});
 			} else {
 				console.log(logPrefix()+"Try with user ID:", user.id);
 				tools.getPlayerFromDiscordUser(user, message, player => {
 					tools.getPlayerStats(player, message, (player, message) => {
-						return view.showUnitInfo(player, message, msg, 2);
+						return view.showUnitInfo(player, message, tmpMsg, 2);
 					});
 				});
 			}
+			delete tmpMsg;
 			break;
 
 		case "tc":
