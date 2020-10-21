@@ -8,7 +8,7 @@
  * Options -h or --help are supported to give some help.
  * The full path of the input JSON file must be given as the first argument of this script.
  *
- * 2019-11-14 written by pix@pixeye.net
+ * 2019-11-14 written by PixEye at PixEye.net
  */
 
 $config_file = "../src/config.json";
