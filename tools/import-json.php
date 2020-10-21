@@ -93,6 +93,7 @@ if ($mysqli->connect_errno) {
     exit(5);
 }
 
+// Execute SQL query:
 if ($result = $mysqli->query($sql)) {
     printf("Result is about %d line(s).%s", $result->affected_rows, PHP_EOL);
 
