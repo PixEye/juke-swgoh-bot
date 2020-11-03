@@ -361,6 +361,21 @@ exports.showUnitInfo = function(player, message, unitName, ct) {
 					++nbFound;
 				}
 			});
+
+			if (!nbFound) {
+				// Try: aliases...
+				player.unitsData.forEach(function(unit) {
+					let uid = unit.name;
+					let fullName = fullUnitNames[uid] || uid;
+
+					fullName = fullName.toUpperCase().replace(/ /g, '');
+					if (unit.combatType===ct && fullName.indexOf(strToLookFor)>=0) {
+						matchingNames.push(uid);
+						if (!nbFound) foundUnit = unit;
+						++nbFound;
+					}
+				});
+			}
 		}
 	}
 
@@ -412,7 +427,7 @@ exports.showUnitInfo = function(player, message, unitName, ct) {
 	lines.push(val);
 
 	// Continue with others keys:
-	Object.keys(foundUnit).sort(function(a, b){return b-a}).forEach(function(key) {
+	Object.keys(foundUnit).sort((a, b) => b-a).forEach(function(key) {
 		var val = foundUnit[key];
 
 		if (hiddenFields.indexOf(key)<0) {

@@ -383,15 +383,15 @@ client.on("message", (message) => {
 			msg = msg.trim();
 			console.log(logPrefix()+"Character to look for is:", msg);
 			if (allycode) {
-				tools.getPlayerStats(player, message, (player, message) => {
-					return view.showUnitInfo(player, message, msg, 1);
-				});
+				tools.getPlayerStats(player, message,
+					(player, message) => view.showUnitInfo(player, message, msg, 1)
+				);
 			} else {
 				console.log(logPrefix()+"Try with Discord ID:", user.id);
 				tools.getPlayerFromDiscordUser(user, message, player => {
-					tools.getPlayerStats(player, message, (player, message) => {
-						return view.showUnitInfo(player, message, msg, 1);
-					});
+					tools.getPlayerStats(player, message,
+						(player, message) => view.showUnitInfo(player, message, msg, 1)
+					);
 				});
 			}
 			delete msg;
