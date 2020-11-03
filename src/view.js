@@ -511,7 +511,8 @@ exports.showLastEvols = function(player, message, evols) {
 		let dt = e.ts.toString() // take timestamp from evolution e
 			.replace(/ \(.*\)$/, "")  // remove useless duplicated time zone in parentheses
 			.replace(/:\d\d /, " ")  // remove seconds
-			.replace(/ \d{4}/, ""); // remove the year
+			.replace(/ \d{4}/, "")  // remove the year
+			.replace(/^.{4}/, ""); // remove day of week
 		let msg = "`"+dt+":` ";
 		let uid = e.unit_id;
 
@@ -520,25 +521,25 @@ exports.showLastEvols = function(player, message, evols) {
 
 		switch(e.type) {
 			case "gear":
-				msg+= " turned G"+e.new_value;
+				msg+= " :arrow_right: G"+e.new_value;
 				break;
 			case "new":
-				msg+= " unlocked";
+				msg+= " :unlock:";
 				break;
 			case "newGifts":
-				msg = "`"+dt+":` player gave "+e.new_value+" item"+(e.new_value===1? '': 's');
+				msg = "`"+dt+":` player gave "+e.new_value+" :gift:";
 				break;
 			case "relic":
-				msg+= " turned R"+e.new_value;
+				msg+= " :arrow_right: R"+e.new_value;
 				break;
 			case "star":
-				msg+= " turned "+e.new_value+"*";
+				msg+= " :arrow_right: "+e.new_value+":star:";
 				break;
 			case "zeta":
 				msg+= " get "+e.type+" #"+e.new_value;
 				break;
 			default:
-				msg+= " turned "+e.type+" to: "+e.new_value;
+				msg+= " :arrow_right: "+e.type+" to: "+e.new_value;
 				console.warn("Unexpected evolution type '%s' at ID %d", e.type, e.id);
 		}
 
