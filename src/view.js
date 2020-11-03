@@ -512,8 +512,10 @@ exports.showLastEvols = function(player, message, evols) {
 			.replace(/ \(.*\)$/, "")  // remove useless duplicated time zone in parentheses
 			.replace(/:\d\d /, " ")  // remove seconds
 			.replace(/ \d{4}/, ""); // remove the year
-		let msg = "`"+dt+":` "+e.unit_id;
+		let msg = "`"+dt+":` ";
+		let uid = e.unit_id;
 
+		msg += fullUnitNames[uid]? fullUnitNames[uid]: uid;
 		maxDt = (e.ts>maxDt)? e.ts: maxDt;
 
 		switch(e.type) {
@@ -577,11 +579,12 @@ exports.showPlayerRelics = function(player, message) {
 	let color = "GREEN";
 	let lines = [];
 	let n = 0;
-	let unitsWithRelics = player.unitsData.filter(function(unit) {
-			return unit.relic>0; // main filter
-		}).sort(function(a, b) {
-			return b.relic-a.relic; // sort by relic count (descending)
-		});
+	let unitsWithRelics = player.unitsData.filter(unit => unit.relic>0) // main filter
+		.sort((a, b) =>
+			(b.relic-a.relic)*1e9 + // sort by relic count (descending)
+			(b.zetaCount-a.zetaCount)*1e8 + // sort by zeta counts (descending)
+			(b.gp-a.gp) // sort by zeta counts (descending)
+		);
 	let tprc = 0; // total player's relic count
 
 	n = unitsWithRelics.length;
@@ -597,9 +600,12 @@ exports.showPlayerRelics = function(player, message) {
 	} else {
 		unitsWithRelics.forEach(function(unit, i) {
 			tprc += unit.relic;
-			if (i<maxLines)
-				lines.push(unit.relic+" relic(s) on: "+unit.name);
-			else if (i===maxLines)
+			if (i<maxLines) {
+				let uid = unit.name;
+
+				uid = fullUnitNames[uid]? fullUnitNames[uid]: uid;
+				lines.push(unit.relic+" relic(s), "+unit.zetaCount+" zeta(s) & GP=``"+unit.gp+"`` on: "+uid);
+			} else if (i===maxLines)
 				lines.push("And "+(n-maxLines)+" more...");
 		});
 		console.log(logPrefix()+"%d total relic(s) found.", tprc);
