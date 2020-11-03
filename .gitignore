@@ -2,3 +2,6 @@
 *~
 error-logs/
 log
+data/Archives
+data/2*
+data/*.lnk
