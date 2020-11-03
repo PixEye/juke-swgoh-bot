@@ -28,10 +28,7 @@ const swgoh   = require("./swgoh"); // SWGoH API of this bot
 let config = require("./config.json");
 // let tplCfg = require("./config-template.json");
 
-let fullUnitNames  = require("../data/units-with-spaces");
-Object.keys(fullUnitNames).forEach(function(k) {
-	fullUnitNames[k] = locutus.ucwords(fullUnitNames[k].toLowerCase());
-});
+const fullUnitNames = require("../data/unit-names");
 
 /** List guild members
  * @param {Number} allycode - An allycode
@@ -428,7 +425,7 @@ exports.showUnitInfo = function(player, message, unitName, ct) {
 				case "mods":
 					if (ct===2) return; // ignore for ships
 
-					console.log("Modules:", val);
+					// console.log("Modules:", val); // verbose!
 					val = val.length;
 					break;
 
@@ -516,7 +513,7 @@ exports.showLastEvols = function(player, message, evols) {
 		let msg = "`"+dt+":` ";
 		let uid = e.unit_id;
 
-		msg += fullUnitNames[uid]? fullUnitNames[uid]: uid;
+		msg += fullUnitNames[uid] || uid;
 		maxDt = (e.ts>maxDt)? e.ts: maxDt;
 
 		switch(e.type) {
@@ -604,7 +601,7 @@ exports.showPlayerRelics = function(player, message) {
 			if (i<maxLines) {
 				let uid = unit.name;
 
-				uid = fullUnitNames[uid]? fullUnitNames[uid]: uid;
+				uid = fullUnitNames[uid] || uid;
 				lines.push(unit.relic+" relic(s), "+unit.zetaCount+" zeta(s) & GP=``"+unit.gp+"`` on: "+uid);
 			} else if (i===maxLines)
 				lines.push("And "+(n-maxLines)+" more...");

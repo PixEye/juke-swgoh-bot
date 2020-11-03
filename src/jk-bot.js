@@ -368,7 +368,7 @@ client.on("message", (message) => {
 			// Look for a character name:
 			let msg = '';
 			words.forEach(word => { // ignore tags/mentions & allycodes:
-				if (word.indexOf("<")<0 && word.match(/[a-z]/i)) {
+				if (word.indexOf("<")<0 && word.match(/[a-z0-9]/i)) {
 					msg+= " "+locutus.ucfirst(word);
 				}
 			});
