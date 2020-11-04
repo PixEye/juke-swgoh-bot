@@ -598,6 +598,7 @@ exports.showPlayerRelics = function(player, message) {
 
 	let color = "GREEN";
 	let lines = [];
+	let msg = "";
 	let n = 0;
 	let unitsWithRelics = player.unitsData.filter(unit => unit.relic>0) // main filter
 		.sort((a, b) =>
@@ -612,8 +613,6 @@ exports.showPlayerRelics = function(player, message) {
 	// console.dir(player.unitsData);
 
 	if (n === 0) {
-		let msg = "";
-
 		color = "ORANGE";
 		console.log(logPrefix()+"There is 0 known relics in this roster.");
 		lines = ["I don't know any relic in this roster for the moment."];
@@ -624,7 +623,10 @@ exports.showPlayerRelics = function(player, message) {
 				let uid = unit.name;
 
 				uid = fullUnitNames[uid] || uid;
-				lines.push(unit.relic+" relic(s), "+unit.zetaCount+" zeta(s) & GP=``"+unit.gp+"`` on: "+uid);
+				msg = "``"+unit.relic+"`` relic(s),"+
+					" ``"+unit.zetaCount+"`` zeta(s) &"+
+					" GP=``"+unit.gp+"`` on: "+uid;
+				lines.push(msg);
 			} else if (i===maxLines)
 				lines.push("And "+(n-maxLines)+" more...");
 		});
