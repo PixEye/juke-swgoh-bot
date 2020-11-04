@@ -83,6 +83,8 @@ exports.guildPlayerStats = function(allycode, message, guild) {
 
 		unitName = unitName.replace('Brood ', '');
 		unitName = unitName.replace('Capital ', '');
+		unitName = unitName.replace('Jedi Knight ', 'JK');
+		unitName = unitName.replace('Supreme Leader Kylo Ren', 'SLKR');
 		console.log(logPrefix()+"Fetching for: %s (%s)...", unitName, unitKey);
 
 		allycodes.forEach(function(allycode, i) {
