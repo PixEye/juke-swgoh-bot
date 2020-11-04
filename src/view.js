@@ -28,7 +28,8 @@ const swgoh   = require("./swgoh"); // SWGoH API of this bot
 let config = require("./config.json");
 // let tplCfg = require("./config-template.json");
 
-const fullUnitNames = require("../data/unit-names");
+const fullUnitNames  = require("../data/unit-names");
+const unitAliasNames = require("../data/unit-aliases");
 
 /** List guild members
  * @param {Number} allycode - An allycode
@@ -333,9 +334,14 @@ exports.showUnitInfo = function(player, message, unitName, ct) {
 	pattern = new RegExp("^"+strToLookFor);
 	if (!ct) ct = 1; // combatType: 1 for characters / 2 for ships
 
-	// Try exact match...
 	player.unitsData.forEach(function(unit) {
-		if (unit.combatType===ct && unit.name===strToLookFor) {
+		if (unit.combatType!==ct) return;
+
+		if (unit.name===strToLookFor) { // Try exact match...
+			matchingNames.push(unit.name);
+			if (!nbFound) foundUnit = unit;
+			++nbFound;
+		} else if (unitAliasNames[strToLookFor]===unit.name) { // Try: aliases...
 			matchingNames.push(unit.name);
 			if (!nbFound) foundUnit = unit;
 			++nbFound;
@@ -363,7 +369,7 @@ exports.showUnitInfo = function(player, message, unitName, ct) {
 			});
 
 			if (!nbFound) {
-				// Try: aliases...
+				// Tryin full unit names...
 				player.unitsData.forEach(function(unit) {
 					let uid = unit.name;
 					let fullName = fullUnitNames[uid] || uid;
@@ -400,7 +406,8 @@ exports.showUnitInfo = function(player, message, unitName, ct) {
 			lines.push("**"+addon+nbFound+" total matching names:**");
 			matchingNames.sort();
 			matchingNames.forEach(function(matchingName, i) {
-				i = (i+1<=9 && nbFound>9)? "_"+(i+1): i+1;
+				i = (i+1<=9 && nbFound>9)? "0"+(i+1): i+1;
+				matchingName = fullUnitNames[matchingName] || matchingName;
 				lines.push("``"+i+"/ "+matchingName+"``");
 			});
 		}
