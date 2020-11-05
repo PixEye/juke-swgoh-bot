@@ -475,7 +475,7 @@ exports.getPlayerFromDiscordUser = function(user, message, callback) {
 				let msg = " is allycode of: **"+user.game_name+"**";
 
 				if (user.guildRefId) {
-					msg+= " (from guild: "+user.guild_name+")";
+					if (user.guild_name) msg+= " (from guild: "+user.guild_name+")";
 					guilds[user.guildRefId] = user.guildRefId;
 				}
 				console.log(logPrefix()+user.allycode+msg);
