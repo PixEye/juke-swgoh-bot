@@ -171,10 +171,7 @@ client.on("message", (message) => {
 		case "ac":
 		case "allycode":
 			sql = "SELECT u.* FROM `users` u WHERE "+searchStr;
-
-			/*	"SELECT u.*, g.name AS guild_name"+ // does not work if guild is unknown!
-				" FROM `users` u, `guilds` g"+
-				" WHERE u.guildRefId=g.swgoh_id AND ("+searchStr+")"; */
+			// Do not request for guilds in same SQL beacause it does not work if guild is unknown!
 
 			db_pool.query(sql, (exc, users) => {
 				let guildIds = {};
@@ -219,22 +216,23 @@ client.on("message", (message) => {
 						dbGuilds.forEach(guild => {
 							guildDescr[guild.swgoh_id] = guild.name.trim();
 							if (guild.memberCount) {
-								guildDescr[guild.swgoh_id]+= ' / '+guild.memberCount+' members';
+								guildDescr[guild.swgoh_id]+= ': '+guild.memberCount+' members';
 							}
-							if (guild.pg) {
-								guildDescr[guild.swgoh_id]+= ' [PG: '+guild.pg+']';
+							if (guild.gp) {
+								guild.gp = Math.round(guild.gp/1e6); // to M
+								guildDescr[guild.swgoh_id]+= ', GP: '+guild.gp+'M';
 							}
 						});
 
 						users.forEach(user => {
 							let msg = " is allycode of: "+user.game_name;
 							if (user.guildRefId && typeof(guildDescr[user.guildRefId])==='string') {
-								msg+= " (from guild: "+guildDescr[user.guildRefId]+")";
+								msg+= " (from guild "+guildDescr[user.guildRefId]+")";
 							}
 							lines.push("``"+user.allycode+"``"+msg);
 							console.log(logPrefix()+user.allycode+msg);
 						});
-						message.reply(lines);
+						message.channel.send(lines);
 					});
 				}
 			});
