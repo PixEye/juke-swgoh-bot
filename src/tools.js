@@ -68,6 +68,8 @@ exports.checkPlayerMods = function(player, message) {
 		return;
 	}
 
+	const nums = ['one', 'two', 'three', 'four', 'five', 'six'];
+
 	let color = "GREEN";
 	let lines = [];
 	let maxModsCount = 6;
@@ -93,10 +95,13 @@ exports.checkPlayerMods = function(player, message) {
 		unitsWithoutAllModules.forEach(function(unit, i) {
 			tpmmc += maxModsCount - unit.mods.length;
 			if (i<maxLines) {
+				let uGp = unit.gp < 1e4 ? '0' + unit.gp : unit.gp;
 				let uid = unit.name;
 				let fullName = fullUnitNames[uid] || uid;
-				
-				lines.push((maxModsCount-unit.mods.length)+" missing module(s) on: (GP="+unit.gp+") "+fullName);
+				let nbMissMods = maxModsCount - unit.mods.length;
+				let numIcon = ':' + nums[nbMissMods - 1] + ':';
+
+				lines.push(numIcon+" missing module(s) on: (GP=``"+uGp+"``) "+fullName);
 			} else if (i===maxLines) {
 				lines.push("And "+(n-maxLines)+" more...");
 			}
