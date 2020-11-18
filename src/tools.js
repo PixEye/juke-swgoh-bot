@@ -28,6 +28,9 @@ const view    = require("./view"); // Functions used to display results
 let config = require("./config.json");
 // let tplCfg = require("./config-template.json");
 
+const fullUnitNames  = require("../data/unit-names");
+// const unitAliasNames = require("../data/unit-aliases");
+
 // Prepare DB connection pool:
 const db_pool = mysql.createPool({
 	connectionLimit: config.db.conMaxCount,
@@ -70,12 +73,10 @@ exports.checkPlayerMods = function(player, message) {
 	let maxModsCount = 6;
 	let minCharLevel = 50;
 	let n = 0;
-	let unitsWithoutAllModules = player.unitsData.filter(function(unit) {
-			// Main filter:
-			return unit.combatType===1 && unit.level>=minCharLevel && unit.mods.length<maxModsCount;
-		}).sort(function(a, b) {
-			return b.gp-a.gp; // sort by galactic power (descending GP)
-		});
+	let unitsWithoutAllModules = player.unitsData.filter(unit => { // Main filter:
+		return unit.combatType===1 && unit.level>=minCharLevel && unit.mods.length<maxModsCount;
+	}).sort((a, b) => b.gp - a.gp); // sort by descending galactic power (GP)
+
 	let tpmmc = 0; // total player's missing modules count
 
 	n = unitsWithoutAllModules.length;
@@ -91,10 +92,14 @@ exports.checkPlayerMods = function(player, message) {
 		color = "ORANGE";
 		unitsWithoutAllModules.forEach(function(unit, i) {
 			tpmmc += maxModsCount - unit.mods.length;
-			if (i<maxLines)
-				lines.push((maxModsCount-unit.mods.length)+" missing module(s) on: (GP="+unit.gp+") "+unit.name);
-			else if (i===maxLines)
+			if (i<maxLines) {
+				let uid = unit.name;
+				let fullName = fullUnitNames[uid] || uid;
+				
+				lines.push((maxModsCount-unit.mods.length)+" missing module(s) on: (GP="+unit.gp+") "+fullName);
+			} else if (i===maxLines) {
 				lines.push("And "+(n-maxLines)+" more...");
+			}
 		});
 		console.log(logPrefix()+"%d total character(s) with %d total missing modules found.", tpmmc, maxModsCount);
 	}
@@ -104,6 +109,7 @@ exports.checkPlayerMods = function(player, message) {
 		.setDescription(lines).setColor(color)
 		.setTimestamp(player.updated)
 		.setFooter(config.footer.message, config.footer.iconUrl);
+
 	message.channel.send(richMsg).catch(function(ex) {
 		console.warn(ex);
 		message.reply(ex.message);
@@ -1303,7 +1309,7 @@ exports.updatePlayerDataInDb = function(player, message, callback) {
 
 					msg = begin+"'s "+u.name+" is now R"+u.relic;
 					console.log(logPrefix()+msg);
-				} else 
+				} else
 				// Look for new gears:
 				if (u.gear>11 && u.gear>prevUnit.gear) {
 					newEvol.new_value = u.gear;
