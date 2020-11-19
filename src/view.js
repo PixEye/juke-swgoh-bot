@@ -28,7 +28,7 @@ const swgoh   = require("./swgoh"); // SWGoH API of this bot
 let config = require("./config.json");
 // let tplCfg = require("./config-template.json");
 
-const fullUnitNames  = require("../data/unit-names");
+const unitRealNames  = require("../data/unit-names");
 const unitAliasNames = require("../data/unit-aliases");
 
 /** List guild members
@@ -374,7 +374,7 @@ exports.showUnitInfo = function(player, message, unitName, ct) {
 				// Tryin full unit names...
 				player.unitsData.forEach(function(unit) {
 					let uid = unit.name;
-					let fullName = fullUnitNames[uid] || uid;
+					let fullName = unitRealNames[uid] || uid;
 
 					fullName = fullName.toUpperCase().replace(/ /g, '');
 					if (unit.combatType===ct && fullName.indexOf(strToLookFor)>=0) {
@@ -409,7 +409,7 @@ exports.showUnitInfo = function(player, message, unitName, ct) {
 			matchingNames.sort();
 			matchingNames.forEach(function(matchingName, i) {
 				i = (i+1<=9 && nbFound>9)? "0"+(i+1): i+1;
-				matchingName = fullUnitNames[matchingName] || matchingName;
+				matchingName = unitRealNames[matchingName] || matchingName;
 				lines.push("``"+i+"/ "+matchingName+"``");
 			});
 		}
@@ -423,7 +423,7 @@ exports.showUnitInfo = function(player, message, unitName, ct) {
 	}
 
 	unitName = foundUnit.name;
-	unitName = fullUnitNames[unitName] || unitName;
+	unitName = unitRealNames[unitName] || unitName;
 	richMsg.setThumbnail("https://swgoh.gg/game-asset/u/"+foundUnit.name+"/")
 		.setTitle(player.name+"'s "+unitName);
 
@@ -537,7 +537,7 @@ exports.showLastEvols = function(player, message, evols) {
 		let msg = "`"+dt+":` ";
 		let uid = e.unit_id;
 
-		msg += fullUnitNames[uid] || uid;
+		msg += unitRealNames[uid] || uid;
 		maxDt = (e.ts>maxDt)? e.ts: maxDt;
 
 		switch(e.type) {
@@ -624,7 +624,7 @@ exports.showPlayerRelics = function(player, message) {
 			if (i<maxLines) {
 				let uid = unit.name;
 
-				uid = fullUnitNames[uid] || uid;
+				uid = unitRealNames[uid] || uid;
 				msg = "``"+unit.relic+"`` relic(s),"+
 					" ``"+unit.zetaCount+"`` zeta(s) &"+
 					" GP=``"+unit.gp+"`` on: "+uid;
@@ -775,6 +775,6 @@ exports.showWhoIs = function(user, nick, message) {
 };
 
 let k = 'GRANDADMIRALTHRAWN';
-console.log(exports.logPrefix()+"Name with space check: %s => %s", k, fullUnitNames[k]);
+console.log(exports.logPrefix()+"Name with space check: %s => %s", k, unitRealNames[k]);
 
 // vim: noexpandtab shiftwidth=4 softtabstop=4 tabstop=4

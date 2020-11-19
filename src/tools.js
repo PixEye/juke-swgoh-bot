@@ -28,7 +28,7 @@ const view    = require("./view"); // Functions used to display results
 let config = require("./config.json");
 // let tplCfg = require("./config-template.json");
 
-const fullUnitNames  = require("../data/unit-names");
+const unitRealNames  = require("../data/unit-names");
 // const unitAliasNames = require("../data/unit-aliases");
 
 // Prepare DB connection pool:
@@ -97,7 +97,7 @@ exports.checkPlayerMods = function(player, message) {
 			if (i<maxLines) {
 				let uGp = unit.gp < 1e4 ? '0' + unit.gp : unit.gp;
 				let uid = unit.name;
-				let fullName = fullUnitNames[uid] || uid;
+				let fullName = unitRealNames[uid] || uid;
 				let nbMissMods = maxModsCount - unit.mods.length;
 				let numIcon = ':' + nums[nbMissMods - 1] + ':';
 
