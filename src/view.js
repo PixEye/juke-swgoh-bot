@@ -231,6 +231,59 @@ exports.logPrefix = function () {
 	return dt.toString().replace(/ GMT.*$$/, "")+" - ";
 };
 
+/** Show known abbreviations / acronyms
+ * @param {Object} message - The user's message to reply to
+ */
+exports.showAbbr = function(message) {
+	let buffer = '';
+	let i = 0;
+	let lines = [];
+	let locale = config.discord.locale; // shortcut
+	let logPrefix = exports.logPrefix; // shortcut
+	let nbAliases = Object.keys(unitAliasNames).length;
+	let nbMsgSent = 0;
+	let newAlias = '';
+	let now = new Date();
+	let richMsg = new RichEmbed().setTitle("Known abbreviations").setColor("GREEN")
+		.setTimestamp(now).setFooter(config.footer.message, config.footer.iconUrl);
+
+	console.log(logPrefix() + "showAbbr() called to show: " + nbAliases + " aliases.")
+
+	Object.keys(unitAliasNames).sort().forEach(alias => {
+		newAlias = alias + ': ' + unitRealNames[unitAliasNames[alias]];
+		if (buffer!='') {
+			lines.push(buffer + ' / ' + newAlias);
+			buffer = '';
+		} else {
+			buffer = newAlias;
+		}
+
+		if (i && i % 12 === 0) {
+			richMsg.setDescription(lines);
+			message.channel.send(richMsg).catch(function(ex) {
+				console.warn(ex);
+				message.reply(ex.message);
+				message.channel.send(lines);
+			});
+			++nbMsgSent;
+			lines = [];
+		}
+		++i;
+	});
+
+	if (lines.length) {
+		richMsg.setDescription(lines);
+		message.channel.send(richMsg).catch(function(ex) {
+			console.warn(ex);
+			message.reply(ex.message);
+			message.channel.send(lines);
+		});
+		++nbMsgSent;
+	}
+
+	console.log(logPrefix() + "\\ showAbbr(): " + nbMsgSent + " messages sent.")
+};
+
 /** Show guild statistics (GS command)
  * @param {Object} guild - The user's guild
  * @param {Object} message - The user's message to reply to
@@ -288,7 +341,7 @@ exports.showGuildStats = function(guild, message) {
 /** Show player's last evolutions (LE command)
  * @param {Object} player - The user's profile as an object
  * @param {Object} message - The user's message to reply to
- * @param {Object[]} evols - Player's evolutions
+ * @param {Object} evols - Player's evolutions (array of objects)
  */
 exports.showLastEvols = function(player, message, evols) {
 	let allycode = player.allycode;

@@ -134,6 +134,14 @@ client.on("message", (message) => {
 			message.channel.send(richMsg);
 			break;
 
+		case "abbr":
+		case "abbreviation":
+		case "abbreviations":
+		case "acronym":
+		case "acronyms":
+			view.showAbbr(message);
+			break;
+
 		case "admin":
 			if(message.author.id !== config.discord.ownerID) {
 				message.reply("You're not my master! :imp:");
