@@ -285,206 +285,6 @@ exports.showGuildStats = function(guild, message) {
 	});
 };
 
-/** Show SWGoH data (fetch command)
- * @param {Object} data - The fetched data
- * @param {Object} message - The user's message to reply to
- */
-exports.showSwgohData = function(data, message) {
-	let locale = config.discord.locale; // shortcut
-	let logPrefix = exports.logPrefix; // shortcut
-	let now = new Date();
-	let showableData = typeof(data)==="object"?
-		JSON.stringify(data).substr(0, 200): data;
-
-	richMsg = new RichEmbed().setTitle("SWGoH data").setColor("GREEN")
-		// .setAuthor(config.discord.username)
-		.setDescription(showableData)
-		.setTimestamp(typeof(data)==="object" && data.updated? data.updated: now)
-		.setFooter(config.footer.message, config.footer.iconUrl);
-
-	message.reply(richMsg).catch(function(ex) {
-		console.warn(ex);
-		message.reply(ex.message);
-		message.channel.send(showableData);
-	});
-};
-
-/** Show information about a specified unit (CI/SI commands)
- * @param {Object} player - The user's profile as an object
- * @param {Object} message - The user's message to reply to
- * @param {String} unitName - The unit name as one or several word(s)
- * @param {Number} ct - Combat type: 1 for characters & 2 for ships
- */
-exports.showUnitInfo = function(player, message, unitName, ct) {
-	let color = "RED";
-	let foundUnit = null;
-	let hiddenFields = ["allycode", "combatType", "name"];
-	let lines = [];
-	let logPrefix = exports.logPrefix; // shortcut
-	let matchingNames = [];
-	let msg = "";
-	let nbFound = 0;
-	let pattern = null;
-	let strToLookFor = unitName.replace(/ /g, "").replace(/-/g, '_').toUpperCase();
-
-	if (!player.name) {
-		console.log(logPrefix()+"invalid name at V29 for user:", player);
-		return;
-	}
-
-	console.log(logPrefix()+"Name to look for: '%s'", strToLookFor);
-	pattern = new RegExp("^"+strToLookFor);
-	if (!ct) ct = 1; // combatType: 1 for characters / 2 for ships
-
-	player.unitsData.forEach(function(unit) {
-		if (unit.combatType!==ct) return;
-
-		if (unit.name===strToLookFor) { // Try exact match...
-			matchingNames.push(unit.name);
-			if (!nbFound) foundUnit = unit;
-			++nbFound;
-		} else if (unitAliasNames[strToLookFor]===unit.name) { // Try: aliases...
-			matchingNames.push(unit.name);
-			if (!nbFound) foundUnit = unit;
-			++nbFound;
-		}
-	});
-
-	if (!nbFound) {
-		// Try: starts with...
-		player.unitsData.forEach(function(unit) {
-			if (unit.combatType===ct && unit.name.match(pattern)) {
-				matchingNames.push(unit.name);
-				if (!nbFound) foundUnit = unit;
-				++nbFound;
-			}
-		});
-
-		if (!nbFound) {
-			// Try: contains...
-			player.unitsData.forEach(function(unit) {
-				if (unit.combatType===ct && unit.name.indexOf(strToLookFor)>=0) {
-					matchingNames.push(unit.name);
-					if (!nbFound) foundUnit = unit;
-					++nbFound;
-				}
-			});
-
-			if (!nbFound) {
-				// Tryin full unit names...
-				player.unitsData.forEach(function(unit) {
-					let uid = unit.name;
-					let fullName = unitRealNames[uid] || uid;
-
-					fullName = fullName.toUpperCase().replace(/ /g, '');
-					if (unit.combatType===ct && fullName.indexOf(strToLookFor)>=0) {
-						matchingNames.push(uid);
-						if (!nbFound) foundUnit = unit;
-						++nbFound;
-					}
-				});
-			}
-		}
-	}
-
-	color = nbFound===1? "GREEN": "ORANGE";
-	let richMsg = new RichEmbed().setTimestamp(player.updated).setColor(color)
-		.setFooter(config.footer.message, config.footer.iconUrl);
-
-	unitName = locutus.ucwords(unitName);
-	msg = nbFound+" units with '"+unitName+"' found in this roster";
-	console.log(logPrefix()+msg);
-	if (nbFound!==1) {
-		let addon = '';
-		let maxUnitsToShow = 10;
-
-		lines = [msg+"!"];
-		if (nbFound>maxUnitsToShow) { // security: limit the units to show
-			tools.arrayShuffle(matchingNames);
-			matchingNames = matchingNames.slice(0, maxUnitsToShow);
-			addon = matchingNames.length+" shown/";
-		}
-		if (nbFound) {
-			lines.push("**"+addon+nbFound+" total matching names:**");
-			matchingNames.sort();
-			matchingNames.forEach(function(matchingName, i) {
-				i = (i+1<=9 && nbFound>9)? "0"+(i+1): i+1;
-				matchingName = unitRealNames[matchingName] || matchingName;
-				lines.push("``"+i+"/ "+matchingName+"``");
-			});
-		}
-		richMsg.setDescription(lines).setTitle(player.name+"'s "+unitName);
-		message.reply(richMsg).catch(function(ex) {
-			console.warn(ex);
-			message.reply(ex.message);
-			message.channel.send(lines);
-		});
-		return;
-	}
-
-	unitName = foundUnit.name;
-	unitName = unitRealNames[unitName] || unitName;
-	richMsg.setThumbnail("https://swgoh.gg/game-asset/u/"+foundUnit.name+"/")
-		.setTitle(player.name+"'s "+unitName);
-
-	// Start with stars:
-	key = 'stars';
-	val = foundUnit[key];
-	key+= " ("+val+")";
-	val = ":star:".repeat(val) + ":low_brightness:".repeat(7-val);
-	val = "**"+locutus.ucfirst(key)+":** "+val;
-	lines.push(val);
-
-	// Continue with others keys:
-	Object.keys(foundUnit).sort((a, b) => b-a).forEach(function(key) {
-		var val = foundUnit[key];
-
-		if (hiddenFields.indexOf(key)<0) {
-			switch(key) {
-				case "gp":
-					key = "GP";
-					val = val.toLocaleString();
-					break;
-
-				case "mods":
-					if (ct===2) return; // ignore for ships
-
-					// console.log("Modules:", val); // verbose!
-					val = val.length;
-					break;
-
-				case "stars":
-					return; // already done at first line
-
-				case "gear":
-				case "relic":
-					if (ct===2) return; // ignore for ships
-					break;
-
-				case "zetaCount":
-					if (ct===2) return; // ignore for ships
-					key = "zeta";
-					break;
-			}
-
-			// richMsg.addField(locutus.ucfirst(key)+":", val, true);
-			val = "**"+locutus.ucfirst(key)+":** "+val;
-			if (lines.length && lines[lines.length-1].length<30)
-				lines[lines.length-1] += " ; "+val;
-			else
-				lines.push(val);
-		}
-	});
-
-	// Build the message & show it:
-	if (lines.length) richMsg.setDescription(lines);
-	message.channel.send(richMsg).catch(function(ex) {
-		console.warn(ex);
-		message.reply(ex.message);
-		message.channel.send(lines);
-	});
-};
-
 /** Show player's last evolutions (LE command)
  * @param {Object} player - The user's profile as an object
  * @param {Object} message - The user's message to reply to
@@ -732,6 +532,206 @@ exports.showRandomTeam = function(player, message) {
 	}
 
 	message.reply(richMsg).catch(function(ex) {
+		console.warn(ex);
+		message.reply(ex.message);
+		message.channel.send(lines);
+	});
+};
+
+/** Show SWGoH data (fetch command)
+ * @param {Object} data - The fetched data
+ * @param {Object} message - The user's message to reply to
+ */
+exports.showSwgohData = function(data, message) {
+	let locale = config.discord.locale; // shortcut
+	let logPrefix = exports.logPrefix; // shortcut
+	let now = new Date();
+	let showableData = typeof(data)==="object"?
+		JSON.stringify(data).substr(0, 200): data;
+
+	richMsg = new RichEmbed().setTitle("SWGoH data").setColor("GREEN")
+		// .setAuthor(config.discord.username)
+		.setDescription(showableData)
+		.setTimestamp(typeof(data)==="object" && data.updated? data.updated: now)
+		.setFooter(config.footer.message, config.footer.iconUrl);
+
+	message.reply(richMsg).catch(function(ex) {
+		console.warn(ex);
+		message.reply(ex.message);
+		message.channel.send(showableData);
+	});
+};
+
+/** Show information about a specified unit (CI/SI commands)
+ * @param {Object} player - The user's profile as an object
+ * @param {Object} message - The user's message to reply to
+ * @param {String} unitName - The unit name as one or several word(s)
+ * @param {Number} ct - Combat type: 1 for characters & 2 for ships
+ */
+exports.showUnitInfo = function(player, message, unitName, ct) {
+	let color = "RED";
+	let foundUnit = null;
+	let hiddenFields = ["allycode", "combatType", "name"];
+	let lines = [];
+	let logPrefix = exports.logPrefix; // shortcut
+	let matchingNames = [];
+	let msg = "";
+	let nbFound = 0;
+	let pattern = null;
+	let strToLookFor = unitName.replace(/ /g, "").replace(/-/g, '_').toUpperCase();
+
+	if (!player.name) {
+		console.log(logPrefix()+"invalid name at V29 for user:", player);
+		return;
+	}
+
+	console.log(logPrefix()+"Name to look for: '%s'", strToLookFor);
+	pattern = new RegExp("^"+strToLookFor);
+	if (!ct) ct = 1; // combatType: 1 for characters / 2 for ships
+
+	player.unitsData.forEach(function(unit) {
+		if (unit.combatType!==ct) return;
+
+		if (unit.name===strToLookFor) { // Try exact match...
+			matchingNames.push(unit.name);
+			if (!nbFound) foundUnit = unit;
+			++nbFound;
+		} else if (unitAliasNames[strToLookFor]===unit.name) { // Try: aliases...
+			matchingNames.push(unit.name);
+			if (!nbFound) foundUnit = unit;
+			++nbFound;
+		}
+	});
+
+	if (!nbFound) {
+		// Try: starts with...
+		player.unitsData.forEach(function(unit) {
+			if (unit.combatType===ct && unit.name.match(pattern)) {
+				matchingNames.push(unit.name);
+				if (!nbFound) foundUnit = unit;
+				++nbFound;
+			}
+		});
+
+		if (!nbFound) {
+			// Try: contains...
+			player.unitsData.forEach(function(unit) {
+				if (unit.combatType===ct && unit.name.indexOf(strToLookFor)>=0) {
+					matchingNames.push(unit.name);
+					if (!nbFound) foundUnit = unit;
+					++nbFound;
+				}
+			});
+
+			if (!nbFound) {
+				// Tryin full unit names...
+				player.unitsData.forEach(function(unit) {
+					let uid = unit.name;
+					let fullName = unitRealNames[uid] || uid;
+
+					fullName = fullName.toUpperCase().replace(/ /g, '');
+					if (unit.combatType===ct && fullName.indexOf(strToLookFor)>=0) {
+						matchingNames.push(uid);
+						if (!nbFound) foundUnit = unit;
+						++nbFound;
+					}
+				});
+			}
+		}
+	}
+
+	color = nbFound===1? "GREEN": "ORANGE";
+	let richMsg = new RichEmbed().setTimestamp(player.updated).setColor(color)
+		.setFooter(config.footer.message, config.footer.iconUrl);
+
+	unitName = locutus.ucwords(unitName);
+	msg = nbFound+" units with '"+unitName+"' found in this roster";
+	console.log(logPrefix()+msg);
+	if (nbFound!==1) {
+		let addon = '';
+		let maxUnitsToShow = 10;
+
+		lines = [msg+"!"];
+		if (nbFound>maxUnitsToShow) { // security: limit the units to show
+			tools.arrayShuffle(matchingNames);
+			matchingNames = matchingNames.slice(0, maxUnitsToShow);
+			addon = matchingNames.length+" shown/";
+		}
+		if (nbFound) {
+			lines.push("**"+addon+nbFound+" total matching names:**");
+			matchingNames.sort();
+			matchingNames.forEach(function(matchingName, i) {
+				i = (i+1<=9 && nbFound>9)? "0"+(i+1): i+1;
+				matchingName = unitRealNames[matchingName] || matchingName;
+				lines.push("``"+i+"/ "+matchingName+"``");
+			});
+		}
+		richMsg.setDescription(lines).setTitle(player.name+"'s "+unitName);
+		message.reply(richMsg).catch(function(ex) {
+			console.warn(ex);
+			message.reply(ex.message);
+			message.channel.send(lines);
+		});
+		return;
+	}
+
+	unitName = foundUnit.name;
+	unitName = unitRealNames[unitName] || unitName;
+	richMsg.setThumbnail("https://swgoh.gg/game-asset/u/"+foundUnit.name+"/")
+		.setTitle(player.name+"'s "+unitName);
+
+	// Start with stars:
+	key = 'stars';
+	val = foundUnit[key];
+	key+= " ("+val+")";
+	val = ":star:".repeat(val) + ":low_brightness:".repeat(7-val);
+	val = "**"+locutus.ucfirst(key)+":** "+val;
+	lines.push(val);
+
+	// Continue with others keys:
+	Object.keys(foundUnit).sort((a, b) => b-a).forEach(function(key) {
+		var val = foundUnit[key];
+
+		if (hiddenFields.indexOf(key)<0) {
+			switch(key) {
+				case "gp":
+					key = "GP";
+					val = val.toLocaleString();
+					break;
+
+				case "mods":
+					if (ct===2) return; // ignore for ships
+
+					// console.log("Modules:", val); // verbose!
+					val = val.length;
+					break;
+
+				case "stars":
+					return; // already done at first line
+
+				case "gear":
+				case "relic":
+					if (ct===2) return; // ignore for ships
+					break;
+
+				case "zetaCount":
+					if (ct===2) return; // ignore for ships
+					key = "zeta";
+					break;
+			}
+
+			// richMsg.addField(locutus.ucfirst(key)+":", val, true);
+			val = "**"+locutus.ucfirst(key)+":** "+val;
+			if (lines.length && lines[lines.length-1].length<30)
+				lines[lines.length-1] += " ; "+val;
+			else
+				lines.push(val);
+		}
+	});
+
+	// Build the message & show it:
+	if (lines.length) richMsg.setDescription(lines);
+	message.channel.send(richMsg).catch(function(ex) {
 		console.warn(ex);
 		message.reply(ex.message);
 		message.channel.send(lines);
