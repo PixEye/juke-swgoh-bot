@@ -244,7 +244,7 @@ exports.showAbbr = function(message) {
 	let nbMsgSent = 0;
 	let newAlias = '';
 	let now = new Date();
-	let richMsg = new RichEmbed().setTitle("Known abbreviations").setColor("GREEN")
+	let richMsg = new RichEmbed().setTitle(nbAliases + " known abbreviations").setColor("GREEN")
 		.setTimestamp(now).setFooter(config.footer.message, config.footer.iconUrl);
 
 	console.log(logPrefix() + "showAbbr() called to show: " + nbAliases + " aliases.")
@@ -258,7 +258,7 @@ exports.showAbbr = function(message) {
 			buffer = newAlias;
 		}
 
-		if (i && i % 12 === 0) {
+		if (i && i % 20 === 0) {
 			richMsg.setDescription(lines);
 			message.channel.send(richMsg).catch(function(ex) {
 				console.warn(ex);
