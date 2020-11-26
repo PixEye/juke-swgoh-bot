@@ -154,8 +154,8 @@ client.on("message", (message) => {
 			richMsg = new RichEmbed().setTitle("Liste des commandes")
 				.setDescription([
 					"**Commandes utilisateur :**",
-					" aide, allycode (ac), auteur, charInfo (ci), checkMods (cm), checkUnitsGp (cugp),"+
-					" dis, getUnregisteredPlayers (gup), guildStats (gs), help, invite,"+
+					" abbr(eviations), aide, allycode (ac), auteur, charInfo (ci), checkMods (cm), checkUnitsGp"+
+					" (cugp), dis, getUnregisteredPlayers (gup), guildStats (gs), help, invite,"+
 					" (last)evols (le), listGuildMembers (lgm), playerStats (ps), profile (gg), register (reg),"+
 					" relics, repete, self(y), shipInfo (si), start, stats, status, whoami, whois",
 					"**Commandes de comportement :**",
@@ -659,8 +659,8 @@ client.on("message", (message) => {
 			richMsg = new RichEmbed().setTitle("Avialable commands")
 				.setDescription([
 					"**User commands:**",
-					" about, aide, allycode (ac), charInfo (ci), checkMods (cm), checkUnitsGp (cugp),"+
-					" getUnregisteredPlayers (gup), guildStats (gs), help, invite, (last)evols (le),"+
+					" abbr(eviations), about, aide, allycode (ac), charInfo (ci), checkMods (cm), checkUnitsGp"+
+					" (cugp), getUnregisteredPlayers (gup), guildStats (gs), help, invite, (last)evols (le),"+
 					" listGuildMembers (lgm), playerStat (ps), profile (gg), register (reg), relics,"+
 					" repeat, say, self(y), shipInfo (si), start, stats, status, whoami, whois",
 					"**Behaviour commands:**",
