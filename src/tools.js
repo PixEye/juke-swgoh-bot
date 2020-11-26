@@ -68,8 +68,6 @@ exports.checkPlayerMods = function(player, message) {
 		return;
 	}
 
-	const nums = ['one', 'two', 'three', 'four', 'five', 'six'];
-
 	let color = "GREEN";
 	let lines = [];
 	let maxModsCount = 6;
@@ -99,9 +97,8 @@ exports.checkPlayerMods = function(player, message) {
 				let uid = unit.name;
 				let fullName = unitRealNames[uid] || uid;
 				let nbMissMods = maxModsCount - unit.mods.length;
-				let numIcon = ':' + nums[nbMissMods - 1] + ':';
 
-				lines.push(numIcon+" missing module(s) on: (GP=``"+uGp+"``) "+fullName);
+				lines.push("``"+nbMissMods+"`` missing module(s) on: (GP=``"+uGp+"``) "+fullName);
 			} else if (i===maxLines) {
 				lines.push("And "+(n-maxLines)+" more...");
 			}
