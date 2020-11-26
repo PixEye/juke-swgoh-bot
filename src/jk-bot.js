@@ -606,6 +606,11 @@ client.on("message", (message) => {
 						msg = "No match found!";
 						console.log(logPrefix()+msg);
 						message.reply(msg);
+						if (allycode) {
+							msg = "https://swgoh.gg/p/"+allycode+"/";
+							console.log(logPrefix()+msg);
+							message.channel.send(msg);
+						}
 					} else if (result.length > 1) {
 						lines.push("There are "+result.length+" matches:");
 						result.forEach(user => {
