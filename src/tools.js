@@ -98,7 +98,7 @@ exports.checkPlayerMods = function(player, message) {
 				let fullName = unitRealNames[uid] || uid;
 				let nbMissMods = maxModsCount - unit.mods.length;
 
-				lines.push("``"+nbMissMods+"`` missing module(s) on: (GP=``"+uGp+"``) "+fullName);
+				lines.push(nbMissMods+" missing module(s) on: (GP=``"+uGp+"``) "+fullName);
 			} else if (i===maxLines) {
 				lines.push("And "+(n-maxLines)+" more...");
 			}
