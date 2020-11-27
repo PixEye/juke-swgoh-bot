@@ -236,6 +236,7 @@ exports.logPrefix = function () {
  */
 exports.showAbbr = function(message) {
 	let buffer = '';
+	let chunkSize = 20;
 	let i = 0;
 	let lines = [];
 	let locale = config.discord.locale; // shortcut
@@ -244,25 +245,25 @@ exports.showAbbr = function(message) {
 	let nbMsgSent = 0;
 	let newAlias = '';
 	let now = new Date();
-	let richMsg = new RichEmbed().setTitle(nbAliases + " known abbreviations").setColor("GREEN")
+	let richMsg = new RichEmbed().setColor("GREEN")
 		.setTimestamp(now).setFooter(config.footer.message, config.footer.iconUrl);
 
 	console.log(logPrefix() + "showAbbr() called to show: " + nbAliases + " aliases.")
 
 	Object.keys(unitAliasNames).sort().forEach(alias => {
 		newAlias = alias + ': ' + unitRealNames[unitAliasNames[alias]];
-		if (buffer!='') {
+		if (buffer==='') {
+			buffer = newAlias;
+		} else {
 			lines.push(buffer + ' / ' + newAlias);
 			buffer = '';
-		} else {
-			buffer = newAlias;
 		}
 
-		if (i && i % 20 === 0) {
-			richMsg.setDescription(lines);
+		if (i && i % chunkSize === 0) {
+			richMsg.setDescription(lines).setTitle(i + "/" + nbAliases + " known abbreviations");
 			message.channel.send(richMsg).catch(function(ex) {
 				console.warn(ex);
-				message.reply(ex.message);
+				// message.reply(ex.message);
 				message.channel.send(lines);
 			});
 			++nbMsgSent;
@@ -272,7 +273,7 @@ exports.showAbbr = function(message) {
 	});
 
 	if (lines.length) {
-		richMsg.setDescription(lines);
+		richMsg.setDescription(lines).setTitle(i + "/" + nbAliases + " known abbreviations");
 		message.channel.send(richMsg).catch(function(ex) {
 			console.warn(ex);
 			message.reply(ex.message);
