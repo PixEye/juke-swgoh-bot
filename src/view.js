@@ -239,7 +239,6 @@ exports.showAbbr = function(message) {
 	let chunkSize = 20;
 	let i = 0;
 	let lines = [];
-	let locale = config.discord.locale; // shortcut
 	let logPrefix = exports.logPrefix; // shortcut
 	let nbAliases = Object.keys(unitAliasNames).length;
 	let nbMsgSent = 0;
@@ -292,6 +291,7 @@ exports.showAbbr = function(message) {
 exports.showGuildStats = function(guild, message) {
 	let locale = config.discord.locale; // shortcut
 	let logPrefix = exports.logPrefix; // shortcut
+	let msg = "";
 
 	if (!guild.gp) {
 		msg = "GGS: Invalid guild GP: "+guild.gp;
@@ -300,7 +300,7 @@ exports.showGuildStats = function(guild, message) {
 		return;
 	}
 
-	richMsg = new RichEmbed().setTitle(guild.name).setColor("GREEN")
+	let richMsg = new RichEmbed().setTitle(guild.name).setColor("GREEN")
 		// .setAuthor(config.discord.username)
 		.setDescription([
 			"**Guild description:** "+guild.desc,
@@ -428,7 +428,7 @@ exports.showLastEvols = function(player, message, evols) {
 	if (!maxDt) maxDt = message.createdTimestamp;
 	else maxDt = new Date(maxDt);
 
-	richMsg = new RichEmbed()
+	let richMsg = new RichEmbed()
 		.setTitle(player.name+"'s "+n+" evolution(s) in the last "+maxDays+" days")
 		.setDescription(lines).setColor(color).setTimestamp(maxDt)
 		.setFooter(config.footer.message, config.footer.iconUrl);
@@ -479,9 +479,7 @@ exports.showPlayerRelics = function(player, message) {
 				let uid = unit.name;
 
 				uid = unitRealNames[uid] || uid;
-				msg = "``"+unit.relic+"`` relic(s),"+
-					" ``"+unit.zetaCount+"`` zeta(s) &"+
-					" GP=``"+unit.gp+"`` on: "+uid;
+				msg = "R"+unit.relic+", "+unit.zetaCount+"Z & GP="+unit.gp+" on: "+uid;
 				lines.push(msg);
 			} else if (i===maxLines)
 				lines.push("And "+(n-maxLines)+" more...");
@@ -493,7 +491,7 @@ exports.showPlayerRelics = function(player, message) {
 	let sr = tprc===1? '': 's';
 
 	lines.push("**Total:** "+tprc+" relic"+sr);
-	richMsg = new RichEmbed()
+	let richMsg = new RichEmbed()
 		.setTitle(player.name+" has "+n+" unit"+su+" with relics:")
 		.setDescription(lines).setColor(color)
 		.setTimestamp(player.updated)
@@ -511,7 +509,6 @@ exports.showPlayerRelics = function(player, message) {
  */
 exports.showPlayerStats = function(player, message) {
 	let lines = [];
-	let locale = config.discord.locale; // shortcut
 	let logPrefix = exports.logPrefix; // shortcut
 
 	if (!player.name) {
@@ -565,7 +562,6 @@ exports.showPlayerStats = function(player, message) {
  */
 exports.showRandomTeam = function(player, message) {
 	let lines = [];
-	let locale = config.discord.locale; // shortcut
 	let logPrefix = exports.logPrefix; // shortcut
 
 	if (!player.name) {
@@ -597,13 +593,11 @@ exports.showRandomTeam = function(player, message) {
  * @param {Object} message - The user's message to reply to
  */
 exports.showSwgohData = function(data, message) {
-	let locale = config.discord.locale; // shortcut
-	let logPrefix = exports.logPrefix; // shortcut
 	let now = new Date();
 	let showableData = typeof(data)==="object"?
 		JSON.stringify(data).substr(0, 200): data;
 
-	richMsg = new RichEmbed().setTitle("SWGoH data").setColor("GREEN")
+	let richMsg = new RichEmbed().setTitle("SWGoH data").setColor("GREEN")
 		// .setAuthor(config.discord.username)
 		.setDescription(showableData)
 		.setTimestamp(typeof(data)==="object" && data.updated? data.updated: now)
@@ -806,7 +800,6 @@ exports.showWhoIs = function(user, nick, message) {
 				.replace(/:\d\d /, " ")), // remove seconds
 			"**"+nick+" status is:** "+availability
 		];
-	let logPrefix = exports.logPrefix; // shortcut
 
 	tools.getPlayerFromDiscordUser(user, message, function(player) {
 		if (player) {
@@ -815,7 +808,7 @@ exports.showWhoIs = function(user, nick, message) {
 		if (user.presence.game && user.presence.game.name) {
 			lines.push("**"+nick+" activity is:** "+user.presence.game.name);
 		}
-		richMsg = new RichEmbed()
+		let richMsg = new RichEmbed()
 			.setTitle("User information").setColor("GREEN")
 			.setThumbnail(user.displayAvatarURL).setDescription(lines)
 			.setTimestamp(message.createdTimestamp)
