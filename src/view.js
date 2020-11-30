@@ -21,8 +21,8 @@ const { RichEmbed } = require("discord.js");
 // Load other module(s):
 const locutus = require("./locutus"); // Functions from locutus.io
 const tools   = require("./tools");  // Several functions
-const swgoh   = require("./swgoh"); // SWGoH API of this bot
-//const view  = require("./view"); // Functions used to display results (self file)
+//nst swgoh   = require("./swgoh"); // SWGoH API of this bot
+//nst view    = require("./view"); // Functions used to display results (self file)
 
 // Get the configuration & its template from a separated JSON files:
 let config = require("./config.json");
@@ -47,13 +47,13 @@ exports.guildPlayerStats = function(allycode, message, guild) {
 	let toonMinStars = config.custom.toonMinStars;
 
 	if (!guild || !guild.players || typeof(guild.players)!=="object") {
-		msg = "GPS: Invalid guild: "+JSON.stringify(guild); // TODO: fix this
+		let msg = "GPS: Invalid guild: "+JSON.stringify(guild); // TODO: fix this
 		console.warn(logPrefix()+msg);
 		message.reply(msg);
 		return;
 	}
 
-	richMsg = new RichEmbed().setTitle(guild.name);
+	let richMsg = new RichEmbed().setTitle(guild.name);
 
 	allycodes = Object.keys(guild.players);
 	console.log(logPrefix()+"%d players to get...", allycodes.length);
@@ -87,7 +87,7 @@ exports.guildPlayerStats = function(allycode, message, guild) {
 		unitName = unitName.replace('Supreme Leader Kylo Ren', 'SLKR');
 		console.log(logPrefix()+"Fetching for: %s (%s)...", unitName, unitKey);
 
-		allycodes.forEach(function(allycode, i) {
+		allycodes.forEach(function(allycode) {
 			let player = players[allycode];
 			if (!player) {
 				console.warn(logPrefix()+"Did not find player with allycode: "+allycode);
@@ -216,7 +216,7 @@ exports.listGuildMembers = function(allycode, message, guild) {
 		msg = "No players in this guild are registered! (see GUP command)";
 	} else {
 		msg = nbReg+" registered player(s) found in this guild";
-		Object.keys(guild.players).forEach(function(allycode, i) {
+		Object.keys(guild.players).forEach(function(allycode) {
 			listToDisplay.push(guild.players[allycode].game_name+" ("+allycode+")");
 		});
 
@@ -335,7 +335,6 @@ exports.showGuildStats = function(guild, message) {
 	message.reply(richMsg).catch(function(ex) {
 		console.warn(ex);
 		message.reply(ex.message);
-		message.channel.send(lines);
 	});
 };
 
@@ -345,14 +344,12 @@ exports.showGuildStats = function(guild, message) {
  * @param {Object} evols - Player's evolutions (array of objects)
  */
 exports.showLastEvols = function(player, message, evols) {
-	let allycode = player.allycode;
 	let color = "GREEN";
 	let lines = [];
 	let maxDays = 10;
 	let maxDt = 0;
 	let maxLines = 10;
 	let maxPeriod = 24 * 3600 * 1000 * maxDays;
-	let msg = "";
 	let n = 0;
 	let now = new Date();
 	let lastEvols = evols.filter(function(evol) {
@@ -729,8 +726,8 @@ exports.showUnitInfo = function(player, message, unitName, ct) {
 		.setTitle(player.name+"'s "+unitName);
 
 	// Start with stars:
-	key = 'stars';
-	val = foundUnit[key];
+	let key = 'stars';
+	let val = foundUnit[key];
 	key+= " ("+val+")";
 	val = ":star:".repeat(val) + ":low_brightness:".repeat(7-val);
 	val = "**"+locutus.ucfirst(key)+":** "+val;
