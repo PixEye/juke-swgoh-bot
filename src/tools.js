@@ -65,20 +65,69 @@ exports.arrayShuffle = function(anArr) {
 exports.checkLegendReq = function(player, message) {
 	const req = require("../data/gl-checklist");
 
-	let logPrefix = exports.logPrefix; // shortcut
+	let concatUpMsg = message.words.join("").trim().toUpperCase();
 	let glUnits = req.units;
-	if (typeof player === "undefined" || typeof player.discord_name === "undefined") {
-		player = message.author;
+	let lines = [];
+	let logPrefix = exports.logPrefix; // shortcut
+	let msg = "";
+
+	if (typeof player === "undefined") player = message.author;
+
+	if (typeof player.discord_name === "undefined") {
 		player.discord_name = message.author.username;
 	}
-	let msg = "checkLegendReq() called about player: " + player.discord_name;
-
-	// TODO: use a RichEmbed message instead
+	if (typeof player.name === "undefined") {
+		player.name = message.author.username;
+	}
+	msg = "checkLegendReq() called about player: " + player.discord_name;
 	console.log(logPrefix()+msg);
+	console.log(logPrefix()+"Looking for GL matching '"+concatUpMsg+"'");
+
 	glUnits.forEach(gl => {
-		msg = "Known GL unit: " + gl.unitName;
+		gl.baseId = gl.baseId.replace("TBD_", "").trim().toUpperCase();
+		if (gl.baseId==="JEDIKNIGHTLUKE") gl.baseId = "JKL";
+		msg = "Checking for GL unit: " + gl.unitName+" ("+gl.baseId+")";
 		console.log(logPrefix()+msg);
-		message.channel.send(msg);
+		if ( ! concatUpMsg.includes(gl.baseId) ) return;
+
+		lines.push(msg);
+		gl.requiredUnits.forEach(req => {
+			let playerUnit = player.unitsData.find(unit => unit.name === req.baseId);
+			let unitName = unitRealNames[req.baseId] || req.baseId;
+			let status = "❌";
+
+			if (!playerUnit) {
+				lines.push(status+" "+unitName+" is locked!");
+				return;
+			}
+
+			status = "🔺";
+			if (playerUnit.gear < req.gearLevel) {
+				lines.push(status+" "+unitName+" is G"+playerUnit.gear+"/"+req.gearLevel);
+				return;
+			}
+
+			status = "👉";
+			if (playerUnit.relic < req.relicTier) {
+				lines.push(status+" "+unitName+" is R"+playerUnit.relic+"/"+req.relicTier);
+				return;
+			}
+
+			status = "🆗";
+			lines.push(status+" "+unitName+" is ready: G"+playerUnit.gear+" & R"+req.relicTier);
+		});
+	});
+
+	let richMsg = new RichEmbed()
+		.setTitle(player.name+"'s Galactic Lengend Status")
+		.setDescription(lines).setColor("GREEN")
+		.setTimestamp(player.updated)
+		.setFooter(config.footer.message, config.footer.iconUrl);
+
+	message.channel.send(richMsg).catch(function(ex) {
+		console.warn(ex);
+		message.reply(ex.message);
+		message.channel.send(lines);
 	});
 };
 
