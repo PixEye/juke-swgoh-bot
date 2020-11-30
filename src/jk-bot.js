@@ -398,7 +398,6 @@ client.on("message", (message) => {
 					);
 				});
 			}
-			delete msg;
 			break;
 
 		case "cgp":
@@ -558,7 +557,6 @@ client.on("message", (message) => {
 			} else {
 				message.reply("what can I say for you?");
 			}
-			delete myMsg;
 			break;
 
 		case "fetch":
@@ -755,7 +753,6 @@ client.on("message", (message) => {
 
 		case "rf":
 		case "randomFleet":
-
 		case "rt":
 		case "rand":
 		case "random":
@@ -872,7 +869,6 @@ client.on("message", (message) => {
 					});
 				});
 			}
-			delete tmpMsg;
 			break;
 
 		case "tc":
