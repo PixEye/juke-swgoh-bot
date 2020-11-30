@@ -479,7 +479,7 @@ exports.fetch = async function(users, message, callback) {
 
 		console.log(logPrefix()+"Fetchind from message with words:", message.words);
 		if ( !message.words.length ) {
-			console.war("No word to parse!");
+			console.warn("No word to parse!");
 			return;
 		}
 
