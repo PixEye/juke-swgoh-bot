@@ -1,5 +1,5 @@
 /**
- * jk-bot.js is the main file for Juke's Discord bot for the SWGoH game
+ * jk-bot.js is the main file of Juke's Discord Bot about the mobile game: Star Wars Galaxy of Heroes
  * @author PixEye@pixeye.net
  * @since  2019-10-29
  */
@@ -30,11 +30,11 @@ let tplCfg = require("./config-template.json");
 
 // Prepare DB connection pool:
 let db_pool = mysql.createPool({
-	connectionLimit: config.db.conMaxCount,
-	database       : config.db.name,
-	host           : config.db.host,
-	password       : config.db.pw,
-	user           : config.db.user
+	"connectionLimit": config.db.conMaxCount,
+	"database"       : config.db.name,
+	"host"           : config.db.host,
+	"password"       : config.db.pw,
+	"user"           : config.db.user
 });
 
 // Shortcut(s):
@@ -60,7 +60,7 @@ setInterval(tools.periodicalProcess, 213000); // 213'000 ms = 3 minutes 33
 client.on("ready", () => {
 	console.log(logPrefix()+"I am ready and listening.");
 	client.user.username = config.discord.username;
-	client.user.setPresence({game: {name: config.discord.prefix + "help", type: "listening"}});
+	client.user.setPresence({game: {type: "listening", name: config.discord.prefix + "help"}});
 });
 
 // Get errors (if any):
@@ -263,10 +263,8 @@ client.on("message", (message) => {
 		case "behaverank":
 		case "behaverem":
 		case "behaveremove":
-		// case "behavereset": // TODO
 		case "behaveset":
 		case "behaveworst":
-
 		case "behaviour": // same as behaviour worst
 		case "behaviouradd":
 		case "behaviourget":
@@ -275,9 +273,10 @@ client.on("message", (message) => {
 		case "behaviourrank":
 		case "behaviourrem":
 		case "behaviourremove":
-		// case "behaviourreset": // TODO
 		case "behaviourset":
 		case "behaviourworst":
+		// case "behavereset": // TODO
+		// case "behaviourreset": // TODO
 			// console.log(logPrefix()+"command: '%s'", command);
 			// console.log(logPrefix()+"word count:", words.length);
 
@@ -363,7 +362,6 @@ client.on("message", (message) => {
 
 				let msg = "Compare 'config-template.json' & 'config.json' to find the mistake.";
 				message.channel.send(msg);
-				delete msg;
 			}
 			break;
 
@@ -371,8 +369,8 @@ client.on("message", (message) => {
 		case "charinfo":
 		case "characterinfo":
 		case "portrait":
-			// Look for a character name:
 			let msg = '';
+			// Look for a character name:
 			words.forEach(word => { // ignore tags/mentions & allycodes:
 				if (word.indexOf("<")<0 && word.match(/[a-z0-9]/i)) {
 					msg+= " "+locutus.ucfirst(word);
@@ -570,6 +568,24 @@ client.on("message", (message) => {
 				console.log(logPrefix()+"Try with user ID:", user.id);
 				tools.getPlayerFromDiscordUser(user, message, player => {
 					tools.fetchSwgohData(player, message, view.showSwgohData);
+				});
+			}
+			break;
+
+		case "gl":
+		case "glc":
+		case "glcheck":
+		case "glreq":
+			if (allycode) {
+				tools.getPlayerStats(player, message,
+					(player, message) => tools.checkLegendReq(player, message, "TODO")
+				);
+			} else {
+				console.log(logPrefix()+"Try with Discord ID:", user.id);
+				tools.getPlayerFromDiscordUser(user, message, player => {
+					tools.getPlayerStats(player, message,
+						(player, message) => tools.checkLegendReq(player, message, "TODO")
+					);
 				});
 			}
 			break;

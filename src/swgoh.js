@@ -22,7 +22,7 @@ const { RichEmbed } = require("discord.js");
 const locutus = require("./locutus"); // Functions from locutus.io
 //nst swgoh   = require("./swgoh");  // SWGoH API of this bot (self file)
 const tools   = require("./tools"); // Several functions
-const view    = require("./view"); // Functions used to display results
+//nst view    = require("./view"); // Functions used to display results
 
 // Get the configuration & its template from a separated JSON files:
 let config = require("./config.json");
@@ -66,7 +66,7 @@ exports.getPlayerData = async function(users, callback, message) {
 		}
 
 		console.log(logPrefix()+"Payload:", payload);
-		let { result, error, warning } = await swapi.fetchPlayer(payload); // <--
+		let { result, error } = await swapi.fetchPlayer(payload); // <--
 		let richMsg = null;
 		let roster = null;
 		let stats = null;
@@ -114,10 +114,10 @@ exports.getPlayerData = async function(users, callback, message) {
 			return;
 		}
 
-		// console.log(logPrefix()+"Players by allycode: ", playersByAllycode);
+		/* console.log(logPrefix()+"Players by allycode: ", playersByAllycode);
 		let numToSkill = [ // from 0 to 8 TODO: use it
 			'none', 'health', 'attack', 'defense', 'speed', 'crit chance', 'crit damage', 'potency', 'tenacity'
-		];
+		]; // */
 
 		result.forEach(function(player) {
 			let clean_stats = null;
@@ -178,7 +178,7 @@ exports.getPlayerData = async function(users, callback, message) {
 			let zetaCount = 0;
 
 			for(i=0; i<20; i++) unitsCountByGear[i] = 0;
-			for(i=1; i<3 ; i++) unitsByCombaType[i] = 0;
+			for(i=1; i<3; i++) unitsByCombaType[i] = 0;
 			player.unitCount = 0;
 			player.unitsData = [];
 
@@ -293,9 +293,8 @@ exports.getPlayerData = async function(users, callback, message) {
 		console.log(logPrefix()+"Player exception: ", ex);
 		if (!message) return;
 
-		allycode = allycode? allycode: user.allycode;
 		let msg = "Failed to get player's data with allycode: "+allycode;
-		richMsg = new RichEmbed().setTitle("Error!").setColor("RED")
+		let richMsg = new RichEmbed().setTitle("Error!").setColor("RED")
 			.setDescription([msg])
 			.setFooter(config.footer.message, config.footer.iconUrl)
 			.setTimestamp(message.createdTimestamp);
@@ -313,6 +312,7 @@ exports.getPlayerData = async function(users, callback, message) {
  * @param {function} callback - Function to call once the data is retrieved
  */
 exports.getPlayerGuild = async function(allycodes, message, callback) {
+	let allycode = 0;
 	let logPrefix = tools.logPrefix;
 	let msg = "";
 
@@ -321,11 +321,11 @@ exports.getPlayerGuild = async function(allycodes, message, callback) {
 			allycodes = [allycodes];
 		}
 
-		let allycode = allycodes[0]; // keep only the first one: 1 guild at once
+		allycode = allycodes[0]; // keep only the first one: 1 guild at once
 		let payload = { "allycodes": allycodes };
 		let locale = config.discord.locale; // shortcut
 		console.log(logPrefix()+"Payload:", payload);
-		let { result, error, warning } = await swapi.fetchGuild(payload); // <--
+		let { result, error } = await swapi.fetchGuild(payload); // <--
 		let richMsg = null;
 		let roster = null;
 
@@ -437,7 +437,7 @@ exports.getPlayerGuild = async function(allycodes, message, callback) {
 	} catch(ex) {
 		console.log(logPrefix()+"Guild exception: ", ex);
 		msg = "Failed to get guild with ally: "+allycode;
-		richMsg = new RichEmbed().setTitle("Error!").setColor("RED")
+		let richMsg = new RichEmbed().setTitle("Error!").setColor("RED")
 			.setDescription([msg])
 			.setFooter(config.footer.message, config.footer.iconUrl);
 		message.channel.send(richMsg).catch(function(ex) {
@@ -478,20 +478,23 @@ exports.fetch = async function(users, message, callback) {
 		allycode = allycodes[0]; // keep only the first one: 1 guild at once
 
 		console.log(logPrefix()+"Fetchind from message with words:", message.words);
+		if ( !message.words.length ) {
+			console.war("No word to parse!");
+			return;
+		}
+
 		// Use first remaining word of the user's message to adapt endpoint:
 		let firstLCWord = message.words[0].toLowerCase();
 		if (allowedEndpoints.indexOf(firstLCWord)>=0) {
 			endpoint = firstLCWord;
 		}
 
-		let locale = config.discord.locale; // shortcut
 	//	let { result, error, warning } = await swapi.fetch(endpoint, payload); // does not work
 		endpoint = 'fetch'+locutus.ucfirst(endpoint);
 		console.log(logPrefix()+"Payload:", payload);
 		console.log(logPrefix()+"Fetchind SWGoH data with method:", endpoint);
-		let { result, error, warning } = await swapi[endpoint](payload); // <--
+		let { result, error } = await swapi[endpoint](payload); // <--
 		let richMsg = null;
-		let roster = null;
 
 		if (error) {
 			if (error.error && error.error===error.message) {
@@ -531,9 +534,8 @@ exports.fetch = async function(users, message, callback) {
 		}
 	} catch(ex) {
 		console.log(logPrefix()+"Fetching exception: ", ex);
-		allycode = allycode? allycode: user.allycode;
 		msg = "Failed to fetch data from allycode: "+allycode;
-		richMsg = new RichEmbed().setTitle("Error!").setColor("RED")
+		let richMsg = new RichEmbed().setTitle("Error!").setColor("RED")
 			.setDescription([msg])
 			.setFooter(config.footer.message, config.footer.iconUrl);
 		message.channel.send(richMsg).catch(function(ex) {

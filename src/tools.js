@@ -58,7 +58,34 @@ exports.arrayShuffle = function(anArr) {
 	}
 };
 
-/** Check for missing modules in a player's roster */
+/** Check for Galactic Legends requirements TODO
+ * @param {object} player The target player
+ * @param {object} message The origin message (request)
+ */
+exports.checkLegendReq = function(player, message) {
+	const req = require("../data/gl-checklist");
+
+	let logPrefix = exports.logPrefix; // shortcut
+	let glUnits = req.units;
+	if (typeof player === "undefined" || typeof player.discord_name === "undefined") {
+		player = message.author;
+		player.discord_name = message.author.username;
+	}
+	let msg = "checkLegendReq() called about player: " + player.discord_name;
+
+	// TODO: use a RichEmbed message instead
+	console.log(logPrefix()+msg);
+	glUnits.forEach(gl => {
+		msg = "Known GL unit: " + gl.unitName;
+		console.log(logPrefix()+msg);
+		message.channel.send(msg);
+	});
+};
+
+/** Check for missing modules in a player's roster
+ * @param {object} player The target player
+ * @param {object} message The origin message (request)
+ */
 exports.checkPlayerMods = function(player, message) {
 	let logPrefix = exports.logPrefix; // shortcut
 	let maxLines = 5;
@@ -84,8 +111,6 @@ exports.checkPlayerMods = function(player, message) {
 	// console.dir(player.unitsData);
 
 	if (n === 0) {
-		let msg = "";
-
 		console.log(logPrefix()+"There is 0 known units with missing modules in this roster.");
 		lines = ["All player's level 50+ characters have "+maxModsCount+" modules."];
 	} else {
@@ -106,7 +131,7 @@ exports.checkPlayerMods = function(player, message) {
 		console.log(logPrefix()+"%d total character(s) with %d total missing modules found.", tpmmc, maxModsCount);
 	}
 
-	richMsg = new RichEmbed()
+	let richMsg = new RichEmbed()
 		.setTitle(player.name+" has "+n+" unit(s) with "+tpmmc+" missing module(s)")
 		.setDescription(lines).setColor(color)
 		.setTimestamp(player.updated)
@@ -119,7 +144,10 @@ exports.checkPlayerMods = function(player, message) {
 	});
 };
 
-/** Check units GP against a threshold */
+/** Check units GP against a threshold
+ * @param {object} player The target player
+ * @param {object} message The origin message (request)
+ */
 exports.checkUnitsGp = function(player, message, limit) {
 	let logPrefix = exports.logPrefix; // shortcut
 
@@ -147,8 +175,6 @@ exports.checkUnitsGp = function(player, message, limit) {
 	// console.dir(player.unitsData);
 
 	if (n === 0) {
-		let msg = "";
-
 		console.log(logPrefix()+"There is 0 known units on the border line in this roster.");
 		lines = ["There is no player's characters between "+minGp+" and "+maxGp+" of GP."];
 	} else {
@@ -162,11 +188,12 @@ exports.checkUnitsGp = function(player, message, limit) {
 		console.log(logPrefix()+"%d total character(s) with GP between %dk & %dk.", n, minit, limit);
 	}
 
-	richMsg = new RichEmbed()
+	let richMsg = new RichEmbed()
 		.setTitle(player.name+" has "+n+" unit(s) with GP between "+minit+"k and "+limit+"k")
 		.setDescription(lines).setColor(color)
 		.setTimestamp(player.updated)
 		.setFooter(config.footer.message, config.footer.iconUrl);
+
 	message.channel.send(richMsg).catch(function(ex) {
 		console.warn(ex);
 		message.reply(ex.message);
@@ -185,7 +212,8 @@ exports.clone = function(x) {
 	return JSON.parse(JSON.stringify(x));
 }
 
-/** Clode database connexion */
+/** Clode database connexion
+ */
 exports.db_close = function(exc) {
 	let logPrefix = exports.logPrefix; // shortcut
 
@@ -193,12 +221,13 @@ exports.db_close = function(exc) {
 		console.warn(logPrefix()+"DB closing exception:", exc);
 	}
 
-	if (db_pool && typeof(db_pool.end)==='function') db_pool.end();
+	if (db_pool && typeof db_pool.end==='function') db_pool.end();
 
 	console.log(logPrefix()+"DB connections stopped.");
 };
 
-/** Get data from the SWGoH-help API */
+/** Get data from the SWGoH-help API
+ */
 exports.fetchSwgohData = function(player, message, callback) {
 	let allycode = player.allycode;
 
@@ -210,15 +239,16 @@ exports.fetchSwgohData = function(player, message, callback) {
 	message.channel.send("Looking for stats about ally: "+allycode+"...")
 		.then(msg => {
 			swgoh.fetch(player, message, function(data) {
-				if (typeof(msg.delete)==="function") msg.delete();
+				if (typeof msg.delete==="function") msg.delete();
 
-				if (typeof(callback)==="function") callback(data, message, player);
+				if (typeof callback==="function") callback(data, message, player);
 			});
 		})
 		.catch(console.error);
 };
 
-/** Try to find an ally code in the words of the user's message */
+/** Try to find an ally code in the words of the user's message
+ */
 exports.getFirstAllycodeInWords = function(words) {
 	let allycode = 0;
 	let foundAt = -1;
@@ -242,7 +272,8 @@ exports.getFirstAllycodeInWords = function(words) {
 	return allycode;
 };
 
-/** Get guild data from the database */
+/** Get guild data from the database
+ */
 exports.getGuildDbStats = function(player1, message, callback) {
 	let allycode = player1.allycode;
 	let locale = config.discord.locale; // shortcut
@@ -260,7 +291,7 @@ exports.getGuildDbStats = function(player1, message, callback) {
 	message.channel.send("Looking for DB stats of guild with ally: "+allycode+"...")
 		.then(msg => {
 			db_pool.query(sql, [allycode], function(exc, result) {
-				if (typeof(msg.delete)==="function") msg.delete();
+				if (typeof msg.delete==="function") msg.delete();
 
 				if (exc) {
 					let otd = exc.sqlMessage? exc.sqlMessage: exc; // obj to display
@@ -337,13 +368,13 @@ exports.getGuildDbStats = function(player1, message, callback) {
 						result.forEach(function(u) {
 							guild.relics += u.relic;
 
-							if(!guild.players[u.allycode].unitsData)
+							if (!guild.players[u.allycode].unitsData)
 								guild.players[u.allycode].unitsData = {};
 
 							guild.players[u.allycode].unitsData[u.name] = u;
 						});
 
-						if (typeof(callback)==="function") // TODO: change allycode to player
+						if (typeof callback==="function") // TODO: change allycode to player
 							callback(allycode, message, guild);
 					});
 				});
@@ -352,7 +383,8 @@ exports.getGuildDbStats = function(player1, message, callback) {
 		.catch(console.error);
 };
 
-/** Get guild data from the SWGoH-help API */
+/** Get guild data from the SWGoH-help API
+ */
 exports.getGuildStats = function(player, message, callback) {
 	let allycode = player.allycode;
 
@@ -364,7 +396,7 @@ exports.getGuildStats = function(player, message, callback) {
 	message.channel.send("Looking for stats of guild with ally: "+allycode+"...")
 		.then(msg => {
 			swgoh.getPlayerGuild(allycode, message, function(guild) {
-				if (typeof(msg.delete)==="function") msg.delete();
+				if (typeof msg.delete==="function") msg.delete();
 
 				// Remember stats of the guild:
 				exports.rememberGuildStats(guild);
@@ -375,7 +407,10 @@ exports.getGuildStats = function(player, message, callback) {
 		.catch(console.error);
 };
 
-/** Get a specified player's last evolutions */
+/** Get a specified player's last evolutions
+ * @param {object} player The target player
+ * @param {object} message The origin message (request)
+ */
 exports.getLastEvolsFromDb = function(player, message) {
 	let allycode = player.allycode;
 	let logPrefix = exports.logPrefix; // shortcut
@@ -398,7 +433,8 @@ exports.getLastEvolsFromDb = function(player, message) {
 	});
 };
 
-/** Get player's data from our database */
+/** Get player's data from our database
+ */
 exports.getPlayerFromDatabase = function(allycode, message, callback) {
 	let logPrefix = exports.logPrefix; // shortcut
 	let msg = "";
@@ -455,7 +491,8 @@ exports.getPlayerFromDatabase = function(allycode, message, callback) {
 	});
 };
 
-/** Get player's data from a Discord user object (Discord tag) */
+/** Get player's data from a Discord user object (Discord tag)
+ */
 exports.getPlayerFromDiscordUser = function(user, message, callback) {
 	let discord_id = user.id;
 	let logPrefix = exports.logPrefix; // shortcut
@@ -531,7 +568,7 @@ exports.getPlayerStats = function(users, message, callback) {
 		playersByAllycode[user.allycode] = user;
 	});
 
-	if (!allycodes || ["number", "object"].indexOf(typeof(allycodes))<0) {
+	if (!allycodes || ["number", "object"].indexOf(typeof allycodes)<0) {
 		message.reply(":red_circle: Invalid or missing allycode(s)! Try 'register' command.");
 		return;
 	}
@@ -541,23 +578,24 @@ exports.getPlayerStats = function(users, message, callback) {
 	message.channel.send("Looking for "+str+" stats...")
 		.then(msg => {
 			swgoh.getPlayerData(users, function(player, message) {
-				if (typeof(msg.delete)==="function") msg.delete();
+				if (typeof msg.delete === "function") msg.delete();
 
 				player.displayAvatarURL =
 					playersByAllycode[player.allycode].displayAvatarURL;
 				exports.updatePlayerDataInDb(player, message);
 
-				if (typeof(callback)==="function") callback(player, message);
+				if (typeof callback === "function") callback(player, message);
 			}, message);
 		})
 		.catch(function(exc) {
-			if (msg && typeof(msg.delete)==="function") msg.delete();
-
 			console.error(exc);
 		});
 };
 
-/** Look for unregistered players in a specified guild */
+/** Look for unregistered players in a specified guild
+ * @param {number} allycode The target player's allycode
+ * @param {object} message The origin message (request)
+ */
 exports.getUnregPlayers = function(allycode, message) {
 	let logPrefix = exports.logPrefix; // shortcut
 
@@ -678,7 +716,8 @@ exports.getUnregPlayers = function(allycode, message) {
 		});
 };
 
-/** Manage players' behaviour notation (with colors) */
+/** Manage players' behaviour notation (with colors)
+ */
 exports.handleBehaviour = function(guild, message, target) {
 	let allycodes = Object.keys(guild.players);
 	let authorFound = false;
@@ -706,7 +745,7 @@ exports.handleBehaviour = function(guild, message, target) {
 			}
 
 			if (!author.game_name) {
-				author.game_name = locutus.utf8_decode(user.username);
+				author.game_name = locutus.utf8_decode(author.username);
 			}
 			console.log(logPrefix()+author.game_name+" is a contest admin.");
 
@@ -749,6 +788,8 @@ exports.handleBehaviour = function(guild, message, target) {
 
 		if (sql) {
 			db_pool.query(sql, [delta, target.allycode], function(exc, result) {
+				let msg = "";
+
 				if (exc) {
 					let otd = exc.sqlMessage? exc.sqlMessage: exc; // obj to display
 
@@ -778,7 +819,6 @@ exports.handleBehaviour = function(guild, message, target) {
 			sql = "UPDATE `users` SET `warnLevel`=0 WHERE `guildRefId`=?";
 			db_pool.query(sql, [guild.refId], function(exc, result) {
 				let color = "GREEN";
-				let lastScore = 0;
 				let lines = [];
 
 				if (exc) {
@@ -798,7 +838,7 @@ exports.handleBehaviour = function(guild, message, target) {
 
 				console.log(logPrefix()+msg);
 				lines = [msg];
-				richMsg = new RichEmbed().setColor(color).setTitle(title)
+				let richMsg = new RichEmbed().setColor(color).setTitle(title)
 					.setDescription(lines).setTimestamp(author.updated)
 					.setFooter(config.footer.message, config.footer.iconUrl);
 				message.channel.send(richMsg).catch(function(ex) {
@@ -840,7 +880,7 @@ exports.handleBehaviour = function(guild, message, target) {
 			if (!result.length) {
 				lines = [':white_check_mark: No behaviour problem registered.'];
 			} else {
-				result.forEach(function(player) {
+				result.forEach(player => {
 					let playerIcon = behaveIcons[player.warnLevel];
 					let addon = player.warnLevel? "**": "";
 
@@ -856,7 +896,7 @@ exports.handleBehaviour = function(guild, message, target) {
 			let as = n===1? "'s": "s'";
 			title = n+" player"+as+" behaviour"+s+" in: "+guild.name;
 			console.log(logPrefix()+"%d line%s displayed", lines.length, s);
-			richMsg = new RichEmbed().setColor(color).setTitle(title)
+			let richMsg = new RichEmbed().setColor(color).setTitle(title)
 				.setDescription(lines).setTimestamp(author.updated)
 				.setFooter(config.footer.message, config.footer.iconUrl);
 			message.channel.send(richMsg).catch(function(ex) {
@@ -868,7 +908,8 @@ exports.handleBehaviour = function(guild, message, target) {
 	});
 };
 
-/** Handle guild contest commands */
+/** Handle guild contest commands
+ */
 exports.handleContest = function(guild, message, target) {
 	let allycodes = Object.keys(guild.players);
 	let authorFound = false;
@@ -942,13 +983,13 @@ exports.handleContest = function(guild, message, target) {
 				}
 
 				if (result.affectedRows !== 1) {
-					msg = result.affectedRows+" user(s) updated!";
+					let msg = result.affectedRows+" user(s) updated!";
 					console.log(logPrefix()+msg);
 					message.reply(msg);
 					return;
 				}
 
-				msg = target.game_name+' successfully updated.';
+				let msg = target.game_name+' successfully updated.';
 				console.log(logPrefix()+msg);
 				message.reply(':white_check_mark: '+msg);
 				return;
@@ -982,7 +1023,7 @@ exports.handleContest = function(guild, message, target) {
 
 				console.log(logPrefix()+msg);
 				lines = [msg];
-				richMsg = new RichEmbed().setColor(color).setTitle(title)
+				let richMsg = new RichEmbed().setColor(color).setTitle(title)
 					.setDescription(lines).setTimestamp(author.updated)
 					.setFooter(config.footer.message, config.footer.iconUrl);
 				message.channel.send(richMsg).catch(function(ex) {
@@ -1029,7 +1070,7 @@ exports.handleContest = function(guild, message, target) {
 			if (!lines.length) {
 				lines = ["Every member of this guild has a contest score at zero."];
 			}
-			richMsg = new RichEmbed().setColor(color).setTitle(title)
+			let richMsg = new RichEmbed().setColor(color).setTitle(title)
 				.setDescription(lines).setTimestamp(author.updated)
 				.setFooter(config.footer.message, config.footer.iconUrl);
 			message.channel.send(richMsg).catch(function(ex) {
@@ -1076,7 +1117,6 @@ exports.periodicalProcess = function() {
 		msg = "Start periodical process on: %s (%s / %s)...";
 		console.log(logPrefix()+msg, u.game_name, u.allycode, exports.toMySQLdate(u.ts));
 
-		let message = false;
 		swgoh.getPlayerData([u], function(player, message) {
 			exports.updatePlayerDataInDb(player, message, function() {
 				let msg = "\\ Periodical process done for %s (%s).";
@@ -1087,7 +1127,11 @@ exports.periodicalProcess = function() {
 	});
 };
 
-/** Store guild data in our database */
+/** Store guild data in our database
+ * @param {number} allycode The target player's allycode
+ * @param {object} message The origin message (request)
+ * @param {function} callback The function to call once the job is done here
+ */
 exports.refreshGuildStats = function(allycode, message, callback) {
 	let locale = config.discord.locale; // shortcut
 	let logPrefix = exports.logPrefix; // shortcut
@@ -1163,7 +1207,8 @@ exports.refreshGuildStats = function(allycode, message, callback) {
 		.catch(console.error);
 };
 
-/** Remember stats of the guild */
+/** Remember stats of the guild
+ */
 exports.rememberGuildStats = function(guild) {
 	let logPrefix = exports.logPrefix; // shortcut
 	let sql = "INSERT INTO `guilds` (swgoh_id, name, gp, memberCount, ts) VALUES ?";
@@ -1187,7 +1232,6 @@ exports.rememberGuildStats = function(guild) {
 
 					console.log("SQL:", sql);
 					console.log(logPrefix()+"GS Exception:", otd);
-					message.reply("GS exception: "+otd);
 					return;
 				}
 
@@ -1231,7 +1275,11 @@ exports.toMySQLdate = function(d) {
 	return d;
 };
 
-/** Store a player's data in our database */
+/** Store a player's data in our database
+ * @param {object} player The target player
+ * @param {object} message The origin message (request)
+ * @param {function} callback The function to call once the job is done here
+ */
 exports.updatePlayerDataInDb = function(player, message, callback) {
 	let allycode = player.allycode;
 	let begin = "";
