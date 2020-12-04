@@ -233,11 +233,12 @@ client.on("message", (message) => {
 						});
 
 						users.forEach(user => {
-							let msg = " is allycode of: "+user.game_name;
+							let gpm = Math.round(user.gp/1e5)/10;
+							let msg = " is "+user.game_name+"'s code ("+gpm+"M";
 							if (user.guildRefId && typeof(guildDescr[user.guildRefId])==='string') {
-								msg+= " (from guild "+guildDescr[user.guildRefId]+")";
+								msg+= " from guild "+guildDescr[user.guildRefId];
 							}
-							lines.push("``"+user.allycode+"``"+msg);
+							lines.push("``"+user.allycode+"``"+msg+")");
 							console.log(logPrefix()+user.allycode+msg);
 						});
 						message.channel.send(lines);
@@ -525,6 +526,10 @@ client.on("message", (message) => {
 				message.reply("You're not my master! :imp:");
 			} else {
 				message.reply("Up to your will master. Leaving...");
+
+				msg = "I was listening since: "+tools.toMySQLdate(start)+" GMT.";
+				message.channel.send(msg);
+				console.log(logPrefix()+msg);
 				console.log(logPrefix()+"STOPPING!");
 
 				db_pool.end(tools.db_close);
