@@ -527,14 +527,15 @@ client.on("message", (message) => {
 			} else {
 				message.reply("Up to your will master. Leaving...");
 
-				msg = "I was listening since: "+tools.toMySQLdate(start)+" GMT.";
-				message.channel.send(msg);
+				let msg = "I was listening since: "+tools.toMySQLdate(start)+" GMT.";
 				console.log(logPrefix()+msg);
-				console.log(logPrefix()+"STOPPING!");
+				message.channel.send(msg).then(() => {
+					console.log(logPrefix()+"STOPPING!");
 
-				db_pool.end(tools.db_close);
-				console.log(logPrefix()+"I'm OFF.");
-				client.destroy();
+					db_pool.end(tools.db_close);
+					console.log(logPrefix()+"I'm OFF.");
+					client.destroy();
+				}).catch(console.error);
 			}
 			break;
 
