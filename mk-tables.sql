@@ -13,6 +13,16 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
+-- Structure of table `alliances`
+--
+
+CREATE TABLE IF NOT EXISTS `alliances` (
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `name` varchar(32) COLLATE utf8_unicode_ci NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+--
 -- Structure of table `evols`
 --
 
@@ -39,6 +49,8 @@ CREATE TABLE IF NOT EXISTS `guilds` (
   `name` varchar(64) COLLATE utf8_unicode_ci NOT NULL,
   `gp` int(10) UNSIGNED NOT NULL,
   `memberCount` tinyint(1) UNSIGNED NOT NULL DEFAULT '0',
+  `gm_allycode` int(10) UNSIGNED NULL DEFAULT NULL,
+  `alliance_id` int(10) UNSIGNED NULL DEFAULT NULL,
   `ts` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   UNIQUE KEY `swgoh_id` (`swgoh_id`),
