@@ -54,7 +54,8 @@ CREATE TABLE IF NOT EXISTS `guilds` (
   `ts` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   UNIQUE KEY `swgoh_id` (`swgoh_id`),
-  KEY `name` (`name`)
+  KEY `name` (`name`),
+  KEY `alliance_id` (`alliance_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- --------------------------------------------------------
