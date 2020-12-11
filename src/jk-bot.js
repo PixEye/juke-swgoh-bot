@@ -1075,9 +1075,7 @@ client.on("message", (message) => {
 			message.channel.send("I am listening since: "+tools.toMySQLdate(start)+" GMT.");
 
 			sql = "SELECT COUNT(`id`) AS nbg FROM `guilds`";
-			db_pool.query(sql, countGuilds);
-
-			function countGuilds(exc, result) {
+			db_pool.query(sql, (exc, result) => {
 				if (exc) {
 					console.log("SQL:", sql);
 					console.log(logPrefix()+"ST1 Exception:", exc.sqlMessage? exc.sqlMessage: exc);
@@ -1095,51 +1093,47 @@ client.on("message", (message) => {
 				console.log(logPrefix()+"   %d guild(s) registered", nbg);
 
 				sql = "SELECT COUNT(`id`) AS nbp FROM `users`"; // nbp = number of players
-				db_pool.query(sql, countPlayers);
-			}
+				db_pool.query(sql, (exc, result) => {
+					if (exc) {
+						console.log("SQL:", sql);
+						console.log(logPrefix()+"ST2 Exception:", exc.sqlMessage? exc.sqlMessage: exc.code);
+						message.reply("Exception: failed to count registered players!");
+						return;
+					}
 
-			function countPlayers(exc, result) {
-				if (exc) {
-					console.log("SQL:", sql);
-					console.log(logPrefix()+"ST2 Exception:", exc.sqlMessage? exc.sqlMessage: exc.code);
-					message.reply("Exception: failed to count registered players!");
-					return;
-				}
+					if (result.length !== 1) {
+						console.log(logPrefix()+result.length+" result(s) to count users!");
+						message.reply("Failed to count registered users!");
+						return;
+					}
 
-				if (result.length !== 1) {
-					console.log(logPrefix()+result.length+" result(s) to count users!");
-					message.reply("Failed to count registered users!");
-					return;
-				}
+					nbp = result[0].nbp; // nbp = number of players
+					let avg = nbg? Math.round(nbp/nbg): nbp; // average per guild
+					console.log(logPrefix()+"  %d  user(s) registered (average = %d per guild)", nbp, avg);
 
-				nbp = result[0].nbp; // nbp = number of players
-				let avg = nbg? Math.round(nbp/nbg): nbp; // average per guild
-				console.log(logPrefix()+"  %d  user(s) registered (average = %d per guild)", nbp, avg);
+					sql = "SELECT COUNT(`id`) AS nbu FROM `units`"; // nbp = number of units
+					db_pool.query(sql, (exc, result) => {
+						if (exc) {
+							console.log("SQL:", sql);
+							console.log(logPrefix()+"ST3 Exception:", exc.sqlMessage? exc.sqlMessage: exc.code);
+							message.reply("Exception: failed to count registered players!");
+							return;
+						}
 
-				sql = "SELECT COUNT(`id`) AS nbu FROM `units`"; // nbp = number of units
-				db_pool.query(sql, countUnits);
-			}
+						if (result.length !== 1) {
+							console.log(logPrefix()+result.length+" result(s) to count users!");
+							message.reply("Failed to count registered units!");
+							return;
+						}
 
-			function countUnits(exc, result) {
-				if (exc) {
-					console.log("SQL:", sql);
-					console.log(logPrefix()+"ST3 Exception:", exc.sqlMessage? exc.sqlMessage: exc.code);
-					message.reply("Exception: failed to count registered players!");
-					return;
-				}
+						let nbu = result[0].nbu; // nbu = number of units
+						let avg = nbp? Math.round(nbu/nbp): nbu; // average per player
+						console.log(logPrefix()+"%d  unit(s) registered (average = %d per user)", nbu, avg);
 
-				if (result.length !== 1) {
-					console.log(logPrefix()+result.length+" result(s) to count users!");
-					message.reply("Failed to count registered units!");
-					return;
-				}
-
-				let nbu = result[0].nbu; // nbu = number of units
-				let avg = nbp? Math.round(nbu/nbp): nbu; // average per player
-				console.log(logPrefix()+"%d  unit(s) registered (average = %d per user)", nbu, avg);
-
-				message.channel.send(nbg+" guilds, "+nbp+" players & "+nbu+" units registered.");
-			}
+						message.channel.send(nbg+" guilds, "+nbp+" players & "+nbu+" units registered.");
+					})
+				})
+			})
 			break;
 		}
 
