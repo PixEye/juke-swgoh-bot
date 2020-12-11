@@ -931,10 +931,10 @@ exports.handleBehaviour = function(guild, message, target) {
 			}
 
 			let color = "GREEN";
-			let lastScore = 0;
+			// let lastScore = 0;
 			let lines = [];
 			let n = 0;
-			let rank = 0;
+			// let rank = 0;
 
 			console.log(logPrefix()+"%d matches found", result.length);
 			if (!result.length) {
@@ -944,10 +944,10 @@ exports.handleBehaviour = function(guild, message, target) {
 					let playerIcon = behaveIcons[player.warnLevel];
 					let addon = player.warnLevel? "**": "";
 
-					if (player.warnLevel!==lastScore) ++rank;
+					// if (player.warnLevel!==lastScore) ++rank;
 					if (cmd==='worst' || player.allycode===target.allycode)
 						lines.push(playerIcon+" "+addon+player.game_name+addon);
-					lastScore = player.warnLevel;
+					// lastScore = player.warnLevel;
 				});
 				n = Math.min(limit, lines.length);
 			}
@@ -1063,7 +1063,6 @@ exports.handleContest = function(guild, message, target) {
 			sql = "UPDATE `users` SET `contestPoints`=0 WHERE `guildRefId`=?";
 			db_pool.query(sql, [guild.refId], function(exc, result) {
 				let color = "GREEN";
-				let lastScore = 0;
 				let lines = [];
 
 				if (exc) {
@@ -1450,6 +1449,7 @@ exports.updatePlayerDataInDb = function(player, message, callback) {
 					console.log(logPrefix()+msg);
 				}
 			}); // end of unit loop
+			console.log(logPrefix()+"Characters count: "+nbChars);
 
 			evols.forEach(function(newEvol) {
 				lines.push(Object.values(newEvol));
