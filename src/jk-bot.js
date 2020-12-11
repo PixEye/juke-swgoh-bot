@@ -155,7 +155,7 @@ client.on("message", (message) => {
 				.setDescription([
 					"**Commandes utilisateur :**",
 					" abbr(eviations), aide, allycode (ac), auteur, charInfo (ci), checkMods (cm), checkUnitsGp"+
-					" (cugp), dis, getUnregisteredPlayers (gup), guildStats (gs), help, invite,"+
+					" (cugp), dis, glCheck (glc), getUnregisteredPlayers (gup), guildStats (gs), help, invite,"+
 					" (last)evols (le), listGuildMembers (lgm), playerStats (ps), profile (gg), register (reg),"+
 					" relics, repete, self(y), shipInfo (si), start, stats, status, whoami, whois",
 					"**Commandes de comportement :**",
@@ -248,6 +248,7 @@ client.on("message", (message) => {
 			break;
 
 		case "auteur":
+		case "author":
 			lines.push("Ce bot a été écrit par <@222443133294739456> (aka PixEye).");
 			lines.push("En cas de bug ou de demande d'amélioration, contactez-le.");
 			lines.push("");
@@ -685,9 +686,9 @@ client.on("message", (message) => {
 				.setDescription([
 					"**User commands:**",
 					" abbr(eviations), about, aide, allycode (ac), charInfo (ci), checkMods (cm), checkUnitsGp"+
-					" (cugp), getUnregisteredPlayers (gup), guildStats (gs), help, invite, (last)evols (le),"+
-					" listGuildMembers (lgm), playerStat (ps), profile (gg), register (reg), relics,"+
-					" repeat, say, self(y), shipInfo (si), start, stats, status, whoami, whois",
+					" (cugp), glCheck (glc), getUnregisteredPlayers (gup), guildStats (gs), help, invite,"+
+					" (last)evols (le), listGuildMembers (lgm), playerStat (ps), profile (gg), register (reg),"+
+					" relics, repeat, say, self(y), shipInfo (si), start, stats, status, whoami, whois",
 					"**Behaviour commands:**",
 					"*Order : behave|behaviour (subcommand) (points) (user)*",
 					" behave, behave( )add, behave( )get, behave( )rank, behave( )rem(ove),",
