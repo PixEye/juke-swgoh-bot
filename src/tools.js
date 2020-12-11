@@ -556,9 +556,9 @@ exports.getPlayerFromDatabase = function(allycode, message, callback) {
 exports.getPlayerFromDiscordUser = function(user, message, callback) {
 	let discord_id = user.id;
 	let logPrefix = exports.logPrefix; // shortcut
-	let sql = "SELECT u.* FROM `users` u WHERE u.discord_id='"+discord_id+"'";
-	/*	"SELECT u.*, g.name AS guild_name FROM `users` u, `guilds` g"+ // fails if guild is not known
-		" WHERE u.discord_id='"+discord_id+"' AND u.guildRefId=g.swgoh_id"; */
+	let sql = "SELECT p.* FROM `users` p WHERE p.discord_id='"+discord_id+"'";
+	/*	"SELECT p.*, g.name AS guild_name FROM `users` p, `guilds` g"+ // fails if guild is not known
+		" WHERE p.discord_id='"+discord_id+"' AND p.guildRefId=g.swgoh_id"; */
 
 	db_pool.query(sql, function(exc, result) {
 		if (exc) {

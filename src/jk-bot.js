@@ -105,17 +105,17 @@ client.on("message", (message) => {
 	console.log(logPrefix()+"/ \""+nick+"\" sent command: "+message.content);
 
 	search = words.join(" ").replace("'", "");
-	searchStr = "u.discord_name LIKE '%"+search+"%' OR u.game_name LIKE '%"+search+"%'";
+	searchStr = "p.discord_name LIKE '%"+search+"%' OR p.game_name LIKE '%"+search+"%'";
 
 	// Extract user's tag (if any):
 	if (message.mentions && message.mentions.users && message.mentions.users.first()) {
 		user = message.mentions.users.first();
 		nick = locutus.utf8_decode(user.username);
 		search = user.id;
-		searchStr = "u.discord_id="+search;
+		searchStr = "p.discord_id="+search;
 	} else if (words.join("").trim()==="") {
 		search = user.id;
-		searchStr = "u.discord_id="+search;
+		searchStr = "p.discord_id="+search;
 	}
 	allycode = tools.getFirstAllycodeInWords(words);
 	player = {"allycode": allycode};
@@ -155,9 +155,10 @@ client.on("message", (message) => {
 				.setDescription([
 					"**Commandes utilisateur :**",
 					" abbr(eviations), aide, allycode (ac), auteur, charInfo (ci), checkMods (cm), checkUnitsGp"+
-					" (cugp), dis, glCheck (glc), getUnregisteredPlayers (gup), guildStats (gs), help, invite,"+
-					" (last)evols (le), listGuildMembers (lgm), playerStats (ps), profile (gg), register (reg),"+
-					" relics, repete, self(y), shipInfo (si), start, stats, status, whoami, whois",
+					" (cugp), countGuildTopUnits (cgtu), dis, glCheck (glc), getUnregisteredPlayers (gup),"+
+					" guildStats (gs), help, invite, (last)evols (le), listGuildMembers (lgm), playerStats (ps),"+
+					" profile (gg), register (reg), relics, repete, self(y), shipInfo (si), start, stats, status,"+
+					" whoami, whois",
 					"**Commandes de comportement :**",
 					"*Ordre : behave|behaviour (sous-commande) (points) (user)*",
 					" behave, behave( )add, behave( )get, behave( )rank, behave( )rem(ove),",
@@ -178,8 +179,9 @@ client.on("message", (message) => {
 
 		case "ac":
 		case "allycode":
-			sql = "SELECT u.* FROM `users` u WHERE "+searchStr;
-			// Do not request for guilds in same SQL beacause it does not work if guild is unknown!
+			sql = "SELECT p.* FROM `users` p"+
+				// " LEFT JOIN `guilds` g ON p.guildRefId=g.swgoh_id"+
+				" WHERE "+searchStr;
 
 			db_pool.query(sql, (exc, users) => {
 				let guildIds = {};
@@ -512,23 +514,45 @@ client.on("message", (message) => {
 		}
 
 		case "cgtu":
-		case "countGuildTopUnits":
-			sql = "SELECT count(p.id) AS nbUnits, p.discord_name"+
-				"FROM `users` p"+
-				"LEFT JOIN `units` u ON p.allycode=u.allycode"+
-				"WHERE p.guildRefId='?' AND u.relic>=5"+
-				"GROUP BY p.id ORDER BY nbUnits DESC";
+		case "ctgu":
+		case "countguildtopunits": {
+			let minRelics = 5;
 
+			sql = "SELECT guildRefId FROM `users` WHERE discord_id=" + user.id;
+
+			sql = "SELECT count(p.id) AS nbUnits, p.discord_name AS player"+
+				" FROM `users` p"+
+				" LEFT JOIN `units` u ON p.allycode=u.allycode"+
+				" WHERE p.guildRefId=("+sql+") AND u.relic>="+minRelics+
+				" GROUP BY p.id ORDER BY nbUnits DESC";
+
+			// console.log(logPrefix()+"CGTU SQL:\n"+sql); // for debug only
 			db_pool.query(sql, (exc, records) => {
-				lines.push(records.nbUnits+" "+records.discord_name);
+				if (exc) {
+					console.log("SQL:", sql);
+					console.log(logPrefix()+"CGTU Exception:", exc.sqlMessage? exc.sqlMessage: exc);
+					message.reply("Failed! This command only support tags or self (no allycode mode).");
+					return;
+				}
+
+				let i = 0;
+				let sum = 0;
+				records.forEach(record => {
+					let num = ++i;
+					if (num<=9) num = "0"+num;
+					sum += record.nbUnits;
+					lines.push(num + "/ **" + record.nbUnits+"** "+record.player);
+				});
+				lines.push("**Total number of units with "+minRelics+" relics or more: "+sum+"**");
+
+				richMsg = new RichEmbed().setTitle("Guild top units ("+i+" players)")
+					.setDescription(lines).setTimestamp().setColor("GREEN")
+					.setFooter(config.footer.message, config.footer.iconUrl);
+
+				message.channel.send(richMsg);
 			});
-
-			richMsg = new RichEmbed().setTitle("License").setColor("GREEN")
-				.setDescription(lines).setTimestamp()
-				.setFooter(config.footer.message, config.footer.iconUrl);
-
-			message.channel.send(richMsg);
 			break;
+		}
 
 		case "licence":
 		case "license":
@@ -634,9 +658,9 @@ client.on("message", (message) => {
 		case "gg":
 		case "profile":
 			if (allycode) {
-				searchStr = "u.allycode="+allycode;
+				searchStr = "p.allycode="+allycode;
 			}
-			sql = "SELECT u.* FROM `users` u WHERE "+searchStr;
+			sql = "SELECT p.* FROM `users` p WHERE "+searchStr;
 			db_pool.query(sql, (exc, result) => {
 				let msg = '';
 
@@ -709,9 +733,9 @@ client.on("message", (message) => {
 				.setDescription([
 					"**User commands:**",
 					" abbr(eviations), about, aide, allycode (ac), charInfo (ci), checkMods (cm), checkUnitsGp"+
-					" (cugp), glCheck (glc), getUnregisteredPlayers (gup), guildStats (gs), help, invite,"+
-					" (last)evols (le), listGuildMembers (lgm), playerStat (ps), profile (gg), register (reg),"+
-					" relics, repeat, say, self(y), shipInfo (si), start, stats, status, whoami, whois",
+					" (cugp), countGuildTopUnits (cgtu), glCheck (glc), getUnregisteredPlayers (gup), guildStats (gs),"+
+					" help, invite, (last)evols (le), listGuildMembers (lgm), playerStat (ps), profile (gg),"+
+					" register (reg), relics, repeat, say, self(y), shipInfo (si), start, stats, status, whoami, whois",
 					"**Behaviour commands:**",
 					"*Order : behave|behaviour (subcommand) (points) (user)*",
 					" behave, behave( )add, behave( )get, behave( )rank, behave( )rem(ove),",
@@ -998,9 +1022,9 @@ client.on("message", (message) => {
 
 		case "stats":
 		case "memstat":
-			sql = "SELECT COUNT(u.id) AS cnt, g.name";
-			sql+= " FROM `guilds` g, `users` u";
-			sql+= " WHERE u.guildRefId=g.swgoh_id"; // join
+			sql = "SELECT COUNT(p.id) AS cnt, g.name";
+			sql+= " FROM `guilds` g, `users` p";
+			sql+= " WHERE p.guildRefId=g.swgoh_id"; // join
 			sql+= " GROUP BY guildRefId";
 			sql+= " ORDER BY cnt DESC, g.name ASC";
 
