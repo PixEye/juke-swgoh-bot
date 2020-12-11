@@ -129,7 +129,7 @@ client.on("message", (message) => {
 			lines.push("");
 			lines.push("This instance of the bot is owned by <@"+config.discord.ownerID+">.");
 			richMsg = new RichEmbed().setTitle("About the author").setColor("GREEN")
-				.setDescription(lines).setTimestamp(message.createdTimestamp)
+				.setDescription(lines).setTimestamp()
 				.setFooter(config.footer.message, config.footer.iconUrl);
 			message.channel.send(richMsg);
 			break;
@@ -171,7 +171,7 @@ client.on("message", (message) => {
 					"**NB2 :** la plupart des commandes accepte un tag ou un code allié (9 chiffres).",
 					"**NB3 :** la \"cible\" par défaut est la personne qui tape la commande (\"me\" inutile).",
 					"**NB4 :** l'ordre des arguments n'importe pas (sauf pour 'contest' et 'behave')."])
-				.setTimestamp(message.createdTimestamp)
+				.setTimestamp()
 				.setFooter(config.footer.message, config.footer.iconUrl);
 			message.channel.send(richMsg);
 			break;
@@ -254,7 +254,7 @@ client.on("message", (message) => {
 			lines.push("");
 			lines.push("Cette instance du bot appartient à <@"+config.discord.ownerID+">.");
 			richMsg = new RichEmbed().setTitle("A propos de l'auteur").setColor("GREEN")
-				.setDescription(lines).setTimestamp(message.createdTimestamp)
+				.setDescription(lines).setTimestamp()
 				.setFooter(config.footer.message, config.footer.iconUrl);
 			message.channel.send(richMsg);
 			break;
@@ -370,7 +370,7 @@ client.on("message", (message) => {
 		case "ci":
 		case "charinfo":
 		case "characterinfo":
-		case "portrait":
+		case "portrait": {
 			let msg = '';
 			// Look for a character name:
 			words.forEach(word => { // ignore tags/mentions & allycodes:
@@ -401,12 +401,13 @@ client.on("message", (message) => {
 				});
 			}
 			break;
+		}
 
 		case "cgp":
 		case "cugp":
 		case "chkgp":
 		case "checkgp":
-		case "checkunitsgp":
+		case "checkunitsgp": {
 			let limit = 21;
 			if (allycode) {
 				tools.getPlayerStats(player, message, (player, message) => {
@@ -421,6 +422,7 @@ client.on("message", (message) => {
 				});
 			}
 			break;
+		}
 
 		case "cm":
 		case "chkmod":
@@ -449,7 +451,7 @@ client.on("message", (message) => {
 		case "contestreset":
 		case "contestset":
 		case "contesttop":
-		case "rank":
+		case "rank": {
 			cmd = command.replace('contest', '');
 
 			if (!cmd && words.length && isNaN(parseInt(words[0]))) {
@@ -507,13 +509,33 @@ client.on("message", (message) => {
 				}
 			}
 			break;
+		}
+
+		case "cgtu":
+		case "countGuildTopUnits":
+			sql = "SELECT count(p.id) AS nbUnits, p.discord_name"+
+				"FROM `users` p"+
+				"LEFT JOIN `units` u ON p.allycode=u.allycode"+
+				"WHERE p.guildRefId='?' AND u.relic>=5"+
+				"GROUP BY p.id ORDER BY nbUnits DESC";
+
+			db_pool.query(sql, (exc, records) => {
+				lines.push(records.nbUnits+" "+records.discord_name);
+			});
+
+			richMsg = new RichEmbed().setTitle("License").setColor("GREEN")
+				.setDescription(lines).setTimestamp()
+				.setFooter(config.footer.message, config.footer.iconUrl);
+
+			message.channel.send(richMsg);
+			break;
 
 		case "licence":
 		case "license":
 			lines.push("This free software is published under the Apache License 2.0");
 			lines.push("http://www.apache.org/licenses/LICENSE-2.0");
 			richMsg = new RichEmbed().setTitle("License").setColor("GREEN")
-				.setDescription(lines).setTimestamp(message.createdTimestamp)
+				.setDescription(lines).setTimestamp()
 				.setFooter(config.footer.message, config.footer.iconUrl);
 			message.channel.send(richMsg);
 			break;
@@ -543,7 +565,7 @@ client.on("message", (message) => {
 		case "dis":
 		case "repeat":
 		case "repete":
-		case "say":
+		case "say": {
 			let destChannel = [message.channel];
 			let myMsg = '';
 
@@ -565,6 +587,7 @@ client.on("message", (message) => {
 				message.reply("what can I say for you?");
 			}
 			break;
+		}
 
 		case "fetch":
 			if (allycode) {
@@ -583,13 +606,13 @@ client.on("message", (message) => {
 		case "glreq":
 			if (allycode) {
 				tools.getPlayerStats(player, message,
-					(player, message) => tools.checkLegendReq(player, message, "TODO")
+					(player, message) => tools.checkLegendReq(player, message)
 				);
 			} else {
 				console.log(logPrefix()+"Try with Discord ID:", user.id);
 				tools.getPlayerFromDiscordUser(user, message, player => {
 					tools.getPlayerStats(player, message,
-						(player, message) => tools.checkLegendReq(player, message, "TODO")
+						(player, message) => tools.checkLegendReq(player, message)
 					);
 				});
 			}
@@ -702,7 +725,7 @@ client.on("message", (message) => {
 					"**NB2:** most of commands accept a user's tag or an ally code (9 digits).",
 					"**NB3:** the default target is the command writer (\"me\" is useless).",
 					"**NB4:** order of arguments is up to you (except for contest and behave commands)."])
-				.setTimestamp(message.createdTimestamp)
+				.setTimestamp()
 				.setFooter(config.footer.message, config.footer.iconUrl);
 			message.channel.send(richMsg);
 			break;
@@ -711,7 +734,7 @@ client.on("message", (message) => {
 			// https://discordapp.com/api/oauth2/authorize?client_id=629346604075450399&permissions=2112&scope=bot
 			lines.push("Follow this link to invite me to your server(s): http://bit.ly/JukeSwgohBot");
 			richMsg = new RichEmbed().setTitle("Invite").setColor("GREEN")
-				.setDescription(lines).setTimestamp(message.createdTimestamp)
+				.setDescription(lines).setTimestamp()
 				.setFooter(config.footer.message, config.footer.iconUrl);
 			message.channel.send(richMsg);
 			break;
@@ -846,7 +869,7 @@ client.on("message", (message) => {
 			break;
 
 		case "si":
-		case "shipinfo":
+		case "shipinfo": {
 			// Look for a ship name:
 			let tmpMsg = '';
 			words.forEach(function(word) {
@@ -877,6 +900,7 @@ client.on("message", (message) => {
 				});
 			}
 			break;
+		}
 
 		case "tc":
 		case "rel":
@@ -957,7 +981,7 @@ client.on("message", (message) => {
 
 				try {
 					richMsg = new RichEmbed().setTitle(title).setColor(col)
-						.setDescription(lines).setTimestamp(message.createdTimestamp)
+						.setDescription(lines).setTimestamp()
 						.setFooter(config.footer.message, config.footer.iconUrl);
 					message.channel.send(richMsg).catch(ex => {
 						console.warn(ex);
@@ -1013,14 +1037,14 @@ client.on("message", (message) => {
 				richMsg = new RichEmbed()
 					.setTitle("Memory status").setColor("GREEN")
 					.setDescription(lines)
-					.setTimestamp(message.createdTimestamp)
+					.setTimestamp()
 					.setFooter(config.footer.message, config.footer.iconUrl);
 				message.channel.send(richMsg);
 			});
 			break;
 
 		case "start":
-		case "status":
+		case "status": {
 			let nbg = 0; // number of registered guilds
 			let nbp = 0; // number of registered players
 
@@ -1093,6 +1117,7 @@ client.on("message", (message) => {
 				message.channel.send(nbg+" guilds, "+nbp+" players & "+nbu+" units registered.");
 			}
 			break;
+		}
 
 		case "self":
 		case "selfy":
