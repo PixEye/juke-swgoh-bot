@@ -115,6 +115,21 @@ exports.checkLegendReq = function(player, message) {
 				return;
 			}
 
+			if (req.stars) {
+				levels = playerUnit.stars+"/"+req.stars;
+				msg = "`"+levels+"`:star:: "+unitName;
+				
+				if (playerUnit.stars < req.stars) {
+					progress = playerUnit.stars / req.stars;
+					lines.push("🔺 "+msg+" is only "+playerUnit.stars+"⭐. "+(progress*100).toFixed()+"%");
+				} else {
+					progress = 1;
+					lines.push("✅ "+msg+" is ready. "+(progress*100).toFixed()+"%");
+				}
+				progresses.push(progress);
+				return;
+			}
+
 			if (playerUnit.gear<=9) playerUnit.gear = "0"+playerUnit.gear;
 			levels = "G"+playerUnit.gear+"/"+req.gearLevel+"; R"+playerUnit.relic+"/"+req.relicTier;
 			msg = "`"+levels+"`: "+unitName;
