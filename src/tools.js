@@ -72,6 +72,7 @@ exports.checkLegendReq = function(player, message) {
 	let lines = [];
 	let logPrefix = exports.logPrefix; // shortcut
 	let msg = "";
+	let progresses = [];
 
 	if (typeof player === "undefined") player = message.author;
 
@@ -93,20 +94,24 @@ exports.checkLegendReq = function(player, message) {
 
 		msg = "Checking for GL unit: " + gl.unitName+" ("+gl.baseId+")";
 		console.log(logPrefix()+msg);
-		if ( ! concatUpMsg.includes(gl.baseId) ) return;
+		if ( ! concatUpMsg.includes(gl.baseId) ) {
+			return; // ---------- ---------- ---------- -------------- -----------
+		}
 
 		found = true;
 		lines.push(msg);
 		gl.requiredUnits.forEach(req => {
 			let levels = "";
 			let playerUnit = player.unitsData.find(unit => unit.name === req.baseId);
+			let progress = 0;
 			let unitName = unitRealNames[req.baseId] || req.baseId;
 
 			if (!playerUnit) {
 				playerUnit = {gear: 0, relic: 0};
 				levels = "G00/"+req.gearLevel+"; R"+playerUnit.relic+"/"+req.relicTier;
 				msg = "`"+levels+"`: "+unitName;
-				lines.push("❌ "+msg+" is locked!");
+				progresses.push(progress);
+				lines.push("❌ "+msg+" is locked! 0%");
 				return;
 			}
 
@@ -114,27 +119,41 @@ exports.checkLegendReq = function(player, message) {
 			levels = "G"+playerUnit.gear+"/"+req.gearLevel+"; R"+playerUnit.relic+"/"+req.relicTier;
 			msg = "`"+levels+"`: "+unitName;
 
+			progress = playerUnit.stars / 10;
 			if (playerUnit.stars < 7) {
-				lines.push("🔺 "+msg+" is only "+playerUnit.stars+"⭐");
+				progresses.push(progress);
+				lines.push("🔺 "+msg+" is only "+playerUnit.stars+"⭐. "+(progress*100).toFixed()+"%");
 				return;
 			}
 
+			progress = playerUnit.gear / (req.gearLevel + req.relicTier);
 			if (playerUnit.gear < req.gearLevel) {
-				lines.push("😕 "+msg+" in progress");
+				progresses.push(progress);
+				lines.push("😕 "+msg+" in progress. "+(progress*100).toFixed()+"%");
 				return;
 			}
 
+			progress = .9 + .1*(playerUnit.relic/req.relicTier);
 			if (playerUnit.relic < req.relicTier) {
-				lines.push("👉 "+msg+" in progress");
+				progresses.push(progress);
+				lines.push("👉 "+msg+" in progress. "+(progress*100).toFixed()+"%");
 				return;
 			}
 
-			lines.push("✅ "+msg+" is ready.");
+			progress = 1;
+			progresses.push(progress);
+			lines.push("✅ "+msg+" is ready. "+(progress*100).toFixed()+"%");
 		});
 	});
 
 	let color = found ? "GREEN" : "RED";
 	if (!found) lines.push("Known GL: "+glNames.join(", "));
+	else if (progresses.length) {
+		const sum = progresses.reduce((a, b) => a + b, 0);
+		const average = (100*sum/progresses.length).toFixed() || 0;
+
+		lines.push("Estimated progress (experimental): **"+average+"%**");
+	}
 
 	let richMsg = new RichEmbed()
 		.setTitle(player.name+"'s Galactic Lengend Status")
