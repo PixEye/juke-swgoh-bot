@@ -104,16 +104,23 @@ exports.checkLegendReq = function(player, message) {
 
 			if (!playerUnit) {
 				playerUnit = {gear: 0, relic: 0};
-				levels = "G0/"+req.gearLevel+"; R"+playerUnit.relic+"/"+req.relicTier;
-				msg = levels+": "+unitName;
+				levels = "G00/"+req.gearLevel+"; R"+playerUnit.relic+"/"+req.relicTier;
+				msg = "`"+levels+"`: "+unitName;
 				lines.push("❌ "+msg+" is locked!");
 				return;
 			}
 
+			if (playerUnit.gear<=9) playerUnit.gear = "0"+playerUnit.gear;
 			levels = "G"+playerUnit.gear+"/"+req.gearLevel+"; R"+playerUnit.relic+"/"+req.relicTier;
-			msg = levels+": "+unitName;
+			msg = "`"+levels+"`: "+unitName;
+
+			if (playerUnit.stars < 7) {
+				lines.push("🔺 "+msg+" is only "+playerUnit.stars+"⭐");
+				return;
+			}
+
 			if (playerUnit.gear < req.gearLevel) {
-				lines.push("🔺 "+msg+" in progress");
+				lines.push("😕 "+msg+" in progress");
 				return;
 			}
 
