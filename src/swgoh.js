@@ -195,20 +195,24 @@ exports.getPlayerData = async function(users, callback, message) {
 					player.unitCount++;
 					unit.relics = (unit.relic && unit.relic.currentTier>1)? unit.relic.currentTier-2: 0;
 
-					// Fix: increase GP if relics:
+					// Fix: increase GP if relics
 					switch(unit.relics) {
 						case 0: break;
-						case 1: unit.gp +=  255 +  504; break; //   9%
-						case 2: unit.gp +=  536 + 1059; break; //  20%
-						case 3: unit.gp +=  842 + 1664; break; //  31%
-						case 4: unit.gp += 1173 + 2319; break; //  43%
-						case 5: unit.gp += 1530 + 3024; break; //  57%
-						case 6: unit.gp += 2040 + 4032; break; //  76%
-						case 7: unit.gp += 2678 + 5292; break; // 100%
+						case 1: unit.gp +=  255 +  504; break;
+						case 2: unit.gp +=  536 + 1059; break;
+						case 3: unit.gp +=  842 + 1664; break;
+						case 4: unit.gp += 1173 + 2319; break;
+						case 5: unit.gp += 1530 + 3024; break;
+						case 6: unit.gp += 2040 + 4032; break;
+						case 7: unit.gp += 2678 + 5292; break;
+						case 8: unit.gp += 3443 + 6804; break;
 						default:
 							msg = "Invalid relic level for %s (ac=%d):";
 							console.warn(msg, unit.defId, allycode, unit.relics);
 					}
+
+					// Fix: increase GP if more than 4 zetas
+					if (zetaCount>4) unit.gp += (zetaCount-4) * 5829;
 
 					player.unitsData.push({
 						"allycode":   allycode,

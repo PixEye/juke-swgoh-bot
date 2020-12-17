@@ -90,10 +90,11 @@ exports.checkLegendReq = function(player, message) {
 		gl.baseId = gl.baseId.replace("TBD_", "").trim();
 		if (gl.baseId==="JEDIKNIGHTLUKE") gl.baseId = "JKL";
 		glNames.push(gl.baseId);
-		gl.baseId = gl.baseId.toUpperCase();
 
 		msg = "Checking for GL unit: " + gl.unitName+" ("+gl.baseId+")";
 		console.log(logPrefix()+msg);
+
+		gl.baseId = gl.baseId.toUpperCase();
 		if ( ! concatUpMsg.includes(gl.baseId) ) {
 			return; // ---------- ---------- ---------- -------------- -----------
 		}
@@ -115,10 +116,10 @@ exports.checkLegendReq = function(player, message) {
 				return;
 			}
 
-			if (req.stars) {
+			if (req.stars) { // special case of ships
 				levels = playerUnit.stars+"/"+req.stars;
 				msg = "`"+levels+"`:star:: "+unitName;
-				
+
 				if (playerUnit.stars < req.stars) {
 					progress = playerUnit.stars / req.stars;
 					lines.push("🔺 "+msg+" is only "+playerUnit.stars+"⭐. "+(progress*100).toFixed()+"%");
@@ -158,11 +159,11 @@ exports.checkLegendReq = function(player, message) {
 			progress = 1;
 			progresses.push(progress);
 			lines.push("✅ "+msg+" is ready. "+(progress*100).toFixed()+"%");
-		});
-	});
+		}); // end of loop on requirements
+	}); // end of loop on GL
 
 	let color = found ? "GREEN" : "RED";
-	if (!found) lines.push("Known GL: "+glNames.join(", "));
+	if (!found) lines.push("Known GL names: "+glNames.join(", "));
 	else if (progresses.length) {
 		const sum = progresses.reduce((a, b) => a + b, 0);
 		const average = (100*sum/progresses.length).toFixed() || 0;
