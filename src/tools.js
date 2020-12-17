@@ -29,7 +29,7 @@ let config = require("./config.json");
 // let tplCfg = require("./config-template.json");
 
 const unitRealNames  = require("../data/unit-names");
-// const unitAliasNames = require("../data/unit-aliases");
+const unitAliasNames = require("../data/unit-aliases");
 
 // Prepare DB connection pool:
 const db_pool = mysql.createPool({
@@ -65,6 +65,7 @@ exports.arrayShuffle = function(anArr) {
 exports.checkLegendReq = function(player, message) {
 	const req = require("../data/gl-checklist");
 
+	let color = "GREEN";
 	let concatUpMsg = message.words.join("").trim().toUpperCase();
 	let found = false;
 	let glNames = [];
@@ -72,104 +73,136 @@ exports.checkLegendReq = function(player, message) {
 	let lines = [];
 	let logPrefix = exports.logPrefix; // shortcut
 	let msg = "";
-	let progresses = [];
+	let resumes = [];
 
 	if (typeof player === "undefined") player = message.author;
 
-	if (typeof player.discord_name === "undefined") {
-		player.discord_name = message.author.username;
+	if (typeof player.game_name === "undefined") {
+		player.game_name = message.author.username;
 	}
 	if (typeof player.name === "undefined") {
-		player.name = message.author.username;
+		player.name = player.game_name;
 	}
-	msg = "checkLegendReq() called about player: " + player.discord_name;
+	msg = "checkLegendReq() called about player: " + player.game_name;
 	console.log(logPrefix()+msg);
+
+	if (unitAliasNames[concatUpMsg]) concatUpMsg = unitAliasNames[concatUpMsg];
 	console.log(logPrefix()+"Looking for GL matching '"+concatUpMsg+"'");
 
 	glUnits.forEach(gl => {
+		if (found) return;
+
+		let progresses = [];
+
+		lines = [];
+		gl.name = gl.unitName;
 		gl.baseId = gl.baseId.replace("TBD_", "").trim();
-		if (gl.baseId==="JEDIKNIGHTLUKE") gl.baseId = "JKL";
 		glNames.push(gl.baseId);
 
-		msg = "Checking for GL unit: " + gl.unitName+" ("+gl.baseId+")";
+		gl.baseId = gl.baseId.toUpperCase();
+		if (gl.baseId==="REY") gl.baseId = "GLREY";
+		if (unitAliasNames[gl.baseId]) gl.baseId = unitAliasNames[gl.baseId];
+
+		msg = "Checking for GL unit: " + gl.name+" ("+gl.baseId+")";
 		console.log(logPrefix()+msg);
 
-		gl.baseId = gl.baseId.toUpperCase();
-		if ( ! concatUpMsg.includes(gl.baseId) ) {
-			return; // ---------- ---------- ---------- -------------- -----------
+		msg = "Checking for GL unit: **" + gl.name+"** ("+gl.baseId+")";
+		lines.push(msg);
+
+		const uid = unitAliasNames[gl.baseId] || gl.baseId;
+		const playerGl = player.unitsData.find(unit => unit.name === uid);
+		const locked = ! playerGl;
+		let indicator = locked? ':green_circle:': ':white_check_mark:';
+
+		gl.name = unitRealNames[gl.baseId];
+		if (!locked) {
+			console.log(logPrefix()+gl.name+" is unlocked.");
+			progresses.push(1);
+		} else {
+			gl.requiredUnits.forEach(req => {
+				let levels = "";
+				let playerUnit = player.unitsData.find(unit => unit.name === req.baseId);
+				let progress = 0;
+				let unitName = unitRealNames[req.baseId] || req.baseId;
+
+				if (!playerUnit) {
+					playerUnit = {gear: 0, relic: 0};
+					levels = "G00/"+req.gearLevel+"; R"+playerUnit.relic+"/"+req.relicTier;
+					msg = "`"+levels+"`: "+unitName;
+					progresses.push(progress);
+					lines.push("❌ "+msg+" is locked! 0%");
+					return;
+				}
+
+				if (req.stars) { // special case of ships
+					levels = playerUnit.stars+"/"+req.stars;
+					msg = "`"+levels+"`:star:: "+unitName;
+
+					if (playerUnit.stars < req.stars) {
+						progress = playerUnit.stars / req.stars;
+						lines.push("🔺 "+msg+" is only "+playerUnit.stars+"⭐. "+(progress*100).toFixed()+"%");
+					} else {
+						progress = 1;
+						lines.push("✅ "+msg+" is ready. "+(progress*100).toFixed()+"%");
+					}
+					progresses.push(progress);
+					return;
+				}
+
+				if (playerUnit.gear<=9) playerUnit.gear = "0"+playerUnit.gear;
+				levels = "G"+playerUnit.gear+"/"+req.gearLevel+"; R"+playerUnit.relic+"/"+req.relicTier;
+				msg = "`"+levels+"`: "+unitName;
+
+				progress = playerUnit.stars / 10;
+				if (playerUnit.stars < 7) {
+					progresses.push(progress);
+					lines.push("🔺 "+msg+" is only "+playerUnit.stars+"⭐. "+(progress*100).toFixed()+"%");
+					return;
+				}
+
+				progress = playerUnit.gear / (req.gearLevel + req.relicTier);
+				if (playerUnit.gear < req.gearLevel) {
+					progresses.push(progress);
+					lines.push("😕 "+msg+" in progress. "+(progress*100).toFixed()+"%");
+					return;
+				}
+
+				progress = .9 + .1*(playerUnit.relic/req.relicTier);
+				if (playerUnit.relic < req.relicTier) {
+					progresses.push(progress);
+					lines.push("👉 "+msg+" in progress. "+(progress*100).toFixed()+"%");
+					return;
+				}
+
+				progress = 1;
+				progresses.push(progress);
+				lines.push("✅ "+msg+" is ready. "+(progress*100).toFixed()+"%");
+			}); // end of loop on requirements
 		}
 
-		found = true;
-		lines.push(msg);
-		gl.requiredUnits.forEach(req => {
-			let levels = "";
-			let playerUnit = player.unitsData.find(unit => unit.name === req.baseId);
-			let progress = 0;
-			let unitName = unitRealNames[req.baseId] || req.baseId;
+		if (progresses.length) {
+			const sum = progresses.reduce((a, b) => a + b, 0);
+			const average = (100*sum/progresses.length).toFixed() || 0;
+			const resume = "Estimated progress for "+gl.name+": **"+average+"%**";
 
-			if (!playerUnit) {
-				playerUnit = {gear: 0, relic: 0};
-				levels = "G00/"+req.gearLevel+"; R"+playerUnit.relic+"/"+req.relicTier;
-				msg = "`"+levels+"`: "+unitName;
-				progresses.push(progress);
-				lines.push("❌ "+msg+" is locked! 0%");
-				return;
-			}
+			lines.push(resume);
+			if (average<100) indicator = '👉';
+			if (average<80) indicator = ':thinking:';
+			if (average<65) indicator = ':large_orange_diamond:';
+			if (average<50) indicator = '🔺';
+			resumes.push(indicator+' '+resume);
 
-			if (req.stars) { // special case of ships
-				levels = playerUnit.stars+"/"+req.stars;
-				msg = "`"+levels+"`:star:: "+unitName;
+			progresses = [];
+			if (average<100) color = "ORANGE";
+		}
 
-				if (playerUnit.stars < req.stars) {
-					progress = playerUnit.stars / req.stars;
-					lines.push("🔺 "+msg+" is only "+playerUnit.stars+"⭐. "+(progress*100).toFixed()+"%");
-				} else {
-					progress = 1;
-					lines.push("✅ "+msg+" is ready. "+(progress*100).toFixed()+"%");
-				}
-				progresses.push(progress);
-				return;
-			}
-
-			if (playerUnit.gear<=9) playerUnit.gear = "0"+playerUnit.gear;
-			levels = "G"+playerUnit.gear+"/"+req.gearLevel+"; R"+playerUnit.relic+"/"+req.relicTier;
-			msg = "`"+levels+"`: "+unitName;
-
-			progress = playerUnit.stars / 10;
-			if (playerUnit.stars < 7) {
-				progresses.push(progress);
-				lines.push("🔺 "+msg+" is only "+playerUnit.stars+"⭐. "+(progress*100).toFixed()+"%");
-				return;
-			}
-
-			progress = playerUnit.gear / (req.gearLevel + req.relicTier);
-			if (playerUnit.gear < req.gearLevel) {
-				progresses.push(progress);
-				lines.push("😕 "+msg+" in progress. "+(progress*100).toFixed()+"%");
-				return;
-			}
-
-			progress = .9 + .1*(playerUnit.relic/req.relicTier);
-			if (playerUnit.relic < req.relicTier) {
-				progresses.push(progress);
-				lines.push("👉 "+msg+" in progress. "+(progress*100).toFixed()+"%");
-				return;
-			}
-
-			progress = 1;
-			progresses.push(progress);
-			lines.push("✅ "+msg+" is ready. "+(progress*100).toFixed()+"%");
-		}); // end of loop on requirements
+		if ( concatUpMsg.includes(gl.baseId) ) {
+			found = true;
+			console.log(logPrefix()+gl.name+" found");
+		}
 	}); // end of loop on GL
 
-	let color = found ? "GREEN" : "RED";
-	if (!found) lines.push("Known GL names: "+glNames.join(", "));
-	else if (progresses.length) {
-		const sum = progresses.reduce((a, b) => a + b, 0);
-		const average = (100*sum/progresses.length).toFixed() || 0;
-
-		lines.push("Estimated progress (experimental): **"+average+"%**");
-	}
+	if (!found) lines = resumes;
 
 	let richMsg = new RichEmbed()
 		.setTitle(player.name+"'s Galactic Lengend Status")
@@ -1415,7 +1448,7 @@ exports.updatePlayerDataInDb = function(player, message, callback) {
 			let nbShips = 0;
 			let prevUnitsCount = prevPlayerVersion.unitsData.length;
 
-			console.log(logPrefix()+"Old chars count:", prevUnitsCount);
+			console.log(logPrefix()+"Previous unit count:", prevUnitsCount);
 
 			// Look for new gifts:
 			if (giftCount && giftCount<player.giftCount) {
