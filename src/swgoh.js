@@ -212,7 +212,7 @@ exports.getPlayerData = async function(users, callback, message) {
 					}
 
 					// Fix: increase GP if more than 4 zetas
-					if (zetaCount>4) unit.gp += (zetaCount-4) * 5829;
+					if (unitZetas>4) unit.gp += (unitZetas-4) * 5829;
 
 					player.unitsData.push({
 						"allycode":   allycode,
@@ -280,6 +280,7 @@ exports.getPlayerData = async function(users, callback, message) {
 			player.g11Count = unitsCountByGear[11];
 			player.g12Count = unitsCountByGear[12];
 			player.g13Count = unitsCountByGear[13];
+			player.game_name = player.name;
 			player.shipCount = unitsByCombaType[2];
 			player.title = player.titles.selected?
 				player.titles.selected.replace('PLAYERTITLE_', '').replace(/_/g, ' '): 'Default';
