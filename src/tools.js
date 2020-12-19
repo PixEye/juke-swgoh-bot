@@ -66,7 +66,7 @@ exports.checkLegendReq = function(player, message) {
 	const req = require("../data/gl-checklist");
 
 	let color = "GREEN";
-	let concatUpMsg = message.words.join("").trim().toUpperCase();
+	let concatUpMsg = message.words.filter(word => !word.includes('<')).join("").trim().toUpperCase();
 	let found = false;
 	let glNames = [];
 	let glUnits = req.units;
@@ -126,9 +126,12 @@ exports.checkLegendReq = function(player, message) {
 				let unitName = unitRealNames[req.baseId] || req.baseId;
 
 				if (!playerUnit) {
-					playerUnit = {gear: 0, relic: 0};
-					levels = "G00/"+req.gearLevel+"; R"+playerUnit.relic+"/"+req.relicTier;
-					msg = "`"+levels+"`: "+unitName;
+					playerUnit = {gear: 0, relic: 0, stars: 0};
+					if (!req.gearLevel)
+						levels = "`"+playerUnit.stars+"/"+req.stars+"`:star:";
+					else
+						levels = "`"+"G00/"+req.gearLevel+"; R"+playerUnit.relic+"/"+req.relicTier+"`";
+					msg = levels+": "+unitName;
 					progresses.push(progress);
 					lines.push("❌ "+msg+" is locked! 0%");
 					return;
@@ -383,6 +386,7 @@ exports.fetchSwgohData = function(player, message, callback) {
 };
 
 /** Try to find an ally code in the words of the user's message
+ * @param {object} words An array of strings (words of the original message)
  */
 exports.getFirstAllycodeInWords = function(words) {
 	let allycode = 0;
