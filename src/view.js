@@ -69,7 +69,7 @@ exports.guildPlayerStats = function(allycode, message, guild) {
 	// line.push("**Total relics:** "+guild.relics);
 	line = "Toons <"+toonMinStars+":star: & ships <"+shipMinStars+":star: are ignored.";
 	lines.push(line);
-	// lines.push("``##/  avg  /  max``");
+	// lines.push("`##/  avg  /  max`");
 
 	// Compute statitics:
 	config.custom.unitsOfInterest.forEach(function(unitName) {
@@ -154,7 +154,7 @@ exports.guildPlayerStats = function(allycode, message, guild) {
 			}
 			statStr = stat.join("; ");
 			if (statStr) {
-				richMsg.addField(icon+" "+uc+" "+unitName, "``"+statStr+"``", true);
+				richMsg.addField(icon+" "+uc+" "+unitName, "`"+statStr+"`", true);
 			}
 		}
 	});
@@ -709,7 +709,7 @@ exports.showUnitInfo = function(player, message, unitName, ct) {
 			matchingNames.forEach(function(matchingName, i) {
 				i = (i+1<=9 && nbFound>9)? "0"+(i+1): i+1;
 				matchingName = unitRealNames[matchingName] || matchingName;
-				lines.push("``"+i+"/ "+matchingName+"``");
+				lines.push("`"+i+"/ "+matchingName+"`");
 			});
 		}
 		richMsg.setDescription(lines).setTitle(player.name+"'s "+unitName);

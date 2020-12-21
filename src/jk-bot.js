@@ -240,7 +240,7 @@ client.on("message", (message) => {
 							if (user.guildRefId && typeof(guildDescr[user.guildRefId])==='string') {
 								msg+= " from guild "+guildDescr[user.guildRefId];
 							}
-							lines.push("``"+user.allycode+"``"+msg+")");
+							lines.push("`"+user.allycode+"`"+msg+")");
 							console.log(logPrefix()+user.allycode+msg);
 						});
 						message.channel.send(lines);
@@ -684,7 +684,7 @@ client.on("message", (message) => {
 						result.forEach(user => {
 							msg = user.allycode+" is allycode of: "+user.game_name;
 							console.log(logPrefix()+msg);
-							lines.push("``"+user.allycode+"`` is allycode of: "+user.game_name);
+							lines.push("`"+user.allycode+"` is allycode of: "+user.game_name);
 						});
 						message.reply(lines);
 					} else { // 1 result here
@@ -1049,7 +1049,7 @@ client.on("message", (message) => {
 						if (i<maxLines) {
 							s = guild.cnt > 1 ? 's' : '';
 							if (guild.cnt <= 9) guild.cnt = '0' + guild.cnt;
-							lines.push("``"+guild.cnt+"`` player"+s+" in: "+guild.name);
+							lines.push("`"+guild.cnt+"` player"+s+" in: "+guild.name);
 						} else if (i===maxLines) {
 							lines.push("And "+(result.length - i)+" more...");
 						}
