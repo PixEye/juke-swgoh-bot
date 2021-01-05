@@ -156,9 +156,9 @@ client.on("message", (message) => {
 					"**Commandes utilisateur :**",
 					" abbr(eviations), aide, allycode (ac), auteur, charInfo (ci), checkMods (cm), checkUnitsGp"+
 					" (cugp), countGuildTopUnits (cgtu), dis, glCheck (glc), getUnregisteredPlayers (gup),"+
-					" guildStats (gs), help, invite, (last)evols (le), listGuildMembers (lgm), playerStats (ps),"+
-					" profile (gg), register (reg), relics, repete, self(y), shipInfo (si), start, stats, status,"+
-					" whoami, whois",
+					" guildBoard (gb), guildStats (gs), help, invite, (last)evols (le), listGuildMembers (lgm),"+
+					" playerStats (ps), profile (gg), register (reg), relics, repete, self(y), shipInfo (si), start,"+
+					" stats, status, whoami, whois",
 					"**Commandes de comportement :**",
 					"*Ordre : behave|behaviour (sous-commande) (points) (user)*",
 					" behave, behave( )add, behave( )get, behave( )rank, behave( )rem(ove),",
@@ -624,6 +624,87 @@ client.on("message", (message) => {
 			}
 			break;
 
+		case "gb":
+		case "guildboard": {
+			let strToLookFor = words.join(" ").trim() || 'ProXima';
+
+			sql = 'SELECT'+
+				' g.memberCount AS Members,'+
+				' round(g.gp/1000000) AS M_GP,'+
+				' g.name AS Guild_name,'+
+				' g.gm_allycode,'+
+				' g.ts AS gts,'+
+				' a.name AS Alliance '+
+				'FROM guilds g'+
+				' LEFT JOIN `alliances` a ON g.alliance_id=a.id'+
+				' WHERE a.name LIKE "%'+strToLookFor+'%"'+
+				' ORDER BY gp DESC';
+
+			db_pool.query(sql, (exc, result) => {
+				let col = "ORANGE";
+				let now = new Date();
+				let update = new Date();
+				let title = "Guild board";
+
+				if (exc) {
+					console.log("SQL:", sql);
+					console.log(
+						logPrefix()+"GB Exception:",
+						exc.sqlMessage? exc.sqlMessage: exc.code
+					);
+
+					col = "RED";
+					lines = [exc.sqlMessage? exc.sqlMessage: exc.code];
+				} else {
+					let n = result.length;
+
+					console.log(logPrefix()+"%d record(s) in the result", n);
+					if (!n) {
+						if (n===0) lines = ["No match."];
+					} else {
+						col = "GREEN";
+						title += ' for '+result[0].Alliance;
+					}
+
+					let oldest_g = null;
+					result.forEach((g, i) => {
+						if (i++>9) return; // LIMIT 10 (0 to 9)
+
+						if (i<=9) i = ' '+i;
+						let gp = g.M_GP<100 ? ' '+g.M_GP : g.M_GP;
+						lines.push('`'+i+'/ '+gp+'M '+g.Members+'/50 '+g.Guild_name+'`');
+						if (g.gts<update) {
+							update = g.gts;
+							oldest_g = g;
+						}
+					});
+
+					let day = update.toISOString().substr(0, 10); // keep date only (forget time)
+					let today = now.toISOString().substr(0, 10); // keep date only (forget time)
+
+					console.log(logPrefix()+"Today:", today);
+					console.log(logPrefix()+"_ day:", day);
+					if (oldest_g && day!==today) {
+						lines.push(''); // blank line
+						lines.push("Oldest guild refresh is about: "+oldest_g.Guild_name);
+						if (oldest_g.gm_allycode) {
+							lines.push(
+								"To refresh it, use command: "+
+								"`"+config.discord.prefix+"gs "+oldest_g.gm_allycode+"`"
+							);
+						}
+					}
+				}
+
+				let richMsg = new RichEmbed().setTitle(title).setColor(col)
+					.setDescription(lines).setTimestamp(update)
+					.setFooter(config.footer.message, config.footer.iconUrl);
+
+				message.channel.send(richMsg);
+			});
+		}
+			break;
+
 		case "gl":
 		case "glc":
 		case "glcheck":
@@ -733,9 +814,10 @@ client.on("message", (message) => {
 				.setDescription([
 					"**User commands:**",
 					" abbr(eviations), about, aide, allycode (ac), charInfo (ci), checkMods (cm), checkUnitsGp"+
-					" (cugp), countGuildTopUnits (cgtu), glCheck (glc), getUnregisteredPlayers (gup), guildStats (gs),"+
-					" help, invite, (last)evols (le), listGuildMembers (lgm), playerStat (ps), profile (gg),"+
-					" register (reg), relics, repeat, say, self(y), shipInfo (si), start, stats, status, whoami, whois",
+					" (cugp), countGuildTopUnits (cgtu), glCheck (glc), getUnregisteredPlayers (gup), guildBoard (gb),"+
+					" guildStats (gs), help, invite, (last)evols (le), listGuildMembers (lgm), playerStat (ps),"+
+					" profile (gg), register (reg), relics, repeat, say, self(y), shipInfo (si),"+
+					" start, stats, status, whoami, whois",
 					"**Behaviour commands:**",
 					"*Order : behave|behaviour (subcommand) (points) (user)*",
 					" behave, behave( )add, behave( )get, behave( )rank, behave( )rem(ove),",
@@ -979,7 +1061,7 @@ client.on("message", (message) => {
 							lines.push(n+" affected row"+s);
 						}
 					} else {
-						let col_sep = "\t";
+						let col_sep = " \t";
 						let headers = [];
 						let maxLen = 0;
 
