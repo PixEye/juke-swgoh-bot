@@ -629,9 +629,9 @@ client.on("message", (message) => {
 			let strToLookFor = words.join(" ").trim() || 'ProXima';
 
 			sql = 'SELECT'+
-				' g.memberCount AS Members,'+
+				' g.memberCount,'+
 				' round(g.gp/1000000) AS M_GP,'+
-				' g.name AS Guild_name,'+
+				' g.name,'+
 				' g.gm_allycode,'+
 				' g.ts AS gts,'+
 				' a.name AS Alliance '+
@@ -667,17 +667,25 @@ client.on("message", (message) => {
 					}
 
 					let oldest_g = null;
+					let tot_player_cnt = 0; // total player count
 					result.forEach((g, i) => {
 						if (i++>9) return; // LIMIT 10 (0 to 9)
 
 						if (i<=9) i = ' '+i;
 						let gp = g.M_GP<100 ? ' '+g.M_GP : g.M_GP;
-						lines.push('`'+i+'/ '+gp+'M '+g.Members+'/50 '+g.Guild_name+'`');
+						tot_player_cnt += g.memberCount;
+						lines.push('`'+i+'/ '+gp+'M '+g.memberCount+'/50 '+g.name+'`');
 						if (g.gts<update) {
 							update = g.gts;
 							oldest_g = g;
 						}
 					});
+
+					let guild_count = result.length;
+					let max_players = guild_count * 50;
+					let msg = 'Total: '+tot_player_cnt+' players in '+guild_count+' guilds';
+					lines.push(''); // blank line
+					lines.push(msg+' ('+(max_players-tot_player_cnt)+' seats left)');
 
 					let day = update.toISOString().substr(0, 10); // keep date only (forget time)
 					let today = now.toISOString().substr(0, 10); // keep date only (forget time)
@@ -686,7 +694,7 @@ client.on("message", (message) => {
 					console.log(logPrefix()+"_ day:", day);
 					if (oldest_g && day!==today) {
 						lines.push(''); // blank line
-						lines.push("Oldest guild refresh is about: "+oldest_g.Guild_name);
+						lines.push("Oldest guild refresh is about: "+oldest_g.name);
 						if (oldest_g.gm_allycode) {
 							lines.push(
 								"To refresh it, use command: "+
@@ -1230,8 +1238,7 @@ client.on("message", (message) => {
 			if (message.mentions && message.mentions.users && message.mentions.users.first()) {
 				user = message.mentions.users.first();
 				nick = locutus.utf8_decode(user.username);
-			} else
-			if (command!=="self" && command!=="selfy" && message.mentions && message.mentions.users) {
+			} else if (command!=="self" && command!=="selfy" && message.mentions && message.mentions.users) {
 				message.reply("Cannot answer for the moment.");
 
 				console.log(logPrefix()+"Mentions:");
