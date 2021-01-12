@@ -48,13 +48,14 @@ const behaveIcons   = [':green_heart:', ':large_orange_diamond:', ':red_circle:'
  * @see: https://www.w3schools.com/js/js_array_sort.asp
  */
 exports.arrayShuffle = function(anArr) {
-	var i, j, k;
+	var i, j, t;
 
-	for (i = anArr.length -1; i > 0; i--) {
+	for (i = anArr.length - 1; i > 0; i--) {
 		j = Math.floor(Math.random() * i);
-		k = anArr[i];
+
+		t = anArr[i];
 		anArr[i] = anArr[j];
-		anArr[j] = k;
+		anArr[j] = t;
 	}
 };
 
@@ -1229,6 +1230,59 @@ exports.logPrefix = function () {
 
 /** Run the periodical process */
 exports.periodicalProcess = function() {
+	let now = new Date();
+
+	if (now.getHours() === 7)
+		exports.updateOldestGuildOr(exports.updateOldestPlayer());
+	else
+		exports.updateOldestPlayer();
+};
+
+/** Update the oldest refreshed player */
+exports.updateOldestGuildOr = function(callback) {
+	let logPrefix = exports.logPrefix; // shortcut
+	let deltaInHours = 24;
+	let sql = "SELECT * FROM guilds WHERE alliance_id=1"+ // ProXima guilds only
+		" AND TIMESTAMPDIFF(HOUR, ts, NOW())>"+deltaInHours+
+		" ORDER BY ts";
+	let start = new Date();
+
+	db_pool.query(sql, function(exc, guilds) {
+		if (exc) {
+			console.log("SQL:", sql);
+			console.log(logPrefix()+"UOG Exception:", exc.sqlMessage? exc.sqlMessage: exc);
+			return;
+		}
+
+		let now = new Date();
+		let delayInMs = now.getTime() - start.getTime();
+		let msg = "/ UOG check: %d guild(s) match (data > %dh; in %d ms)";
+
+		console.log(logPrefix()+msg, guilds.length, deltaInHours, delayInMs);
+		if ( ! guilds.length ) {
+			if (typeof(callback)==='function' ) {
+				return callback();
+			} else {
+				return;
+			}
+		}
+
+		let g = guilds[0];
+		msg = "Start UOG process on: %s (%s / %s)...";
+		console.log(logPrefix()+msg, g.game_name, g.gm_allycode, exports.toMySQLdate(g.ts));
+
+		swgoh.getPlayerData([g], function(guild, message) {
+			exports.updatePlayerDataInDb(guild, message, function() {
+				let msg = "\\ UOG done for %s (%s).";
+
+				console.log(logPrefix()+msg, guild.name, guild.gm_allycode);
+			});
+		});
+	});
+};
+
+/** Update the oldest refreshed player */
+exports.updateOldestPlayer = function() {
 	let logPrefix = exports.logPrefix; // shortcut
 	let deltaInHours = 18;
 	let sql = "SELECT allycode, game_name, ts FROM users"+
@@ -1240,24 +1294,24 @@ exports.periodicalProcess = function() {
 	db_pool.query(sql, function(exc, users) {
 		if (exc) {
 			console.log("SQL:", sql);
-			console.log(logPrefix()+"Period Exception:", exc.sqlMessage? exc.sqlMessage: exc);
+			console.log(logPrefix()+"UOP Exception:", exc.sqlMessage? exc.sqlMessage: exc);
 			return;
 		}
 
 		let now = new Date();
 		let delayInMs = now.getTime() - start.getTime();
-		let msg = "/ Periodical check: %d users(s) match (data > %dh; in %d ms)";
+		let msg = "/ UOP check: %d user(s) match (data > %dh; in %d ms)";
 
 		console.log(logPrefix()+msg, users.length, deltaInHours, delayInMs);
 		if ( ! users.length ) return;
 
 		let u = users[0];
-		msg = "Start periodical process on: %s (%s / %s)...";
+		msg = "Start UOP process on: %s (%s / %s)...";
 		console.log(logPrefix()+msg, u.game_name, u.allycode, exports.toMySQLdate(u.ts));
 
 		swgoh.getPlayerData([u], function(player, message) {
 			exports.updatePlayerDataInDb(player, message, function() {
-				let msg = "\\ Periodical process done for %s (%s).";
+				let msg = "\\ UOP done for %s (%s).";
 
 				console.log(logPrefix()+msg, player.name, player.allycode);
 			});
