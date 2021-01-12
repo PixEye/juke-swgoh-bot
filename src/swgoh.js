@@ -329,7 +329,7 @@ exports.getPlayerGuild = async function(allycodes, message, callback) {
 		console.log(logPrefix()+"Payload:", payload);
 		let { result, error } = await swapi.fetchGuild(payload); // <--
 		let richMsg = null;
-		let roster = null;
+		let rosters = null;
 
 		/* if (warning) { // useless
 			if (warning.error && warning.error===warning.message) {
@@ -370,7 +370,7 @@ exports.getPlayerGuild = async function(allycodes, message, callback) {
 
 		let guild = result[0];
 
-		roster = guild.roster;
+		rosters = guild.roster;
 
 		/*
 		guild.roster = "departed";
@@ -383,7 +383,7 @@ exports.getPlayerGuild = async function(allycodes, message, callback) {
 
 		console.log("-----");
 		console.log(logPrefix()+"First player found in the guild:");
-		console.dir(roster[0]);
+		console.dir(rosters[0]);
 		// id, guildMemberLevel (3), name, level (85), allyCode, gp, gpChar, gpShip, updated (bigint)
 		console.log("====="); // */
 
@@ -396,10 +396,11 @@ exports.getPlayerGuild = async function(allycodes, message, callback) {
 		guild.players = {}; // allycode => (IG nick) name
 		guild.refId = guild.id;
 		guild.swgoh_id = guild.id;
+
 		delete guild.members; // better named: memberCount
 		delete guild.roster; // better named: players
 
-		roster.forEach(function(player) {
+		rosters.forEach(function(player) {
 			guild.gpChar+= player.gpChar;
 			guild.gpShip+= player.gpShip;
 			guild.players[player.allyCode] = player.name;
@@ -407,6 +408,10 @@ exports.getPlayerGuild = async function(allycodes, message, callback) {
 			if (player.gp > guild.biggestPlayer.gp) guild.biggestPlayer = player;
 
 			switch(player.guildMemberLevel) {
+				case 1: // invited
+					guild.memberCount--; // not yet in the guild
+					break;
+
 				case 2: // member
 					break;
 
