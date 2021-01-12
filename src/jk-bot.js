@@ -662,7 +662,6 @@ client.on("message", (message) => {
 					if (!n) {
 						if (n===0) lines = ["No match."];
 					} else {
-						col = "GREEN";
 						title += ' for '+result[0].Alliance;
 					}
 
@@ -701,6 +700,8 @@ client.on("message", (message) => {
 								"`"+config.discord.prefix+"gs "+oldest_g.gm_allycode+"`"
 							);
 						}
+					} else {
+						col = "GREEN";
 					}
 				}
 
