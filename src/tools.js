@@ -1232,8 +1232,8 @@ exports.logPrefix = function () {
 exports.periodicalProcess = function() {
 	let now = new Date();
 
-	if (now.getHours() === 7)
-		exports.updateOldestGuildOr(exports.updateOldestPlayer());
+	if (now.getHours() === 9)
+		exports.updateOldestGuildOr(exports.updateOldestPlayer);
 	else
 		exports.updateOldestPlayer();
 };
@@ -1242,7 +1242,7 @@ exports.periodicalProcess = function() {
 exports.updateOldestGuildOr = function(callback) {
 	let logPrefix = exports.logPrefix; // shortcut
 	let deltaInHours = 24;
-	let sql = "SELECT * FROM guilds WHERE alliance_id=1"+ // ProXima guilds only
+	let sql = "SELECT * FROM guilds WHERE alliance_id IS NOT NULL"+
 		" AND TIMESTAMPDIFF(HOUR, ts, NOW())>"+deltaInHours+
 		" ORDER BY ts";
 	let start = new Date();
@@ -1268,15 +1268,16 @@ exports.updateOldestGuildOr = function(callback) {
 		}
 
 		let g = guilds[0];
+		let message = {};
 		msg = "Start UOG process on: %s (%s / %s)...";
-		console.log(logPrefix()+msg, g.game_name, g.gm_allycode, exports.toMySQLdate(g.ts));
+		console.log(logPrefix()+msg, g.name, g.gm_allycode, exports.toMySQLdate(g.ts));
 
-		swgoh.getPlayerData([g], function(guild, message) {
-			exports.updatePlayerDataInDb(guild, message, function() {
-				let msg = "\\ UOG done for %s (%s).";
+		swgoh.getPlayerGuild(g.gm_allycode, message, function(guild) {
 
-				console.log(logPrefix()+msg, guild.name, guild.gm_allycode);
-			});
+			// Remember stats of the guild:
+			exports.rememberGuildStats(guild);
+
+			console.log(logPrefix()+'\\ End UOG process about '+guild.name);
 		});
 	});
 };
