@@ -346,12 +346,16 @@ exports.checkUnitsGp = function(player, message, limit) {
 	});
 };
 
-/** Cloner (mainly for objects) */
+/** Cloner (mainly for objects)
+ * @param {object} x The object to clone
+ * @returns {object}
+ */
 exports.clone = function(x) {
 	return JSON.parse(JSON.stringify(x));
 }
 
-/** Clode database connexion
+/** Close database connexion
+ * @param {object} exc Potential exception
  */
 exports.db_close = function(exc) {
 	let logPrefix = exports.logPrefix; // shortcut
@@ -366,6 +370,9 @@ exports.db_close = function(exc) {
 };
 
 /** Get data from the SWGoH-help API
+ * @param {object} player The target player
+ * @param {object} message The origin message (request)
+ * @param {function} callback Function to call with fetched data
  */
 exports.fetchSwgohData = function(player, message, callback) {
 	let allycode = player.allycode;
@@ -413,6 +420,9 @@ exports.getFirstAllycodeInWords = function(words) {
 };
 
 /** Get guild data from the database
+ * @param {object} player1 The target player
+ * @param {object} message The origin message (request)
+ * @param {function} callback Function to call with fetched data
  */
 exports.getGuildDbStats = function(player1, message, callback) {
 	let allycode = player1.allycode;
@@ -524,6 +534,9 @@ exports.getGuildDbStats = function(player1, message, callback) {
 };
 
 /** Get guild data from the SWGoH-help API
+ * @param {object} player The target player
+ * @param {object} message The origin message (request)
+ * @param {function} callback Function to call with fetched data
  */
 exports.getGuildStats = function(player, message, callback) {
 	let allycode = player.allycode;
@@ -574,6 +587,8 @@ exports.getLastEvolsFromDb = function(player, message) {
 };
 
 /** Get player's data from our database
+ * @param {number} allycode The target allycode (9 digits)
+ * @param {object} message The origin message (request)
  */
 exports.getPlayerFromDatabase = function(allycode, message, callback) {
 	let logPrefix = exports.logPrefix; // shortcut
@@ -632,6 +647,9 @@ exports.getPlayerFromDatabase = function(allycode, message, callback) {
 };
 
 /** Get player's data from a Discord user object (Discord tag)
+ * @param {object} user The target player
+ * @param {object} message The origin message (request)
+ * @param {function} callback Function to call with fetched data
  */
 exports.getPlayerFromDiscordUser = function(user, message, callback) {
 	let discord_id = user.id;
@@ -1232,7 +1250,7 @@ exports.logPrefix = function () {
 exports.periodicalProcess = function() {
 	let now = new Date();
 
-	if (now.getHours() === 9)
+	if (now.getHours() === 5)
 		exports.updateOldestGuildOr(exports.updateOldestPlayer);
 	else
 		exports.updateOldestPlayer();
@@ -1241,9 +1259,9 @@ exports.periodicalProcess = function() {
 /** Update the oldest refreshed player */
 exports.updateOldestGuildOr = function(callback) {
 	let logPrefix = exports.logPrefix; // shortcut
-	let deltaInHours = 24;
+	let deltaInHours = 12;
 	let sql = "SELECT * FROM guilds WHERE alliance_id IS NOT NULL"+
-		" AND TIMESTAMPDIFF(HOUR, ts, NOW())>"+deltaInHours+
+		" AND (officerCount IS NULL OR TIMESTAMPDIFF(HOUR, ts, NOW())>"+deltaInHours+")"+
 		" ORDER BY ts";
 	let start = new Date();
 
@@ -1401,12 +1419,14 @@ exports.refreshGuildStats = function(allycode, message, callback) {
 };
 
 /** Remember stats of the guild
+ * @param object g The guild object to save in the database
  */
-exports.rememberGuildStats = function(guild) {
+exports.rememberGuildStats = function(g) {
+
 	let logPrefix = exports.logPrefix; // shortcut
-	let sql = "INSERT INTO `guilds` (swgoh_id, name, gp, memberCount, gm_allycode, ts) VALUES ?";
-	let update = new Date(guild.updated);
-	let values = [[guild.id, guild.name, guild.gp, guild.memberCount, guild.leader.allyCode, update]];
+	let sql = "INSERT INTO `guilds` (swgoh_id, name, gp, memberCount, officerCount, gm_allycode, ts) VALUES ?";
+	let update = new Date(g.updated);
+	let values = [[g.id, g.name, g.gp, g.memberCount, g.officerCount, g.leader.allyCode, update]];
 
 	db_pool.query(sql, [values], function(exc, result) {
 		if (exc) {
@@ -1416,8 +1436,10 @@ exports.rememberGuildStats = function(guild) {
 			console.log(logPrefix()+"GS Exception:", otd);
 
 			// Retry with an UPDATE:
-			sql = "UPDATE `guilds` SET name=?, gp=?, memberCount=?, gm_allycode=?, ts=? WHERE swgoh_id=?";
-			values = [guild.name, guild.gp, guild.memberCount, guild.leader.allyCode, update, guild.id];
+			sql = "UPDATE `guilds`"+
+				" SET name=?, gp=?, memberCount=?, officerCount=?, gm_allycode=?, ts=?"+
+				" WHERE swgoh_id=?";
+			values = [g.name, g.gp, g.memberCount, g.officerCount, g.leader.allyCode, update, g.id];
 
 			db_pool.query(sql, values, function(exc, result) {
 				if (exc) {

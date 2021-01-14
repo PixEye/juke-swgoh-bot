@@ -630,6 +630,7 @@ client.on("message", (message) => {
 
 			sql = 'SELECT'+
 				' g.memberCount,'+
+				' g.officerCount,'+
 				' round(g.gp/1000000) AS M_GP,'+
 				' g.name,'+
 				' g.gm_allycode,'+
@@ -673,7 +674,13 @@ client.on("message", (message) => {
 						if (i<=9) i = ' '+i;
 						let gp = g.M_GP<100 ? ' '+g.M_GP : g.M_GP;
 						tot_player_cnt += g.memberCount;
-						lines.push('`'+i+'/ '+gp+'M '+g.memberCount+'/50 '+g.name+'`');
+						if (g.officerCount) {
+							if (g.officerCount<=9) g.officerCount = ' '+g.officerCount;
+							lines.push('`'+i+'/ '+gp+'M '+g.officerCount+' off/'+g.memberCount+' in: '+g.name+'`');
+						} else {
+							lines.push('`'+i+'/ '+gp+'M '+g.memberCount+'/50 '+g.name+'`');
+						}
+
 						if (g.gts<update) {
 							update = g.gts;
 							oldest_g = g;
@@ -712,7 +719,7 @@ client.on("message", (message) => {
 				message.channel.send(richMsg);
 			});
 		}
-			break;
+		break;
 
 		case "gl":
 		case "glc":

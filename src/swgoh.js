@@ -428,6 +428,8 @@ exports.getPlayerGuild = async function(allycodes, message, callback) {
 					console.warn(msg, player.guildMemberLevel, player);
 			}
 		});
+		guild.officerCount = guild.officerNames.length;
+
 		console.log(logPrefix()+"Ship GP before fix: %s", guild.gpShip.toLocaleString(locale));
 		guild.gpShip = guild.gp - guild.gpChar; // fix
 		console.log(logPrefix()+"Ship GP after  fix: %s", guild.gpShip.toLocaleString(locale));
