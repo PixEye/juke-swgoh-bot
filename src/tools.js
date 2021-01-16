@@ -147,7 +147,7 @@ exports.checkLegendReq = function(player, message) {
 						lines.push("🔺 "+msg+" is only "+playerUnit.stars+"⭐. "+(progress*100).toFixed()+"%");
 					} else {
 						progress = 1;
-						lines.push("✅ "+msg+" is ready. "+(progress*100).toFixed()+"%");
+						lines.push("✅ "+msg+" is ready.");
 					}
 					progresses.push(progress);
 					return;
@@ -180,7 +180,7 @@ exports.checkLegendReq = function(player, message) {
 
 				progress = 1;
 				progresses.push(progress);
-				lines.push("✅ "+msg+" is ready. "+(progress*100).toFixed()+"%");
+				lines.push("✅ "+msg+" is ready.");
 			}); // end of loop on requirements
 		}
 
@@ -1250,7 +1250,7 @@ exports.logPrefix = function () {
 exports.periodicalProcess = function() {
 	let now = new Date();
 
-	if (now.getHours() === 5)
+	if (now.getHours() === 6)
 		exports.updateOldestGuildOr(exports.updateOldestPlayer);
 	else
 		exports.updateOldestPlayer();
