@@ -520,7 +520,7 @@ client.on("message", (message) => {
 
 			sql = "SELECT guildRefId FROM `users` WHERE discord_id=" + user.id;
 
-			sql = "SELECT count(p.id) AS nbUnits, p.discord_name AS player"+
+			sql = "SELECT count(p.id) AS nbUnits, p.game_name AS player"+
 				" FROM `users` p"+
 				" LEFT JOIN `units` u ON p.allycode=u.allycode"+
 				" WHERE p.guildRefId=("+sql+") AND u.relic>="+minRelics+
