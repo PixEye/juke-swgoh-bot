@@ -1259,7 +1259,7 @@ exports.periodicalProcess = function() {
 /** Update the oldest refreshed player */
 exports.updateOldestGuildOr = function(callback) {
 	let logPrefix = exports.logPrefix; // shortcut
-	let deltaInHours = 12;
+	let deltaInHours = 3;
 	let sql = "SELECT * FROM guilds WHERE alliance_id IS NOT NULL"+
 		" AND (officerCount IS NULL OR TIMESTAMPDIFF(HOUR, ts, NOW())>"+deltaInHours+")"+
 		" ORDER BY ts";
