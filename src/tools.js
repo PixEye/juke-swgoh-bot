@@ -186,7 +186,9 @@ exports.checkLegendReq = function(player, message) {
 
 		if (progresses.length) {
 			const sum = progresses.reduce((a, b) => a + b, 0);
-			const average = (100*sum/progresses.length).toFixed() || 0;
+			let average = 100*sum/progresses.length || 0;
+
+			average = average.toFixed();
 			const resume = "Estimated progress for "+gl.name+": **"+average+"%**";
 
 			lines.push(resume);
@@ -345,6 +347,18 @@ exports.checkUnitsGp = function(player, message, limit) {
 		);
 	});
 };
+
+/** Add 2 minus characters in an ally code for better readability
+ * @param {number} allyCode
+ * @returns {string} A more readable version of the given ally's code
+ */
+exports.cleanAc = function(allyCode) {
+	var ret = allyCode.toString();
+
+	ret = ret.substr(0, 3) + "-" + ret.substr(3, 3) + "-" + ret.substr(6, 3);
+
+	return ret;
+}
 
 /** Cloner (mainly for objects)
  * @param {object} x The object to clone
@@ -682,7 +696,7 @@ exports.getPlayerFromDiscordUser = function(user, message, callback) {
 					guilds[user.guildRefId] = user.guildRefId;
 				}
 				console.log(logPrefix()+user.allycode+msg);
-				lines.push("`"+user.allycode+"`"+msg);
+				lines.push("`"+exports.cleanAc(user.allycode)+"`"+msg);
 			});
 
 			let richMsg = new RichEmbed().setColor(color).setTitle(title)

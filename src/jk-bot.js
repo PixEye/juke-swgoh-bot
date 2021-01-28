@@ -41,6 +41,7 @@ let db_pool = mysql.createPool({
 let logPrefix = tools.logPrefix;
 
 console.log(logPrefix()+"Loading...");
+console.log(logPrefix()+"Test cleanAc(): "+tools.cleanAc(123456789));
 
 // Check config:
 try {
@@ -59,6 +60,7 @@ setInterval(tools.periodicalProcess, 213000); // 213'000 ms = 3 minutes 33
 // Start listening:
 client.on("ready", () => {
 	console.log(logPrefix()+"I am ready and listening.");
+
 	client.user.username = config.discord.username;
 	client.user.setPresence({game: {type: "listening", name: config.discord.prefix + "help"}});
 });
@@ -240,8 +242,8 @@ client.on("message", (message) => {
 							if (user.guildRefId && typeof(guildDescr[user.guildRefId])==='string') {
 								msg+= " from guild "+guildDescr[user.guildRefId];
 							}
-							lines.push("`"+user.allycode+"`"+msg+")");
-							console.log(logPrefix()+user.allycode+msg);
+							lines.push("`"+tools.cleanAc(user.allycode)+"`"+msg+")");
+							console.log(logPrefix()+tools.cleanAc(user.allycode)+msg);
 						});
 						message.channel.send(lines);
 					});
