@@ -819,7 +819,4 @@ exports.showWhoIs = function(user, nick, message) {
 	});
 };
 
-let k = 'GRANDADMIRALTHRAWN';
-console.log(exports.logPrefix()+"Name with space check: %s => %s", k, unitRealNames[k]);
-
 // vim: noexpandtab shiftwidth=4 softtabstop=4 tabstop=4
