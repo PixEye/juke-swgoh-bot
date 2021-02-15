@@ -477,7 +477,7 @@ exports.showPlayerRelics = function(player, message) {
 				let uid = unit.name;
 
 				uid = unitRealNames[uid] || uid;
-				msg = "R"+unit.relic+", "+unit.zetaCount+"Z & GP="+unit.gp+" on: "+uid;
+				msg = "`R"+unit.relic+", "+unit.zetaCount+"z & GP="+unit.gp+"` on: "+uid;
 				lines.push(msg);
 			} else if (i===maxLines)
 				lines.push("And "+(n-maxLines)+" more...");
