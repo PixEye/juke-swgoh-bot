@@ -670,11 +670,9 @@ client.on("message", (message) => {
 
 					let oldest_g = null;
 					let tot_player_cnt = 0; // total player count
-					result.forEach((g, i) => {
-						if (i++>9) return; // LIMIT 10 (0 to 9)
+					result.forEach(g => {
+						let gp = g.M_GP<100? ' '+g.M_GP: g.M_GP;
 
-						if (i<=9) i = ' '+i;
-						let gp = g.M_GP<100 ? ' '+g.M_GP : g.M_GP;
 						tot_player_cnt += g.memberCount;
 						if (g.officerCount) {
 							if (g.officerCount<=9) g.officerCount = ' '+g.officerCount;
@@ -689,11 +687,10 @@ client.on("message", (message) => {
 						}
 					});
 
-					let guild_count = result.length;
-					let max_players = guild_count * 50;
-					let msg = 'Total: '+tot_player_cnt+' players in '+guild_count+' guilds';
+					let seats_left = n * 50 - tot_player_cnt;
+					let msg = 'Total: '+tot_player_cnt+' players in '+n+' guilds';
 					lines.push(''); // blank line
-					lines.push(msg+' ('+(max_players-tot_player_cnt)+' seats left)');
+					lines.push(msg+' ('+seats_left+' seats left)');
 
 					let day = update.toISOString().substr(0, 10); // keep date only (forget time)
 					let today = now.toISOString().substr(0, 10); // keep date only (forget time)
