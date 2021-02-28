@@ -678,9 +678,9 @@ client.on("message", (message) => {
 						tot_player_cnt += g.memberCount;
 						if (g.officerCount) {
 							if (g.officerCount<=9) g.officerCount = ' '+g.officerCount;
-							lines.push('`'+i+'/ '+gp+'M '+g.officerCount+' off/'+g.memberCount+' in: '+g.name+'`');
+							lines.push('`'+gp+'M '+g.officerCount+' off/'+g.memberCount+'` '+g.name);
 						} else {
-							lines.push('`'+i+'/ '+gp+'M '+g.memberCount+'/50 '+g.name+'`');
+							lines.push('`'+gp+'M '+g.memberCount+'/50 '+g.name+'`');
 						}
 
 						if (g.gts<update) {
