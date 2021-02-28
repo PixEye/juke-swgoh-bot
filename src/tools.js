@@ -188,7 +188,7 @@ exports.checkLegendReq = function(player, message) {
 			const sum = progresses.reduce((a, b) => a + b, 0);
 			let average = 100*sum/progresses.length || 0;
 
-			average = average.toFixed();
+			average = Math.floor(average);
 			const resume = "Estimated progress for "+gl.name+": **"+average+"%**";
 
 			lines.push(resume);
