@@ -6,7 +6,7 @@
 			"image":"/static/img/assets/journeyguide/tex.jg_charui_galacticlegend_kylo.png",
 			"requiredUnits":
 			[
-				{"stars":6,"baseId":"CAPITALFINALIZER"},
+				{"stars":5,"baseId":"CAPITALFINALIZER"},
 				{"gearLevel":13,"relicTier":7,"baseId":"KYLORENUNMASKED"},
 				{"gearLevel":13,"relicTier":5,"baseId":"FIRSTORDEROFFICERMALE"},
 				{"gearLevel":13,"relicTier":5,"baseId":"FIRSTORDERTROOPER"},
@@ -27,7 +27,7 @@
 			"image":"/static/img/assets/journeyguide/tex.jg_charui_whiteroberey.png",
 			"requiredUnits":
 			[
-				{"stars":6,"baseId":"CAPITALRADDUS"},
+				{"stars":5,"baseId":"CAPITALRADDUS"},
 				{"gearLevel":13,"relicTier":7,"baseId":"REYJEDITRAINING"},
 				{"gearLevel":13,"relicTier":5,"baseId":"FINN"},
 				{"gearLevel":13,"relicTier":5,"baseId":"RESISTANCETROOPER"},
