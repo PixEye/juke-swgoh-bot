@@ -1,5 +1,6 @@
 *.sw*
 *~
+.gitconfig
 error-logs/
 log
 data/Archives
