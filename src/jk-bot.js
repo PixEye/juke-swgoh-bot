@@ -1236,8 +1236,7 @@ client.on("message", (message) => {
 
 		case "self":
 		case "selfy":
-			user = client.user;
-			nick = "My";
+			nick += "'s";
 			view.showWhoIs(user, nick, message);
 			break;
 
