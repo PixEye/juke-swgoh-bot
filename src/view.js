@@ -794,21 +794,24 @@ exports.showWhoIs = function(user, nick, message) {
 	let lines = [
 			"**Discord ID:** "+user.id,
 			"**Creation date:** "+user.createdAt.toDateString(),
-			"**Status:** "+availability
+			"**Status:** "+availability.toLowerCase()
 		];
 
 	tools.getPlayerFromDiscordUser(user, message, function(player) {
 		if (player) {
 			lines.push("**Allycode:** "+tools.cleanAc(player.allycode));
 		}
+
 		if (user.presence.game && user.presence.game.name) {
 			lines.push("**Activity:** "+user.presence.game.name);
 		}
+
 		let richMsg = new RichEmbed()
 			.setTitle(nick+" Discord profile").setColor("GREEN")
 			.setThumbnail(user.displayAvatarURL).setDescription(lines)
 			.setTimestamp(message.createdTimestamp)
 			.setFooter(config.footer.message, config.footer.iconUrl);
+
 		message.channel.send(richMsg).catch(function(ex) {
 			console.warn(ex);
 			message.reply(ex.message);
