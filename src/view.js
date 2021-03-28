@@ -792,22 +792,20 @@ exports.showUnitInfo = function(player, message, unitName, ct) {
 exports.showWhoIs = function(user, nick, message) {
 	let availability = user.presence.status.toUpperCase(); // DND, ONLINE, OFFLINE, ... (lowercase at first)
 	let lines = [
-			"**"+nick+" Discord ID:** "+user.id,
-			"**"+nick+" creation date:**", " "+(user.createdAt.toString()
-				.replace(/ \(.*\)$/, "")  // remove useless duplicated time zone in parentheses
-				.replace(/:\d\d /, " ")), // remove seconds
-			"**"+nick+" status:** "+availability
+			"**Discord ID:** "+user.id,
+			"**Creation date:** "+user.createdAt.toDateString(),
+			"**Status:** "+availability
 		];
 
 	tools.getPlayerFromDiscordUser(user, message, function(player) {
 		if (player) {
-			lines.push("**"+nick+" allycode is:** "+player.allycode);
+			lines.push("**Allycode:** "+tools.cleanAc(player.allycode));
 		}
 		if (user.presence.game && user.presence.game.name) {
-			lines.push("**"+nick+" activity is:** "+user.presence.game.name);
+			lines.push("**Activity:** "+user.presence.game.name);
 		}
 		let richMsg = new RichEmbed()
-			.setTitle("User information").setColor("GREEN")
+			.setTitle(nick+"'s Discord profile").setColor("GREEN")
 			.setThumbnail(user.displayAvatarURL).setDescription(lines)
 			.setTimestamp(message.createdTimestamp)
 			.setFooter(config.footer.message, config.footer.iconUrl);
