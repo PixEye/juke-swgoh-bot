@@ -679,6 +679,9 @@ exports.getPlayerFromDiscordUser = function(user, message, callback) {
 			return;
 		}
 
+		let player = result.length>0? result[0]: {};
+
+		player.displayAvatarURL = user.displayAvatarURL;
 		console.log(logPrefix()+result.length+" record(s) match(es) user's ID:", discord_id);
 		if (result.length > 1) {
 			let color  = "ORANGE";
@@ -709,10 +712,8 @@ exports.getPlayerFromDiscordUser = function(user, message, callback) {
 				message.reply(title);
 				message.channel.send(lines);
 			});
+			if (typeof(callback)==="function") callback(player);
 		} else if (result.length === 1) { // 1 match, perfect!
-			let player = result[0];
-
-			player.displayAvatarURL = user.displayAvatarURL;
 			console.log(logPrefix()+"Found allycode: %d (%s)", player.allycode, player.discord_name);
 
 			if (typeof(callback)==="function") callback(player);

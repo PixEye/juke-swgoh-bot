@@ -792,11 +792,11 @@ exports.showUnitInfo = function(player, message, unitName, ct) {
 exports.showWhoIs = function(user, nick, message) {
 	let availability = user.presence.status.toUpperCase(); // DND, ONLINE, OFFLINE, ... (lowercase at first)
 	let lines = [
-			"**"+nick+" ID is:** "+user.id,
-			"**"+nick+" creation date is:**", " "+(user.createdAt.toString()
+			"**"+nick+" Discord ID:** "+user.id,
+			"**"+nick+" creation date:**", " "+(user.createdAt.toString()
 				.replace(/ \(.*\)$/, "")  // remove useless duplicated time zone in parentheses
 				.replace(/:\d\d /, " ")), // remove seconds
-			"**"+nick+" status is:** "+availability
+			"**"+nick+" status:** "+availability
 		];
 
 	tools.getPlayerFromDiscordUser(user, message, function(player) {
