@@ -805,7 +805,7 @@ exports.showWhoIs = function(user, nick, message) {
 			lines.push("**Activity:** "+user.presence.game.name);
 		}
 		let richMsg = new RichEmbed()
-			.setTitle(nick+"'s Discord profile").setColor("GREEN")
+			.setTitle(nick+" Discord profile").setColor("GREEN")
 			.setThumbnail(user.displayAvatarURL).setDescription(lines)
 			.setTimestamp(message.createdTimestamp)
 			.setFooter(config.footer.message, config.footer.iconUrl);
