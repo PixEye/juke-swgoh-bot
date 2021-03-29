@@ -252,12 +252,22 @@ client.on("message", (message) => {
 			break;
 
 		case "auteur":
-		case "author":
 			lines.push("Ce bot a été écrit par <@222443133294739456> (aka PixEye).");
 			lines.push("En cas de bug ou de demande d'amélioration, contactez-le.");
 			lines.push("");
 			lines.push("Cette instance du bot appartient à <@"+config.discord.ownerID+">.");
 			richMsg = new RichEmbed().setTitle("A propos de l'auteur").setColor("GREEN")
+				.setDescription(lines).setTimestamp()
+				.setFooter(config.footer.message, config.footer.iconUrl);
+			message.channel.send(richMsg);
+			break;
+
+		case "author":
+			lines.push("This bot was written by <@222443133294739456> (aka PixEye).");
+			lines.push("In case of bug or enhancement request, please contact him.");
+			lines.push("");
+			lines.push("This instance of the bot blongs to <@"+config.discord.ownerID+">.");
+			richMsg = new RichEmbed().setTitle("About the author").setColor("GREEN")
 				.setDescription(lines).setTimestamp()
 				.setFooter(config.footer.message, config.footer.iconUrl);
 			message.channel.send(richMsg);
