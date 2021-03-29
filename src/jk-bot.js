@@ -702,7 +702,7 @@ client.on("message", (message) => {
 						lines.push("Oldest guild refresh is about: "+oldest_g.name);
 						if (oldest_g.gm_allycode) {
 							lines.push(
-								"USe this to refresh: "+
+								"Type this to refresh: "+
 								"`"+config.discord.prefix+"gs "+
 								tools.cleanAc(oldest_g.gm_allycode)+"`"
 							);
