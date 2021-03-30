@@ -668,9 +668,9 @@ exports.getPlayerFromDatabase = function(allycode, message, callback) {
 exports.getPlayerFromDiscordUser = function(user, message, callback) {
 	let discord_id = user.id;
 	let logPrefix = exports.logPrefix; // shortcut
-	let sql = "SELECT p.* FROM `users` p WHERE p.discord_id='"+discord_id+"'";
-	/*	"SELECT p.*, g.name AS guild_name FROM `users` p, `guilds` g"+ // fails if guild is not known
-		" WHERE p.discord_id='"+discord_id+"' AND p.guildRefId=g.swgoh_id"; */
+	let sql = "SELECT p.*, g.name AS guildName FROM `users` p"+
+		" LEFT JOIN `guilds` g ON p.guildRefId=g.swgoh_id"+
+		" WHERE p.discord_id='"+discord_id+"'";
 
 	db_pool.query(sql, function(exc, result) {
 		if (exc) {
@@ -679,7 +679,8 @@ exports.getPlayerFromDiscordUser = function(user, message, callback) {
 			return;
 		}
 
-		let player = result.length>0? result[0]: {};
+		let player = result.length>0? result[0]:
+			{"discord_id": user.id, "discord_name": user.username};
 
 		player.displayAvatarURL = user.displayAvatarURL;
 		console.log(logPrefix()+result.length+" record(s) match(es) user's ID:", discord_id);
@@ -715,12 +716,15 @@ exports.getPlayerFromDiscordUser = function(user, message, callback) {
 			if (typeof(callback)==="function") callback(player);
 		} else if (result.length === 1) { // 1 match, perfect!
 			console.log(logPrefix()+"Found allycode: %d (%s)", player.allycode, player.discord_name);
+			// console.log(logPrefix()+"Found player: %s", JSON.stringify(player));
 
 			if (typeof(callback)==="function") callback(player);
 		} else { // no match:
+			let msg = "This user has no player ID. You may try: ";
+
 			console.log( "SQL:\n"+sql); // Normal for "self(y)" command
 			console.warn(logPrefix()+"User not found"); // Normal for "self(y)" command
-			message.reply("This user has no player ID. You may try: "+config.discord.prefix+"register ally-code");
+			message.reply(msg+config.discord.prefix+"register your-ally-code");
 		}
 	});
 };
@@ -1431,6 +1435,135 @@ exports.refreshGuildStats = function(allycode, message, callback) {
 			});
 		})
 		.catch(console.error);
+};
+
+/** Store guild territory war results in our database
+ * @param {number} allycode The target player's allycode
+ * @param {object} message The origin message (request)
+ */
+exports.regTerritoryWar = function(player, message) {
+	let allycode = player.allycode;
+	let logPrefix = exports.logPrefix; // shortcut
+	let table = "tw_results";
+
+	if (!allycode) {
+		message.reply(":red_circle: Invalid or missing allycode!");
+		return;
+	}
+
+	if (message.words.length < 4) {
+		let example = "Example: rtw 48 20000 19500 Our opponents guild name";
+		let usage = "Usage: rtw <your player count> <your score> <their score> <their guild name>";
+
+		message.channel.send(":red_circle: "+usage);
+		message.channel.send("👉 "+example);
+
+		return;
+	}
+
+	let msg = "";
+	let self_player_cnt = message.words.shift();
+	let self_score = message.words.shift();
+	let opp_score = message.words.shift();
+
+	if (!self_player_cnt.match(/^\d{1,2}$/)) {
+		msg = "Invalid self player count (not an integer < 100)!";
+	}
+	if (!self_score.match(/^\d{1,5}$/)) {
+		msg = "Invalid self score (not an integer < 100)!";
+	}
+	if (!opp_score.match(/^\d{1,5}$/)) {
+		msg = "Invalid opponent score (not an integer < 100)!";
+	}
+
+	if (msg.trim()!=="") {
+		console.log(msg);
+		message.reply(msg);
+
+		return;
+	}
+
+	let sql = "INSERT INTO `"+table+"` (#)\n VALUES (?)";
+	let str = x => '"'+x+'"';
+	let params = {
+		"discord_id": str(player.discord_id),
+		"allycode": player.allycode,
+		"self_guild_id": str(player.guildRefId),
+		"self_guild_name": str(player.guildName),
+		"self_player_cnt": parseInt(self_player_cnt),
+		"self_score": parseInt(self_score),
+		"opp_score": parseInt(opp_score),
+		"opp_name": str(message.words.join(" "))
+	};
+
+	let color = typeof player.guildName === "undefined"? "ORANGE": "GREEN";
+	let lines = [];
+	Object.keys(params).forEach(k => {
+		lines.push("**"+k.replace("_", " ")+":** "+params[k]);
+		console.log(logPrefix()+k+": "+params[k]);
+	});
+
+	let richMsg = new RichEmbed()
+		.setTitle("TW data to insert in DB")
+		.setDescription(lines).setColor(color)
+		.setTimestamp(player.updated)
+		.setFooter(config.footer.message, config.footer.iconUrl);
+
+	sql = sql.replace('#', Object.keys( params ).join(", "));
+	sql = sql.replace('?', Object.values(params).join(", "));
+	console.log(logPrefix()+"SQL: "+sql);
+
+	message.channel.send(richMsg)
+	.then(() => {
+		let values = [Object.values(params)];
+
+		db_pool.query(sql, [values], function(exc, result) {
+			if (exc) {
+				let otd = exc.sqlMessage? exc.sqlMessage: exc; // obj to display
+
+				console.log("SQL:", sql);
+				console.log(logPrefix()+"RTW Exception:", otd);
+
+				// Retry with an UPDATE:
+				sql = "UPDATE `"+table+"`"+
+					" SET name=?, gp=?, memberCount=?, officerCount=?, gm_allycode=?, ts=?"+
+					" WHERE swgoh_id=?";
+
+				db_pool.query(sql, values, function(exc, result) {
+					if (exc) {
+						otd = exc.sqlMessage? exc.sqlMessage: exc; // obj to display
+						console.log("SQL:", sql);
+						console.log(logPrefix()+"RTW Exception:", otd);
+					} else {
+						let n = result.affectedRows;
+						console.log(logPrefix()+"%d guild records updated (UPDATE).", n);
+					}
+				});
+			} else {
+				let n = result.affectedRows;
+				console.log(logPrefix()+"%d guild records updated (DEL+ADD).", n);
+			}
+		});
+	})
+	.catch(function(ex) {
+		console.warn(ex);
+		message.reply(ex.message);
+		message.channel.send(lines);
+	});
+
+	return; // stop here for the moment
+
+	/* message.channel.send("Looking for DB stats of guild with ally: "+allycode+"...")
+		.then(msg => {
+			db_pool.query(sql, [allycode], function(exc, result) {
+				if (typeof msg.delete==="function") msg.delete();
+
+				msg = "Found this number of results: "+result.length;
+				message.reply(msg);
+				console.log(logPrefix()+msg);
+			});
+		})
+		.catch(console.error); // */
 };
 
 /** Remember stats of the guild

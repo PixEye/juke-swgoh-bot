@@ -120,7 +120,7 @@ client.on("message", (message) => {
 		searchStr = "p.discord_id="+search;
 	}
 	allycode = tools.getFirstAllycodeInWords(words);
-	player = {"allycode": allycode};
+	player = {"allycode": allycode, "discord_name": nick};
 	message.words = words;
 
 	// public commands:
@@ -231,13 +231,13 @@ client.on("message", (message) => {
 								guildDescr[guild.swgoh_id]+= ': '+guild.memberCount+' members';
 							}
 							if (guild.gp) {
-								guild.gp = Math.round(guild.gp/1e6); // to M
+								guild.gp = Math.round(guild.gp / 1e6); // to M
 								guildDescr[guild.swgoh_id]+= ', GP: '+guild.gp+'M';
 							}
 						});
 
 						users.forEach(user => {
-							let gpm = Math.round(user.gp/1e5)/10;
+							let gpm = Math.round(user.gp / 1e5) / 10;
 							let msg = " is "+user.game_name+"'s code ("+gpm+"M";
 							if (user.guildRefId && typeof(guildDescr[user.guildRefId])==='string') {
 								msg+= " from guild "+guildDescr[user.guildRefId];
@@ -341,7 +341,7 @@ client.on("message", (message) => {
 					tools.getGuildStats(player, message, tools.handleBehaviour);
 				}
 			} else {
-				console.log(logPrefix()+"Try with user ID:", user.id);
+				console.log(logPrefix()+"Try with Discord ID:", user.id);
 				if (readCommands.indexOf(cmd) >= 0) {
 					tools.getPlayerFromDiscordUser(user, message, player => {
 						tools.getGuildDbStats(player, message, (allycode, message, guild) => {
@@ -428,7 +428,7 @@ client.on("message", (message) => {
 					return tools.checkUnitsGp(player, message, limit);
 				});
 			} else {
-				console.log(logPrefix()+"Try with user ID:", user.id);
+				console.log(logPrefix()+"Try with Discord ID:", user.id);
 				tools.getPlayerFromDiscordUser(user, message, player => {
 					tools.getPlayerStats(player, message, (player, message) => {
 						return tools.checkUnitsGp(player, message, limit);
@@ -447,7 +447,7 @@ client.on("message", (message) => {
 			if (allycode) {
 				tools.getPlayerStats(player, message, tools.checkPlayerMods);
 			} else {
-				console.log(logPrefix()+"Try with user ID:", user.id);
+				console.log(logPrefix()+"Try with Discord ID:", user.id);
 				tools.getPlayerFromDiscordUser(user, message, player => {
 					tools.getPlayerStats(player, message, tools.checkPlayerMods);
 				});
@@ -509,7 +509,7 @@ client.on("message", (message) => {
 					tools.getGuildStats(player, message, tools.handleContest);
 				}
 			} else {
-				console.log(logPrefix()+"Try with user ID:", user.id);
+				console.log(logPrefix()+"Try with Discord ID:", user.id);
 				if (cmdIdx >= 0) {
 					tools.getPlayerFromDiscordUser(user, message, player => {
 						tools.getGuildDbStats(player, message, (allycode, message, guild) => {
@@ -629,7 +629,7 @@ client.on("message", (message) => {
 			if (allycode) {
 				tools.fetchSwgohData(player, message, view.showSwgohData);
 			} else {
-				console.log(logPrefix()+"Try with user ID:", user.id);
+				console.log(logPrefix()+"Try with Discord ID:", user.id);
 				tools.getPlayerFromDiscordUser(user, message, player => {
 					tools.fetchSwgohData(player, message, view.showSwgohData);
 				});
@@ -643,7 +643,7 @@ client.on("message", (message) => {
 			sql = 'SELECT'+
 				' g.memberCount,'+
 				' g.officerCount,'+
-				' round(g.gp/1000000) AS M_GP,'+
+				' round(g.gp / 1000000) AS M_GP,'+
 				' g.name,'+
 				' g.gm_allycode,'+
 				' g.ts AS gts,'+
@@ -755,7 +755,7 @@ client.on("message", (message) => {
 			if (allycode) {
 				tools.getGuildStats(player, message, view.showGuildStats);
 			} else {
-				console.log(logPrefix()+"Try with user ID:", user.id);
+				console.log(logPrefix()+"Try with Discord ID:", user.id);
 				tools.getPlayerFromDiscordUser(user, message, player => {
 					tools.getGuildStats(player, message, view.showGuildStats);
 				});
@@ -813,7 +813,7 @@ client.on("message", (message) => {
 			if (allycode) {
 				tools.getGuildDbStats(player, message, view.guildPlayerStats);
 			} else {
-				console.log(logPrefix()+"Try with user ID:", user.id);
+				console.log(logPrefix()+"Try with Discord ID:", user.id);
 				tools.getPlayerFromDiscordUser(user, message, player => {
 					tools.getGuildDbStats(player, message, view.guildPlayerStats);
 				});
@@ -828,7 +828,7 @@ client.on("message", (message) => {
 			if (allycode) {
 				tools.getUnregPlayers(allycode, message);
 			} else {
-				console.log(logPrefix()+"Try with user ID:", user.id);
+				console.log(logPrefix()+"Try with Discord ID:", user.id);
 				tools.getPlayerFromDiscordUser(user, message, player => {
 					tools.getUnregPlayers(player.allycode, message);
 				});
@@ -879,7 +879,7 @@ client.on("message", (message) => {
 			if (allycode) {
 				tools.getPlayerStats(player, message, tools.getLastEvolsFromDb);
 			} else {
-				console.log(logPrefix()+"Try with user ID:", user.id);
+				console.log(logPrefix()+"Try with Discord ID:", user.id);
 				tools.getPlayerFromDiscordUser(user, message, player => {
 					tools.getPlayerStats(player, message, tools.getLastEvolsFromDb);
 				});
@@ -891,7 +891,7 @@ client.on("message", (message) => {
 			if (allycode) {
 				tools.getGuildDbStats(player, message, view.listGuildMembers);
 			} else {
-				console.log(logPrefix()+"Try with user ID:", user.id);
+				console.log(logPrefix()+"Try with Discord ID:", user.id);
 				tools.getPlayerFromDiscordUser(user, message, player => {
 					tools.getGuildDbStats(player, message, view.listGuildMembers);
 				});
@@ -906,7 +906,7 @@ client.on("message", (message) => {
 			if (allycode) {
 				tools.getPlayerStats(player, message, view.showPlayerStats);
 			} else {
-				console.log(logPrefix()+"Try with user ID:", user.id);
+				console.log(logPrefix()+"Try with Discord ID:", user.id);
 				tools.getPlayerFromDiscordUser(user, message, player => {
 					tools.getPlayerStats(player, message, view.showPlayerStats);
 				});
@@ -922,7 +922,7 @@ client.on("message", (message) => {
 			if (allycode) {
 				tools.getPlayerStats(player, message, view.showRandomTeam);
 			} else {
-				console.log(logPrefix()+"Try with user ID:", user.id);
+				console.log(logPrefix()+"Try with Discord ID:", user.id);
 				tools.getPlayerFromDiscordUser(user, message, player => {
 					tools.getPlayerStats(player, message, view.showRandomTeam);
 				});
@@ -993,7 +993,7 @@ client.on("message", (message) => {
 			if (allycode) {
 				tools.refreshGuildStats(allycode, message, view.guildPlayerStats);
 			} else {
-				console.log(logPrefix()+"Try with user ID:", user.id);
+				console.log(logPrefix()+"Try with Discord ID:", user.id);
 				tools.getPlayerFromDiscordUser(user, message, player => {
 					tools.refreshGuildStats(player.allycode, message, view.guildPlayerStats);
 				});
@@ -1024,7 +1024,7 @@ client.on("message", (message) => {
 					return view.showUnitInfo(player, message, tmpMsg, 2);
 				});
 			} else {
-				console.log(logPrefix()+"Try with user ID:", user.id);
+				console.log(logPrefix()+"Try with Discord ID:", user.id);
 				tools.getPlayerFromDiscordUser(user, message, player => {
 					tools.getPlayerStats(player, message, (player, message) => {
 						return view.showUnitInfo(player, message, tmpMsg, 2);
@@ -1043,9 +1043,24 @@ client.on("message", (message) => {
 			if (allycode) {
 				tools.getPlayerStats(player, message, view.showPlayerRelics);
 			} else {
-				console.log(logPrefix()+"Try with user ID:", user.id);
+				console.log(logPrefix()+"Try with Discord ID:", user.id);
 				tools.getPlayerFromDiscordUser(user, message, player => {
 					tools.getPlayerStats(player, message, view.showPlayerRelics);
+				});
+			}
+			break;
+
+		case "rgt":
+		case "rtw":
+		case "regtw":
+		case "regterritorywar":
+		case "registerterritorywar":
+			if (allycode) {
+				tools.regTerritoryWar(player, message);
+			} else {
+				console.log(logPrefix()+"Try with Discord ID:", user.id);
+				tools.getPlayerFromDiscordUser(user, message, player => {
+					tools.regTerritoryWar(player, message);
 				});
 			}
 			break;
@@ -1216,7 +1231,7 @@ client.on("message", (message) => {
 					}
 
 					nbp = result[0].nbp; // nbp = number of players
-					let avg = nbg? Math.round(nbp/nbg): nbp; // average per guild
+					let avg = nbg? Math.round(nbp / nbg): nbp; // average per guild
 					console.log(logPrefix()+"  %d  user(s) registered (average = %d per guild)", nbp, avg);
 
 					sql = "SELECT COUNT(`id`) AS nbu FROM `units`"; // nbp = number of units
@@ -1235,7 +1250,7 @@ client.on("message", (message) => {
 						}
 
 						let nbu = result[0].nbu; // nbu = number of units
-						let avg = nbp? Math.round(nbu/nbp): nbu; // average per player
+						let avg = nbp? Math.round(nbu / nbp): nbu; // average per player
 						console.log(logPrefix()+"%d  unit(s) registered (average = %d per user)", nbu, avg);
 
 						message.channel.send(nbg+" guilds, "+nbp+" players & "+nbu+" units registered.");
