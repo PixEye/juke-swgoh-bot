@@ -1503,52 +1503,64 @@ exports.regTerritoryWar = function(player, message) {
 		console.log(logPrefix()+k+": "+params[k]);
 	});
 
-	let richMsg = new RichEmbed()
-		.setTitle("TW data to insert in DB")
-		.setDescription(lines).setColor(color)
-		.setTimestamp(player.updated)
-		.setFooter(config.footer.message, config.footer.iconUrl);
-
 	sql = sql.replace('#', Object.keys( params ).join(", "));
 	sql = sql.replace('?', Object.values(params).join(", "));
 	console.log(logPrefix()+"SQL: "+sql);
 
-	message.channel.send(richMsg)
-	.then(() => {
-		let values = [Object.values(params)];
+	let values = [Object.values(params)];
 
-		db_pool.query(sql, [values], function(exc, result) {
-			if (exc) {
-				let otd = exc.sqlMessage? exc.sqlMessage: exc; // obj to display
+	db_pool.query(sql, [values], function(exc, result) {
+		let richMsg = new RichEmbed()
+			.setTitle("TW data to insert:")
+			.setDescription(lines).setColor(color)
+			.setTimestamp(player.updated)
+			.setFooter(config.footer.message, config.footer.iconUrl);
 
-				console.log("SQL:", sql);
-				console.log(logPrefix()+"RTW Exception:", otd);
+		if (exc) {
+			let otd = exc.sqlMessage? exc.sqlMessage: exc; // obj to display
 
-				// Retry with an UPDATE:
-				sql = "UPDATE `"+table+"`"+
-					" SET name=?, gp=?, memberCount=?, officerCount=?, gm_allycode=?, ts=?"+
-					" WHERE swgoh_id=?";
+			console.log("SQL:", sql);
+			console.log(logPrefix()+"RTW Exception:", otd);
 
-				db_pool.query(sql, values, function(exc, result) {
-					if (exc) {
-						otd = exc.sqlMessage? exc.sqlMessage: exc; // obj to display
-						console.log("SQL:", sql);
-						console.log(logPrefix()+"RTW Exception:", otd);
+			// Retry with an UPDATE:
+			sql = "UPDATE `"+table+"`"+
+				" SET name=?, gp=?, memberCount=?, officerCount=?, gm_allycode=?, ts=?"+
+				" WHERE swgoh_id=?";
+
+			db_pool.query(sql, values, function(exc, result) {
+				if (exc) {
+					color = "RED";
+					richMsg.setColor(color);
+					otd = exc.sqlMessage? exc.sqlMessage: exc; // obj to display
+					console.log("SQL:", sql);
+					console.log(logPrefix()+"RTW Exception:", otd);
+				} else {
+					let n = result.affectedRows;
+
+					color = "GREEN";
+					richMsg.setColor(color);
+					console.log(logPrefix()+"%d guild records updated (UPDATE).", n);
+				}
+
+				message.channel.send(richMsg)
+				.then(() => {
+					if (color==="GREEN") {
+						message.reply("Updated with success.")
 					} else {
-						let n = result.affectedRows;
-						console.log(logPrefix()+"%d guild records updated (UPDATE).", n);
+						message.reply("Update failed!")
 					}
+				})
+				.catch(function(ex) {
+					console.warn(ex);
+					message.reply(ex.message);
+					message.channel.send(lines);
 				});
-			} else {
-				let n = result.affectedRows;
-				console.log(logPrefix()+"%d guild records updated (DEL+ADD).", n);
-			}
-		});
-	})
-	.catch(function(ex) {
-		console.warn(ex);
-		message.reply(ex.message);
-		message.channel.send(lines);
+			});
+		} else {
+			let n = result.affectedRows;
+			console.log(logPrefix()+"%d record inserted.", n);
+			message.reply("Inserted with success.")
+		}
 	});
 
 	return; // stop here for the moment
