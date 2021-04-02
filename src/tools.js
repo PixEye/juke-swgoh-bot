@@ -1523,9 +1523,9 @@ exports.regTerritoryWar = function(player, message) {
 			console.log(logPrefix()+"RTW Exception:", otd);
 
 			// Retry with an UPDATE:
-			sql = "UPDATE `"+table+"`"+
+			sql = "UPDATE `"+table+"`"+ // TODO
 				" SET name=?, gp=?, memberCount=?, officerCount=?, gm_allycode=?, ts=?"+
-				" WHERE swgoh_id=?";
+				" WHERE tw_id=?";
 
 			db_pool.query(sql, values, function(exc, result) {
 				if (exc) {
