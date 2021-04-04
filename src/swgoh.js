@@ -170,20 +170,18 @@ exports.getPlayerData = async function(users, callback, message) {
 			// Others: gp (int), primaryUnitStat (null), relic {currentTier: 1}
 
 			let i = 0;
-			let unitsByCombaType = {};
+			let unitsByCombatType = {};
 			let unitsCountByGear = {};
 			let zetaCount = 0;
 
 			for(i=0; i<20; i++) unitsCountByGear[i] = 0;
-			for(i=1; i<3; i++) unitsByCombaType[i] = 0;
+			for(i=1; i<3; i++) unitsByCombatType[i] = 0;
 			player.unitCount = 0;
 			player.unitsData = [];
 
 			roster.forEach(function(unit) {
 				unitsCountByGear[unit.gear]++;
-				unitsByCombaType[unit.combatType]++; // 1 = character, 2 = ship
-
-				// if (unit.defId==="AHSOKATANO") console.log("Unit:", unit); // for debug
+				unitsByCombatType[unit.combatType]++; // 1 = character, 2 = ship
 
 				let unitZetas = 0;
 				unit.skills.forEach(function(skill) {
@@ -213,6 +211,8 @@ exports.getPlayerData = async function(users, callback, message) {
 
 					// Fix: increase GP if more than 4 zetas
 					if (unitZetas>4) unit.gp += (unitZetas-4) * 5829;
+
+					// if (unit.gp>40000 && unit.combatType<2) console.log("Unit:", unit); // for debug
 
 					player.unitsData.push({
 						"allycode":   allycode,
@@ -269,19 +269,19 @@ exports.getPlayerData = async function(users, callback, message) {
 			} */
 
 			// console.log("-----");
-			// console.log("Units by combat type: ", unitsByCombaType);
+			// console.log("Units by combat type: ", unitsByCombatType);
 
 			// console.log("=====");
 			console.log(logPrefix()+'User "%s" fetched', player.name);
 
 			player.allycode = allycode;
-			player.charCount = unitsByCombaType[1];
+			player.charCount = unitsByCombatType[1];
 			player.gp = clean_stats.GALACTIC_POWER_ACQUIRED_NAME;
 			player.g11Count = unitsCountByGear[11];
 			player.g12Count = unitsCountByGear[12];
 			player.g13Count = unitsCountByGear[13];
 			player.game_name = player.name;
-			player.shipCount = unitsByCombaType[2];
+			player.shipCount = unitsByCombatType[2];
 			player.title = player.titles.selected?
 				player.titles.selected.replace('PLAYERTITLE_', '').replace(/_/g, ' '): 'Default';
 			player.giftCount = clean_stats.TOTAL_GUILD_EXCHANGE_DONATIONS_TU07_2;
