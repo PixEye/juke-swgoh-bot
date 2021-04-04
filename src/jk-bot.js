@@ -6,14 +6,14 @@
 
 // jshint esversion: 8
 
+// Remember when this program started:
+const start = new Date();
+
 // Extract the required classes from the discord.js module:
 const { Client, RichEmbed } = require("discord.js");
 
 // Create an instance of a Discord client:
 const client = new Client();
-
-// Remember when this program started:
-const start = new Date();
 
 // Database connection:
 const mysql = require("mysql");
@@ -1212,8 +1212,21 @@ client.on("message", (message) => {
 		case "status": {
 			let nbg = 0; // number of registered guilds
 			let nbp = 0; // number of registered players
+			// let servers = [];
 
 			message.channel.send("I am listening since: "+tools.toMySQLdate(start)+" GMT.");
+
+			/* client.guilds.cache.forEach(guild => {
+				let newServer = (`${guild.name} | ${guild.id}`);
+				servers.push(newServer);
+				console.log(servers.length+"/ "+newServer);
+			})
+			console.log("Number of servers: "+servers.length);
+			message.channel.send("I am listening to "+servers.length+" servers.");
+
+			let clientguilds = client.guilds.cache();
+			console.log(clientguilds.map(g => g.id) || "None") // */
+			message.channel.send("I am listening to those servers: "+JSON.stringify(client.guilds));
 
 			sql = "SELECT COUNT(`id`) AS nbg FROM `guilds`";
 			db_pool.query(sql, (exc, result) => {
@@ -1250,7 +1263,7 @@ client.on("message", (message) => {
 
 					nbp = result[0].nbp; // nbp = number of players
 					let avg = nbg? Math.round(nbp / nbg): nbp; // average per guild
-					console.log(logPrefix()+"  %d  user(s) registered (average = %d per guild)", nbp, avg);
+					console.log(logPrefix()+"  %d user(s) registered (average = %d per guild)", nbp, avg);
 
 					sql = "SELECT COUNT(`id`) AS nbu FROM `units`"; // nbp = number of units
 					db_pool.query(sql, (exc, result) => {
@@ -1269,7 +1282,7 @@ client.on("message", (message) => {
 
 						let nbu = result[0].nbu; // nbu = number of units
 						let avg = nbp? Math.round(nbu / nbp): nbu; // average per player
-						console.log(logPrefix()+"%d  unit(s) registered (average = %d per user)", nbu, avg);
+						console.log(logPrefix()+"%d unit(s) registered (average = %d per user)", nbu, avg);
 
 						message.channel.send(nbg+" guilds, "+nbp+" players & "+nbu+" units registered.");
 					})
