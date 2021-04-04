@@ -159,8 +159,8 @@ client.on("message", (message) => {
 					" abbr(eviations), aide, allycode (ac), auteur, charInfo (ci), checkMods (cm), checkUnitsGp (cugp)"+
 					", countGuildTopUnits (cgtu), dis, gacH(istory), glCheck (glc), getUnregisteredPlayers (gup),"+
 					" guildBoard (gb), guildStats (gs), help, invite, (last)evols (le), listGuildMembers (lgm),"+
-					" playerStats (ps), profile (gg), register (reg), relics, repete, self(y), shipInfo (si), start,"+
-					" stats, status, whoami, whois",
+					" playerStats (ps), profile (gg), register (reg), relics, repete,"+
+					" self(y), shipInfo (si), sources (src), start, stats, status, whoami, whois",
 					"**Commandes de comportement :**",
 					"*Ordre : behave|behaviour (sous-commande) (points) (user)*",
 					" behave, behave( )add, behave( )get, behave( )rank, behave( )rem(ove),",
@@ -765,59 +765,58 @@ client.on("message", (message) => {
 		case "gach":
 		case "gachistory":
 		case "gg":
-		case "profile":
-			{
-				let link = "";
+		case "profile": {
+			let link = "";
 
-				if (allycode) {
-					searchStr = "p.allycode="+allycode;
-				}
-				sql = "SELECT p.* FROM `users` p WHERE "+searchStr;
-				db_pool.query(sql, (exc, result) => {
-					let msg = '';
+			if (allycode) {
+				searchStr = "p.allycode="+allycode;
+			}
+			sql = "SELECT p.* FROM `users` p WHERE "+searchStr;
+			db_pool.query(sql, (exc, result) => {
+				let msg = '';
 
-					if (exc) {
-						console.log("SQL:", sql);
-						console.log(logPrefix()+"AC Exception:", exc.sqlMessage? exc.sqlMessage: exc);
-					} else {
-						console.log(logPrefix()+result.length+" record(s) match(es):", search);
-						// console.dir(result);
-						if (result.length <= 0) {
-							msg = "No match found!";
-							console.log(logPrefix()+msg);
-							message.reply(msg);
+				if (exc) {
+					console.log("SQL:", sql);
+					console.log(logPrefix()+"AC Exception:", exc.sqlMessage? exc.sqlMessage: exc);
+				} else {
+					console.log(logPrefix()+result.length+" record(s) match(es):", search);
+					// console.dir(result);
+					if (result.length <= 0) {
+						msg = "No match found!";
+						console.log(logPrefix()+msg);
+						message.reply(msg);
 
-							if (allycode) {
-								link = command.substr(1, 1)==='a'?
-									"https://swgoh.gg/p/"+allycode+"/gac-history/":
-									"https://swgoh.gg/p/"+allycode+"/";
-								console.log(logPrefix()+link);
-								message.channel.send(link);
-							}
-						} else if (result.length > 1) {
-							lines.push("There are "+result.length+" matches:");
-							result.forEach(user => {
-								msg = user.allycode+" is allycode of: "+user.game_name;
-								console.log(logPrefix()+msg);
-								lines.push("`"+user.allycode+"` is allycode of: "+user.game_name);
-							});
-							message.reply(lines);
-						} else { // 1 result here
-							let label = command.substr(1, 1)==='a'? "GAC history": "profile";
-
-							user = result[0];
-							allycode = user.allycode;
+						if (allycode) {
 							link = command.substr(1, 1)==='a'?
 								"https://swgoh.gg/p/"+allycode+"/gac-history/":
 								"https://swgoh.gg/p/"+allycode+"/";
-							msg = user.game_name+"'s "+label+" is: "+link;
-							console.log(logPrefix()+msg);
-							message.channel.send(msg);
+							console.log(logPrefix()+link);
+							message.channel.send(link);
 						}
+					} else if (result.length > 1) {
+						lines.push("There are "+result.length+" matches:");
+						result.forEach(user => {
+							msg = user.allycode+" is allycode of: "+user.game_name;
+							console.log(logPrefix()+msg);
+							lines.push("`"+user.allycode+"` is allycode of: "+user.game_name);
+						});
+						message.reply(lines);
+					} else { // 1 result here
+						let label = command.substr(1, 1)==='a'? "GAC history": "profile";
+
+						user = result[0];
+						allycode = user.allycode;
+						link = command.substr(1, 1)==='a'?
+							"https://swgoh.gg/p/"+allycode+"/gac-history/":
+							"https://swgoh.gg/p/"+allycode+"/";
+						msg = user.game_name+"'s "+label+" is: "+link;
+						console.log(logPrefix()+msg);
+						message.channel.send(msg);
 					}
-				});
-			}
+				}
+			});
 			break;
+		}
 
 		case "ggs":
 		case "gps":
@@ -857,7 +856,7 @@ client.on("message", (message) => {
 					" (cugp), countGuildTopUnits (cgtu), gacH(istory), glCheck (glc), getUnregisteredPlayers (gup),"+
 					" guildBoard (gb), guildStats (gs), help, invite, (last)evols (le), listGuildMembers (lgm),"+
 					" playerStat (ps), profile (gg), register (reg), relics, repeat, say, self(y), shipInfo (si),"+
-					" start, stats, status, whoami, whois",
+					" sources (src), start, stats, status, whoami, whois",
 					"**Behaviour commands:**",
 					"*Order : behave|behaviour (subcommand) (points) (user)*",
 					" behave, behave( )add, behave( )get, behave( )rank, behave( )rem(ove),",
@@ -1202,6 +1201,11 @@ client.on("message", (message) => {
 					.setFooter(config.footer.message, config.footer.iconUrl);
 				message.channel.send(richMsg);
 			});
+			break;
+
+		case "sources":
+		case "src":
+			message.channel.send("Official repository: https://github.com/PixEye/juke-swgoh-bot");
 			break;
 
 		case "start":
