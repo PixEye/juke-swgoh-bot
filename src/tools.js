@@ -383,6 +383,19 @@ exports.db_close = function(exc) {
 	console.log(logPrefix()+"DB connections stopped.");
 };
 
+/** Convert a number into a string using engineer notation (K, M, B, ...) */
+exports.eng_format = function(amount, precision = 0) {
+	let unit = "";
+	let x = typeof amount === "string"? parseFloat(amount): 0 + amount;
+
+	if (x>1024) { x /= 1024; unit = "K"; }
+	if (x>1024) { x /= 1024; unit = "M"; }
+	if (x>1024) { x /= 1024; unit = "G"; }
+	if (x>1024) { x /= 1024; unit = "P"; }
+
+	return x.toFixed(precision) + unit;
+}
+
 /** Get data from the SWGoH-help API
  * @param {object} player The target player
  * @param {object} message The origin message (request)
