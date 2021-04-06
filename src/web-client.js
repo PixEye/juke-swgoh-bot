@@ -46,7 +46,6 @@ exports.parseSwgohGgGuildList = function(html, result, chunkCnt) {
 	console.log("Nb data blocks:", nbDataBlocks);
 	console.log("Nb cells found:", dataBlocks.length);
 
-	var colName = "";
 	var colNum = 0;
 	var i = 0;
 
@@ -154,6 +153,7 @@ exports.wget = function(url, callback) {
 		var chunkCnt = 0;
 
 		console.log("Got response code %d from %s", res.statusCode, url);
+		// console.log("Web headers:", res.headers);
 
 		res.on("data", function(chunk) {
 			++chunkCnt;
