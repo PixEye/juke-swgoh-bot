@@ -13,7 +13,8 @@ const WEB = require("https");
 // Source pages:
 // const WARSTATS_TOP_GUILDS = "https://goh.warstats.net/?sort=tw&direction=asc";
 // const PROXIMA_GUILDS = "https://goh.warstats.net/15/ProXima";
-const SWGOH_TOP_GUILDS = "https://swgoh.gg/g/";
+// const SWGOH_TOP_GUILDS = "https://swgoh.gg/g/";
+const BASE_SPEED_OF_TOONS = "https://swgoh.gg/characters/stats/#2";
 
 exports.parseSwgohGgGuildList = function(html, result, chunkCnt) {
 	var fileSize = html.length;
@@ -30,29 +31,29 @@ exports.parseSwgohGgGuildList = function(html, result, chunkCnt) {
 	console.log("HTML page is valid?", isValid? "true": "false");
 	if (!isValid) return;
 
-	const doc = HTML_PARSER.parse(html);
-	const title =
-		doc.querySelector("html>head>title").text.trim();
+	const Doc = HTML_PARSER.parse(html);
+	const Title =
+		Doc.querySelector("html>head>title").text.trim();
 
-	const dataBlocks =
-		doc.querySelectorAll("div.content-container-primary>ul>li.p-0>a>*");
+	const DataNodes =
+		Doc.querySelectorAll("div.content-container-primary>ul>li.p-0>a>*");
 	const Headers = ["Picture", "Name", "Descr.", "Stats"];
-	const nbHeaders = Headers.length;
 	const Stats = ["Raid points", "Members", "Profiles", "Avg arena rank", "GP"];
 
-	const nbDataBlocks = dataBlocks.length;
+	const NbHeaders = Headers.length;
+	const NbDataBlocks = DataNodes.length;
 
-	console.log("Page title:", title);
-	console.log("Nb data blocks:", nbDataBlocks);
-	console.log("Nb cells found:", dataBlocks.length);
+	console.log("Page title:", Title);
+	console.log("Nb data blocks:", NbDataBlocks);
+	console.log("Nb cells found:", DataNodes.length);
 
 	var colNum = 0;
 	var i = 0;
 
 	i = 0;
 	console.log("=".repeat(SEP_LEN)); // ===== ===== ===== ======
-	dataBlocks.forEach(node => {
-		var colName = Headers[i % nbHeaders];
+	DataNodes.forEach(node => {
+		var colName = Headers[i % NbHeaders];
 		var txt = node.text.trim().replace(/\s+/g, " ");
 
 		if (!colNum++) { ++i; return; }
@@ -73,10 +74,60 @@ exports.parseSwgohGgGuildList = function(html, result, chunkCnt) {
 
 		console.log("Cell %d/col %d - %s: %s", ++i, colNum, colName, txt);
 
-		if (i % nbHeaders === 0 && i>0) {
+		if (i % NbHeaders === 0 && i>0) {
 			console.log("-".repeat(SEP_LEN)); // ----- ----- -----
 			colNum = 0;
 		}
+	});
+};
+
+exports.parseSwgohGgToonList = function(html, result, chunkCnt) {
+	var fileSize = html.length;
+
+	if (result.statusCode !== 200) {
+		console.warn("wget failed!");
+		return;
+	}
+
+	console.log("%sB read in %d chunk(s)", TOOLS.eng_format(fileSize), chunkCnt);
+
+	const isValid = HTML_PARSER.valid(html);
+
+	console.log("HTML page is valid?", isValid? "true": "false");
+	if (!isValid) return;
+
+	const Doc = HTML_PARSER.parse(html);
+	const Title =
+		Doc.querySelector("html>head>title").text.trim();
+
+	const DataBlock = Doc.querySelector("table#characters");
+	const Headers = DataBlock.querySelectorAll("th");
+	const ToonLines = DataBlock.querySelectorAll("tbody tr");
+
+	const NbHeaders = Headers.length;
+	const NbToons = ToonLines.length;
+
+	console.log("Page title:", Title);
+	console.log("Nb columns:", NbHeaders);
+	console.log("Nb toons:", NbToons);
+
+	console.log("=".repeat(SEP_LEN)); // ===== ===== ===== ======
+	let i = 0;
+	ToonLines.forEach(line => {
+		let colNum = 0;
+		let dataNodes = line.querySelectorAll("td");
+		let toon = {};
+
+		dataNodes.forEach(node => {
+			var colName = Headers[colNum++].text;
+			var txt = node.text.trim().replace(/\s+/g, " ");
+
+			if (colNum === 1) colName = "Name";
+			toon[colName] = txt;
+			if (colNum === 4) {
+				console.log("%d/ %s", ++i, JSON.stringify(toon));
+			}
+		});
 	});
 };
 
@@ -95,27 +146,28 @@ exports.parseWarstatGuildList = function(html, result, chunkCnt) {
 	console.log("HTML page is valid?", isValid? "true": "false");
 	if (!isValid) return;
 
-	const doc = HTML_PARSER.parse(html);
-	const title =
-		doc.querySelector("html>head>title").text.trim();
-	const mainTableCols =
-		doc.querySelectorAll("table.highlight>thead th");
-	const nbDataBlocks =
-		doc.querySelectorAll("table.highlight>tbody tr").length;
-	const mainTableCells =
-		doc.querySelectorAll("table.highlight>tbody td");
-	const nbCols = mainTableCols.length;
+	const Doc = HTML_PARSER.parse(html);
+	const Title =
+		Doc.querySelector("html>head>title").text.trim();
 
-	console.log("Page title:", title);
-	console.log("Nb colomns found:", nbCols);
-	console.log("Nb data blocks:", nbDataBlocks);
-	console.log("Nb cells found:", mainTableCells.length);
+	const Headers =
+		Doc.querySelectorAll("table.highlight>thead th");
+	const NbDataBlocks =
+		Doc.querySelectorAll("table.highlight>tbody tr").length;
+	const DataNodes =
+		Doc.querySelectorAll("table.highlight>tbody td");
+	const NbCols = Headers.length;
+
+	console.log("Page title:", Title);
+	console.log("Nb colomns found:", NbCols);
+	console.log("Nb data blocks:", NbDataBlocks);
+	console.log("Nb cells found:", DataNodes.length);
 
 	var colTitles = [];
 	var i = 0;
 	console.log("=".repeat(SEP_LEN)); // ===== ===== ===== ======
 
-	mainTableCols.forEach(node => {
+	Headers.forEach(node => {
 		var txt = node.text.trim().replace(/\s+/g, " ");
 
 		colTitles.push(txt);
@@ -125,7 +177,7 @@ exports.parseWarstatGuildList = function(html, result, chunkCnt) {
 
 	var colNum = 0;
 	i = 0;
-	mainTableCells.forEach(node => {
+	DataNodes.forEach(node => {
 		var colName = colTitles[colNum];
 		var txt = node.text.trim().replace(/\s+/g, " ");
 
@@ -140,7 +192,7 @@ exports.parseWarstatGuildList = function(html, result, chunkCnt) {
 			}
 		}
 
-		if (i % nbCols === 0 && i>0) {
+		if (i % NbCols === 0 && i>0) {
 			console.log("-".repeat(SEP_LEN)); // ----- ----- -----
 			colNum = 0;
 		}
@@ -171,6 +223,7 @@ exports.wget = function(url, callback) {
 };
 
 // exports.wget(PROXIMA_GUILDS, exports.parseWarstatGuildList);
-exports.wget(SWGOH_TOP_GUILDS, exports.parseSwgohGgGuildList);
+// exports.wget(SWGOH_TOP_GUILDS, exports.parseSwgohGgGuildList);
+exports.wget(BASE_SPEED_OF_TOONS, exports.parseSwgohGgToonList);
 
 // vim: noexpandtab
