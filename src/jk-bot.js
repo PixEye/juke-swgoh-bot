@@ -160,7 +160,7 @@ client.on("message", (message) => {
 					", countGuildTopUnits (cgtu), dis, gacH(istory), glCheck (glc), getUnregisteredPlayers (gup),"+
 					" guildBoard (gb), guildStats (gs), help, invite, (last)evols (le), listGuildMembers (lgm),"+
 					" playerStats (ps), profile (gg), register (reg), relics, repete,"+
-					" self(y), shipInfo (si), sources (src), start, stats, status, whoami, whois",
+					" self(y), shipInfo (si), sources (src), start, stats, status, unreg(ister), whoami, whois",
 					"**Commandes de comportement :**",
 					"*Ordre : behave|behaviour (sous-commande) (points) (user)*",
 					" behave, behave( )add, behave( )get, behave( )rank, behave( )rem(ove),",
@@ -856,7 +856,7 @@ client.on("message", (message) => {
 					" (cugp), countGuildTopUnits (cgtu), gacH(istory), glCheck (glc), getUnregisteredPlayers (gup),"+
 					" guildBoard (gb), guildStats (gs), help, invite, (last)evols (le), listGuildMembers (lgm),"+
 					" playerStat (ps), profile (gg), register (reg), relics, repeat, say, self(y), shipInfo (si),"+
-					" sources (src), start, stats, status, whoami, whois",
+					" sources (src), start, stats, status, unreg(ister), whoami, whois",
 					"**Behaviour commands:**",
 					"*Order : behave|behaviour (subcommand) (points) (user)*",
 					" behave, behave( )add, behave( )get, behave( )rank, behave( )rem(ove),",
