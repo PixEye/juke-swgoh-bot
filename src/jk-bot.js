@@ -1297,6 +1297,39 @@ client.on("message", (message) => {
 			view.showWhoIs(user, nick, message);
 			break;
 
+		case "unreg":
+		case "unregister":
+			user = message.author;
+			search = user.id;
+			searchStr = "p.discord_id=" + search;
+			if (allycode) searchStr += " AND allycode=" + allycode;
+			sql = "DELETE users WHERE " + searchStr;
+
+			// Update an existing registration:
+			db_pool.query(sql, [], (exc, result) => {
+				if (exc) {
+					console.log("Unreg SQL:", sql);
+					if (exc.sqlMessage) {
+						console.log(Date()+ " - Unreg Exception 1:", exc.sqlMessage);
+						message.reply(":red_circle: Error: "+exc.sqlMessage);
+					} else {
+						console.log(logPrefix()+"Unreg Exception 2:", exc);
+						message.reply(":red_circle: Error!");
+					}
+				} else if (result.affectedRows) {
+					message.reply(":white_check_mark: "+nick+" unregistered where "+searchStr);
+					console.log(logPrefix()+"%d user(s) updated:", result.affectedRows, nick);
+				} else {
+					console.log(logPrefix()+"%d user(s) updated:", result.affectedRows, nick);
+					console.log("Unreg SQL:", sql);
+					message.reply([
+						":red_circle: Nothing has changed. You cannot unregister someone else!",
+						":red_circle: The player should unregister on its own."
+					]);
+				}
+			});
+			break;
+
 		case "whois":
 			if (message.mentions && message.mentions.users && message.mentions.users.first()) {
 				user = message.mentions.users.first();
