@@ -1225,8 +1225,8 @@ client.on("message", (message) => {
 			message.channel.send("I am listening to "+servers.length+" servers.");
 
 			let clientguilds = client.guilds.cache();
-			console.log(clientguilds.map(g => g.id) || "None") // */
-			message.channel.send("I am listening to those servers: "+JSON.stringify(client.guilds));
+			console.log(clientguilds.map(g => g.id) || "None");
+			message.channel.send("I am listening to those servers: "+JSON.stringify(client.guilds)); // */
 
 			sql = "SELECT COUNT(`id`) AS nbg FROM `guilds`";
 			db_pool.query(sql, (exc, result) => {
