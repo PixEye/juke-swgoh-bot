@@ -431,7 +431,7 @@ exports.getFirstAllycodeInWords = function(words) {
 	if (words.join("").trim().length>0) {
 		words.forEach(function(word, i) {
 			// ignore too short words, tags/mentions & not numeric words:
-			if (word.length>8 && word.indexOf("<")<0 && !word.match(/[a-z]/i) && word.match(/[0-9]{3,}/)) {
+			if (foundAt<0 && word.length>8 && word.indexOf("<")<0 && !word.match(/[a-z]/i) && word.match(/[0-9]{3,}/)) {
 				allycode = parseInt(word.replace(/[^0-9]/g, ""));
 				foundAt = i;
 				console.log(logPrefix()+"Found allycode %d at position %d", allycode, i);
