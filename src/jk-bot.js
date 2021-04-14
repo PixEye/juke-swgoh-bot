@@ -1301,9 +1301,9 @@ client.on("message", (message) => {
 		case "unregister":
 			user = message.author;
 			search = user.id;
-			searchStr = "discord_id=" + search;
-			if (allycode) searchStr += " AND allycode=" + allycode;
-			sql = "DELETE users WHERE " + searchStr;
+			searchStr = "`discord_id`=" + search;
+			if (allycode) searchStr += " AND `allycode`=" + allycode;
+			sql = "DELETE FROM `users` WHERE " + searchStr;
 
 			// Update an existing registration:
 			db_pool.query(sql, [], (exc, result) => {
