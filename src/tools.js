@@ -7,7 +7,7 @@
 // jshint esversion: 8
 
 // Extract the required classes from the discord.js module:
-const { RichEmbed } = require("discord.js");
+const { MessageAttachment, RichEmbed } = require("discord.js");
 
 // Create an instance of a Discord client:
 //const client = new Client();
@@ -1450,11 +1450,114 @@ exports.refreshGuildStats = function(allycode, message, callback) {
 		.catch(console.error);
 };
 
-/** Store guild territory war results in our database
- * @param {number} allycode The target player's allycode
+/** Remember stats of the guild
+ * @param object g The guild object to save in the database
+ */
+exports.rememberGuildStats = function(g) {
+
+	let logPrefix = exports.logPrefix; // shortcut
+	let sql = "INSERT INTO `guilds` (swgoh_id, name, gp, memberCount, officerCount, gm_allycode, ts) VALUES ?";
+	let update = new Date(g.updated);
+	let values = [[g.id, g.name, g.gp, g.memberCount, g.officerCount, g.leader.allyCode, update]];
+
+	db_pool.query(sql, [values], function(exc, result) {
+		if (exc) {
+			let otd = exc.sqlMessage? exc.sqlMessage: exc; // obj to display
+
+			console.log("SQL:", sql);
+			console.log(logPrefix()+"GS Exception:", otd);
+
+			// Retry with an UPDATE:
+			sql = "UPDATE `guilds`"+
+				" SET name=?, gp=?, memberCount=?, officerCount=?, gm_allycode=?, ts=?"+
+				" WHERE swgoh_id=?";
+			values = [g.name, g.gp, g.memberCount, g.officerCount, g.leader.allyCode, update, g.id];
+
+			db_pool.query(sql, values, function(exc, result) {
+				if (exc) {
+					otd = exc.sqlMessage? exc.sqlMessage: exc; // obj to display
+
+					console.log("SQL:", sql);
+					console.log(logPrefix()+"GS Exception:", otd);
+					return;
+				}
+
+				let n = result.affectedRows;
+				console.log(logPrefix()+"%d guild records updated (UPDATE).", n);
+			});
+			return;
+		}
+
+		let n = result.affectedRows;
+		console.log(logPrefix()+"%d guild records updated (DEL+ADD).", n);
+	});
+};
+
+/** Compare 2 strings ignoring case
+ * @param {string} a
+ * @param {string} b
+ * @return {number}
+ */
+exports.stringsCompare = function(a, b) {
+	return a.localeCompare(b, undefined, {sensitivity: 'base'});
+};
+
+/** Get guild territory war results from the database to an attached file
+ * @param {object} player The target player
  * @param {object} message The origin message (request)
  */
-exports.regTerritoryWar = function(player, message) {
+exports.territoryWarGet = function(player, message) {
+	let filename = "gt.csv";
+	let logPrefix = exports.logPrefix; // shortcut
+	let table = "tw_results";
+	let sql = "SELECT * FROM `"+table+"`";
+	let lines = [];
+
+	console.log(logPrefix()+"SQL: "+sql);
+
+	db_pool.query(sql, [], function(exc, result) {
+		if (exc) {
+			let otd = exc.sqlMessage? exc.sqlMessage: exc; // obj to display
+
+			console.log("SQL:", sql);
+			console.log(logPrefix()+"RTW Exception:", otd);
+			message.reply("Failed: "+otd);
+
+			return;
+		}
+
+		let n = result.length;
+		let ln = 0;
+
+		if (!n) {
+			message.reply("No data found!");
+			return;
+		}
+
+		result.forEach(record => {
+			if (! ln++) lines.push(Object.keys(record).join(";"));
+			lines.push(Object.values(record).join(";"));
+		});
+		console.log(logPrefix()+"%d records embeded in %d lines of %s", n, ln, filename);
+
+		const file_contents = lines.join("\n");
+		if (file_contents.trim()==="") {
+			message.reply("Generated file contents is empty!");
+			return;
+		}
+
+		const attachment = new MessageAttachment(file_contents, filename);
+
+		message.channel.send("Here's "+filename+" with "+n+" records");
+		message.channel.send(attachment).catch(console.warn);
+	});
+};
+
+/** Store guild territory war results in our database
+ * @param {object} player The target player
+ * @param {object} message The origin message (request)
+ */
+exports.territoryWarReg = function(player, message) {
 	let allycode = player.allycode;
 	let logPrefix = exports.logPrefix; // shortcut
 	let table = "tw_results";
@@ -1589,58 +1692,6 @@ exports.regTerritoryWar = function(player, message) {
 			});
 		})
 		.catch(console.error); // */
-};
-
-/** Remember stats of the guild
- * @param object g The guild object to save in the database
- */
-exports.rememberGuildStats = function(g) {
-
-	let logPrefix = exports.logPrefix; // shortcut
-	let sql = "INSERT INTO `guilds` (swgoh_id, name, gp, memberCount, officerCount, gm_allycode, ts) VALUES ?";
-	let update = new Date(g.updated);
-	let values = [[g.id, g.name, g.gp, g.memberCount, g.officerCount, g.leader.allyCode, update]];
-
-	db_pool.query(sql, [values], function(exc, result) {
-		if (exc) {
-			let otd = exc.sqlMessage? exc.sqlMessage: exc; // obj to display
-
-			console.log("SQL:", sql);
-			console.log(logPrefix()+"GS Exception:", otd);
-
-			// Retry with an UPDATE:
-			sql = "UPDATE `guilds`"+
-				" SET name=?, gp=?, memberCount=?, officerCount=?, gm_allycode=?, ts=?"+
-				" WHERE swgoh_id=?";
-			values = [g.name, g.gp, g.memberCount, g.officerCount, g.leader.allyCode, update, g.id];
-
-			db_pool.query(sql, values, function(exc, result) {
-				if (exc) {
-					otd = exc.sqlMessage? exc.sqlMessage: exc; // obj to display
-
-					console.log("SQL:", sql);
-					console.log(logPrefix()+"GS Exception:", otd);
-					return;
-				}
-
-				let n = result.affectedRows;
-				console.log(logPrefix()+"%d guild records updated (UPDATE).", n);
-			});
-			return;
-		}
-
-		let n = result.affectedRows;
-		console.log(logPrefix()+"%d guild records updated (DEL+ADD).", n);
-	});
-};
-
-/** Compare 2 strings ignoring case
- * @param {string} a
- * @param {string} b
- * @return {number}
- */
-exports.stringsCompare = function(a, b) {
-	return a.localeCompare(b, undefined, {sensitivity: 'base'});
 };
 
 /** Generate a date string in MySQL format (if no date is given, now is used)

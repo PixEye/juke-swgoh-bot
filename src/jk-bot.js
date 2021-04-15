@@ -1063,17 +1063,33 @@ client.on("message", (message) => {
 			}
 			break;
 
+		case "gtg":
+		case "gtget":
+		case "twg":
+		case "twget":
+			if (allycode) {
+				tools.territoryWarGet(player, message);
+			} else {
+				console.log(logPrefix()+"Trying with Discord ID:", user.id);
+				tools.getPlayerFromDiscordUser(user, message, player => {
+					tools.territoryWarGet(player, message);
+				});
+			}
+			break;
+
+		case "gtr":
 		case "rgt":
 		case "rtw":
 		case "regtw":
 		case "regterritorywar":
 		case "registerterritorywar":
+		case "twr":
 			if (allycode) {
-				tools.regTerritoryWar(player, message);
+				tools.territoryWarReg(player, message);
 			} else {
-				console.log(logPrefix()+"Try with Discord ID:", user.id);
+				console.log(logPrefix()+"Trying with Discord ID:", user.id);
 				tools.getPlayerFromDiscordUser(user, message, player => {
-					tools.regTerritoryWar(player, message);
+					tools.territoryWarReg(player, message);
 				});
 			}
 			break;
