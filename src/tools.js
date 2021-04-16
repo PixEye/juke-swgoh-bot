@@ -471,7 +471,7 @@ exports.getGuildDbStats = function(player1, message, callback) {
 				if (typeof msg.delete==="function") msg.delete();
 
 				if (exc) {
-					let otd = exc.sqlMessage? exc.sqlMessage: exc; // obj to display
+					let otd = exc.sqlMessage? exc.sqlMessage: exc; // object to display
 
 					console.log("SQL:", sql);
 					console.log(logPrefix()+"GDDBS Exception:", otd);
@@ -497,7 +497,7 @@ exports.getGuildDbStats = function(player1, message, callback) {
 				sql = "SELECT * from `users` WHERE guildRefId=?"; // get players
 				db_pool.query(sql, [guild.refId], function(exc, result) {
 					if (exc) {
-						let otd = exc.sqlMessage? exc.sqlMessage: exc; // obj to display
+						let otd = exc.sqlMessage? exc.sqlMessage: exc; // object to display
 
 						console.log("SQL:", sql);
 						console.warn(logPrefix()+"GDDBS Exception:", otd);
@@ -525,7 +525,7 @@ exports.getGuildDbStats = function(player1, message, callback) {
 					sql = "SELECT * from `units` WHERE allycode IN (?)"; // get units
 					db_pool.query(sql, [allycodes], function(exc, result) {
 						if (exc) {
-							let otd = exc.sqlMessage? exc.sqlMessage: exc; // obj to display
+							let otd = exc.sqlMessage? exc.sqlMessage: exc; // object to display
 
 							console.log("SQL:", sql);
 							console.log(logPrefix()+"GDDBS Exception:", otd);
@@ -600,7 +600,7 @@ exports.getLastEvolsFromDb = function(player, message) {
 
 	db_pool.query(sql, function(exc, result) {
 		if (exc) {
-			let otd = exc.sqlMessage? exc.sqlMessage: exc; // obj to display
+			let otd = exc.sqlMessage? exc.sqlMessage: exc; // object to display
 
 			console.log("SQL:", sql);
 			console.log(logPrefix()+"GLA Exception:", otd);
@@ -827,7 +827,7 @@ exports.getUnregPlayers = function(allycode, message) {
 					let noProbePlayers = [];
 
 					if (exc) {
-						let otd = exc.sqlMessage? exc.sqlMessage: exc; // obj to display
+						let otd = exc.sqlMessage? exc.sqlMessage: exc; // object to display
 
 						console.log(logPrefix()+"GUP SQL:", sql);
 						console.warn(logPrefix()+"GUP Exception:", otd);
@@ -981,7 +981,7 @@ exports.handleBehaviour = function(guild, message, target) {
 				let msg = "";
 
 				if (exc) {
-					let otd = exc.sqlMessage? exc.sqlMessage: exc; // obj to display
+					let otd = exc.sqlMessage? exc.sqlMessage: exc; // object to display
 
 					console.log("SQL:", sql);
 					console.warn(logPrefix()+"HBH Exception:", otd);
@@ -1012,7 +1012,7 @@ exports.handleBehaviour = function(guild, message, target) {
 				let lines = [];
 
 				if (exc) {
-					let otd = exc.sqlMessage? exc.sqlMessage: exc; // obj to display
+					let otd = exc.sqlMessage? exc.sqlMessage: exc; // object to display
 
 					color = "RED";
 					console.log("SQL:", sql);
@@ -1053,7 +1053,7 @@ exports.handleBehaviour = function(guild, message, target) {
 			let logPrefix = exports.logPrefix; // shortcut
 
 			if (exc) {
-				let otd = exc.sqlMessage? exc.sqlMessage: exc; // obj to display
+				let otd = exc.sqlMessage? exc.sqlMessage: exc; // object to display
 
 				console.log("SQL:", sql);
 				console.warn(logPrefix()+"HBH Exception:", otd);
@@ -1165,7 +1165,7 @@ exports.handleContest = function(guild, message, target) {
 		if (sql) {
 			db_pool.query(sql, [delta, target.allycode], function(exc, result) {
 				if (exc) {
-					let otd = exc.sqlMessage? exc.sqlMessage: exc; // obj to display
+					let otd = exc.sqlMessage? exc.sqlMessage: exc; // object to display
 
 					console.log("SQL:", sql);
 					console.warn(logPrefix()+"GCT Exception:", otd);
@@ -1196,7 +1196,7 @@ exports.handleContest = function(guild, message, target) {
 				let lines = [];
 
 				if (exc) {
-					let otd = exc.sqlMessage? exc.sqlMessage: exc; // obj to display
+					let otd = exc.sqlMessage? exc.sqlMessage: exc; // object to display
 
 					color = "RED";
 					console.log("SQL:", sql);
@@ -1234,7 +1234,7 @@ exports.handleContest = function(guild, message, target) {
 		sql+= " ORDER BY contestPoints DESC, game_name ASC LIMIT ?";
 		db_pool.query(sql, [guild.refId, limit], function(exc, result) {
 			if (exc) {
-				let otd = exc.sqlMessage? exc.sqlMessage: exc; // obj to display
+				let otd = exc.sqlMessage? exc.sqlMessage: exc; // object to display
 
 				console.log("SQL:", sql);
 				console.warn(logPrefix()+"GCT Exception:", otd);
@@ -1394,7 +1394,7 @@ exports.refreshGuildStats = function(allycode, message, callback) {
 				if (typeof(msg.delete)==="function") msg.delete();
 
 				if (exc) {
-					let otd = exc.sqlMessage? exc.sqlMessage: exc; // obj to display
+					let otd = exc.sqlMessage? exc.sqlMessage: exc; // object to display
 
 					console.log("SQL:", sql);
 					console.log(logPrefix()+"GDDBS Exception:", otd);
@@ -1420,7 +1420,7 @@ exports.refreshGuildStats = function(allycode, message, callback) {
 				sql = "SELECT * from `users` WHERE guildRefId=?"; // get players
 				db_pool.query(sql, [guild.refId], function(exc, result) {
 					if (exc) {
-						let otd = exc.sqlMessage? exc.sqlMessage: exc; // obj to display
+						let otd = exc.sqlMessage? exc.sqlMessage: exc; // object to display
 
 						console.log("SQL:", sql);
 						console.warn(logPrefix()+"GDDBS Exception:", otd);
@@ -1462,7 +1462,7 @@ exports.rememberGuildStats = function(g) {
 
 	db_pool.query(sql, [values], function(exc, result) {
 		if (exc) {
-			let otd = exc.sqlMessage? exc.sqlMessage: exc; // obj to display
+			let otd = exc.sqlMessage? exc.sqlMessage: exc; // object to display
 
 			console.log("SQL:", sql);
 			console.log(logPrefix()+"GS Exception:", otd);
@@ -1475,7 +1475,7 @@ exports.rememberGuildStats = function(g) {
 
 			db_pool.query(sql, values, function(exc, result) {
 				if (exc) {
-					otd = exc.sqlMessage? exc.sqlMessage: exc; // obj to display
+					otd = exc.sqlMessage? exc.sqlMessage: exc; // object to display
 
 					console.log("SQL:", sql);
 					console.log(logPrefix()+"GS Exception:", otd);
@@ -1507,17 +1507,20 @@ exports.stringsCompare = function(a, b) {
  * @param {object} message The origin message (request)
  */
 exports.territoryWarGet = function(player, message) {
-	let filename = "gt.csv";
-	let logPrefix = exports.logPrefix; // shortcut
-	let table = "tw_results";
-	let sql = "SELECT * FROM `"+table+"`";
+	const filename = "../data/gt.csv";
+	const ext = filename.replace(/^.*\./, "");
+	const logPrefix = exports.logPrefix; // shortcut
+	const sep = ";";
+	const sql = "SELECT * FROM `tw_results`";
+	const MINUTES_BEFORE_CLEANUP = 1;
+
 	let lines = [];
 
 	console.log(logPrefix()+"SQL: "+sql);
 
 	db_pool.query(sql, [], function(exc, result) {
 		if (exc) {
-			let otd = exc.sqlMessage? exc.sqlMessage: exc; // obj to display
+			let otd = exc.sqlMessage? exc.sqlMessage: exc; // object to display
 
 			console.log("SQL:", sql);
 			console.log(logPrefix()+"RTW Exception:", otd);
@@ -1526,8 +1529,9 @@ exports.territoryWarGet = function(player, message) {
 			return;
 		}
 
-		let n = result.length;
 		let ln = 0;
+		let msg = "%d records embeded in %d lines of %s";
+		let n = result.length;
 
 		if (!n) {
 			message.reply("No data found!");
@@ -1535,21 +1539,55 @@ exports.territoryWarGet = function(player, message) {
 		}
 
 		result.forEach(record => {
-			if (! ln++) lines.push(Object.keys(record).join(";"));
-			lines.push(Object.values(record).join(";"));
+			if (! ln++) lines.push(Object.keys(record).join(sep));
+			lines.push(Object.values(record).join(sep));
 		});
-		console.log(logPrefix()+"%d records embeded in %d lines of %s", n, ln, filename);
+		console.log(logPrefix()+msg, n, lines.length, filename);
+		let file_contents = lines.join("\n");
 
-		const file_contents = lines.join("\n");
 		if (file_contents.trim()==="") {
 			message.reply("Generated file contents is empty!");
 			return;
 		}
 
-		const attachment = new MessageAttachment(file_contents, filename);
+		const fs = require("fs");
 
-		message.channel.send("Here's "+filename+" with "+n+" records");
-		message.channel.send(attachment).catch(console.warn);
+		fs.writeFile(filename, file_contents, (err) => {
+			if (err) {
+				console.warn(err);
+				message.reply(err);
+				return;
+			}
+
+			console.log(logPrefix()+'File saved in: %s', filename);
+
+			setTimeout(() => { // Auto clean up:
+				fs.unlink(filename, function (err) {
+					if (err) {
+						console.warn(err);
+						return;
+					}
+
+					console.log(logPrefix()+'File '+filename+' deleted.');
+				});
+			}, MINUTES_BEFORE_CLEANUP * 60000); // Converts minutes to ms
+			console.log(logPrefix()+'Will clean it up in %d minute(s)...', MINUTES_BEFORE_CLEANUP);
+
+			const basename = filename.replace(/^.*\//, "");
+			const buffer = fs.readFileSync(filename);
+			const attachment = new MessageAttachment(buffer, basename);
+
+			attachment.filename = filename;
+			attachment.filesize = file_contents.length;
+			msg = "Here's "+basename+" ("+ext.toUpperCase()+") containing "+n+" records";
+			message.channel.send(msg, attachment)
+			.catch(exc => {
+				let otd = exc.message? exc.message: exc; // object to display
+
+				console.warn(logPrefix()+otd);
+				message.reply(otd);
+			});
+		});
 	});
 };
 
@@ -1558,9 +1596,10 @@ exports.territoryWarGet = function(player, message) {
  * @param {object} message The origin message (request)
  */
 exports.territoryWarReg = function(player, message) {
+	const table = "tw_results";
+
 	let allycode = player.allycode;
 	let logPrefix = exports.logPrefix; // shortcut
-	let table = "tw_results";
 
 	if (!allycode) {
 		message.reply(":red_circle: Invalid or missing allycode!");
@@ -1633,7 +1672,7 @@ exports.territoryWarReg = function(player, message) {
 			.setFooter(config.footer.message, config.footer.iconUrl);
 
 		if (exc) {
-			let otd = exc.sqlMessage? exc.sqlMessage: exc; // obj to display
+			let otd = exc.sqlMessage? exc.sqlMessage: exc; // object to display
 
 			console.log("SQL:", sql);
 			console.log(logPrefix()+"RTW Exception:", otd);
@@ -1647,7 +1686,7 @@ exports.territoryWarReg = function(player, message) {
 				if (exc) {
 					color = "RED";
 					richMsg.setColor(color);
-					otd = exc.sqlMessage? exc.sqlMessage: exc; // obj to display
+					otd = exc.sqlMessage? exc.sqlMessage: exc; // object to display
 					console.log("SQL:", sql);
 					console.log(logPrefix()+"RTW Exception:", otd);
 				} else {
