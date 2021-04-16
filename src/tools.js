@@ -7,7 +7,7 @@
 // jshint esversion: 8
 
 // Extract the required classes from the discord.js module:
-const { MessageAttachment, RichEmbed } = require("discord.js");
+const { RichEmbed } = require("discord.js");
 
 // Create an instance of a Discord client:
 //const client = new Client();
@@ -1508,7 +1508,6 @@ exports.stringsCompare = function(a, b) {
  */
 exports.territoryWarGet = function(player, message) {
 	const filename = "../data/gt.csv";
-	const ext = filename.replace(/^.*\./, "");
 	const logPrefix = exports.logPrefix; // shortcut
 	const sep = ";";
 	const sql = "SELECT * FROM `tw_results`";
@@ -1574,13 +1573,16 @@ exports.territoryWarGet = function(player, message) {
 			console.log(logPrefix()+'Will clean it up in %d minute(s)...', MINUTES_BEFORE_CLEANUP);
 
 			const basename = filename.replace(/^.*\//, "");
-			const buffer = fs.readFileSync(filename);
-			const attachment = new MessageAttachment(buffer, basename);
 
-			attachment.filename = filename;
-			attachment.filesize = file_contents.length;
-			msg = "Here's "+basename+" ("+ext.toUpperCase()+") containing "+n+" records";
-			message.channel.send(msg, attachment)
+			msg = basename+" contains headers & "+n+" records (total: "+lines.length+" lines)";
+			let richMsg = new RichEmbed()
+				.setTitle("TW data:")
+				.setColor("GREEN")
+				.setDescription(msg)
+				.attachFile(filename)
+				.setFooter(config.footer.message, config.footer.iconUrl);
+
+			message.channel.send(richMsg)
 			.catch(exc => {
 				let otd = exc.message? exc.message: exc; // object to display
 
