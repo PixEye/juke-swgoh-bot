@@ -396,10 +396,13 @@ exports.showLastEvols = function(player, message, evols) {
 			case "new":
 				msg+= " :unlock:";
 				break;
-			case "newGifts":
-				if (message.words.join("").toLowerCase()==="nogift") return;
+			case "newGifts": {
+				let low_words = message.words.join("").toLowerCase();
+				if (low_words==="hidegifts" || low_words==="hg") return;
+
 				msg = "`"+dt+":` player gave "+e.new_value+" :gift:";
 				break;
+			}
 			case "relic":
 				msg+= " :arrow_right: R"+e.new_value;
 				break;
