@@ -10,6 +10,12 @@ SET AUTOCOMMIT = 0;
 START TRANSACTION;
 SET time_zone = "+00:00";
 
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8mb4 */;
+
 -- --------------------------------------------------------
 
 --
@@ -19,8 +25,13 @@ SET time_zone = "+00:00";
 CREATE TABLE IF NOT EXISTS `alliances` (
   `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `name` varchar(32) COLLATE utf8_unicode_ci NOT NULL,
-  PRIMARY KEY (`id`)
+  `creation_date` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `update_ts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `name` (`name`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+-- --------------------------------------------------------
 
 --
 -- Structure of table `evols`
@@ -46,16 +57,40 @@ CREATE TABLE IF NOT EXISTS `evols` (
 CREATE TABLE IF NOT EXISTS `guilds` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `swgoh_id` varchar(16) COLLATE utf8_unicode_ci NOT NULL,
-  `name` varchar(64) COLLATE utf8_unicode_ci NOT NULL,
+  `name` varchar(32) COLLATE utf8_unicode_ci NOT NULL,
   `gp` int(10) UNSIGNED NOT NULL,
   `memberCount` tinyint(1) UNSIGNED NOT NULL DEFAULT '0',
-  `gm_allycode` int(10) UNSIGNED NULL DEFAULT NULL,
-  `alliance_id` int(10) UNSIGNED NULL DEFAULT NULL,
+  `officerCount` int(1) UNSIGNED DEFAULT NULL,
+  `gm_allycode` int(10) UNSIGNED DEFAULT NULL,
+  `alliance_id` int(10) UNSIGNED DEFAULT NULL,
   `ts` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   UNIQUE KEY `swgoh_id` (`swgoh_id`),
   KEY `name` (`name`),
   KEY `alliance_id` (`alliance_id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Structure of table `tw_results`
+--
+
+CREATE TABLE IF NOT EXISTS `tw_results` (
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `discord_id` varchar(20) COLLATE utf8_unicode_ci NOT NULL,
+  `allycode` int(4) UNSIGNED NOT NULL,
+  `self_guild_id` varchar(15) COLLATE utf8_unicode_ci NOT NULL,
+  `self_guild_name` varchar(32) COLLATE utf8_unicode_ci NOT NULL,
+  `self_player_cnt` int(1) UNSIGNED NOT NULL,
+  `self_score` int(2) UNSIGNED NOT NULL,
+  `opp_score` int(2) UNSIGNED NOT NULL,
+  `opp_name` varchar(32) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `allycode` (`allycode`),
+  KEY `guild_ref_id` (`self_guild_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- --------------------------------------------------------
@@ -90,7 +125,7 @@ CREATE TABLE IF NOT EXISTS `units` (
 CREATE TABLE IF NOT EXISTS `users` (
   `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
   `allycode` int(11) UNSIGNED NOT NULL,
-  `discord_id` varchar(32) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `discord_id` varchar(20) COLLATE utf8_unicode_ci DEFAULT NULL,
   `discord_name` varchar(32) COLLATE utf8_unicode_ci DEFAULT NULL,
   `game_name` varchar(32) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
   `guildRefId` varchar(16) COLLATE utf8_unicode_ci DEFAULT NULL,
@@ -108,5 +143,8 @@ CREATE TABLE IF NOT EXISTS `users` (
   KEY `discord_id` (`discord_id`) USING BTREE,
   KEY `guildRefId` (`guildRefId`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-
 COMMIT;
+
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
