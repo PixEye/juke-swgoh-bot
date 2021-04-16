@@ -345,11 +345,12 @@ exports.showGuildStats = function(guild, message) {
  */
 exports.showLastEvols = function(player, message, evols) {
 	let color = "GREEN";
+	let i = 0;
 	let lines = [];
 	let maxDays = 10;
 	let maxDt = 0;
 	let maxLines = 10;
-	let maxPeriod = 24 * 3600 * 1000 * maxDays;
+	let maxPeriod = 24000 * 3600 * maxDays;
 	let n = 0;
 	let now = new Date();
 	let lastEvols = evols.filter(function(evol) {
@@ -379,7 +380,7 @@ exports.showLastEvols = function(player, message, evols) {
 		return;
 	}
 
-	lastEvols.forEach(function(e, i) {
+	lastEvols.forEach(function(e) {
 		let dt = e.ts.toDateString() // take timestamp from evolution e
 			.replace(/ \d{4}/, ""); // remove the year
 		let msg = "`"+dt+":` ";
@@ -396,6 +397,7 @@ exports.showLastEvols = function(player, message, evols) {
 				msg+= " :unlock:";
 				break;
 			case "newGifts":
+				if (message.words.join("").toLowerCase()==="nogift") return;
 				msg = "`"+dt+":` player gave "+e.new_value+" :gift:";
 				break;
 			case "relic":
@@ -417,6 +419,7 @@ exports.showLastEvols = function(player, message, evols) {
 		} else if (i===maxLines) {
 			lines.push("And some more...");
 		}
+		++i;
 	});
 
 	if (!maxDt) maxDt = message.createdTimestamp;
