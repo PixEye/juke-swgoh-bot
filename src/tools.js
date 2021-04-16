@@ -1510,7 +1510,10 @@ exports.territoryWarGet = function(player, message) {
 	const filename = "../data/gt.csv";
 	const logPrefix = exports.logPrefix; // shortcut
 	const sep = ";";
-	const sql = "SELECT * FROM `tw_results`";
+	const sql = "SELECT *"+
+		", DATE_FORMAT(created_at, '%Y-%m-%d %T') AS created_hd"+
+		", DATE_FORMAT(updated_at, '%Y-%m-%d %T') AS updated_hd"+
+		" FROM `tw_results`";
 	const MINUTES_BEFORE_CLEANUP = 1;
 
 	let lines = [];
@@ -1538,7 +1541,10 @@ exports.territoryWarGet = function(player, message) {
 		}
 
 		result.forEach(record => {
+			delete record.created_at;
+			delete record.updated_at;
 			if (! ln++) lines.push(Object.keys(record).join(sep));
+			record.discord_id = "'" + record.discord_id;
 			lines.push(Object.values(record).join(sep));
 		});
 		console.log(logPrefix()+msg, n, lines.length, filename);
