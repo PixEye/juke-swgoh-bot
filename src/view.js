@@ -380,11 +380,8 @@ exports.showLastEvols = function(player, message, evols) {
 	}
 
 	lastEvols.forEach(function(e, i) {
-		let dt = e.ts.toString() // take timestamp from evolution e
-			.replace(/ \(.*\)$/, "")  // remove useless duplicated time zone in parentheses
-			.replace(/:\d\d /, " ")  // remove seconds
-			.replace(/ \d{4}/, "")  // remove the year
-			.replace(/^.{4}/, ""); // remove day of week
+		let dt = e.ts.toDateString() // take timestamp from evolution e
+			.replace(/ \d{4}/, ""); // remove the year
 		let msg = "`"+dt+":` ";
 		let uid = e.unit_id;
 
