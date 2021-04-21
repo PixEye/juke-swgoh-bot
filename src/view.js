@@ -345,6 +345,8 @@ exports.showGuildStats = function(guild, message) {
  */
 exports.showLastEvols = function(player, message, evols) {
 	let color = "GREEN";
+	let gaveItemsCnt = 0;
+	let giftCnt = 0;
 	let i = 0;
 	let lines = [];
 	let maxDays = 10;
@@ -358,7 +360,7 @@ exports.showLastEvols = function(player, message, evols) {
 			evol.ts = new Date(); // was: (evol.ts)
 			++n;
 		}
-		return (now.getTime() - evol.ts)<maxPeriod;
+		return (now.getTime() - evol.ts) < maxPeriod;
 	});
 	let logPrefix = exports.logPrefix; // shortcut
 
@@ -398,7 +400,12 @@ exports.showLastEvols = function(player, message, evols) {
 				break;
 			case "newGifts": {
 				let low_words = message.words.join("").toLowerCase();
-				if (low_words==="hidegifts" || low_words==="hg") return;
+				if (low_words==="hidegifts" || low_words==="hg") {
+					gaveItemsCnt += e.new_value;
+					++giftCnt;
+					++i;
+					return;
+				}
 
 				msg = "`"+dt+":` player gave "+e.new_value+" :gift:";
 				break;
@@ -427,6 +434,10 @@ exports.showLastEvols = function(player, message, evols) {
 
 	if (!maxDt) maxDt = message.createdTimestamp;
 	else maxDt = new Date(maxDt);
+
+	if (giftCnt) {
+		lines.push(giftCnt+" gift(s) of total "+gaveItemsCnt+" item(s) hidden.");
+	}
 
 	let richMsg = new RichEmbed()
 		.setTitle(player.name+"'s "+n+" evolution(s) in the last "+maxDays+" days")
