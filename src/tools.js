@@ -1288,7 +1288,9 @@ exports.periodicalProcess = function() {
 		exports.updateOldestPlayer();
 };
 
-/** Update the oldest refreshed player */
+/** Update the oldest refreshed player
+ * @param {function} callback The function to call if there is nothing left to do here
+ */
 exports.updateOldestGuildOr = function(callback) {
 	let logPrefix = exports.logPrefix; // shortcut
 	let deltaInHours = 3;
@@ -1317,7 +1319,7 @@ exports.updateOldestGuildOr = function(callback) {
 			}
 		}
 
-		let g = guilds[0];
+		let g = guilds[0]; // keep only the oldest one
 		let message = {};
 		msg = "Start UOG process on: %s (%s / %s)...";
 		console.log(logPrefix()+msg, g.name, g.gm_allycode, exports.toMySQLdate(g.ts));
