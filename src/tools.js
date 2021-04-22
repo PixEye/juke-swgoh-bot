@@ -1543,8 +1543,26 @@ exports.territoryWarGet = function(player, message) {
 		}
 
 		result.forEach(record => {
+			// reorder starting with:
+			let newRecord = {
+				"Created at": record.created_hd,
+				"Updated at": record.updated_hd,
+				"Self guild name": record.self_guild_name
+			};
+
+			// clean up:
 			delete record.created_at;
+			delete record.created_hd;
+			delete record.id;
+			delete record.self_guild_name;
 			delete record.updated_at;
+			delete record.updated_hd;
+
+			Object.keys(record).forEach((k) => {
+				newRecord[k] = record[k];
+			});
+			record = newRecord;
+
 			if (! ln++) lines.push(Object.keys(record).join(sep));
 			record.discord_id = "'" + record.discord_id;
 			lines.push(Object.values(record).join(sep));
