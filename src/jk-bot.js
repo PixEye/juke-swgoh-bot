@@ -1121,6 +1121,12 @@ client.on("message", (message) => {
 			} else {
 				console.log(logPrefix()+"Trying with Discord ID:", user.id);
 				tools.getPlayerFromDiscordUser(user, message, player => {
+					if (!player.allycode) {
+						console.log(logPrefix()+"Please register first with: j.reg your-ally-code")
+						message.reply("Please register first with: j.reg your-ally-code")
+						return;
+					}
+
 					tools.territoryWarReg(player, message);
 				});
 			}
