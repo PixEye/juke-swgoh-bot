@@ -120,7 +120,7 @@ exports.getPlayerData = async function(users, callback, message) {
 		]; // */
 
 		result.forEach(function(player) {
-			let clean_stats = null;
+			let clean_stats = {};
 
 			allycode = player.allyCode;
 			roster  = player.roster;
@@ -175,7 +175,7 @@ exports.getPlayerData = async function(users, callback, message) {
 			let zetaCount = 0;
 
 			for(i=0; i<20; i++) unitsCountByGear[i] = 0;
-			for(i=1; i<3; i++) unitsByCombatType[i] = 0;
+			for(i=1; i< 3; i++) unitsByCombatType[i] = 0;
 			player.unitCount = 0;
 			player.unitsData = [];
 
@@ -234,7 +234,6 @@ exports.getPlayerData = async function(users, callback, message) {
 				}
 			});
 
-			clean_stats = {};
 			stats.forEach(function(stat) {
 				if (!stat || stat.nameKey===null) return;
 
