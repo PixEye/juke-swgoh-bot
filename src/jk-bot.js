@@ -156,7 +156,8 @@ client.on("message", (message) => {
 			richMsg = new RichEmbed().setTitle("Liste des commandes")
 				.setDescription([
 					"**Commandes utilisateur :**",
-					" abbr(eviations), aide, allycode (ac), auteur, charInfo (ci), checkMods (cm), checkUnitsGp (cugp)"+
+					" abbr(eviations), aide, allycode (ac), auteur, chan(nelInfo), charInfo (ci),"+
+					" checkMods (cm), checkUnitsGp (cugp)"+
 					", countGuildTopUnits (cgtu), dis, gacH(istory), glCheck (glc), getUnregisteredPlayers (gup),"+
 					" guildBoard (gb), guildStats (gs), help, invite, (last)evols (le), listGuildMembers (lgm),"+
 					" playerStats (ps), profile (gg), register (reg), relics, repete, self(y), shipInfo (si),"+
@@ -379,6 +380,14 @@ client.on("message", (message) => {
 				let msg = "Compare 'config-template.json' & 'config.json' to find the mistake.";
 				message.channel.send(msg);
 			}
+			break;
+
+		case "chan":
+		case "channel":
+		case "channelinfo":
+			lines = ["Channel ID: "+message.channel.id+", type: "+message.channel.type];
+			console.log(logPrefix()+lines);
+			message.channel.send(lines);
 			break;
 
 		case "ci":
@@ -852,7 +861,8 @@ client.on("message", (message) => {
 			richMsg = new RichEmbed().setTitle("Avialable commands")
 				.setDescription([
 					"**User commands:**",
-					" abbr(eviations), about, aide, allycode (ac), charInfo (ci), checkMods (cm), checkUnitsGp"+
+					" abbr(eviations), about, aide, allycode (ac), chan(nelInfo), charInfo (ci),"+
+					" checkMods (cm), checkUnitsGp"+
 					" (cugp), countGuildTopUnits (cgtu), gacH(istory), glCheck (glc), getUnregisteredPlayers (gup),"+
 					" guildBoard (gb), guildStats (gs), help, invite, (last)evols (le), listGuildMembers (lgm),"+
 					" playerStat (ps), profile (gg), register (reg), relics, repeat, say, self(y), shipInfo (si),"+
