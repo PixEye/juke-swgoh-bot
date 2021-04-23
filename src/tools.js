@@ -1601,11 +1601,10 @@ exports.territoryWarGet = function(player, message) {
 			const basename = filename.replace(/^.*\//, "");
 
 			msg = basename+" contains headers & "+n+" records (total: "+lines.length+" lines)";
+			let now = new Date();
 			let richMsg = new RichEmbed()
-				.setTitle("TW data:")
-				.setColor("GREEN")
-				.setDescription(msg)
-				.attachFile(filename)
+				.setTitle("TW data:").setColor("GREEN")
+				.setDescription(msg).attachFile(filename).setTimestamp(now)
 				.setFooter(config.footer.message, config.footer.iconUrl);
 
 			message.channel.send(richMsg)
