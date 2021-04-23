@@ -1074,8 +1074,8 @@ client.on("message", (message) => {
 			break;
 
 		case "gte":
-		case "gtg":
 		case "gtexport":
+		case "gtg":
 		case "gtget":
 		case "territorywarexport":
 		case "territorywarget":
@@ -1107,7 +1107,10 @@ client.on("message", (message) => {
 		case "registerterritorywar":
 		case "twr":
 			if (message.channel.id !== config.twResults.regChanId) {
-				lines = ["This command is restricted to another channel (on the Mercato Discord)!"];
+				lines = [
+					"This command is restricted to <#"+config.twResults.regChanId+
+					"> channel (on the Mercato Discord)!"
+				];
 				console.log(logPrefix()+lines);
 				message.reply(lines);
 				return;
