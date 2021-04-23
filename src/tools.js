@@ -1520,8 +1520,6 @@ exports.territoryWarGet = function(player, message) {
 
 	let lines = [];
 
-	console.log(logPrefix()+"SQL: "+sql);
-
 	db_pool.query(sql, [], function(exc, result) {
 		if (exc) {
 			let otd = exc.sqlMessage? exc.sqlMessage: exc; // object to display
@@ -1792,7 +1790,7 @@ exports.updatePlayerDataInDb = function(player, message, callback) {
 	let now = new Date();
 
 	if (!player.name) {
-		console.log(logPrefix()+"invalid name at T1070 for user:", player);
+		console.log(logPrefix()+"Invalid player's name for user:", player);
 		return;
 	}
 
@@ -1915,7 +1913,7 @@ exports.updatePlayerDataInDb = function(player, message, callback) {
 				let sql1 = "INSERT INTO `evols` (allycode, unit_id, type, new_value, ts) VALUES ?";
 				db_pool.query(sql1, [lines], function(exc, result) {
 					if (exc) {
-						console.log("SQL:", sql1);
+						console.log("SQL1:", sql1);
 						console.warn(logPrefix()+"UC Exception:", exc.sqlMessage? exc.sqlMessage: exc);
 						if (message) message.reply("Failed to save evolution(s)!");
 						return;
@@ -1945,7 +1943,7 @@ exports.updatePlayerDataInDb = function(player, message, callback) {
 
 		db_pool.query(sql2, function(exc, result) {
 			if (exc) {
-				console.log("SQL:", sql2);
+				console.log("SQL2:", sql2);
 				console.log(logPrefix()+"UC Exception:", exc.sqlMessage? exc.sqlMessage: exc);
 				return;
 			}
@@ -1961,7 +1959,7 @@ exports.updatePlayerDataInDb = function(player, message, callback) {
 
 				db_pool.query(sql3, function(exc, result) {
 					if (exc) {
-						console.log("SQL:", sql3);
+						console.log("SQL3:", sql3);
 						console.log(logPrefix()+"GC Exception:", exc.sqlMessage? exc.sqlMessage: exc);
 						return;
 					}
@@ -1977,6 +1975,7 @@ exports.updatePlayerDataInDb = function(player, message, callback) {
 			// See:
 			// https://www.w3schools.com/nodejs/shownodejs_cmd.asp?filename=demo_db_insert_multiple
 			let sql4 = "REPLACE `units` (allycode, name, combatType, gear, gp, relic, stars, zetaCount) VALUES ?";
+
 			player.unitsData.forEach(function(u) { // u = current unit
 				if (!u.stars) {
 					console.warn(logPrefix()+"Invalid star count for unit:\n ", JSON.stringify(u));
@@ -1988,7 +1987,7 @@ exports.updatePlayerDataInDb = function(player, message, callback) {
 
 			db_pool.query(sql4, [lines], function(exc, result) {
 				if (exc) {
-					console.log("SQL:", sql4);
+					console.log("SQL4:", sql4);
 					console.log(logPrefix()+"RU Exception:", exc.sqlMessage? exc.sqlMessage: exc);
 					return;
 				}
@@ -1998,8 +1997,23 @@ exports.updatePlayerDataInDb = function(player, message, callback) {
 
 				if (typeof(callback)==="function") callback(player, message);
 			});
-		} else
-				if (typeof(callback)==="function") callback(player, message);
+		} else	if (typeof(callback)==="function") callback(player, message);
+
+		let sql5 = "UPDATE `tw_results` SET self_guild_id=?, self_guild_name=?"+
+			" WHERE allycode=? AND self_guild_id IS NULL AND self_guild_name IS NULL";
+
+		lines = [player.guildRefId, player.guildName, allycode];
+		db_pool.query(sql5, lines, function(exc, result) {
+			if (exc) {
+				console.log("SQL5:", sql5);
+				console.log(logPrefix()+"UTWR Exception:", exc.sqlMessage? exc.sqlMessage: exc);
+				console.log("Lines:", JSON.stringify(lines));
+				return;
+			}
+
+			let nbr = result.affectedRows; // shortcut for number of records
+			console.log(logPrefix()+"%d TW results updated.", nbr);
+		});
 	});
 };
 
