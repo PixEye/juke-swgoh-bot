@@ -32,6 +32,10 @@
     "iconUrl": "http://cliparts.co/cliparts/5TR/X89/5TRX89egc.png",
     "message": "Beta version. Data update:"
   },
+  "twResults": {
+      "admins": ["303613660960653312", "351352640028016640", "222443133294739456"],
+      "regChanId": "835128266544250890"
+  },
   "swapi": {
     "user": "<your api.swgoh.help login>",
     "pwd": "<your api.swgoh.help password>"

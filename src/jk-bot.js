@@ -1073,10 +1073,22 @@ client.on("message", (message) => {
 			}
 			break;
 
+		case "gte":
 		case "gtg":
+		case "gtexport":
 		case "gtget":
+		case "territorywarexport":
+		case "territorywarget":
+		case "twe":
 		case "twg":
 		case "twget":
+			if (config.twResults.admins.indexOf(message.author.id)<0) {
+				lines = ["Only TW admins can export the data file!"];
+				console.log(logPrefix()+lines[0]);
+				message.reply(logPrefix()+lines[0]);
+				return;
+			}
+
 			if (allycode) {
 				tools.territoryWarGet(player, message);
 			} else {
@@ -1094,6 +1106,13 @@ client.on("message", (message) => {
 		case "regterritorywar":
 		case "registerterritorywar":
 		case "twr":
+			if (message.channel.id !== config.twResults.regChanId) {
+				lines = ["This command is restricted to another channel (on the Mercato Discord)!"];
+				console.log(logPrefix()+lines);
+				message.reply(lines);
+				return;
+			}
+
 			if (allycode) {
 				tools.territoryWarReg(player, message);
 			} else {
