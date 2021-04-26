@@ -1679,7 +1679,7 @@ exports.territoryWarReg = function(player, message) {
 	let color = typeof player.guildName === "undefined"? "ORANGE": "GREEN";
 	let lines = [];
 	Object.keys(params).forEach(k => {
-		lines.push("**"+k.replace("_", " ")+":** "+params[k]);
+		lines.push("**"+k.replace(/_/g, " ")+":** "+params[k]);
 		console.log(logPrefix()+k+": "+params[k]);
 	});
 
@@ -2000,7 +2000,7 @@ exports.updatePlayerDataInDb = function(player, message, callback) {
 		} else	if (typeof(callback)==="function") callback(player, message);
 
 		let sql5 = "UPDATE `tw_results` SET self_guild_id=?, self_guild_name=?"+
-			" WHERE allycode=? AND self_guild_id IS NULL AND self_guild_name IS NULL";
+			" WHERE allycode=? AND self_guild_name='null' OR self_guild_name IS NULL";
 
 		lines = [player.guildRefId, player.guildName, allycode];
 		db_pool.query(sql5, lines, function(exc, result) {
