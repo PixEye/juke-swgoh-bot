@@ -43,6 +43,8 @@ const db_pool = mysql.createPool({
 // Behaviour icons (about players):
 const behaveIcons   = [':green_heart:', ':large_orange_diamond:', ':red_circle:'];
 
+exports.alreadyFetchedGuildIds = [];
+
 /** Shuffle an array
  * @param {Array} anArr The array to shuffle
  * @see: https://www.w3schools.com/js/js_array_sort.asp
@@ -1284,8 +1286,10 @@ exports.periodicalProcess = function() {
 
 	if (now.getHours() === 6)
 		exports.updateOldestGuildOr(exports.updateOldestPlayer);
-	else
+	else {
+		exports.alreadyFetchedGuildIds = [];
 		exports.updateOldestPlayer();
+	}
 };
 
 /** Update the oldest refreshed player
@@ -1319,10 +1323,22 @@ exports.updateOldestGuildOr = function(callback) {
 			}
 		}
 
-		let g = guilds[0]; // keep only the oldest one
+		let g = guilds.shift(); // use the oldest one
 		let message = {};
+
+		while (exports.alreadyFetchedGuildIds.indexOf(g.id) >= 0) {
+			console.warn(logPrefix()+"Guild "+g.name+" already fetched!");
+
+			g = guilds.shift(); // keep only the oldest one
+			if (typeof g === "undefined") {
+				console.warn("Nothing left to fetch => stopping this process!");
+				return;
+			}
+		}
+
 		msg = "Start UOG process on: %s (%s / %s)...";
 		console.log(logPrefix()+msg, g.name, g.gm_allycode, exports.toMySQLdate(g.ts));
+		exports.alreadyFetchedGuildIds.push(g.id);
 
 		swgoh.getPlayerGuild(g.gm_allycode, message, function(guild) {
 
