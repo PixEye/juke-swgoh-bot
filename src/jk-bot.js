@@ -858,7 +858,7 @@ client.on("message", (message) => {
 			break;
 
 		case "help":
-			richMsg = new RichEmbed().setTitle("Avialable commands")
+			richMsg = new RichEmbed().setTitle("Available commands")
 				.setDescription([
 					"**User commands:**",
 					" abbr(eviations), about, aide, allycode (ac), chan(nelInfo), charInfo (ci),"+
