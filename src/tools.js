@@ -1531,7 +1531,8 @@ exports.territoryWarGet = function(player, message) {
 	const sql = "SELECT *"+
 		", DATE_FORMAT(created_at, '%Y-%m-%d %T') AS created_hd"+
 		", DATE_FORMAT(updated_at, '%Y-%m-%d %T') AS updated_hd"+
-		" FROM `tw_results`";
+		" FROM `tw_results`"+
+		" ORDER BY id DESC"; // most recent first
 	const MINUTES_BEFORE_CLEANUP = 1;
 
 	let lines = [];
