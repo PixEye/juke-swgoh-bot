@@ -3,111 +3,123 @@
 	"units":
 	[
 		{
-			"image":"/static/img/assets/journeyguide/tex.jg_charui_galacticlegend_kylo.png",
+			"image": "/static/img/assets/journeyguide/tex.jg_charui_galacticlegend_kylo.png",
 			"requiredUnits":
 			[
-				{"stars":5,"baseId":"CAPITALFINALIZER"},
-				{"gearLevel":13,"relicTier":7,"baseId":"KYLORENUNMASKED"},
-				{"gearLevel":13,"relicTier":5,"baseId":"FIRSTORDEROFFICERMALE"},
-				{"gearLevel":13,"relicTier":5,"baseId":"FIRSTORDERTROOPER"},
-				{"gearLevel":13,"relicTier":7,"baseId":"KYLOREN"},
-				{"gearLevel":13,"relicTier":5,"baseId":"PHASMA"},
-				{"gearLevel":13,"relicTier":5,"baseId":"FIRSTORDEREXECUTIONER"},
-				{"gearLevel":13,"relicTier":3,"baseId":"SMUGGLERHAN"},
-				{"gearLevel":13,"relicTier":5,"baseId":"FOSITHTROOPER"},
-				{"gearLevel":13,"relicTier":3,"baseId":"FIRSTORDERSPECIALFORCESPILOT"},
-				{"gearLevel":13,"relicTier":5,"baseId":"GENERALHUX"},
-				{"gearLevel":13,"relicTier":3,"baseId":"FIRSTORDERTIEPILOT"},
-				{"gearLevel":13,"relicTier":7,"baseId":"EMPERORPALPATINE"}
+				{"stars":5, "baseId": "CAPITALFINALIZER"},
+				{"gearLevel":13, "relicTier":7, "baseId": "KYLORENUNMASKED"},
+				{"gearLevel":13, "relicTier":5, "baseId": "FIRSTORDEROFFICERMALE"},
+				{"gearLevel":13, "relicTier":5, "baseId": "FIRSTORDERTROOPER"},
+				{"gearLevel":13, "relicTier":7, "baseId": "KYLOREN"},
+				{"gearLevel":13, "relicTier":5, "baseId": "PHASMA"},
+				{"gearLevel":13, "relicTier":5, "baseId": "FIRSTORDEREXECUTIONER"},
+				{"gearLevel":13, "relicTier":3, "baseId": "SMUGGLERHAN"},
+				{"gearLevel":13, "relicTier":5, "baseId": "FOSITHTROOPER"},
+				{"gearLevel":13, "relicTier":3, "baseId": "FIRSTORDERSPECIALFORCESPILOT"},
+				{"gearLevel":13, "relicTier":5, "baseId": "GENERALHUX"},
+				{"gearLevel":13, "relicTier":3, "baseId": "FIRSTORDERTIEPILOT"},
+				{"gearLevel":13, "relicTier":7, "baseId": "EMPERORPALPATINE"}
 			],
-			"baseId":"TBD_KYLO",
-			"unitName":"Kylo"
+			"baseId": "TBD_KYLO",
+			"unitName": "Kylo"
 		},
 		{
-			"image":"/static/img/assets/journeyguide/tex.jg_charui_whiteroberey.png",
+			"image": "/static/img/assets/journeyguide/tex.jg_charui_whiteroberey.png",
 			"requiredUnits":
 			[
-				{"stars":5,"baseId":"CAPITALRADDUS"},
-				{"gearLevel":13,"relicTier":7,"baseId":"REYJEDITRAINING"},
-				{"gearLevel":13,"relicTier":5,"baseId":"FINN"},
-				{"gearLevel":13,"relicTier":5,"baseId":"RESISTANCETROOPER"},
-				{"gearLevel":13,"relicTier":7,"baseId":"REY"},
-				{"gearLevel":13,"relicTier":5,"baseId":"POE"},
-				{"gearLevel":13,"relicTier":3,"baseId":"RESISTANCEPILOT"},
-				{"gearLevel":13,"relicTier":5,"baseId":"EPIXFINN"},
-				{"gearLevel":13,"relicTier":5,"baseId":"AMILYNHOLDO"},
-				{"gearLevel":13,"relicTier":5,"baseId":"ROSETICO"},
-				{"gearLevel":13,"relicTier":5,"baseId":"EPIXPOE"},
-				{"gearLevel":13,"relicTier":7,"baseId":"BB8"},
-				{"gearLevel":13,"relicTier":3,"baseId":"SMUGGLERCHEWBACCA"}
+				{"stars":5, "baseId": "CAPITALRADDUS"},
+				{"gearLevel":13, "relicTier":7, "baseId": "REYJEDITRAINING"},
+				{"gearLevel":13, "relicTier":5, "baseId": "FINN"},
+				{"gearLevel":13, "relicTier":5, "baseId": "RESISTANCETROOPER"},
+				{"gearLevel":13, "relicTier":7, "baseId": "REY"},
+				{"gearLevel":13, "relicTier":5, "baseId": "POE"},
+				{"gearLevel":13, "relicTier":3, "baseId": "RESISTANCEPILOT"},
+				{"gearLevel":13, "relicTier":5, "baseId": "EPIXFINN"},
+				{"gearLevel":13, "relicTier":5, "baseId": "AMILYNHOLDO"},
+				{"gearLevel":13, "relicTier":5, "baseId": "ROSETICO"},
+				{"gearLevel":13, "relicTier":5, "baseId": "EPIXPOE"},
+				{"gearLevel":13, "relicTier":7, "baseId": "BB8"},
+				{"gearLevel":13, "relicTier":3, "baseId": "SMUGGLERCHEWBACCA"}
 			],
-			"baseId":"TBD_Rey",
-			"unitName":"Rey"
+			"baseId": "TBD_Rey",
+			"unitName": "Rey"
 		},
 		{
-			"image":"/static/img/assets/journeyguide/tex.jg_charui_jediknightluke.png",
+			"image": "/static/img/assets/journeyguide/tex.jg_charui_jediknightluke.png",
 			"requiredUnits":
 			[
-				{"stars":7,"baseId":"MILLENNIUMFALCON"},
-				{"stars":7,"baseId":"XWINGRED2"},
-				{"gearLevel":13,"relicTier":3,"baseId":"C3POLEGENDARY"},
-				{"gearLevel":13,"relicTier":3,"baseId":"VADER"},
-				{"gearLevel":13,"relicTier":3,"baseId":"CHEWBACCALEGENDARY"},
-				{"gearLevel":13,"relicTier":3,"baseId":"WAMPA"},
-				{"gearLevel":13,"relicTier":3,"baseId":"HOTHLEIA"},
-				{"gearLevel":13,"relicTier":3,"baseId":"ADMINISTRATORLANDO"},
-				{"gearLevel":13,"relicTier":3,"baseId":"HOTHHAN"},
-				{"gearLevel":13,"relicTier":3,"baseId":"COMMANDERLUKESKYWALKER"},
-				{"gearLevel":13,"relicTier":3,"baseId":"HERMITYODA"}
+				{"stars":7, "baseId": "MILLENNIUMFALCON"},
+				{"stars":7, "baseId": "XWINGRED2"},
+				{"gearLevel":13, "relicTier":3, "baseId": "C3POLEGENDARY"},
+				{"gearLevel":13, "relicTier":3, "baseId": "VADER"},
+				{"gearLevel":13, "relicTier":3, "baseId": "CHEWBACCALEGENDARY"},
+				{"gearLevel":13, "relicTier":3, "baseId": "WAMPA"},
+				{"gearLevel":13, "relicTier":3, "baseId": "HOTHLEIA"},
+				{"gearLevel":13, "relicTier":3, "baseId": "ADMINISTRATORLANDO"},
+				{"gearLevel":13, "relicTier":3, "baseId": "HOTHHAN"},
+				{"gearLevel":13, "relicTier":3, "baseId": "COMMANDERLUKESKYWALKER"},
+				{"gearLevel":13, "relicTier":3, "baseId": "HERMITYODA"}
 			],
-			"baseId":"JEDIKNIGHTLUKE",
-			"unitName":"Jedi Knight Luke"
+			"baseId": "JEDIKNIGHTLUKE",
+			"unitName": "Jedi Knight Luke"
 		},
 		{
-			"image":"/static/img/assets/journeyguide/tex.jg_charui_luke_grandmaster.png",
+			"image": "/static/img/assets/journeyguide/tex.jg_charui_luke_grandmaster.png",
 			"requiredUnits":
 			[
-				{"stars":6,"baseId":"YWINGREBEL"},
-				{"gearLevel":13,"relicTier":5,"baseId":"MONMOTHMA"},
-				{"gearLevel":13,"relicTier":5,"baseId":"C3POCHEWBACCA"},
-				{"gearLevel":13,"relicTier":5,"baseId":"OLDBENKENOBI"},
-				{"gearLevel":13,"relicTier":7,"baseId":"REYJEDITRAINING"},
-				{"gearLevel":13,"relicTier":5,"baseId":"C3POLEGENDARY"},
-				{"gearLevel":13,"relicTier":7,"baseId":"R2D2_LEGENDARY"},
-				{"gearLevel":13,"relicTier":6,"baseId":"CHEWBACCALEGENDARY"},
-				{"gearLevel":13,"relicTier":6,"baseId":"HANSOLO"},
-				{"gearLevel":13,"relicTier":7,"baseId":"JEDIKNIGHTLUKE"},
-				{"gearLevel":13,"relicTier":3,"baseId":"PRINCESSLEIA"},
-				{"gearLevel":13,"relicTier":5,"baseId":"HERMITYODA"},
-				{"gearLevel":13,"relicTier":3,"baseId":"WEDGEANTILLES"},
-				{"gearLevel":13,"relicTier":3,"baseId":"BIGGSDARKLIGHTER"},
-				{"gearLevel":13,"relicTier":5,"baseId":"ADMINISTRATORLANDO"}
+				{"stars":6, "baseId": "YWINGREBEL"},
+				{"gearLevel":13, "relicTier":5, "baseId": "MONMOTHMA"},
+				{"gearLevel":13, "relicTier":5, "baseId": "C3POCHEWBACCA"},
+				{"gearLevel":13, "relicTier":5, "baseId": "OLDBENKENOBI"},
+				{"gearLevel":13, "relicTier":7, "baseId": "REYJEDITRAINING"},
+				{"gearLevel":13, "relicTier":5, "baseId": "C3POLEGENDARY"},
+				{"gearLevel":13, "relicTier":7, "baseId": "R2D2_LEGENDARY"},
+				{"gearLevel":13, "relicTier":6, "baseId": "CHEWBACCALEGENDARY"},
+				{"gearLevel":13, "relicTier":6, "baseId": "HANSOLO"},
+				{"gearLevel":13, "relicTier":7, "baseId": "JEDIKNIGHTLUKE"},
+				{"gearLevel":13, "relicTier":3, "baseId": "PRINCESSLEIA"},
+				{"gearLevel":13, "relicTier":5, "baseId": "HERMITYODA"},
+				{"gearLevel":13, "relicTier":3, "baseId": "WEDGEANTILLES"},
+				{"gearLevel":13, "relicTier":3, "baseId": "BIGGSDARKLIGHTER"},
+				{"gearLevel":13, "relicTier":5, "baseId": "ADMINISTRATORLANDO"}
 			],
-			"baseId":"TBD_JMLS",
-			"unitName":"Jedi Master Luke Skywalker"
+			"baseId": "TBD_JMLS",
+			"unitName": "Jedi Master Luke Skywalker"
 		},
 		{
-			"image":"/static/img/assets/journeyguide/tex.jg_charui_espalpatine.png",
+			"image": "/static/img/assets/journeyguide/tex.jg_charui_espalpatine.png",
 			"requiredUnits":
 			[
-				{"stars":6,"baseId":"TIEBOMBERIMPERIAL"},
-				{"gearLevel":13,"relicTier":5,"baseId":"ADMIRALPIETT"},
-				{"gearLevel":13,"relicTier":3,"baseId":"ROYALGUARD"},
-				{"gearLevel":13,"relicTier":7,"baseId":"VADER"},
-				{"gearLevel":13,"relicTier":7,"baseId":"EMPERORPALPATINE"},
-				{"gearLevel":13,"relicTier":4,"baseId":"DIRECTORKRENNIC"},
-				{"gearLevel":13,"relicTier":6,"baseId":"COUNTDOOKU"},
-				{"gearLevel":13,"relicTier":7,"baseId":"SITHMARAUDER"},
-				{"gearLevel":13,"relicTier":7,"baseId":"DARTHSIDIOUS"},
-				{"gearLevel":13,"relicTier":4,"baseId":"MAUL"},
-				{"gearLevel":13,"relicTier":7,"baseId":"ANAKINKNIGHT"},
-				{"gearLevel":13,"relicTier":6,"baseId":"GRANDADMIRALTHRAWN"},
-				{"gearLevel":13,"relicTier":3,"baseId":"GRANDMOFFTARKIN"},
-				{"gearLevel":13,"relicTier":3,"baseId":"VEERS"},
-				{"gearLevel":13,"relicTier":3,"baseId":"COLONELSTARCK"}
+				{"stars":6, "baseId": "TIEBOMBERIMPERIAL"},
+				{"gearLevel":13, "relicTier":5, "baseId": "ADMIRALPIETT"},
+				{"gearLevel":13, "relicTier":3, "baseId": "ROYALGUARD"},
+				{"gearLevel":13, "relicTier":7, "baseId": "VADER"},
+				{"gearLevel":13, "relicTier":7, "baseId": "EMPERORPALPATINE"},
+				{"gearLevel":13, "relicTier":4, "baseId": "DIRECTORKRENNIC"},
+				{"gearLevel":13, "relicTier":6, "baseId": "COUNTDOOKU"},
+				{"gearLevel":13, "relicTier":7, "baseId": "SITHMARAUDER"},
+				{"gearLevel":13, "relicTier":7, "baseId": "DARTHSIDIOUS"},
+				{"gearLevel":13, "relicTier":4, "baseId": "MAUL"},
+				{"gearLevel":13, "relicTier":7, "baseId": "ANAKINKNIGHT"},
+				{"gearLevel":13, "relicTier":6, "baseId": "GRANDADMIRALTHRAWN"},
+				{"gearLevel":13, "relicTier":3, "baseId": "GRANDMOFFTARKIN"},
+				{"gearLevel":13, "relicTier":3, "baseId": "VEERS"},
+				{"gearLevel":13, "relicTier":3, "baseId": "COLONELSTARCK"}
 			],
-			"baseId":"TBD_SEE",
-			"unitName":"Sith Eternal Emperor"
+			"baseId": "TBD_SEE",
+			"unitName": "Sith Eternal Emperor"
+		},
+		{
+			"image": "/static/img/assets/journeyguide/temp_gk_gl.png",
+			"requiredUnits":
+			[
+				{"gearLevel":13, "relicTier":3, "baseId": "AAYLASECURA"},
+				{"gearLevel":13, "relicTier":8, "baseId": "GENERALKENOBI"},
+				{"gearLevel":13, "relicTier":3, "baseId": "MACEWINDU"},
+				{"gearLevel":13, "relicTier":5, "baseId": "BOKATAN"}
+			],
+			"baseId": "TBD_GK",
+			"unitName": "Jedi Master Kenobi"
 		}
 	]
 }

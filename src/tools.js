@@ -76,6 +76,7 @@ exports.checkLegendReq = function(player, message) {
 	let lines = [];
 	let logPrefix = exports.logPrefix; // shortcut
 	let msg = "";
+	let picture = "";
 	let resumes = [];
 
 	if (typeof player === "undefined") player = message.author;
@@ -91,6 +92,7 @@ exports.checkLegendReq = function(player, message) {
 
 	if (unitAliasNames[concatUpMsg]) concatUpMsg = unitAliasNames[concatUpMsg];
 	console.log(logPrefix()+"Looking for GL matching '"+concatUpMsg+"'");
+	if (concatUpMsg==="REY") concatUpMsg = "GLREY";
 
 	glUnits.forEach(gl => {
 		if (found) return;
@@ -104,12 +106,13 @@ exports.checkLegendReq = function(player, message) {
 
 		gl.baseId = gl.baseId.toUpperCase();
 		if (gl.baseId==="REY") gl.baseId = "GLREY";
+		if (gl.baseId==="GK" ) gl.baseId = "JEDIMASTERKENOBI";
 		if (unitAliasNames[gl.baseId]) gl.baseId = unitAliasNames[gl.baseId];
 
 		msg = "Checking for GL unit: " + gl.name+" ("+gl.baseId+")";
 		console.log(logPrefix()+msg);
 
-		msg = "Checking for GL unit: **" + gl.name+"** ("+gl.baseId+")";
+		msg = "Checking for GL unit: **" + gl.name+"**";
 		lines.push(msg);
 
 		const uid = unitAliasNames[gl.baseId] || gl.baseId;
@@ -191,7 +194,7 @@ exports.checkLegendReq = function(player, message) {
 			let average = 100*sum/progresses.length || 0;
 
 			average = Math.floor(average);
-			const resume = "Estimated progress for "+gl.name+": **"+average+"%**";
+			const resume = "Estimation for "+gl.name+": **"+average+"%**";
 
 			lines.push(resume);
 			if (average<100) indicator = '👉';
@@ -206,6 +209,7 @@ exports.checkLegendReq = function(player, message) {
 
 		if ( concatUpMsg.includes(gl.baseId) ) {
 			found = true;
+			picture = gl.image;
 			console.log(logPrefix()+gl.name+" found");
 		}
 	}); // end of loop on GL
@@ -217,6 +221,10 @@ exports.checkLegendReq = function(player, message) {
 		.setDescription(lines).setColor(color)
 		.setTimestamp(player.updated)
 		.setFooter(config.footer.message, config.footer.iconUrl);
+
+	if (picture) {
+		richMsg.setThumbnail("https://swgoh.gg"+picture);
+	}
 
 	message.channel.send(richMsg).catch(function(ex) {
 		console.warn(ex);
