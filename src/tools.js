@@ -1764,7 +1764,7 @@ exports.territoryWarReg = function(player, message) {
 		} else {
 			let n = result.affectedRows;
 			console.log(logPrefix()+"%d record inserted.", n);
-			message.reply("Inserted with success.")
+			message.reply("Score inserted with success for your guild: "+player.guildName);
 		}
 	});
 
