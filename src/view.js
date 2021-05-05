@@ -441,7 +441,7 @@ exports.showLastEvols = function(player, message, evols) {
 
 	let richMsg = new RichEmbed()
 		.setTitle(player.name+"'s "+n+" evolution(s) in the last "+maxDays+" days")
-		.setDescription(lines).setColor(color).setTimestamp(player.ts)
+		.setDescription(lines).setColor(color).setTimestamp(player.updated)
 		.setFooter(config.footer.message, config.footer.iconUrl);
 
 	message.channel.send(richMsg).catch(function(ex) {
