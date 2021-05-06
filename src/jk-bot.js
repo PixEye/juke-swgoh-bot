@@ -645,6 +645,62 @@ client.on("message", (message) => {
 			}
 			break;
 
+		case "gach":
+		case "gachistory":
+		case "gg":
+		case "profile": {
+			let link = "";
+
+			if (allycode) {
+				searchStr = "p.allycode="+allycode;
+			}
+			sql = "SELECT p.* FROM `users` p WHERE "+searchStr;
+			db_pool.query(sql, (exc, result) => {
+				let msg = '';
+
+				if (exc) {
+					console.log("SQL:", sql);
+					console.log(logPrefix()+"AC Exception:", exc.sqlMessage? exc.sqlMessage: exc);
+				} else {
+					console.log(logPrefix()+result.length+" record(s) match(es):", search);
+					// console.dir(result);
+					if (result.length <= 0) {
+						msg = "No match found!";
+						console.log(logPrefix()+msg);
+						message.reply(msg);
+
+						if (allycode) {
+							link = command.substr(1, 1)==='a'?
+								"https://swgoh.gg/p/"+allycode+"/gac-history/":
+								"https://swgoh.gg/p/"+allycode+"/";
+							console.log(logPrefix()+link);
+							message.channel.send(link);
+						}
+					} else if (result.length > 1) {
+						lines.push("There are "+result.length+" matches:");
+						result.forEach(user => {
+							msg = user.allycode+" is allycode of: "+user.game_name;
+							console.log(logPrefix()+msg);
+							lines.push("`"+user.allycode+"` is allycode of: "+user.game_name);
+						});
+						message.reply(lines);
+					} else { // 1 result here
+						let label = command.substr(1, 1)==='a'? "GAC history": "profile";
+
+						user = result[0];
+						allycode = user.allycode;
+						link = command.substr(1, 1)==='a'?
+							"https://swgoh.gg/p/"+allycode+"/gac-history/":
+							"https://swgoh.gg/p/"+allycode+"/";
+						msg = user.game_name+"'s "+label+" is: "+link;
+						console.log(logPrefix()+msg);
+						message.channel.send(msg);
+					}
+				}
+			});
+			break;
+		}
+
 		case "gb":
 		case "guildboard": {
 			let strToLookFor = words.join(" ").trim() || 'ProXima';
@@ -771,62 +827,6 @@ client.on("message", (message) => {
 			}
 			break;
 
-		case "gach":
-		case "gachistory":
-		case "gg":
-		case "profile": {
-			let link = "";
-
-			if (allycode) {
-				searchStr = "p.allycode="+allycode;
-			}
-			sql = "SELECT p.* FROM `users` p WHERE "+searchStr;
-			db_pool.query(sql, (exc, result) => {
-				let msg = '';
-
-				if (exc) {
-					console.log("SQL:", sql);
-					console.log(logPrefix()+"AC Exception:", exc.sqlMessage? exc.sqlMessage: exc);
-				} else {
-					console.log(logPrefix()+result.length+" record(s) match(es):", search);
-					// console.dir(result);
-					if (result.length <= 0) {
-						msg = "No match found!";
-						console.log(logPrefix()+msg);
-						message.reply(msg);
-
-						if (allycode) {
-							link = command.substr(1, 1)==='a'?
-								"https://swgoh.gg/p/"+allycode+"/gac-history/":
-								"https://swgoh.gg/p/"+allycode+"/";
-							console.log(logPrefix()+link);
-							message.channel.send(link);
-						}
-					} else if (result.length > 1) {
-						lines.push("There are "+result.length+" matches:");
-						result.forEach(user => {
-							msg = user.allycode+" is allycode of: "+user.game_name;
-							console.log(logPrefix()+msg);
-							lines.push("`"+user.allycode+"` is allycode of: "+user.game_name);
-						});
-						message.reply(lines);
-					} else { // 1 result here
-						let label = command.substr(1, 1)==='a'? "GAC history": "profile";
-
-						user = result[0];
-						allycode = user.allycode;
-						link = command.substr(1, 1)==='a'?
-							"https://swgoh.gg/p/"+allycode+"/gac-history/":
-							"https://swgoh.gg/p/"+allycode+"/";
-						msg = user.game_name+"'s "+label+" is: "+link;
-						console.log(logPrefix()+msg);
-						message.channel.send(msg);
-					}
-				}
-			});
-			break;
-		}
-
 		case "ggs":
 		case "gps":
 		case "getGuildStats":
@@ -838,6 +838,65 @@ client.on("message", (message) => {
 				console.log(logPrefix()+"Try with Discord ID:", user.id);
 				tools.getPlayerFromDiscordUser(user, message, player => {
 					tools.getGuildDbStats(player, message, view.guildPlayerStats);
+				});
+			}
+			break;
+
+		case "gte":
+		case "gtexport":
+		case "gtg":
+		case "gtget":
+		case "territorywarexport":
+		case "territorywarget":
+		case "twe":
+		case "twg":
+		case "twget":
+			if (config.twResults.admins.indexOf(message.author.id)<0) {
+				lines = ["Only TW admins can export the data file!"];
+				console.log(logPrefix()+lines[0]);
+				message.reply(logPrefix()+lines[0]);
+				return;
+			}
+
+			if (allycode) {
+				tools.territoryWarGet(player, message);
+			} else {
+				console.log(logPrefix()+"Trying with Discord ID:", user.id);
+				tools.getPlayerFromDiscordUser(user, message, player => {
+					tools.territoryWarGet(player, message);
+				});
+			}
+			break;
+
+		case "gtr":
+		case "rgt":
+		case "rtw":
+		case "regtw":
+		case "regterritorywar":
+		case "registerterritorywar":
+		case "twr":
+			if (message.channel.id !== config.twResults.regChanId) {
+				lines = [
+					"This command is restricted to <#"+config.twResults.regChanId+
+					"> channel (on the Mercato Discord)!"
+				];
+				console.log(logPrefix()+lines);
+				message.reply(lines);
+				return;
+			}
+
+			if (allycode) {
+				tools.territoryWarReg(player, message);
+			} else {
+				console.log(logPrefix()+"Trying with Discord ID:", user.id);
+				tools.getPlayerFromDiscordUser(user, message, player => {
+					if (!player.allycode) {
+						console.log(logPrefix()+"Please register first with: j.reg your-ally-code")
+						message.reply("Please register first with: j.reg your-ally-code")
+						return;
+					}
+
+					tools.territoryWarReg(player, message);
 				});
 			}
 			break;
@@ -1069,65 +1128,6 @@ client.on("message", (message) => {
 				console.log(logPrefix()+"Try with Discord ID:", user.id);
 				tools.getPlayerFromDiscordUser(user, message, player => {
 					tools.getPlayerStats(player, message, view.showPlayerRelics);
-				});
-			}
-			break;
-
-		case "gte":
-		case "gtexport":
-		case "gtg":
-		case "gtget":
-		case "territorywarexport":
-		case "territorywarget":
-		case "twe":
-		case "twg":
-		case "twget":
-			if (config.twResults.admins.indexOf(message.author.id)<0) {
-				lines = ["Only TW admins can export the data file!"];
-				console.log(logPrefix()+lines[0]);
-				message.reply(logPrefix()+lines[0]);
-				return;
-			}
-
-			if (allycode) {
-				tools.territoryWarGet(player, message);
-			} else {
-				console.log(logPrefix()+"Trying with Discord ID:", user.id);
-				tools.getPlayerFromDiscordUser(user, message, player => {
-					tools.territoryWarGet(player, message);
-				});
-			}
-			break;
-
-		case "gtr":
-		case "rgt":
-		case "rtw":
-		case "regtw":
-		case "regterritorywar":
-		case "registerterritorywar":
-		case "twr":
-			if (message.channel.id !== config.twResults.regChanId) {
-				lines = [
-					"This command is restricted to <#"+config.twResults.regChanId+
-					"> channel (on the Mercato Discord)!"
-				];
-				console.log(logPrefix()+lines);
-				message.reply(lines);
-				return;
-			}
-
-			if (allycode) {
-				tools.territoryWarReg(player, message);
-			} else {
-				console.log(logPrefix()+"Trying with Discord ID:", user.id);
-				tools.getPlayerFromDiscordUser(user, message, player => {
-					if (!player.allycode) {
-						console.log(logPrefix()+"Please register first with: j.reg your-ally-code")
-						message.reply("Please register first with: j.reg your-ally-code")
-						return;
-					}
-
-					tools.territoryWarReg(player, message);
 				});
 			}
 			break;
