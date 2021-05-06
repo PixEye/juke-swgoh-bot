@@ -1539,6 +1539,7 @@ exports.territoryWarGet = function(player, message) {
 	const sql = "SELECT *"+
 		", DATE_FORMAT(created_at, '%Y-%m-%d %T') AS created_hd"+
 		", DATE_FORMAT(updated_at, '%Y-%m-%d %T') AS updated_hd"+
+		", (self_score - opp_score) AS score_diff"+
 		" FROM `tw_results`"+
 		" ORDER BY id DESC"; // most recent first
 	const MINUTES_BEFORE_CLEANUP = 1;
@@ -1570,7 +1571,8 @@ exports.territoryWarGet = function(player, message) {
 			let newRecord = {
 				"Created at": record.created_hd,
 				"Updated at": record.updated_hd,
-				"Self guild name": record.self_guild_name
+				"Self guild name": record.self_guild_name,
+				"Score diff": record.score_diff
 			};
 
 			// clean up:
@@ -1578,6 +1580,7 @@ exports.territoryWarGet = function(player, message) {
 			delete record.created_hd;
 			delete record.id;
 			delete record.self_guild_name;
+			delete record.score_diff;
 			delete record.updated_at;
 			delete record.updated_hd;
 
@@ -1586,7 +1589,8 @@ exports.territoryWarGet = function(player, message) {
 			});
 			record = newRecord;
 
-			if (! ln++) lines.push(Object.keys(record).join(sep));
+			if (! ln++) lines.push(Object.keys(record).map(exports.trUnderToSpaces).join(sep)); // headers
+
 			record.discord_id = "'" + record.discord_id;
 			lines.push(Object.values(record).join(sep));
 		});
@@ -1801,6 +1805,14 @@ exports.toMySQLdate = function(d) {
 	d = d.toISOString().replace("T", " ").replace(/z$/i, "").replace(/\..*$/, "");
 
 	return d;
+};
+
+/** Transform underscores to spaces
+ * @param {String} inputStr String with underscores
+ * @return {string} String with spaces
+ */
+exports.trUnderToSpaces = function(inputStr) {
+	return inputStr.replace(/_/g, ' ')
 };
 
 /** Store a player's data in our database
