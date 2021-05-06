@@ -1517,6 +1517,21 @@ exports.rememberGuildStats = function(g) {
 		let n = result.affectedRows;
 		console.log(logPrefix()+"%d guild records updated (DEL+ADD).", n);
 	});
+
+	sql = "UPDATE `tw_results` SET self_guild_name=?"+
+		" WHERE self_guild_id=? AND (self_guild_name='null' OR self_guild_name IS NULL)";
+
+	db_pool.query(sql, [g.name, g.id], function(exc, result) {
+		if (exc) {
+			console.log("SQL UPG:", sql);
+			console.log(logPrefix()+"UGTWR Exception:", exc.sqlMessage? exc.sqlMessage: exc);
+			console.log("Lines:", JSON.stringify([g.name, g.id]));
+			return;
+		}
+
+		let nbr = result.affectedRows; // shortcut for number of records
+		console.log(logPrefix()+"%d TW results updated.", nbr);
+	});
 };
 
 /** Compare 2 strings ignoring case
