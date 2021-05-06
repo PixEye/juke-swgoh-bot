@@ -215,7 +215,7 @@ exports.getPlayerData = async function(users, callback, message) {
 					// if (unit.gp>40000 && unit.combatType<2) console.log("Unit:", unit); // for debug
 
 					if (!unit.combatType) {
-						console.warn("Combat type was not set in:", JSON.stringify(unit));
+						// console.warn("Combat type is not set in:", JSON.stringify(unit));
 						unit.combatType = 1;
 					}
 
