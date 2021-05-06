@@ -901,6 +901,19 @@ client.on("message", (message) => {
 			}
 			break;
 
+		case "gtreset":
+		case "twreset":
+			if (config.twResults.admins.indexOf(message.author.id)<0) {
+				lines = ["Only TW admins can reset TW data!"];
+				console.log(logPrefix()+lines[0]);
+				message.reply(logPrefix()+lines[0]);
+				return;
+			}
+
+			message.reply("TODO");
+			tools.territoryWarReset(player, message); // TODO
+			break;
+
 		case "gu":
 		case "gup":
 		case "getunregistered":
