@@ -1676,8 +1676,8 @@ exports.territoryWarReg = function(player, message) {
 	}
 
 	if (message.words.length < 4) {
-		let example = "Example: rtw 48 20000 19500 Our opponents guild name";
-		let usage = "Usage: rtw <your player count> <your score> <their score> <their guild name>";
+		let example = "Example: twr 48 20000 19500 Our opponents guild name";
+		let usage = "Usage: twr <your player count> <your score> <their score> <their guild name>";
 
 		message.channel.send(":red_circle: "+usage);
 		message.channel.send("👉 "+example);
@@ -1740,51 +1740,53 @@ exports.territoryWarReg = function(player, message) {
 			.setTimestamp(player.updated)
 			.setFooter(config.footer.message, config.footer.iconUrl);
 
-		if (exc) {
-			let otd = exc.sqlMessage? exc.sqlMessage: exc; // object to display
-
-			console.log("SQL:", sql);
-			console.log(logPrefix()+"RTW Exception:", otd);
-
-			// Retry with an UPDATE:
-			sql = "UPDATE `"+table+"`"+ // TODO
-				" SET name=?, gp=?, memberCount=?, officerCount=?, gm_allycode=?, ts=?"+
-				" WHERE tw_id=?";
-
-			db_pool.query(sql, values, function(exc, result) {
-				if (exc) {
-					color = "RED";
-					richMsg.setColor(color);
-					otd = exc.sqlMessage? exc.sqlMessage: exc; // object to display
-					console.log("SQL:", sql);
-					console.log(logPrefix()+"RTW Exception:", otd);
-				} else {
-					let n = result.affectedRows;
-
-					color = "GREEN";
-					richMsg.setColor(color);
-					console.log(logPrefix()+"%d guild records updated (UPDATE).", n);
-				}
-
-				message.channel.send(richMsg)
-				.then(() => {
-					if (color==="GREEN") {
-						message.reply("Updated with success.")
-					} else {
-						message.reply("Update failed!")
-					}
-				})
-				.catch(function(ex) {
-					console.warn(ex);
-					message.reply(ex.message);
-					message.channel.send(lines);
-				});
-			});
-		} else {
+		if ( ! exc) {
 			let n = result.affectedRows;
 			console.log(logPrefix()+"%d record inserted.", n);
-			message.reply("Score inserted with success for your guild: "+player.guildName);
+			message.channel.send("✅ Score inserted with success for guild: "+player.guildName);
+
+			return;
 		}
+
+		let otd = exc.sqlMessage? exc.sqlMessage: exc; // object to display
+
+		console.log("SQL:", sql);
+		console.log(logPrefix()+"RTW Exception:", otd);
+
+		// Retry with an UPDATE:
+		sql = "UPDATE `"+table+"`"+ // TODO
+			" SET name=?, gp=?, memberCount=?, officerCount=?, gm_allycode=?, ts=?"+
+			" WHERE tw_id=?";
+
+		db_pool.query(sql, values, function(exc, result) {
+			if (exc) {
+				color = "RED";
+				richMsg.setColor(color);
+				otd = exc.sqlMessage? exc.sqlMessage: exc; // object to display
+				console.log("SQL:", sql);
+				console.log(logPrefix()+"RTW Exception:", otd);
+			} else {
+				let n = result.affectedRows;
+
+				color = "GREEN";
+				richMsg.setColor(color);
+				console.log(logPrefix()+"%d guild records updated (UPDATE).", n);
+			}
+
+			message.channel.send(richMsg)
+			.then(() => {
+				if (color==="GREEN") {
+					message.channel.send("✅ Score updated with success for guild: "+player.guildName);
+				} else {
+					message.reply(":red_circle: Update failed for guild: "+player.guildName);
+				}
+			})
+			.catch(function(ex) {
+				console.warn(ex);
+				message.reply(ex.message);
+				message.channel.send(lines);
+			});
+		});
 	});
 
 	return; // stop here for the moment
