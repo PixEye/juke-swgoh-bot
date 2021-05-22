@@ -1708,7 +1708,7 @@ exports.territoryWarReg = function(player, message) {
 	}
 
 	let sql = "INSERT INTO `"+table+"` (#)\n VALUES (?)";
-	let str = x => '"'+x+'"';
+	let str = x => '"'+x+'"'; // quick function to add double quotes around strings
 	let params = {
 		"discord_id": str(player.discord_id),
 		"allycode": player.allycode,
