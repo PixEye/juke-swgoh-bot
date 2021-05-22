@@ -117,11 +117,11 @@
 				{"gearLevel": 13, "relicTier": 8, "baseId": "GENERALKENOBI"},
 				{"gearLevel": 13, "relicTier": 3, "baseId": "MACEWINDU"},
 				{"gearLevel": 13, "relicTier": 5, "baseId": "BOKATAN"},
-        {"gearLevel": 13, "relicTier": 3, "baseId": "QUIGONJINN"},
-        {"gearLevel": 13, "relicTier": 5, "baseId": "MAGNAGUARD"},
-        {"gearLevel": 13, "relicTier": 5, "baseId": "CLONESERGEANTPHASEI"},
-        {"gearLevel": 13, "relicTier": 7, "baseId": "WATTAMBOR"},
-        {"gearLevel": 13, "relicTier": 7, "baseId": "GRIEVOUS"}
+				{"gearLevel": 13, "relicTier": 3, "baseId": "QUIGONJINN"},
+				{"gearLevel": 13, "relicTier": 5, "baseId": "MAGNAGUARD"},
+				{"gearLevel": 13, "relicTier": 5, "baseId": "CLONESERGEANTPHASEI"},
+				{"gearLevel": 13, "relicTier": 7, "baseId": "WATTAMBOR"},
+				{"gearLevel": 13, "relicTier": 7, "baseId": "GRIEVOUS"}
 			],
 			"baseId": "TBD_GK",
 			"unitName": "Jedi Master Kenobi"
