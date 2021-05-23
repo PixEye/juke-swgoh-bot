@@ -1792,8 +1792,6 @@ exports.territoryWarReg = function(player, message) {
 			});
 		}); // */
 	});
-
-	return; // stop here for the moment
 };
 
 /** Generate a date string in MySQL format (if no date is given, now is used)
