@@ -1743,28 +1743,32 @@ exports.territoryWarReg = function(player, message) {
 		if ( ! exc) {
 			let n = result.affectedRows;
 			console.log(logPrefix()+"%d record inserted.", n);
-			message.channel.send("✅ Score inserted with success for guild: "+player.guildName);
+			message.channel.send("✅ Saved for guild: "+player.guildName);
 
 			return;
 		}
 
-		let otd = exc.sqlMessage? exc.sqlMessage: exc; // object to display
+		let err_msg = exc.sqlMessage? exc.sqlMessage: exc; // object to display
 
 		console.log("SQL:", sql);
-		console.log(logPrefix()+"RTW Exception:", otd);
+		console.log(logPrefix()+"RTW Exception:", err_msg);
 
-		// Retry with an UPDATE:
+		message.reply('Failed: '+err_msg);
+
+		return; // ========== stop here for the moment ==========
+
+		/* Retry with an UPDATE:
 		sql = "UPDATE `"+table+"`"+ // TODO
 			" SET name=?, gp=?, memberCount=?, officerCount=?, gm_allycode=?, ts=?"+
-			" WHERE tw_id=?";
+			" WHERE allycode=?";
 
 		db_pool.query(sql, values, function(exc, result) {
 			if (exc) {
 				color = "RED";
 				richMsg.setColor(color);
-				otd = exc.sqlMessage? exc.sqlMessage: exc; // object to display
+				err_msg = exc.sqlMessage? exc.sqlMessage: exc; // object to display
 				console.log("SQL:", sql);
-				console.log(logPrefix()+"RTW Exception:", otd);
+				console.log(logPrefix()+"RTW Exception:", err_msg);
 			} else {
 				let n = result.affectedRows;
 
@@ -1786,22 +1790,10 @@ exports.territoryWarReg = function(player, message) {
 				message.reply(ex.message);
 				message.channel.send(lines);
 			});
-		});
+		}); // */
 	});
 
 	return; // stop here for the moment
-
-	/* message.channel.send("Looking for DB stats of guild with ally: "+allycode+"...")
-		.then(msg => {
-			db_pool.query(sql, [allycode], function(exc, result) {
-				if (typeof msg.delete==="function") msg.delete();
-
-				msg = "Found this number of results: "+result.length;
-				message.reply(msg);
-				console.log(logPrefix()+msg);
-			});
-		})
-		.catch(console.error); // */
 };
 
 /** Generate a date string in MySQL format (if no date is given, now is used)
