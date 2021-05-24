@@ -41,6 +41,8 @@ const swapi = new ApiSwgohHelp({
  * @param {Object} [message] - The user's (optional) message to reply to
  */
 exports.getPlayerData = async function(users, callback, message) {
+	const ERR_TO_DETECT = 'Could not find any players affiliated with these allycodes';
+
 	let allycode = 0;
 	let logPrefix = tools.logPrefix;
 	let msg = "";
@@ -79,6 +81,10 @@ exports.getPlayerData = async function(users, callback, message) {
 			message.channel.send(warning.message);
 		} // */
 
+		if ( allycodes.length > 0 ) {
+			allycode = allycodes[0];
+		}
+
 		if (error) {
 			if (error.error && error.error===error.message) {
 				delete error.error; // avoid to log duplicated data
@@ -90,11 +96,13 @@ exports.getPlayerData = async function(users, callback, message) {
 				message.channel.send(error.message);
 			} else {
 				message.channel.send("**"+error.message+":** "+error.description);
+				if ( allycodes.length === 1 && error.description === ERR_TO_DETECT ) {
+					// Remove this allycode
+					tools.removeAllycode(allycode);
+				}
 			}
 			return;
 		}
-
-		allycode = allycodes[0];
 
 		if (!result) {
 			// Fail:

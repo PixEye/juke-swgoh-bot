@@ -1534,6 +1534,24 @@ exports.rememberGuildStats = function(g) {
 	});
 };
 
+/** Remove an allycode from the DB
+ * @param {number} allycode
+ */
+exports.removeAllycode = function(allycode) {
+	let logPrefix = exports.logPrefix; // shortcut
+	let sql = "DELETE FROM users WHERE allycode=? LIMIT 1";
+
+	db_pool.query(sql, [allycode], function(exc, result) {
+		if (exc) {
+			console.log(sql);
+			console.warn(logPrefix()+"DelAC error: "+exc);
+			return;
+		}
+
+		console.log(logPrefix()+"Allycode "+allycode+" deleted from the DB.");
+	});
+};
+
 /** Compare 2 strings ignoring case
  * @param {string} a
  * @param {string} b
