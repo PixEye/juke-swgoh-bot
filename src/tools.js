@@ -120,9 +120,9 @@ exports.checkLegendReq = function(player, message) {
 		const locked = ! playerGl;
 		let indicator = locked? ':green_circle:': ':white_check_mark:';
 
-		gl.name = unitRealNames[gl.baseId];
+		gl.name = unitRealNames[gl.baseId] || gl.name;
 		if (!locked) {
-			console.log(logPrefix()+gl.name+" is unlocked.");
+			console.log(logPrefix()+gl.name+" ("+gl.baseId+") is unlocked.");
 			progresses.push(1);
 		} else {
 			gl.requiredUnits.forEach(req => {
@@ -196,8 +196,8 @@ exports.checkLegendReq = function(player, message) {
 
 			avg = Math.floor(avg);
 			average = avg.toString();
-			while (average.length < 3) average = "0" + average;
-			const resume = "~ **" + average + "%** for "+gl.name;
+			while (average.length < 3) average = " " + average;
+			const resume = "~ `" + average + "%` for "+gl.name;
 
 			lines.push(resume);
 			if (avg<100) indicator = '👉';
