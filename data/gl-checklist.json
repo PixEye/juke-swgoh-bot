@@ -1,11 +1,9 @@
 {
 	"selfUrl": "https://swgoh.gg/api/gl-checklist/",
-	"units":
-	[
+	"units": [
 		{
 			"image": "/static/img/assets/journeyguide/tex.jg_charui_galacticlegend_kylo.png",
-			"requiredUnits":
-			[
+			"requiredUnits": [
 				{"stars": 5, "baseId": "CAPITALFINALIZER"},
 				{"gearLevel": 13, "relicTier": 7, "baseId": "KYLORENUNMASKED"},
 				{"gearLevel": 13, "relicTier": 5, "baseId": "FIRSTORDEROFFICERMALE"},
@@ -25,8 +23,7 @@
 		},
 		{
 			"image": "/static/img/assets/journeyguide/tex.jg_charui_whiteroberey.png",
-			"requiredUnits":
-			[
+			"requiredUnits": [
 				{"stars": 5, "baseId": "CAPITALRADDUS"},
 				{"gearLevel": 13, "relicTier": 7, "baseId": "REYJEDITRAINING"},
 				{"gearLevel": 13, "relicTier": 5, "baseId": "FINN"},
@@ -46,8 +43,7 @@
 		},
 		{
 			"image": "/static/img/assets/journeyguide/tex.jg_charui_jediknightluke.png",
-			"requiredUnits":
-			[
+			"requiredUnits": [
 				{"stars": 7, "baseId": "MILLENNIUMFALCON"},
 				{"stars": 7, "baseId": "XWINGRED2"},
 				{"gearLevel": 13, "relicTier": 3, "baseId": "C3POLEGENDARY"},
@@ -65,8 +61,7 @@
 		},
 		{
 			"image": "/static/img/assets/journeyguide/tex.jg_charui_luke_grandmaster.png",
-			"requiredUnits":
-			[
+			"requiredUnits": [
 				{"stars": 6, "baseId": "YWINGREBEL"},
 				{"gearLevel": 13, "relicTier": 5, "baseId": "MONMOTHMA"},
 				{"gearLevel": 13, "relicTier": 5, "baseId": "C3POCHEWBACCA"},
@@ -88,8 +83,7 @@
 		},
 		{
 			"image": "/static/img/assets/journeyguide/tex.jg_charui_espalpatine.png",
-			"requiredUnits":
-			[
+			"requiredUnits": [
 				{"stars": 6, "baseId": "TIEBOMBERIMPERIAL"},
 				{"gearLevel": 13, "relicTier": 5, "baseId": "ADMIRALPIETT"},
 				{"gearLevel": 13, "relicTier": 3, "baseId": "ROYALGUARD"},
@@ -110,9 +104,8 @@
 			"unitName": "Sith Eternal Emperor"
 		},
 		{
-			"image": "/static/img/assets/journeyguide/temp_gk_gl.png",
-			"requiredUnits":
-			[
+			"image": "/static/img/assets/journeyguide/tex.jg_charui_globiwan.png",
+			"requiredUnits": [
 				{"gearLevel": 13, "relicTier": 3, "baseId": "AAYLASECURA"},
 				{"gearLevel": 13, "relicTier": 8, "baseId": "GENERALKENOBI"},
 				{"gearLevel": 13, "relicTier": 3, "baseId": "MACEWINDU"},
@@ -130,6 +123,33 @@
 			],
 			"baseId": "TBD_GK",
 			"unitName": "Jedi Master Kenobi"
+		},
+		{
+			"image": "/static/img/assets/journeyguide/tex.jg_charui_lordvader.png",
+			"requiredUnits": [
+				{ "gearLevel": 13, "relicTier": 5, "baseId": "BADBATCHHUNTER" },
+				{ "gearLevel": 13, "relicTier": 5, "baseId": "BADBATCHWRECKER" },
+				{ "gearLevel": 13, "relicTier": 5, "baseId": "BADBATCHTECH" },
+				{ "gearLevel": 13, "relicTier": 5, "baseId": "TUSKENRAIDER" },
+				{ "gearLevel": 13, "relicTier": 8, "baseId": "PADMEAMIDALA" },
+				{ "gearLevel": 13, "relicTier": 8, "baseId": "GENERALSKYWALKER" }
+			],
+			"baseId": "TBD_LV",
+			"unitName": "Lord Vader"
+		},
+		{
+			"image": "/static/img/assets/journeyguide/tex.jg_charui_executor.png",
+			"requiredUnits": [
+				{ "gearLevel": 13, "relicTier": 7, "baseId": "VADER" },
+				{ "gearLevel": 13, "relicTier": 8, "baseId": "ADMIRALPIETT" },
+				{ "gearLevel": 13, "relicTier": 8, "baseId": "BOBAFETT" },
+				{ "gearLevel": 13, "relicTier": 5, "baseId": "TIEFIGHTERPILOT" },
+				{ "gearLevel": 13, "relicTier": 5, "baseId": "BOSSK" },
+				{ "gearLevel": 13, "relicTier": 5, "baseId": "IG88" },
+				{ "gearLevel": 13, "relicTier": 5, "baseId": "DENGAR" }
+			],
+			"baseId": "TBD_EXECUTOR",
+			"unitName": "Executor"
 		}
 	]
 }
