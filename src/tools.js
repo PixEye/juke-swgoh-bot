@@ -1541,7 +1541,7 @@ exports.removeAllycode = function(allycode) {
 	let logPrefix = exports.logPrefix; // shortcut
 	let sql = "DELETE FROM users WHERE allycode=? LIMIT 1";
 
-	db_pool.query(sql, [allycode], function(exc, result) {
+	db_pool.query(sql, [allycode], function(exc /*, result */) {
 		if (exc) {
 			console.log(sql);
 			console.warn(logPrefix()+"DelAC error: "+exc);
@@ -1738,7 +1738,7 @@ exports.territoryWarReg = function(player, message) {
 		"opp_name": str(message.words.join(" "))
 	};
 
-	let color = typeof player.guildName === "undefined"? "ORANGE": "GREEN";
+	// let color = typeof player.guildName === "undefined"? "ORANGE": "GREEN";
 	let lines = [];
 	Object.keys(params).forEach(k => {
 		lines.push("**"+k.replace(/_/g, " ")+":** "+params[k]);
@@ -1752,11 +1752,11 @@ exports.territoryWarReg = function(player, message) {
 	let values = [Object.values(params)];
 
 	db_pool.query(sql, [values], function(exc, result) {
-		let richMsg = new RichEmbed()
+		/* let richMsg = new RichEmbed()
 			.setTitle("TW data to insert:")
 			.setDescription(lines).setColor(color)
 			.setTimestamp(player.updated)
-			.setFooter(config.footer.message, config.footer.iconUrl);
+			.setFooter(config.footer.message, config.footer.iconUrl); // */
 
 		if ( ! exc) {
 			let n = result.affectedRows;
