@@ -109,10 +109,10 @@ exports.checkLegendReq = function(player, message) {
 		if (gl.baseId==="GK" ) gl.baseId = "JEDIMASTERKENOBI";
 		if (unitAliasNames[gl.baseId]) gl.baseId = unitAliasNames[gl.baseId];
 
-		msg = "Checking for GL unit: " + gl.name+" ("+gl.baseId+")";
+		msg = "Checking GL: " + gl.name+" ("+gl.baseId+")";
 		console.log(logPrefix()+msg);
 
-		msg = "Checking for GL unit: **" + gl.name+"**";
+		msg = "Checking GL: **" + gl.name+"**";
 		lines.push(msg);
 
 		const uid = unitAliasNames[gl.baseId] || gl.baseId;
@@ -122,7 +122,7 @@ exports.checkLegendReq = function(player, message) {
 
 		gl.name = unitRealNames[gl.baseId] || gl.name;
 		if (!locked) {
-			console.log(logPrefix()+gl.name+" ("+gl.baseId+") is unlocked.");
+			// console.log(logPrefix()+gl.name+" ("+gl.baseId+") is unlocked.");
 			progresses.push(1);
 		} else {
 			gl.requiredUnits.forEach(req => {
@@ -132,7 +132,7 @@ exports.checkLegendReq = function(player, message) {
 				let unitName = unitRealNames[req.baseId] || req.baseId;
 
 				if (!playerUnit) {
-					playerUnit = {gear: 0, relic: 0, stars: 0};
+					playerUnit = {"gear": 0, "relic": 0, "stars": 0};
 					if (!req.gearLevel)
 						levels = "`"+playerUnit.stars+"/"+req.stars+"`:star:";
 					else
@@ -211,7 +211,7 @@ exports.checkLegendReq = function(player, message) {
 			if (avg<100) color = "ORANGE";
 		}
 
-		if ( concatUpMsg.includes(gl.baseId) ) {
+		if ( concatUpMsg.includes(gl.baseId) || gl.baseId.includes(concatUpMsg) ) {
 			found = true;
 			picture = gl.image;
 			console.log(logPrefix()+gl.name+" found");
@@ -655,7 +655,7 @@ exports.getPlayerFromDatabase = function(allycode, message, callback) {
 		if ( ! result.length ) { // no result
 			console.log(logPrefix()+"User with allycode "+allycode+" not registered.");
 			message.channel.send("I don't know this player yet. You may use the 'register' command.");
-			player = {game_name: allycode};
+			player = {"game_name": allycode};
 		} else { // One or more result(s):
 			player = result[result.length - 1]; // take last match <-----
 			console.log(logPrefix()+"Ally w/ code "+allycode+" is:", player.game_name);
@@ -676,7 +676,7 @@ exports.getPlayerFromDatabase = function(allycode, message, callback) {
 				console.warn(logPrefix()+"GPFDB get %d characters for:", result.length, player.game_name);
 
 			// Add units to the player object:
-			player.unitsData = {length: 0};
+			player.unitsData = {"length": 0};
 			result.forEach(function(u) {
 				player.unitsData.length++;
 				player.unitsData[u.name] = u;
