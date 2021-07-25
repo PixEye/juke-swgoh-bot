@@ -191,20 +191,24 @@ exports.checkLegendReq = function(player, message) {
 
 		if (progresses.length) {
 			const sum = progresses.reduce((a, b) => a + b, 0);
-			let average = 100*sum/progresses.length || 0;
+			let avg = 100*sum/progresses.length || 0;
+			let average = "";
 
-			average = Math.floor(average);
-			const resume = "Estimation for "+gl.name+": **"+average+"%**";
+			avg = Math.floor(avg);
+			average = avg.toString();
+			while (average.length < 3) average = "0" + average;
+			const resume = "~ **" + average + "%** for "+gl.name;
 
 			lines.push(resume);
-			if (average<100) indicator = '👉';
-			if (average<80) indicator = ':thinking:';
-			if (average<65) indicator = ':large_orange_diamond:';
-			if (average<50) indicator = '🔺';
+			if (avg<100) indicator = '👉';
+			if (avg< 80) indicator = '🤔';
+			if (avg< 65) indicator = '🔶';
+			if (avg< 50) indicator = '🔺';
+
 			resumes.push(indicator+' '+resume);
 
 			progresses = [];
-			if (average<100) color = "ORANGE";
+			if (avg<100) color = "ORANGE";
 		}
 
 		if ( concatUpMsg.includes(gl.baseId) ) {
