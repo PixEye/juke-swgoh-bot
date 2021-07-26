@@ -222,7 +222,7 @@ exports.checkLegendReq = function(player, message) {
 	if (!found) lines = resumes;
 
 	let richMsg = new RichEmbed()
-		.setTitle(player.name+"'s Galactic Legend Status")
+		.setTitle(player.name+"'s unit status")
 		.setDescription(lines).setColor(color)
 		.setTimestamp(player.updated)
 		.setFooter(config.footer.message, config.footer.iconUrl);
