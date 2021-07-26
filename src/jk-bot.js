@@ -800,6 +800,10 @@ client.on("message", (message) => {
 		case "glc":
 		case "glcheck":
 		case "glreq":
+		case "check":
+		case "checkgl":
+		case "checklist":
+		case "cl":
 			if (allycode) {
 				tools.getPlayerStats(player, message,
 					(player, message) => tools.checkLegendReq(player, message)
