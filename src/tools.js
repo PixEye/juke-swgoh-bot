@@ -92,43 +92,43 @@ exports.checkLegendReq = function(player, message) {
 	console.log(logPrefix()+msg);
 
 	if (unitAliasNames[concatUpMsg]) concatUpMsg = unitAliasNames[concatUpMsg];
-	console.log(logPrefix()+"Looking for GL matching '"+concatUpMsg+"'");
+	console.log(logPrefix()+"Looking for unit matching '"+concatUpMsg+"'");
 	if (concatUpMsg==="REY") concatUpMsg = "GLREY";
 
-	glUnits.forEach(gl => {
+	glUnits.forEach(unit => {
 		if (found) return;
 
 		let progresses = [];
 
 		lines = [];
-		gl.name = gl.unitName;
-		gl.baseId = gl.baseId.replace("TBD_", "").trim();
-		glNames.push(gl.baseId);
+		unit.name = unit.unitName;
+		unit.baseId = unit.baseId.replace("TBD_", "").trim();
+		glNames.push(unit.baseId);
 
-		gl.baseId = gl.baseId.toUpperCase();
-		if (gl.baseId==="REY") gl.baseId = "GLREY";
-		if (gl.baseId==="GK" ) gl.baseId = "JEDIMASTERKENOBI";
-		if (unitAliasNames[gl.baseId]) gl.baseId = unitAliasNames[gl.baseId];
+		unit.baseId = unit.baseId.toUpperCase();
+		if (unit.baseId==="REY") unit.baseId = "GLREY";
+		if (unit.baseId==="GK" ) unit.baseId = "JEDIMASTERKENOBI";
+		if (unitAliasNames[unit.baseId]) unit.baseId = unitAliasNames[unit.baseId];
 
-		msg = "Checking GL: " + gl.name+" ("+gl.baseId+")";
+		msg = "Checking unit: " + unit.name+" ("+unit.baseId+")";
 		console.log(logPrefix()+msg);
 
-		msg = "Checking GL: **" + gl.name+"**";
+		msg = "Checking unit: **" + unit.name+"**";
 		lines.push(msg);
 
-		const uid = unitAliasNames[gl.baseId] || gl.baseId;
-		const playerGl = player.unitsData.find(unit => unit.name === uid);
+		const uid = unitAliasNames[unit.baseId] || unit.baseId;
+		const playerGl = player.unitsData.find(u => u.name === uid);
 		const locked = ! playerGl;
 		let indicator = locked? ':green_circle:': ':white_check_mark:';
 
-		gl.name = unitRealNames[gl.baseId] || gl.name;
+		unit.name = unitRealNames[unit.baseId] || unit.name;
 		if (!locked) {
-			// console.log(logPrefix()+gl.name+" ("+gl.baseId+") is unlocked.");
+			// console.log(logPrefix()+unit.name+" ("+unit.baseId+") is unlocked.");
 			progresses.push(1);
 		} else {
-			gl.requiredUnits.forEach(req => {
+			unit.requiredUnits.forEach(req => {
 				let levels = "";
-				let playerUnit = player.unitsData.find(unit => unit.name === req.baseId);
+				let playerUnit = player.unitsData.find(u => u.name === req.baseId);
 				let progress = 0;
 				let unitName = unitRealNames[req.baseId] || req.baseId;
 
@@ -198,7 +198,7 @@ exports.checkLegendReq = function(player, message) {
 			avg = Math.floor(avg);
 			average = avg.toString();
 			while (average.length < 3) average = " " + average;
-			const resume = "~ `" + average + "%` for "+gl.name;
+			const resume = "~ `" + average + "%` for "+unit.name;
 
 			lines.push(resume);
 			if (avg<100) indicator = '👉';
@@ -212,12 +212,12 @@ exports.checkLegendReq = function(player, message) {
 			if (avg<100) color = "ORANGE";
 		}
 
-		if ( concatUpMsg && (concatUpMsg.includes(gl.baseId) || gl.baseId.includes(concatUpMsg)) ) {
+		if ( concatUpMsg && (concatUpMsg.includes(unit.baseId) || unit.baseId.includes(concatUpMsg)) ) {
 			found = true;
-			picture = gl.image;
-			console.log(logPrefix()+gl.name+" found");
+			picture = unit.image;
+			console.log(logPrefix()+unit.name+" found");
 		}
-	}); // end of loop on GL
+	}); // end of loop on units
 
 	if (!found) lines = resumes;
 
