@@ -69,7 +69,8 @@ exports.checkLegendReq = function(player, message) {
 	const req = require("../data/gl-checklist");
 
 	let color = "GREEN";
-	let concatUpMsg = message.words.filter(word => !word.includes('<')).join("").trim().toUpperCase();
+	let concatUpMsg = message.words.filter(word => !word.includes('<'))
+		.join("").trim().toUpperCase();
 	let found = false;
 	let glNames = [];
 	let glUnits = req.units;
@@ -211,7 +212,7 @@ exports.checkLegendReq = function(player, message) {
 			if (avg<100) color = "ORANGE";
 		}
 
-		if ( concatUpMsg.includes(gl.baseId) || gl.baseId.includes(concatUpMsg) ) {
+		if ( concatUpMsg && (concatUpMsg.includes(gl.baseId) || gl.baseId.includes(concatUpMsg)) ) {
 			found = true;
 			picture = gl.image;
 			console.log(logPrefix()+gl.name+" found");
