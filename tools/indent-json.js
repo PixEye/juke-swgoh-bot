@@ -28,7 +28,11 @@ fs.readFile(argv[0], function(err, fcontent) {
 	const json = JSON.stringify(obj, null, "\t");
 	console.log("JSON content weights: %d bytes.", json.length);
 
-	if (argc < 2) return;
+	if (argc < 2) {
+		let jsonPreview = json.substr(0, 256);
+		console.log("New JSON preview:\n%s", jsonPreview);
+		return;
+	}
 
 	fs.writeFile(argv[1], json, function (err) {
 		if (err) throw err;
