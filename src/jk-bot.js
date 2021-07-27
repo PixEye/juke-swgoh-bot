@@ -53,20 +53,30 @@ try {
 	throw exc; // Stop here
 }
 
+let failure_since = false;
+let listen_since = new Date;
+let down_time = listen_since - start;
+
 // Run the periodical process:
 tools.periodicalProcess(true); // true to identify the first time
 setInterval(tools.periodicalProcess, 213000); // 213'000 ms = 3 minutes 33
 
 // Start listening:
 client.on("ready", () => {
+	listen_since = new Date;
+	if (failure_since) down_time += listen_since - failure_since;
+	failure_since = false;
+
 	console.log(logPrefix()+"I am ready and listening.");
+	console.log(logPrefix()+"Down time in minutes: "+Math.round(down_time/1000/60));
 
 	client.user.username = config.discord.username;
-	client.user.setPresence({game: {type: "listening", name: config.discord.prefix + "help"}});
+	client.user.setPresence({"game": {"type": "listening", "name": config.discord.prefix + "help"}});
 });
 
 // Get errors (if any):
 client.on("error", (exc) => {
+	if (!failure_since) failure_since = new Date;
 	console.log(logPrefix()+"Client exception!\n %s: %s", exc.type, exc.message? exc.message: exc);
 });
 
@@ -595,7 +605,9 @@ client.on("message", (message) => {
 			} else {
 				message.reply("Up to your will master. Leaving...");
 
-				let msg = "I was listening since: "+tools.toMySQLdate(start)+" GMT.";
+				let msg = "I was started at: "+tools.toMySQLdate(start)+" GMT.\n";
+
+				msg += "I was listening since: "+tools.toMySQLdate(listen_since)+" GMT.";
 				console.log(logPrefix()+msg);
 				message.channel.send(msg).then(() => {
 					console.log(logPrefix()+"STOPPING!");
@@ -1283,7 +1295,12 @@ client.on("message", (message) => {
 			let nbp = 0; // number of registered players
 			// let servers = [];
 
-			message.channel.send("I am listening since: "+tools.toMySQLdate(start)+" GMT.");
+			lines = [];
+			lines.push("I was started at: "+tools.toMySQLdate(start)+" GMT.");
+			lines.push("I am listening since: "+tools.toMySQLdate(listen_since)+" GMT.");
+			lines.push("Down time in minutes: "+Math.round(down_time/1000/60));
+			console.log(logPrefix()+"Down time in minutes: "+Math.round(down_time/1000/60));
+			message.channel.send(lines);
 
 			/* client.guilds.cache.forEach(guild => {
 				let newServer = (`${guild.name} | ${guild.id}`);
