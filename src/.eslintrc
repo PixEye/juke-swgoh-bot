@@ -1,35 +1,35 @@
 {
-  "env": {
-    "node": true,
-    "browser": true
-  },
-  "extends": "eslint:recommended",
-  "parserOptions": {
-      "ecmaVersion": 8
-  },
-  "rules": {
-    "block-scoped-var": "error",
-    "brace-style": [ "warn", "1tbs", { "allowSingleLine": true } ],
-    "comma-dangle": [ "error", "never" ],
-    "comma-spacing": [ "warn", { "before": false, "after": true } ],
-    "comma-style": [ "error", "last" ],
-    "complexity": "off",
-    "max-depth": [ "warn", 8 ],
-    "max-len": [ "warn", { "code": 120 } ],
-    "max-nested-callbacks": [ "warn", 5 ],
-    "no-alert": "error",
-    "no-array-constructor": "error",
-    "no-caller": "error",
-    "no-cond-assign": [ "error", "except-parens" ],
-    "no-console": "off",
-    "no-empty": [ "error", { "allowEmptyCatch": true } ],
-    "no-extra-semi": "error",
-    "no-global-assign": "warn",
-    "no-new-object": "error",
-    "no-new-wrappers": "error",
-    "no-unused-vars": [ "warn" ],
-    "one-var": "off",
-    "semi-spacing": [ "warn", { "before": false, "after": true } ],
-    "space-before-blocks": "warn"
-  }
+	"env": {
+		"node": true,
+		"browser": true
+	},
+	"extends": "eslint:recommended",
+	"parserOptions": {
+		"ecmaVersion": 8
+	},
+	"rules": {
+		"block-scoped-var": "error",
+		"brace-style": [ "warn", "1tbs", { "allowSingleLine": true } ],
+		"comma-dangle": [ "error", "never" ],
+		"comma-spacing": [ "warn", { "before": false, "after": true } ],
+		"comma-style": [ "error", "last" ],
+		"complexity": "off",
+		"max-depth": [ "warn", 8 ],
+		"max-len": [ "warn", { "code": 120 } ],
+		"max-nested-callbacks": [ "warn", 5 ],
+		"no-alert": "error",
+		"no-array-constructor": "error",
+		"no-caller": "error",
+		"no-cond-assign": [ "error", "except-parens" ],
+		"no-console": "off",
+		"no-empty": [ "error", { "allowEmptyCatch": true } ],
+		"no-extra-semi": "error",
+		"no-global-assign": "warn",
+		"no-new-object": "error",
+		"no-new-wrappers": "error",
+		"no-unused-vars": [ "warn" ],
+		"one-var": "off",
+		"semi-spacing": [ "warn", { "before": false, "after": true } ],
+		"space-before-blocks": "warn"
+	}
 }
