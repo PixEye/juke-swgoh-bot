@@ -1,5 +1,5 @@
 /**
- * tools.js is the functions module for Juke's SWGoH Discord bot
+ * translations-fr.js is the French translation module for Juke's SWGoH Discord bot
  * @author PixEye@pixeye.net
  * @since 2021-05-05
  */
