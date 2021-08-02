@@ -127,12 +127,12 @@
 		{
 			"image": "/static/img/assets/journeyguide/tex.jg_charui_lordvader.png",
 			"requiredUnits": [
-				{ "gearLevel": 13, "relicTier": 5, "baseId": "BADBATCHHUNTER" },
-				{ "gearLevel": 13, "relicTier": 5, "baseId": "BADBATCHWRECKER" },
-				{ "gearLevel": 13, "relicTier": 5, "baseId": "BADBATCHTECH" },
-				{ "gearLevel": 13, "relicTier": 5, "baseId": "TUSKENRAIDER" },
-				{ "gearLevel": 13, "relicTier": 8, "baseId": "PADMEAMIDALA" },
-				{ "gearLevel": 13, "relicTier": 8, "baseId": "GENERALSKYWALKER" }
+				{"gearLevel": 13, "relicTier": 5, "baseId": "BADBATCHHUNTER"},
+				{"gearLevel": 13, "relicTier": 5, "baseId": "BADBATCHWRECKER"},
+				{"gearLevel": 13, "relicTier": 5, "baseId": "BADBATCHTECH"},
+				{"gearLevel": 13, "relicTier": 5, "baseId": "TUSKENRAIDER"},
+				{"gearLevel": 13, "relicTier": 8, "baseId": "PADMEAMIDALA"},
+				{"gearLevel": 13, "relicTier": 8, "baseId": "GENERALSKYWALKER"}
 			],
 			"baseId": "TBD_LV",
 			"unitName": "Lord Vader"
@@ -140,13 +140,20 @@
 		{
 			"image": "/static/img/assets/journeyguide/tex.jg_charui_executor.png",
 			"requiredUnits": [
-				{ "gearLevel": 13, "relicTier": 7, "baseId": "VADER" },
-				{ "gearLevel": 13, "relicTier": 8, "baseId": "ADMIRALPIETT" },
-				{ "gearLevel": 13, "relicTier": 8, "baseId": "BOBAFETT" },
-				{ "gearLevel": 13, "relicTier": 5, "baseId": "TIEFIGHTERPILOT" },
-				{ "gearLevel": 13, "relicTier": 5, "baseId": "BOSSK" },
-				{ "gearLevel": 13, "relicTier": 5, "baseId": "IG88" },
-				{ "gearLevel": 13, "relicTier": 5, "baseId": "DENGAR" }
+				{"stars": 5, "baseId": "RAZORCREST"},
+				{"stars": 4, "baseId": "SLAVE1"},
+				{"stars": 4, "baseId": "IG2000"},
+				{"stars": 4, "baseId": "HOUNDSTOOTH"},
+				{"stars": 4, "baseId": "TIEADVANCED"},
+				{"stars": 4, "baseId": "TIEBOMBERIMPERIAL"},
+				{"stars": 4, "baseId": "TIEFIGHTERIMPERIAL"},
+				{"gearLevel": 13, "relicTier": 7, "baseId": "VADER"},
+				{"gearLevel": 13, "relicTier": 8, "baseId": "ADMIRALPIETT"},
+				{"gearLevel": 13, "relicTier": 8, "baseId": "BOBAFETT"},
+				{"gearLevel": 13, "relicTier": 5, "baseId": "TIEFIGHTERPILOT"},
+				{"gearLevel": 13, "relicTier": 5, "baseId": "BOSSK"},
+				{"gearLevel": 13, "relicTier": 5, "baseId": "IG88"},
+				{"gearLevel": 13, "relicTier": 5, "baseId": "DENGAR"}
 			],
 			"baseId": "TBD_EXECUTOR",
 			"unitName": "Executor"
