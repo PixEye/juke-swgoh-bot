@@ -168,7 +168,7 @@ client.on("message", (message) => {
 					"**Commandes utilisateur :**",
 					" abbr(eviations), aide, allycode (ac), auteur, chan(nelInfo), charInfo (ci),"+
 					" checkMods (cm), checkUnitsGp (cugp)"+
-					", countGuildTopUnits (cgtu), dis, gacH(istory), glCheck (glc), getUnregisteredPlayers (gup),"+
+					", countGuildTopUnits (cgtu), dis, gacH(istory), (gl)Check (glc), getUnregisteredPlayers (gup),"+
 					" guildBoard (gb), guildStats (gs), help, invite, (last)evols (le), listGuildMembers (lgm),"+
 					" playerStats (ps), profile (gg), register (reg), relics, repete, self(y), shipInfo (si),"+
 					" sources (src), start, stats, status, unreg(ister), warstats (ws), whoami, whois",
@@ -263,8 +263,9 @@ client.on("message", (message) => {
 			break;
 
 		case "auteur":
+		case "problème":
 			lines.push("Ce bot a été écrit par <@222443133294739456> (aka PixEye).");
-			lines.push("En cas de bug ou de demande d'amélioration, contactez-le.");
+			lines.push("En cas de bug ou de demande d'amélioration, merci de passer par github.");
 			lines.push("");
 			lines.push("Cette instance du bot appartient à <@"+config.discord.ownerID+">.");
 			richMsg = new RichEmbed().setTitle("A propos de l'auteur").setColor("GREEN")
@@ -274,10 +275,12 @@ client.on("message", (message) => {
 			break;
 
 		case "author":
+		case "bug":
+		case "problem":
 			lines.push("This bot was written by <@222443133294739456> (aka PixEye).");
-			lines.push("In case of bug or enhancement request, please contact him.");
+			lines.push("In case of bug or enhancement request, please open a github ticket.");
 			lines.push("");
-			lines.push("This instance of the bot blongs to <@"+config.discord.ownerID+">.");
+			lines.push("This instance of the bot belongs to <@"+config.discord.ownerID+">.");
 			richMsg = new RichEmbed().setTitle("About the author").setColor("GREEN")
 				.setDescription(lines).setTimestamp()
 				.setFooter(config.footer.message, config.footer.iconUrl);
@@ -949,7 +952,7 @@ client.on("message", (message) => {
 					"**User commands:**",
 					" abbr(eviations), about, aide, allycode (ac), chan(nelInfo), charInfo (ci),"+
 					" checkMods (cm), checkUnitsGp"+
-					" (cugp), countGuildTopUnits (cgtu), gacH(istory), glCheck (glc), getUnregisteredPlayers (gup),"+
+					" (cugp), countGuildTopUnits (cgtu), gacH(istory), (gl)Check (glc), getUnregisteredPlayers (gup),"+
 					" guildBoard (gb), guildStats (gs), help, invite, (last)evols (le), listGuildMembers (lgm),"+
 					" playerStat (ps), profile (gg), register (reg), relics, repeat, say, self(y), shipInfo (si),"+
 					" sources (src), start, stats, status, unreg(ister), warstats (ws), whoami, whois",
