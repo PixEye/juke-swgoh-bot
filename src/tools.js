@@ -1996,6 +1996,7 @@ exports.updatePlayerDataInDb = function(player, message, callback) {
 		let update = new Date(player.updated);
 
 		update = exports.toMySQLdate(update);
+		console.log(logPrefix()+'Data updated at: %s', update);
 
 		let sql2 = "UPDATE users SET"+
 			" game_name="+mysql.escape(player.name)+","+

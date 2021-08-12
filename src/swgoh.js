@@ -375,6 +375,7 @@ exports.getPlayerGuild = async function(allycodes, message, callback) {
 		let guild = result[0];
 
 		rosters = guild.roster;
+		console.log(logPrefix()+'Data updated at: %s', guild.updated);
 
 		/*
 		guild.roster = "departed";
