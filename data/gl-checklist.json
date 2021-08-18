@@ -119,7 +119,8 @@
 				{"gearLevel": 13, "relicTier": 5, "baseId": "CC2224"},
 				{"gearLevel": 13, "relicTier": 7, "baseId": "JANGOFETT"},
 				{"gearLevel": 13, "relicTier": 7, "baseId": "SHAAKTI"},
-				{"gearLevel": 13, "relicTier": 8, "baseId": "GRANDMASTERYODA"}
+				{"gearLevel": 13, "relicTier": 8, "baseId": "GRANDMASTERYODA"},
+				{"stars": 6, "baseId": "CAPITALNEGOTIATOR"}
 			],
 			"baseId": "TBD_GK",
 			"unitName": "Jedi Master Kenobi"
