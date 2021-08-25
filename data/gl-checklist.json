@@ -139,11 +139,11 @@
 				{"gearLevel": 13, "relicTier": 5, "baseId": "BADBATCHECHO"},
 				{"gearLevel": 13, "relicTier": 8, "baseId": "COUNTDOOKU"},
 				{"gearLevel": 13, "relicTier": 7, "baseId": "ZAMWESELL"},
-				{"stars": 7, "baseId": "YWINGCLONEWARS"},
 				{"gearLevel": 13, "relicTier": 7, "baseId": "GRANDMOFFTARKIN"},
 				{"gearLevel": 13, "relicTier": 8, "baseId": "ARCTROOPER501ST"},
 				{"gearLevel": 13, "relicTier": 8, "baseId": "GENERALSKYWALKER"},
-				{"gearLevel": 13, "relicTier": 7, "baseId": "NUTEGUNRAY"}
+				{"gearLevel": 13, "relicTier": 7, "baseId": "NUTEGUNRAY"},
+				{"stars": 7, "baseId": "YWINGCLONEWARS"}
 			],
 			"baseId": "TBD_LV",
 			"unitName": "Lord Vader"
