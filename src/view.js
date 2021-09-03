@@ -737,7 +737,7 @@ exports.showUnitInfo = function(player, message, unitName, ct) {
 
 	unitName = foundUnit.name;
 	unitName = unitRealNames[unitName] || unitName;
-	richMsg.setThumbnail("https://swgoh.gg/game-asset/u/"+foundUnit.name+".png")
+	richMsg.setThumbnail("https://game-assets.swgoh.gg/tex.charui_"+foundUnit.name.toLowerCase()+".png")
 		.setTitle(player.name+"'s "+unitName);
 
 	// Start with stars:
