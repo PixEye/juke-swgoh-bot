@@ -73,12 +73,12 @@ exports.checkLegendReq = function(player, message) {
 		.join("").trim().toUpperCase();
 	let found = false;
 	let glNames = [];
-	let glUnits = req.units;
 	let lines = [];
 	let logPrefix = exports.logPrefix; // shortcut
 	let msg = "";
 	let picture = "";
 	let resumes = [];
+	let unitsOfInterest = req.units;
 
 	if (typeof player === "undefined") player = message.author;
 
@@ -95,7 +95,7 @@ exports.checkLegendReq = function(player, message) {
 	console.log(logPrefix()+"Looking for unit matching '"+concatUpMsg+"'");
 	if (concatUpMsg==="REY") concatUpMsg = "GLREY";
 
-	glUnits.forEach(unit => {
+	unitsOfInterest.forEach(unit => {
 		if (found) return;
 
 		let progresses = [];
@@ -106,8 +106,16 @@ exports.checkLegendReq = function(player, message) {
 		glNames.push(unit.baseId);
 
 		unit.baseId = unit.baseId.toUpperCase();
-		if (unit.baseId==="REY") unit.baseId = "GLREY";
-		if (unit.baseId==="GK" ) unit.baseId = "JEDIMASTERKENOBI";
+		switch(unit.baseId) {
+			case "GK":
+				unit.baseId = "JEDIMASTERKENOBI"; break;
+			case "EXECUTOR":
+				unit.baseId = "CAPITALEXECUTOR"; break;
+			case "LV":
+				unit.baseId = "LORDVADER"; break;
+			case "REY":
+				unit.baseId = "GLREY"; break;
+		}
 		if (unitAliasNames[unit.baseId]) unit.baseId = unitAliasNames[unit.baseId];
 
 		msg = "Checking unit: " + unit.name+" ("+unit.baseId+")";
