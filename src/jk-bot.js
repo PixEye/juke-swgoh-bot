@@ -769,7 +769,7 @@ client.on("message", (message) => {
 
 						tot_player_cnt += g.memberCount;
 						if (g.officerCount) {
-							while (g.officerCount<=9) g.officerCount = ' '+g.officerCount;
+							if (g.officerCount<=9) g.officerCount = ' '+g.officerCount;
 							lines.push('`'+gp+'M '+g.officerCount+' off/'+g.memberCount+'` '+g.name);
 						} else {
 							lines.push('`'+gp+'M '+g.memberCount+'/50 '+g.name+'`');
