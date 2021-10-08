@@ -772,7 +772,8 @@ client.on("message", (message) => {
 							if (g.officerCount<=9) g.officerCount = ' '+g.officerCount;
 							lines.push('`'+gp+'M '+g.officerCount+' off/'+g.memberCount+'` '+g.name);
 						} else {
-							lines.push('`'+gp+'M '+g.memberCount+'/50 '+g.name+'`');
+							if (g.memberCount<=9) g.memberCount = ' '+g.memberCount;
+							lines.push('`'+gp+'M '+g.memberCount+' ppl/50` '+g.name);
 						}
 
 						if (g.gts<update) {
