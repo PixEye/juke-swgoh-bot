@@ -761,7 +761,11 @@ client.on("message", (message) => {
 					let oldest_g = null;
 					let tot_player_cnt = 0; // total player count
 					result.forEach(g => {
-						let gp = g.M_GP<100? ' '+g.M_GP: g.M_GP;
+						let gp = g.M_GP;
+
+						if (gp < 10) gp = '  '+gp;
+						else
+						if (gp <100) gp = ' ' +gp;
 
 						tot_player_cnt += g.memberCount;
 						if (g.officerCount) {
