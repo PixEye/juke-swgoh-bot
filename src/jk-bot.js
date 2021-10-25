@@ -717,6 +717,20 @@ client.on("message", (message) => {
 			break;
 		}
 
+		case "gals":
+		case "lsga":
+		case "lateststatsgrandarena":
+		case "grandarenalateststats":
+			if (allycode) {
+				gac_tools.getPlayerStatsFromLatestGA(player, message, view.showPlayerGAStats);
+			} else {
+				console.log(logPrefix()+"Try with Discord ID:", user.id);
+				tools.getPlayerFromDiscordUser(user, message, player => {
+					gac_tools.getPlayerStatsFromLatestGA(player, message, view.showPlayerGAStats);
+				});
+			}
+			break;
+
 		case "gar":
 		case "rga":
 		case "regga":

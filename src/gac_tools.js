@@ -73,6 +73,39 @@ function getInitializedGrandArenaValues(allycode) {
     });
 }
 
+/** Get the player's stats from the latest GA
+ * @param {string} allycode The target player
+ */
+
+ exports.getPlayerStatsFromLatestGA = function(player, message, callback) {
+    let sql_query = "SELECT * FROM `current_ga` WHERE allycode = `"+parseInt(allycode)+"` AND round <> 0 ORDER BY round DESC LIMIT 1;"
+    console.log(logPrefix()+"SQL: "+sql);
+
+    message.channel.send("Looking for DB stats for the latest GA for the ally: "+allycode+"...")
+		.then(msg => {
+            db_pool.query(sql_query, function(exc, result) {
+                if (typeof(msg.delete)==="function") msg.delete();
+                
+                if (exc) {
+                    let otd = exc.sqlMessage? exc.sqlMessage: exc; // object to display
+        
+                    console.log("SQL:", sql);
+                    console.log(logPrefix()+"getPlayerStatsFromLatestGA Exception:", otd);
+                    return;
+                }
+
+                if (result.length == 0) {
+                    msg = "No GA data registered. Try j.gar command."
+                    console.warn(logPrefix()+"msg");
+					message.reply(msg);
+					return;
+                }
+                
+                if (typeof(callback)==="function") callback(player, message, result[0]);
+            });
+        }).catch(console.error);
+}
+
 function between(x, min, max) {
     return x >= min && x <= max;
 }
@@ -132,7 +165,7 @@ function registerPlayerForGrandArena(player, message) {
 
     let sql_query = "INSERT INTO `current_ga`\n"+
     "(`allycode`, `division`, `type`, `round`, `ground_territory`, `fleet_territory`, `result`, `opponent_score`, `score`, `gl_faced`, `auto_def`, `defensive_win`, `undersize_win`)\n"+
-    "VALUES ("+player.allycode+", "+division+", '0', '0', "+parseInt(player.gaTerritoriesDefeated)+", "+parseInt(player.gaTerritoriesDefeated)+", '0', '0', "+parseInt(player.gaBannersEarned)+", '0', '0', "+parseInt(player.gaSuccessfulDefends)+", "+parseInt(player.gaUndersizedSquadWins)+");"
+    "VALUES ("+parseInt(player.allycode)+", "+division+", '0', '0', "+parseInt(player.gaTerritoriesDefeated)+", "+parseInt(player.gaTerritoriesDefeated)+", '0', '0', "+parseInt(player.gaBannersEarned)+", '0', '0', "+parseInt(player.gaSuccessfulDefends)+", "+parseInt(player.gaUndersizedSquadWins)+");"
     console.log(logPrefix()+"SQL: "+sql);
 
     db_pool.query(sql_query, function(exc, result) {
@@ -176,7 +209,7 @@ function registerGrandArenaResult(player, message, input_data) {
         } else {
             let sql_query = "INSERT INTO `current_ga`\n"+
             "(`allycode`, `division`, `type`, `round`, `ground_territory`, `fleet_territory`, `result`, `opponent_score`, `score`, `gl_faced`, `auto_def`, `defensive_win`, `undersize_win`)\n"+
-            "VALUES ("+player.allycode+", "+initialValues.division+" "+input_data.type+", "+computed_values.round+", "+input_data.ground_terr+", "+input_data.fleet_terr+", "+input_data.result+", "+input_data.opp_score+", "+computed_values.score+", "+input_data.gl_faced+", "+input_data.auto_def+", "+computed_values.defensive_win+", "+computed_values.undersize_win+");"
+            "VALUES ("+parseInt(player.allycode)+", "+initialValues.division+" "+input_data.type+", "+computed_values.round+", "+input_data.ground_terr+", "+input_data.fleet_terr+", "+input_data.result+", "+input_data.opp_score+", "+computed_values.score+", "+input_data.gl_faced+", "+input_data.auto_def+", "+computed_values.defensive_win+", "+computed_values.undersize_win+");"
             console.log(logPrefix()+"SQL: "+sql);
 
             db_pool.query(sql_query, function(exc, result) {
