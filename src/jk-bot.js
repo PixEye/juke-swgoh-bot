@@ -22,6 +22,7 @@ const mysql = require("mysql");
 const locutus  = require("./locutus"); // Functions from locutus.io
 //nst swgohApi = require("./swgoh");  // SWGoH API of this bot
 const tools    = require("./tools"); // Several functions
+const gac_tools = require("./gac_tools"); // GAC tracker related functions
 const view     = require("./view"); // Functions used to display results
 
 // Get the configuration & its template from a separated JSON files:
@@ -715,6 +716,27 @@ client.on("message", (message) => {
 			});
 			break;
 		}
+
+		case "gar":
+		case "rga":
+		case "regga":
+		case "reggrandarena":
+		case "registergrandarena":
+			if (allycode) {
+				gac_tools.grandArenaRegistration(player, message);
+			} else {
+				console.log(logPrefix()+"Trying with Discord ID:", user.id);
+				tools.getPlayerFromDiscordUser(user, message, player => {
+					if (!player.allycode) {
+						console.log(logPrefix()+"Please register first with: j.reg your-ally-code")
+						message.reply("Please register first with: j.reg your-ally-code")
+						return;
+					}
+
+					gac_tools.grandArenaRegistration(player, message);
+				});
+			}
+			break;
 
 		case "gb":
 		case "guildboard": {
