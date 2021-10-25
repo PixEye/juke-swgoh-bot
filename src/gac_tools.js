@@ -1,7 +1,7 @@
 /**
  * gac_tools.js is the functions module for Juke's SWGoH Discord bot to handle the gac functions
- * @author PixEye@pixeye.net
- * @since 2019-12-09
+ * @author Falmmer
+ * @since 2021-10-25
  */
 
 // jshint esversion: 8
