@@ -298,6 +298,13 @@ exports.getPlayerData = async function(users, callback, message) {
 				player.titles.selected.replace('PLAYERTITLE_', '').replace(/_/g, ' '): 'Default';
 			player.giftCount = clean_stats.TOTAL_GUILD_EXCHANGE_DONATIONS_TU07_2;
 			player.zetaCount = zetaCount;
+			player.gaTerritoriesDefeated = clean_stats.SEASON_TERRITORIES_DEFEATED_NAME;
+			player.gaBannersEarned = clean_stats.SEASON_BANNERS_EARNED_NAME;
+			player.gaFullCleardRoundWins = clean_stats.SEASON_FULL_CLEAR_ROUND_WINS_NAME;
+			player.gaOffensiveBattles = clean_stats.SEASON_OFFENSIVE_BATTLES_WON_NAME;
+			player.gaSuccessfulDefends = clean_stats.SEASON_SUCCESSFUL_DEFENDS_NAME;
+			player.gaUndersizedSquadWins = clean_stats.SEASON_UNDERSIZED_SQUAD_WINS_NAME;
+			player.gaScore = clean_stats.SEASON_LEAGUE_SCORE_NAME;
 
 			if (typeof(callback)==="function") {
 				callback(player, message);
