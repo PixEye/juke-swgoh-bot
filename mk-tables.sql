@@ -2,6 +2,8 @@
 -- version 4.8.4
 -- https://www.phpmyadmin.net/
 --
+-- Host:  127.0.0.1:3306
+-- Generated on:  2021-10-26 at 08:43
 -- Version du serveur :  5.7.24
 -- Version de PHP :  7.2.14
 
@@ -80,8 +82,8 @@ CREATE TABLE IF NOT EXISTS `tw_results` (
   `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `discord_id` varchar(20) COLLATE utf8_unicode_ci NOT NULL,
   `allycode` int(4) UNSIGNED NOT NULL,
-  `self_guild_id` varchar(15) COLLATE utf8_unicode_ci NOT NULL,
-  `self_guild_name` varchar(32) COLLATE utf8_unicode_ci NOT NULL,
+  `self_guild_id` varchar(15) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `self_guild_name` varchar(32) COLLATE utf8_unicode_ci DEFAULT NULL,
   `self_player_cnt` int(1) UNSIGNED NOT NULL,
   `self_score` int(2) UNSIGNED NOT NULL,
   `opp_score` int(2) UNSIGNED NOT NULL,
@@ -89,8 +91,8 @@ CREATE TABLE IF NOT EXISTS `tw_results` (
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
-  KEY `allycode` (`allycode`),
-  KEY `guild_ref_id` (`self_guild_id`)
+  KEY `allycode` (`allycode`)
+  UNIQUE KEY `self_guild_id` (`self_guild_id`),
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- --------------------------------------------------------
