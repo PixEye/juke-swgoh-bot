@@ -143,6 +143,32 @@ CREATE TABLE IF NOT EXISTS `users` (
   KEY `discord_id` (`discord_id`) USING BTREE,
   KEY `guildRefId` (`guildRefId`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Structure of table `current_ga`
+--
+
+CREATE TABLE IF NOT EXISTS `current_ga` (
+  `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `allycode` int(11) UNSIGNED NOT NULL,
+  `division` tinyint(1) UNSIGNED NOT NULL DEFAULT '10',
+  `type` tinyint(1) UNSIGNED NOT NULL DEFAULT '5',
+  `round` tinyint(1) UNSIGNED NOT NULL DEFAULT '0',
+  `ground_territory` tinyint(1) UNSIGNED NOT NULL DEFAULT '0',
+  `fleet_territory` tinyint(1) UNSIGNED NOT NULL DEFAULT '0',
+  `result` tinyint(1) UNSIGNED NOT NULL DEFAULT '0',
+  `opponent_score` int(10) UNSIGNED NOT NULL DEFAULT '0',
+  `score` int(10) UNSIGNED NOT NULL DEFAULT '0',
+  `gl_faced` tinyint(1) UNSIGNED NOT NULL DEFAULT '0',
+  `auto_def` tinyint(1) UNSIGNED NOT NULL DEFAULT '0',
+  `defensive_win` tinyint(1) UNSIGNED NOT NULL DEFAULT '0',
+  `undersize_win` tinyint(1) UNSIGNED NOT NULL DEFAULT '0',
+  `ts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `allycode` (`allycode`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

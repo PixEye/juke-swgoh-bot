@@ -568,6 +568,47 @@ exports.showPlayerStats = function(player, message) {
 	});
 };
 
+/** Show player's GA statistics (GALS command)
+ * @param {Object} player - The user's profile as an object
+ * @param {Object} message - The user's message to reply to
+ * @param {Object} ga_stats - The user's latest ga statistics
+ */
+ exports.showPlayerGAStats = function(player, message, ga_stats) {
+	let lines = [];
+	let logPrefix = exports.logPrefix; // shortcut
+
+	if (!player.name) {
+		console.log(logPrefix()+"invalid name at V55 for user:", player);
+		return;
+	}
+
+	lines = [
+		"**Divsion:** "+ga_stats.division,
+		"**Result: ** "+parseInt(ga_stats.result) == 1 ? "win" : "loss"+ " - " + player.name + ": " + ga_stats.score + " vs " + ga_stats.opponent_score,
+		"",
+		"**Ground territories efficienty:** "+ ((parseInt(ga_stats.ground_territory)/3).toFixed(1)*100) + "%" + " - " +
+		"**Fleet territory efficienty:** "+ parseInt(ga_stats.fleet_territory)*100 + "%",
+		"",
+		"**Auto defense ?** "+ parseInt(ga_stats.auto_def) == 1 ? "yes" : "no" + " - " + "**GL faced on defense:** "+ ga_stats.gl_faced,
+		"",
+		"**Number of undersized wins:** "+ga_stats.undersize_win + " - " + "**Number of defensive wins:** "+ga_stats.defensive_win
+	];
+
+	let richMsg = new RichEmbed().setTitle(player.name+"'s " + ga_stats.type + " GA").setColor("GREEN")
+		.setDescription(lines).setTimestamp(player.updated)
+		.setFooter(config.footer.message, config.footer.iconUrl);
+
+	if (player.displayAvatarURL) {
+		richMsg.setThumbnail(player.displayAvatarURL);
+	}
+
+	message.reply(richMsg).catch(function(ex) {
+		console.warn(ex);
+		message.reply(ex.message);
+		message.channel.send(lines);
+	});
+};
+
 /** Show a player's random team (RAND command)
  * @param {Object} player - The user's profile as an object
  * @param {Object} message - The user's message to reply to
