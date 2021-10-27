@@ -594,7 +594,7 @@ exports.showPlayerStats = function(player, message) {
 		"**Number of undersized wins:** "+ga_stats.undersize_win + " - " + "**Number of defensive wins:** "+ga_stats.defensive_win
 	];
 
-	let richMsg = new RichEmbed().setTitle(player.name+"'s " + ga_stats.type + " GA").setColor("GREEN")
+	let richMsg = new RichEmbed().setTitle(player.name+"'s " + ga_stats.type + " GA - Round " + ga_stats.round).setColor("GREEN")
 		.setDescription(lines).setTimestamp(player.updated)
 		.setFooter(config.footer.message, config.footer.iconUrl);
 

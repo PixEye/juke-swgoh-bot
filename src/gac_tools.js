@@ -38,7 +38,7 @@ const db_pool = mysql.createPool({
  */
 
 function checkGrandArenaRegistration(allycode) {
-    let sql_query = "SELECT allycode, round FROM `current_ga` WHERE allycode = `"+parseInt(allycode)+"` AND round = 0;"
+    let sql_query = "SELECT allycode, round FROM `current_ga` WHERE allycode = "+parseInt(allycode)+" AND round = 0;"
     console.log(logPrefix()+"SQL: "+sql_query);
 
     db_pool.query(sql_query, function(exc, result) {
@@ -58,7 +58,7 @@ function checkGrandArenaRegistration(allycode) {
  */
 
 function getInitializedGrandArenaValues(allycode) {
-    let sql_query = "SELECT * FROM `current_ga` WHERE allycode = `"+parseInt(allycode)+"` AND round = 0;"
+    let sql_query = "SELECT * FROM `current_ga` WHERE allycode = "+parseInt(allycode)+" AND round = 0;"
     console.log(logPrefix()+"SQL: "+sql_query);
 
     db_pool.query(sql_query, function(exc, result) {
@@ -79,8 +79,8 @@ function getInitializedGrandArenaValues(allycode) {
 
  exports.getPlayerStatsFromLatestGA = function(player, message, callback) {
 	let allycode = player.allycode;
-    let sql_query = "SELECT * FROM `current_ga` WHERE allycode = `"
-		+parseInt(allycode)+"` AND round <> 0 ORDER BY round DESC LIMIT 1;"
+    let sql_query = "SELECT * FROM `current_ga` WHERE allycode = "
+		+parseInt(allycode)+" AND round <> 0 ORDER BY round DESC LIMIT 1;"
     console.log(logPrefix()+"SQL: "+sql_query);
 
     message.channel.send("Looking for DB stats for the latest GA for the ally: "+allycode+"...")
@@ -155,14 +155,23 @@ function registerPlayerForGrandArena(player, message) {
         return;
     }
 
+    console.log(logPrefix()+"GA Stats : gaTerritoriesDefeated : "
+    +player.gaTerritoriesDefeated+ " - gaBannersEarned : "
+    +player.gaBannersEarned+ " - gaFullCleardRoundWins : "
+    +player.gaFullCleardRoundWins+ " - gaOffensiveBattles : "
+    +player.gaOffensiveBattles+ " - gaSuccessfulDefends : "
+    +player.gaSuccessfulDefends+ " - gaUndersizedSquadWins : "
+    +player.gaUndersizedSquadWins+ " - gaScore : "
+    +player.gaScore)
+
     let sql_query = "INSERT INTO `current_ga` "
 		+ "(`allycode`, `division`, `type`, `round`, `ground_territory`"
 		+ ", `fleet_territory`, `result`, `opponent_score`, `score`"
 		+ ", `gl_faced`, `auto_def`, `defensive_win`, `undersize_win`)\n"
-		+ "VALUES ("+parseInt(player.allycode)+", "+division+", '0', '0', "
+		+ "VALUES ("+parseInt(player.allycode)+", "+division+", 0, 0, "
 		+parseInt(player.gaTerritoriesDefeated)+", "
-		+parseInt(player.gaTerritoriesDefeated)+", '0', '0', "
-		+parseInt(player.gaBannersEarned)+", '0', '0', "
+		+parseInt(player.gaTerritoriesDefeated)+", 0, 0, "
+		+parseInt(player.gaBannersEarned)+", 0, 0, "
 		+parseInt(player.gaSuccessfulDefends)+", "+parseInt(player.gaUndersizedSquadWins)+");"
     console.log(logPrefix()+"SQL: "+sql_query);
 
