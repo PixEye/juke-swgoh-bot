@@ -736,7 +736,7 @@ client.on("message", (message) => {
 		case "regga":
 		case "reggrandarena":
 		case "registergrandarena":
-			if (allycode) {
+			/* if (allycode) {
 				gac_tools.grandArenaRegistration(player, message);
 			} else {
 				console.log(logPrefix()+"Trying with Discord ID:", user.id);
@@ -748,6 +748,14 @@ client.on("message", (message) => {
 					}
 
 					gac_tools.grandArenaRegistration(player, message);
+				});
+			} // */
+			if (allycode) {
+				tools.getPlayerStats(player, message, gac_tools.grandArenaRegistration);
+			} else {
+				console.log(logPrefix()+"Try with Discord ID:", user.id);
+				tools.getPlayerFromDiscordUser(user, message, player => {
+					tools.getPlayerStats(player, message, gac_tools.grandArenaRegistration);
 				});
 			}
 			break;

@@ -14,7 +14,7 @@ const mysql = require("mysql");
 
 // Load other module(s):
 // const locutus = require("./locutus"); // Functions from locutus.io
-const swgoh   = require("./swgoh");  // SWGoH API
+// const swgoh   = require("./swgoh");  // SWGoH API
 // const view	= require("./view"); // Functions used to display results
 const tools = require("./tools");
 
@@ -191,10 +191,11 @@ function registerPlayerForGrandArena(player, message) {
 /** Store ga stats in our database
  * @param {object} player The target player
  * @param {object} message The origin message (request)
- * @param {object} input_data data entered by the user
+	 * @param {object} input_data data entered by the user
  */
-function registerGrandArenaResult(player, message, input_data) {
+function registerGrandArenaResult(player, message) {
 	let initialValues = getInitializedGrandArenaValues(player.allycode);
+	let input_data = player.ga_players_input;
 
 	if (initialValues) {
 
@@ -254,11 +255,11 @@ exports.grandArenaRegistration = function(player, message) {
 	if (message.words.length == 0) {
 		if (checkGrandArenaRegistration(allycode)) {
 			message.reply(":red_circle: You are already registered for this GA!");
-			return;
 		} else {
-			swgoh.getPlayerData(player, registerPlayerForGrandArena(player, message));
-			return;
+			// swgoh.getPlayerData(player, registerPlayerForGrandArena(player, message));
+			registerPlayerForGrandArena(player, message);
 		}
+		return;
 	}
 
 	if (message.words.length < 7 && message.words.length != 0) {
@@ -326,7 +327,9 @@ exports.grandArenaRegistration = function(player, message) {
 		'auto_def': parseInt(ga_auto_def)
 	}
 
-	swgoh.getPlayerData(player, registerGrandArenaResult(player, message, input_data));
+	// swgoh.getPlayerData(player, registerGrandArenaResult(player, message, input_data));
+	player.ga_players_input = input_data;
+	registerGrandArenaResult(player, message);
 
 	return;
 };
