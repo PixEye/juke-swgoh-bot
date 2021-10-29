@@ -568,6 +568,43 @@ exports.showPlayerStats = function(player, message) {
 	});
 };
 
+/** Show player's GAs (GASM command)
+ * @param {Object} player - The user's profile as an object
+ * @param {Object} message - The user's message to reply to
+ * @param {Object} gas - The user's registered gas
+ */
+ exports.showPlayerGAs = function(player, message, gas) {
+	let lines = [];
+	let logPrefix = exports.logPrefix; // shortcut
+
+	if (!player.name) {
+		console.log(logPrefix()+"invalid name at V55 for user:", player);
+		return;
+	}
+
+	gas.forEach(function(ga) {
+		lines.push(
+			"**Divsion:** "+ga.division + " - "+ parseInt(ga.type) == 5 ? "5v5" : "3v3" + " - Round " + ga.round,
+			"Result : " + parseInt(ga.result) == 1 ? "win" : "loss" + " - " + ga.score + " vs " + ga.opponent_score,
+			""
+		);
+	});
+
+	let richMsg = new RichEmbed().setTitle(player.name+"'s registered  GAs").setColor("GREEN")
+		.setDescription(lines).setTimestamp(player.updated)
+		.setFooter(config.footer.message, config.footer.iconUrl);
+
+	if (player.displayAvatarURL) {
+		richMsg.setThumbnail(player.displayAvatarURL);
+	}
+
+	message.reply(richMsg).catch(function(ex) {
+		console.warn(ex);
+		message.reply(ex.message);
+		message.channel.send(lines);
+	});
+};
+
 /** Show player's GA statistics (GALS command)
  * @param {Object} player - The user's profile as an object
  * @param {Object} message - The user's message to reply to
@@ -594,7 +631,7 @@ exports.showPlayerStats = function(player, message) {
 		"**Number of undersized wins:** "+ga_stats.undersize_win + " - " + "**Number of defensive wins:** "+ga_stats.defensive_win
 	];
 
-	let richMsg = new RichEmbed().setTitle(player.name+"'s " + ga_stats.type + " GA - Round " + ga_stats.round).setColor("GREEN")
+	let richMsg = new RichEmbed().setTitle(player.name+"'s " + parseInt(ga_stats.type) == 5 ? "5v5" : "3v3" + " GA - Round " + ga_stats.round).setColor("GREEN")
 		.setDescription(lines).setTimestamp(player.updated)
 		.setFooter(config.footer.message, config.footer.iconUrl);
 
