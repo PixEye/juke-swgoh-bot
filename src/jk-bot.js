@@ -736,26 +736,26 @@ client.on("message", (message) => {
 		case "regga":
 		case "reggrandarena":
 		case "registergrandarena":
-			/* if (allycode) {
-				gac_tools.grandArenaRegistration(player, message);
-			} else {
-				console.log(logPrefix()+"Trying with Discord ID:", user.id);
-				tools.getPlayerFromDiscordUser(user, message, player => {
-					if (!player.allycode) {
-						console.log(logPrefix()+"Please register first with: j.reg your-ally-code")
-						message.reply("Please register first with: j.reg your-ally-code")
-						return;
-					}
-
-					gac_tools.grandArenaRegistration(player, message);
-				});
-			} // */
 			if (allycode) {
 				tools.getPlayerStats(player, message, gac_tools.grandArenaRegistration);
 			} else {
 				console.log(logPrefix()+"Try with Discord ID:", user.id);
 				tools.getPlayerFromDiscordUser(user, message, player => {
 					tools.getPlayerStats(player, message, gac_tools.grandArenaRegistration);
+				});
+			}
+			break;
+
+		case "gasm":
+		case "smga":
+		case "gashowme":
+		case "showmega":
+			if (allycode) {
+				gac_tools.getPlayerGAs(player, message, view.showPlayerGAs);
+			} else {
+				console.log(logPrefix()+"Try with Discord ID:", user.id);
+				tools.getPlayerFromDiscordUser(user, message, player => {
+					gac_tools.getPlayerGAs(player, message, view.showPlayerGAs);
 				});
 			}
 			break;
