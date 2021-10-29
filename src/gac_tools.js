@@ -139,37 +139,39 @@ exports.getPlayerStatsFromLatestGA = function(player, message, callback) {
 		}).catch(console.error);
 }
 
-function between(x, min, max) {
-	return x >= min && x <= max;
-}
-
 /** Get the division in GA from the given GP
- * @param {number} gp GP of the player
+ * @param  {number} gp GP of the player
+ * @return {number} Division number between 0 & 10 included
  */
-function getDivisionFromGP(gp) {
-	if (between(gp, 1000000, 1599999)) {
-		return 10;
-	} else if (between(gp, 1600000, 2299999)) {
-		return 9;
-	} else if (between(gp, 2300000, 3099999)) {
-		return 8;
-	} else if (between(gp, 3100000, 3849999)) {
-		return 7;
-	} else if (between(gp, 3850000, 4499999)) {
-		return 6;
-	} else if (between(gp, 4500000, 5149999)) {
-		return 5;
-	} else if (between(gp, 5150000, 5999999)) {
-		return 4;
-	} else if (between(gp, 6000000, 6649999)) {
-		return 3;
-	} else if (between(gp, 6650000, 7799999)) {
-		return 2;
-	} else if (gp >= 7800000) {
-		return 1;
+function getDivFromGP(gp) {
+	let div = -1;
+	let gpm = gp / 1e6; // Same GP but in M
+
+	if (gpm < 1) {
+		div = 0
+	} else if (gpm < 1.6) {
+		div = 10
+	} else if (gpm < 2.3) {
+		div = 9
+	} else if (gpm < 3.1) {
+		div = 8
+	} else if (gpm < 3.85) {
+		div = 7
+	} else if (gpm < 4.5) {
+		div = 6
+	} else if (gpm < 5.15) {
+		div = 5
+	} else if (gpm < 6) {
+		div = 4
+	} else if (gpm < 6.65) {
+		div = 3
+	} else if (gpm < 7.8) {
+		div = 2
 	} else {
-		return 0;
+		div = 1
 	}
+
+	return div
 }
 
 /** Register player for the current GA in our database
@@ -177,7 +179,7 @@ function getDivisionFromGP(gp) {
  * @param {object} message The origin message (request)
  */
 function registerPlayerForGrandArena(player, message) {
-	let division = getDivisionFromGP(parseInt(player.gp));
+	let division = getDivFromGP(parseInt(player.gp));
 
 	if ( !division ) {
 		console.log(logPrefix()+"registerPlayerForGrandArena divsion calculation error.")
@@ -277,7 +279,7 @@ function registerGrandArenaResult(player, message) {
         msg = "No GA data registered. Try j.gar command."
         console.warn(logPrefix()+"msg");
         message.reply(msg);
-        return;   
+        return;
     }
 }
 
