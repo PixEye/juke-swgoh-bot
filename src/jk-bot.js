@@ -742,6 +742,17 @@ client.on("message", (message) => {
 				console.log(logPrefix()+"Try with Discord ID:", user.id);
 				tools.getPlayerFromDiscordUser(user, message, player => {
 					tools.getPlayerStats(player, message, gacTools.grandArenaRegistration);
+
+		case "gasm":
+		case "smga":
+		case "gashowme":
+		case "showmega":
+			if (allycode) {
+				gacTools.getPlayerGAs(player, message, view.showPlayerGAs);
+			} else {
+				console.log(logPrefix()+"Try with Discord ID:", user.id);
+				tools.getPlayerFromDiscordUser(user, message, player => {
+					gacTools.getPlayerGAs(player, message, view.showPlayerGAs);
 				});
 			}
 			break;
