@@ -22,7 +22,7 @@ const mysql = require("mysql");
 const locutus  = require("./locutus"); // Functions from locutus.io
 //nst swgohApi = require("./swgoh");  // SWGoH API of this bot
 const tools    = require("./tools"); // Several functions
-const gac_tools = require("./gac_tools"); // GAC tracker related functions
+const gacTools = require("./gac_tools"); // GAC tracker related functions
 const view     = require("./view"); // Functions used to display results
 
 // Get the configuration & its template from a separated JSON files:
@@ -722,11 +722,11 @@ client.on("message", (message) => {
 		case "lateststatsgrandarena":
 		case "grandarenalateststats":
 			if (allycode) {
-				gac_tools.getPlayerStatsFromLatestGA(player, message, view.showPlayerGAStats);
+				gacTools.getPlayerStatsFromLatestGA(player, message, view.showPlayerGAStats);
 			} else {
 				console.log(logPrefix()+"Try with Discord ID:", user.id);
 				tools.getPlayerFromDiscordUser(user, message, player => {
-					gac_tools.getPlayerStatsFromLatestGA(player, message, view.showPlayerGAStats);
+					gacTools.getPlayerStatsFromLatestGA(player, message, view.showPlayerGAStats);
 				});
 			}
 			break;
@@ -736,26 +736,12 @@ client.on("message", (message) => {
 		case "regga":
 		case "reggrandarena":
 		case "registergrandarena":
-			/* if (allycode) {
-				gac_tools.grandArenaRegistration(player, message);
-			} else {
-				console.log(logPrefix()+"Trying with Discord ID:", user.id);
-				tools.getPlayerFromDiscordUser(user, message, player => {
-					if (!player.allycode) {
-						console.log(logPrefix()+"Please register first with: j.reg your-ally-code")
-						message.reply("Please register first with: j.reg your-ally-code")
-						return;
-					}
-
-					gac_tools.grandArenaRegistration(player, message);
-				});
-			} // */
 			if (allycode) {
-				tools.getPlayerStats(player, message, gac_tools.grandArenaRegistration);
+				tools.getPlayerStats(player, message, gacTools.grandArenaRegistration);
 			} else {
 				console.log(logPrefix()+"Try with Discord ID:", user.id);
 				tools.getPlayerFromDiscordUser(user, message, player => {
-					tools.getPlayerStats(player, message, gac_tools.grandArenaRegistration);
+					tools.getPlayerStats(player, message, gacTools.grandArenaRegistration);
 				});
 			}
 			break;
