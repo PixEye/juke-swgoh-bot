@@ -332,25 +332,25 @@ exports.grandArenaRegistration = function(player, message) {
 	let ga_gl_faced = message.words.shift();
 	let ga_auto_def = message.words.shift();
 
-	if (!ga_type.match(/^\d{5}|d{3}$/)) {
+	if (!ga_type.match(/^[3]|[5]$/)) {
 		msg = "Invalid ga type (not 3 or 5)!";
 	}
-	if (!ga_result.match(/^\d{0}|d{1}$/)) {
+	if (!ga_result.match(/^[0-1]$/)) {
 		msg = "Invalid ga result (not 0 or 1)!";
 	}
 	if (!ga_opp_score.match(/^\d{1,4}$/)) {
 		msg = "Invalid opponent score (not an integer < 5000)!";
 	}
-	if (!ga_ground_terr.match(/^\d[0-3]$/)) {
+	if (!ga_ground_terr.match(/^[0-3]$/)) {
 		msg = "Invalid ga ground territory cleared number (not an integer between 0 and 3)!";
 	}
-	if (!ga_fleet_terr.match(/^\d[0-1]$/)) {
+	if (!ga_fleet_terr.match(/^[0-1]$/)) {
 		msg = "Invalid ga fleet territory cleared number (not an integer between 0 and 1)!";
 	}
-	if (!ga_gl_faced.match(/^\d[0-6]$/)) {
+	if (!ga_gl_faced.match(/^[0-6]$/)) {
 		msg = "Invalid ga Galactic Legend faced in defense number (not an integer between 0 and 6)!";
 	}
-	if (!ga_auto_def.match(/^\d{0}|d{1}$/)) {
+	if (!ga_auto_def.match(/^[0-1]$/)) {
 		msg = "Invalid ga auto defense indicator (not 0 or 1)!";
 	}
 
