@@ -37,7 +37,7 @@ const db_pool = mysql.createPool({
  * @param {string} allycode The target player
  */
 function checkGrandArenaRegistration(allycode) {
-	let sql_query = "SELECT allycode, round FROM `current_ga` WHERE allycode = "+parseInt(allycode)+" AND round = 0;"
+	let sql_query = "SELECT count(id) FROM `current_ga` WHERE allycode="+parseInt(allycode)+" AND round=0;"
 	console.log(logPrefix()+"SQL: "+sql_query);
 
 	db_pool.query(sql_query, function(exc, result) {
@@ -48,7 +48,7 @@ function checkGrandArenaRegistration(allycode) {
 			console.log(logPrefix()+"CheckGrandArenaRegister Exception:", otd);
 			return;
 		}
-		return result.length
+		return result
 	});
 }
 
@@ -56,7 +56,7 @@ function checkGrandArenaRegistration(allycode) {
  * @param {string} allycode The target player
  */
 function getInitializedGrandArenaValues(allycode) {
-	let sql_query = "SELECT * FROM `current_ga` WHERE allycode = "+parseInt(allycode)+" ORDER BY ts DESC LIMIT 1;"
+	let sql_query = "SELECT * FROM `current_ga` WHERE allycode="+parseInt(allycode)+" ORDER BY ts DESC LIMIT 1;"
 	console.log(logPrefix()+"SQL: "+sql_query);
 
 	db_pool.query(sql_query, function(exc, result) {
@@ -76,8 +76,8 @@ function getInitializedGrandArenaValues(allycode) {
  */
  exports.getPlayerGAs = function(player, message, callback) {
 	let allycode = player.allycode;
-	let sql_query = "SELECT * FROM `current_ga` WHERE allycode = "
-		+parseInt(allycode)+" AND round <> 0 ORDER BY round DESC LIMIT 12;"
+	let sql_query = "SELECT * FROM `current_ga` WHERE allycode="
+		+parseInt(allycode)+" AND round<>0 ORDER BY round DESC LIMIT 12;"
 	console.log(logPrefix()+"SQL: "+sql_query);
 
 	message.channel.send("Looking for DB stats for GAs for the ally: "+allycode+"...")
@@ -110,8 +110,8 @@ function getInitializedGrandArenaValues(allycode) {
  */
 exports.getPlayerStatsFromLatestGA = function(player, message, callback) {
 	let allycode = player.allycode;
-	let sql_query = "SELECT * FROM `current_ga` WHERE allycode = "
-		+parseInt(allycode)+" AND round <> 0 ORDER BY round DESC LIMIT 1;"
+	let sql_query = "SELECT * FROM `current_ga` WHERE allycode="
+		+parseInt(allycode)+" AND round<>0 ORDER BY round DESC LIMIT 1;"
 	console.log(logPrefix()+"SQL: "+sql_query);
 
 	message.channel.send("Looking for DB stats for the latest GA for the ally: "+allycode+"...")
