@@ -226,19 +226,17 @@ function registerPlayerForGrandArena(player, message) {
 /** Store ga stats in our database
  * @param {object} player The target player
  * @param {object} message The origin message (request)
-	 * @param {object} input_data data entered by the user
  */
 function registerGrandArenaResult(player, message) {
 	let initialValues = getInitializedGrandArenaValues(player.allycode);
-    console.log(logPrefix()+"registerGrandArenaResult: getInitializedGrandArenaValues: "+initialValues.length);
 	let input_data = player.ga_players_input;
 
+    console.log(logPrefix()+"registerGrandArenaResult: getInitializedGrandArenaValues: "+initialValues.length);
 	if (initialValues.length != 0) {
 		if (parseInt(initialValues[0].gaBannersEarned) == parseInt(player.gaBannersEarned)) {
 			message.channel.send(":red_circle: GA Data aren't updated yet, try again later.");
 			return;
 		} else {
-
             let computed_values = {
                 'defensive_win': parseInt(player.gaSuccessfulDefends) - parseInt(initialValues[0].total_defensive_win),
                 'undersize_win': parseInt(player.gaUndersizedSquadWins) - parseInt(initialValues[0].total_undersize_win),
@@ -276,9 +274,11 @@ function registerGrandArenaResult(player, message) {
 			});
 		}
 	} else {
-        msg = "No GA data registered. Try j.gar command."
-        console.warn(logPrefix()+"msg");
+        let msg = "No GA data registered. Try j.gar command."
+
+        console.warn(logPrefix()+msg);
         message.reply(msg);
+
         return;
     }
 }
