@@ -227,7 +227,7 @@ function registerPlayerForGrandArena(player, message) {
  * @param {object} player The target player
  * @param {object} message The origin message (request)
  */
-function registerGrandArenaResult(player, message) {
+registerGrandArenaResult = async function(player, message) {
 	let initialValues = await getInitializedGrandArenaValues(player.allycode);
 	let input_data = player.ga_players_input;
 
@@ -287,7 +287,7 @@ function registerGrandArenaResult(player, message) {
  * @param {object} player The target player
  * @param {object} message The origin message (request)
  */
-exports.grandArenaRegistration = function(player, message) {
+exports.grandArenaRegistration = async function(player, message) {
 	let allycode = player.allycode;
 
 	if (!allycode) {
