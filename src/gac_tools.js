@@ -36,7 +36,7 @@ const db_pool = mysql.createPool({
 /** Check if player is registered to current GA and return the initial stats
  * @param {string} allycode The target player
  */
-function checkGrandArenaRegistration(allycode) {
+checkGrandArenaRegistration = async function(allycode) {
 	let sql_query = "SELECT count(id) FROM `current_ga` WHERE allycode="+parseInt(allycode)+" AND round=0;"
 	console.log(logPrefix()+"SQL: "+sql_query);
 
@@ -46,16 +46,16 @@ function checkGrandArenaRegistration(allycode) {
 
 			// console.log("SQL:", sql);
 			console.log(logPrefix()+"CheckGrandArenaRegister Exception:", otd);
-			return;
+			return Promise.reject();
 		}
-		return result
+		return Promise.resolve(result)
 	});
 }
 
 /** Get the player's initial stats when he registered to the current GA
  * @param {string} allycode The target player
  */
-function getInitializedGrandArenaValues(allycode) {
+getInitializedGrandArenaValues = async function(allycode) {
 	let sql_query = "SELECT * FROM `current_ga` WHERE allycode="+parseInt(allycode)+" ORDER BY ts DESC LIMIT 1;"
 	console.log(logPrefix()+"SQL: "+sql_query);
 
@@ -65,9 +65,9 @@ function getInitializedGrandArenaValues(allycode) {
 
 			// console.log("SQL:", sql);
 			console.log(logPrefix()+"GetInitializedGrandArenaValues Exception:", otd);
-			return;
+			return Promise.reject();
 		}
-		return result
+		return Promise.resolve(result)
 	});
 }
 
@@ -228,7 +228,7 @@ function registerPlayerForGrandArena(player, message) {
  * @param {object} message The origin message (request)
  */
 function registerGrandArenaResult(player, message) {
-	let initialValues = getInitializedGrandArenaValues(player.allycode);
+	let initialValues = await getInitializedGrandArenaValues(player.allycode);
 	let input_data = player.ga_players_input;
 
     console.log(logPrefix()+"registerGrandArenaResult: getInitializedGrandArenaValues: "+initialValues.length);
@@ -295,7 +295,7 @@ exports.grandArenaRegistration = function(player, message) {
 		return;
 	}
 
-    let registered = checkGrandArenaRegistration(allycode);
+    let registered = await checkGrandArenaRegistration(allycode);
     console.log(logPrefix()+"grandArenaRegistration : checkGrandArenaRegistration = " +registered);
 
 	if (message.words.length == 0) {
