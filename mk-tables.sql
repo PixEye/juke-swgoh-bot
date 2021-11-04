@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host:  127.0.0.1:3306
--- Generated on:  2021-10-26 at 08:43
+-- Generated on:  jeu. 04 nov. 2021 à 15:51
 -- Version du serveur :  5.7.24
 -- Version de PHP :  7.2.14
 
@@ -36,6 +36,33 @@ CREATE TABLE IF NOT EXISTS `alliances` (
 -- --------------------------------------------------------
 
 --
+-- Structure of table `current_ga`
+--
+
+DROP TABLE IF EXISTS `current_ga`;
+CREATE TABLE IF NOT EXISTS `current_ga` (
+  `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `allycode` int(4) UNSIGNED NOT NULL,
+  `division` tinyint(1) UNSIGNED NOT NULL DEFAULT '10',
+  `type` tinyint(1) UNSIGNED NOT NULL DEFAULT '5',
+  `round` tinyint(1) UNSIGNED NOT NULL DEFAULT '0',
+  `ground_territory` int(4) UNSIGNED NOT NULL DEFAULT '0',
+  `fleet_territory` int(4) UNSIGNED NOT NULL DEFAULT '0',
+  `result` int(4) UNSIGNED NOT NULL DEFAULT '0',
+  `opponent_score` int(2) UNSIGNED NOT NULL DEFAULT '0',
+  `score` int(2) UNSIGNED NOT NULL DEFAULT '0',
+  `gl_faced` tinyint(1) UNSIGNED NOT NULL DEFAULT '0',
+  `auto_def` tinyint(1) UNSIGNED NOT NULL DEFAULT '0',
+  `defensive_win` int(4) UNSIGNED NOT NULL DEFAULT '0',
+  `undersize_win` int(4) UNSIGNED NOT NULL DEFAULT '0',
+  `ts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `allycode` (`allycode`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Structure of table `evols`
 --
 
@@ -44,7 +71,7 @@ CREATE TABLE IF NOT EXISTS `evols` (
   `ts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `allycode` int(4) UNSIGNED NOT NULL,
   `unit_id` varchar(32) COLLATE utf8_unicode_ci NOT NULL,
-  `new_value` int(8) UNSIGNED NOT NULL,
+  `new_value` int(4) UNSIGNED NOT NULL,
   `type` varchar(15) COLLATE utf8_unicode_ci NOT NULL,
   PRIMARY KEY (`id`),
   KEY `allycode` (`allycode`)
@@ -85,14 +112,14 @@ CREATE TABLE IF NOT EXISTS `tw_results` (
   `self_guild_id` varchar(15) COLLATE utf8_unicode_ci DEFAULT NULL,
   `self_guild_name` varchar(32) COLLATE utf8_unicode_ci DEFAULT NULL,
   `self_player_cnt` int(1) UNSIGNED NOT NULL,
-  `self_score` int(2) UNSIGNED NOT NULL,
-  `opp_score` int(2) UNSIGNED NOT NULL,
+  `self_score` int(4) NOT NULL,
+  `opp_score` int(4) NOT NULL,
   `opp_name` varchar(32) COLLATE utf8_unicode_ci DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
-  KEY `allycode` (`allycode`)
   UNIQUE KEY `self_guild_id` (`self_guild_id`),
+  KEY `allycode` (`allycode`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- --------------------------------------------------------
@@ -126,17 +153,17 @@ CREATE TABLE IF NOT EXISTS `units` (
 
 CREATE TABLE IF NOT EXISTS `users` (
   `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
-  `allycode` int(11) UNSIGNED NOT NULL,
+  `allycode` int(4) UNSIGNED NOT NULL,
   `discord_id` varchar(20) COLLATE utf8_unicode_ci DEFAULT NULL,
   `discord_name` varchar(32) COLLATE utf8_unicode_ci DEFAULT NULL,
   `game_name` varchar(32) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
   `guildRefId` varchar(16) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `gp` int(11) UNSIGNED DEFAULT NULL,
+  `gp` int(4) UNSIGNED DEFAULT NULL,
   `g12Count` tinyint(1) UNSIGNED DEFAULT NULL,
   `g13Count` tinyint(1) UNSIGNED DEFAULT NULL,
-  `giftCount` int(10) UNSIGNED NOT NULL DEFAULT '0',
+  `giftCount` int(4) UNSIGNED NOT NULL DEFAULT '0',
   `zetaCount` tinyint(1) UNSIGNED DEFAULT NULL,
-  `contestPoints` int(10) NOT NULL DEFAULT '0',
+  `contestPoints` int(4) NOT NULL DEFAULT '0',
   `isContestAdmin` tinyint(1) NOT NULL DEFAULT '0',
   `ts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `warnLevel` tinyint(1) UNSIGNED NOT NULL DEFAULT '0',
@@ -144,35 +171,6 @@ CREATE TABLE IF NOT EXISTS `users` (
   UNIQUE KEY `allycode` (`allycode`) USING BTREE,
   KEY `discord_id` (`discord_id`) USING BTREE,
   KEY `guildRefId` (`guildRefId`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-
--- --------------------------------------------------------
-
---
--- Structure of table `current_ga`
---
-
-CREATE TABLE IF NOT EXISTS `current_ga` (
-  `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
-  `allycode` int(4) UNSIGNED NOT NULL,
-  `division` tinyint(1) UNSIGNED NOT NULL DEFAULT '0',
-  `type` tinyint(1) UNSIGNED NOT NULL DEFAULT '0',
-  `round` tinyint(1) UNSIGNED NOT NULL DEFAULT '0',
-  `ground_territory` int(4) UNSIGNED NOT NULL DEFAULT '0',
-  `fleet_territory` int(4) UNSIGNED NOT NULL DEFAULT '0',
-  `result` tinyint(1) UNSIGNED NOT NULL DEFAULT '0',
-  `opponent_score` int(4) UNSIGNED NOT NULL DEFAULT '0',
-  `score` int(4) UNSIGNED NOT NULL DEFAULT '0',
-  `total_score` int(4) UNSIGNED NOT NULL DEFAULT '0',
-  `gl_faced` tinyint(1) UNSIGNED NOT NULL DEFAULT '0',
-  `auto_def` tinyint(1) UNSIGNED NOT NULL DEFAULT '0',
-  `defensive_win` int(4) UNSIGNED NOT NULL DEFAULT '0',
-  `undersize_win` int(4) UNSIGNED NOT NULL DEFAULT '0',
-  `total_defensive_win` int(4) UNSIGNED NOT NULL DEFAULT '0',
-  `total_undersize_win` int(4) UNSIGNED NOT NULL DEFAULT '0',
-  `ts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`),
-  KEY `allycode` (`allycode`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 COMMIT;
 
