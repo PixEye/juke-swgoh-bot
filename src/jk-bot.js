@@ -737,11 +737,11 @@ client.on("message", (message) => {
 		case "reggrandarena":
 		case "registergrandarena":
 			if (allycode) {
-				tools.getPlayerStats(player, message, gacTools.grandArenaRegistration);
+				tools.getPlayerStats(player, message, gacTools.checkGrandArenaRegistration);
 			} else {
 				console.log(logPrefix()+"Try with Discord ID:", user.id);
 				tools.getPlayerFromDiscordUser(user, message, player => {
-					tools.getPlayerStats(player, message, gacTools.grandArenaRegistration);
+					tools.getPlayerStats(player, message, gacTools.checkGrandArenaRegistration);
 				});
 			}
 			break;
