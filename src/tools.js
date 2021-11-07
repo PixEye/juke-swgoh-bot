@@ -1722,14 +1722,22 @@ exports.territoryWarReg = function(player, message) {
 	let opp_score = message.words.shift();
 
 	if (!self_player_cnt.match(/^\d{1,2}$/)) {
-		msg = "Invalid self player count (not an integer < 100)!";
+		msg = "Invalid self player count (not a 2 digits integer)!";
 	}
+	self_player_cnt = parseInt(self_player_cnt);
+	if (self_player_cnt<12 || self_player_cnt>50) {
+		msg = "Invalid self player count (not an integer <= 50)!";
+	}
+
 	if (!self_score.match(/^\d{1,5}$/)) {
-		msg = "Invalid self score (not an integer < 100)!";
+		msg = "Invalid self score!";
 	}
+	self_score = parseInt(self_score);
+
 	if (!opp_score.match(/^\d{1,5}$/)) {
-		msg = "Invalid opponent score (not an integer < 100)!";
+		msg = "Invalid opponent score!";
 	}
+	opp_score = parseInt(opp_score);
 
 	if (msg.trim()!=="") {
 		console.log(msg);
@@ -1745,9 +1753,9 @@ exports.territoryWarReg = function(player, message) {
 		"allycode": player.allycode,
 		"self_guild_id": str(player.guildRefId),
 		"self_guild_name": str(player.guildName),
-		"self_player_cnt": parseInt(self_player_cnt),
-		"self_score": parseInt(self_score),
-		"opp_score": parseInt(opp_score),
+		"self_player_cnt": self_player_cnt,
+		"self_score": self_score,
+		"opp_score": opp_score,
 		"opp_name": str(message.words.join(" "))
 	};
 
