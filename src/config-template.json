@@ -20,7 +20,7 @@
     "conMaxCount": 10,
     "host": "localhost",
     "name": "swgoh",
-    "pw":   "****************",
+    "pass": "****************",
     "user": "jsb"
   },
   "discord": {
@@ -40,6 +40,6 @@
   },
   "swapi": {
     "user": "<your api.swgoh.help login>",
-    "pwd": "<your api.swgoh.help password>"
+    "pass": "<your api.swgoh.help password>"
   }
 }

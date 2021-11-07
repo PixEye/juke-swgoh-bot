@@ -32,7 +32,7 @@ let config = require("./config.json");
 const ApiSwgohHelp = require("api-swgoh-help");
 const swapi = new ApiSwgohHelp({
 	"username": config.swapi.user,
-	"password": config.swapi.pwd
+	"password": config.swapi.pass
 });
 
 /** Get player(s)' data from the SWGoH Help API

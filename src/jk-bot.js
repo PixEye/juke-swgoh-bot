@@ -34,7 +34,7 @@ let db_pool = mysql.createPool({
 	"connectionLimit": config.db.conMaxCount,
 	"database"       : config.db.name,
 	"host"           : config.db.host,
-	"password"       : config.db.pw,
+	"password"       : config.db.pass,
 	"user"           : config.db.user
 });
 

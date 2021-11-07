@@ -29,7 +29,7 @@ const db_pool = mysql.createPool({
 	connectionLimit: config.db.conMaxCount,
 	database	   : config.db.name,
 	host		   : config.db.host,
-	password	   : config.db.pw,
+	password	   : config.db.pass,
 	user		   : config.db.user
 });
 
@@ -70,7 +70,7 @@ const db_pool = mysql.createPool({
 			console.log(logPrefix()+"GetInitializedGrandArenaValues Exception:", otd);
 			return;
 		}
-        
+
 		if (typeof(callback)==="function") callback(player, message, result);
 	});
 }
