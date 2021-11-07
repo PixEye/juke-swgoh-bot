@@ -34,9 +34,11 @@ const db_pool = mysql.createPool({
 });
 
 /** Check if player is registered to current GA and return the initial stats
- * @param {string} allycode The target player
+ * @param {Object} player The target player
+ * @param {Object} message The origin message (request)
  */
-checkGrandArenaRegistration = async function(allycode) {
+ exports.checkGrandArenaRegistration = function(player, message) {
+    let allycode = player.allycode;
 	let sql_query = "SELECT count(id) FROM `current_ga` WHERE allycode="+parseInt(allycode)+" AND round=0;"
 	console.log(logPrefix()+"SQL: "+sql_query);
 
@@ -46,16 +48,17 @@ checkGrandArenaRegistration = async function(allycode) {
 
 			// console.log("SQL:", sql);
 			console.log(logPrefix()+"CheckGrandArenaRegister Exception:", otd);
-			return Promise.reject();
+			return;
 		}
-		return Promise.resolve(result)
+		exports.grandArenaRegistration(player, message, result);
 	});
 }
 
 /** Get the player's initial stats when he registered to the current GA
- * @param {string} allycode The target player
+ * @param {object} player The target player
+ * @param {object} message The origin message (request)
  */
-getInitializedGrandArenaValues = async function(allycode) {
+ exports.getInitializedGrandArenaValues = function(player, message, callback) {
 	let sql_query = "SELECT * FROM `current_ga` WHERE allycode="+parseInt(allycode)+" ORDER BY ts DESC LIMIT 1;"
 	console.log(logPrefix()+"SQL: "+sql_query);
 
@@ -65,14 +68,16 @@ getInitializedGrandArenaValues = async function(allycode) {
 
 			// console.log("SQL:", sql);
 			console.log(logPrefix()+"GetInitializedGrandArenaValues Exception:", otd);
-			return Promise.reject();
+			return;
 		}
-		return Promise.resolve(result)
+        
+		if (typeof(callback)==="function") callback(player, message, result);
 	});
 }
 
 /** Get the player's registered GAs
- * @param {string} allycode The target player
+ * @param {object} player The target player
+ * @param {object} message The origin message (request)
  */
  exports.getPlayerGAs = function(player, message, callback) {
 	let allycode = player.allycode;
@@ -106,7 +111,8 @@ getInitializedGrandArenaValues = async function(allycode) {
 }
 
 /** Get the player's stats from the latest GA
- * @param {string} allycode The target player
+ * @param {object} player The target player
+ * @param {object} message The origin message (request)
  */
 exports.getPlayerStatsFromLatestGA = function(player, message, callback) {
 	let allycode = player.allycode;
@@ -227,8 +233,8 @@ function registerPlayerForGrandArena(player, message) {
  * @param {object} player The target player
  * @param {object} message The origin message (request)
  */
-registerGrandArenaResult = async function(player, message) {
-	let initialValues = await getInitializedGrandArenaValues(player.allycode);
+exports.registerGrandArenaResult = function(player, message, initialValues) {
+	let initialValues = getInitializedGrandArenaValues(player.allycode);
 	let input_data = player.ga_players_input;
 
     console.log(logPrefix()+"registerGrandArenaResult: getInitializedGrandArenaValues: "+initialValues.length);
@@ -287,7 +293,7 @@ registerGrandArenaResult = async function(player, message) {
  * @param {object} player The target player
  * @param {object} message The origin message (request)
  */
-exports.grandArenaRegistration = async function(player, message) {
+exports.grandArenaRegistration = function(player, message, registered) {
 	let allycode = player.allycode;
 
 	if (!allycode) {
@@ -295,7 +301,6 @@ exports.grandArenaRegistration = async function(player, message) {
 		return;
 	}
 
-    let registered = await checkGrandArenaRegistration(allycode);
     console.log(logPrefix()+"grandArenaRegistration : checkGrandArenaRegistration = " +registered);
 
 	if (message.words.length == 0) {
@@ -373,7 +378,8 @@ exports.grandArenaRegistration = async function(player, message) {
 	}
 
 	player.ga_players_input = input_data;
-	registerGrandArenaResult(player, message);
+
+    exports.getInitializedGrandArenaValues(player, message, registerGrandArenaResult);
 
 	return;
 };
