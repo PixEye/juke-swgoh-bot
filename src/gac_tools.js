@@ -58,7 +58,7 @@ const db_pool = mysql.createPool({
  * @param {object} player The target player
  * @param {object} message The origin message (request)
  */
- exports.getInitializedGrandArenaValues = function(player, message, callback) {
+ exports.getInitializedGrandArenaValues = function(player, message) {
 	let sql_query = "SELECT * FROM `current_ga` WHERE allycode="+parseInt(allycode)+" ORDER BY ts DESC LIMIT 1;"
 	console.log(logPrefix()+"SQL: "+sql_query);
 
@@ -71,7 +71,7 @@ const db_pool = mysql.createPool({
 			return;
 		}
 
-		if (typeof(callback)==="function") callback(player, message, result);
+		exports.registerGrandArenaResult(player, message, result);
 	});
 }
 
@@ -379,7 +379,7 @@ exports.grandArenaRegistration = function(player, message, registered) {
 
 	player.ga_players_input = input_data;
 
-    exports.getInitializedGrandArenaValues(player, message, registerGrandArenaResult);
+    exports.getInitializedGrandArenaValues(player, message);
 
 	return;
 };
