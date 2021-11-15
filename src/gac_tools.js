@@ -59,6 +59,7 @@ const db_pool = mysql.createPool({
  * @param {object} message The origin message (request)
  */
  exports.getInitializedGrandArenaValues = function(player, message) {
+	let allycode = player.allycode;
 	let sql_query = "SELECT * FROM `current_ga` WHERE allycode="+parseInt(allycode)+" ORDER BY ts DESC LIMIT 1;"
 	console.log(logPrefix()+"SQL: "+sql_query);
 
@@ -234,7 +235,7 @@ function registerPlayerForGrandArena(player, message) {
  * @param {object} message The origin message (request)
  */
 exports.registerGrandArenaResult = function(player, message, initialValues) {
-	let initialValues = getInitializedGrandArenaValues(player.allycode);
+	// let initialValues = getInitializedGrandArenaValues(player.allycode);
 	let input_data = player.ga_players_input;
 
     console.log(logPrefix()+"registerGrandArenaResult: getInitializedGrandArenaValues: "+initialValues.length);
@@ -245,7 +246,7 @@ exports.registerGrandArenaResult = function(player, message, initialValues) {
 		} else {
             let computed_values = {
                 'defensive_win': parseInt(player.gaSuccessfulDefends) - parseInt(initialValues[0].total_defensive_win),
-                'undersize_win': parseInt(player.gaUndersizedSquadWins) - parseInt(initialValues[0].total_undersize_win),
+                'undersize_win': parseInt(player.gaUndersizedSquadWins)-parseInt(initialValues[0].total_undersize_win),
                 'score': parseInt(player.gaBannersEarned) - parseInt(initialValues[0].total_score),
                 'round': parseInt(initialValues[0].round) + 1
             }
