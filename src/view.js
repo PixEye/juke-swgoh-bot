@@ -349,6 +349,7 @@ exports.showLastEvols = function(player, message, evols) {
 	let giftCnt = 0;
 	let i = 0;
 	let lines = [];
+	let low_words = message.words.join("").toLowerCase();
 	let maxDays = 10;
 	let maxDt = 0;
 	let maxLines = 10;
@@ -399,7 +400,6 @@ exports.showLastEvols = function(player, message, evols) {
 				msg+= " :unlock:";
 				break;
 			case "newGifts": {
-				let low_words = message.words.join("").toLowerCase();
 				if (low_words==="hidegifts" || low_words==="hg") {
 					gaveItemsCnt += e.new_value;
 					++giftCnt;
@@ -621,17 +621,21 @@ exports.showPlayerStats = function(player, message) {
 
 	lines = [
 		"**Divsion:** "+ga_stats.division,
-		"**Result: ** "+parseInt(ga_stats.result) == 1 ? "win" : "loss"+ " - " + player.name + ": " + ga_stats.score + " vs " + ga_stats.opponent_score,
+		"**Result: ** "+parseInt(ga_stats.result) == 1? "win": "loss"
+			+ " - " + player.name + ": " + ga_stats.score + " vs " + ga_stats.opponent_score,
 		"",
-		"**Ground territories efficienty:** "+ ((parseInt(ga_stats.ground_territory)/3).toFixed(1)*100) + "%" + " - " +
-		"**Fleet territory efficienty:** "+ parseInt(ga_stats.fleet_territory)*100 + "%",
+		"**Ground territories efficienty:** "+ ((parseInt(ga_stats.ground_territory)/3).toFixed(1)*100) + "%"
+			+ " - " + "**Fleet territory efficienty:** "+ parseInt(ga_stats.fleet_territory)*100 + "%",
 		"",
-		"**Auto defense ?** "+ parseInt(ga_stats.auto_def) == 1 ? "yes" : "no" + " - " + "**GL faced on defense:** "+ ga_stats.gl_faced,
+		"**Auto defense ?** "+ parseInt(ga_stats.auto_def) == 1? "yes": "no"
+			+ " - " + "**GL faced on defense:** "+ ga_stats.gl_faced,
 		"",
-		"**Number of undersized wins:** "+ga_stats.undersize_win + " - " + "**Number of defensive wins:** "+ga_stats.defensive_win
+		"**Number of undersized wins:** "+ga_stats.undersize_win + " - "
+			+ "**Number of defensive wins:** "+ga_stats.defensive_win
 	];
 
-	let richMsg = new RichEmbed().setTitle(player.name+"'s " + parseInt(ga_stats.type) == 5 ? "5v5" : "3v3" + " GA - Round " + ga_stats.round).setColor("GREEN")
+	let richMsg = new RichEmbed().setTitle(player.name+"'s " + parseInt(ga_stats.type) == 5?
+		"5v5" : "3v3" + " GA - Round " + ga_stats.round).setColor("GREEN")
 		.setDescription(lines).setTimestamp(player.updated)
 		.setFooter(config.footer.message, config.footer.iconUrl);
 
