@@ -617,9 +617,13 @@ exports.getGuildStats = function(player, message, callback) {
 exports.getLastEvolsFromDb = function(player, message) {
 	let allycode = player.allycode;
 	let logPrefix = exports.logPrefix; // shortcut
-	let sql = "SELECT * FROM `evols`"+
-		" WHERE allycode="+parseInt(allycode)+
-		" ORDER BY `ts` DESC LIMIT 50";
+	let low_words = message.words.join("").toLowerCase();
+	let sql = "SELECT * FROM `evols` WHERE allycode="+parseInt(allycode);
+
+	if (low_words==="hidegifts" || low_words==="hg") {
+		sql += " AND type <> 'newGifts'";
+	}
+	sql += " ORDER BY `ts` DESC LIMIT 50";
 
 	db_pool.query(sql, function(exc, result) {
 		if (exc) {
