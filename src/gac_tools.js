@@ -249,7 +249,12 @@ exports.registerGrandArenaResult = function(player, message, initialValues) {
                 'undersize_win': parseInt(player.gaUndersizedSquadWins)-parseInt(initialValues[0].total_undersize_win),
                 'score': parseInt(player.gaBannersEarned) - parseInt(initialValues[0].total_score),
                 'round': parseInt(initialValues[0].round) + 1
-            }
+            };
+
+			console.log(logPrefix()+"registerGrandArenaResult: computed_values defensive win: "+computed_values.defensive_win);
+			console.log(logPrefix()+"registerGrandArenaResult: computed_values undersize win: "+computed_values.undersize_win);
+			console.log(logPrefix()+"registerGrandArenaResult: computed_values score: "+computed_values.score);
+			console.log(logPrefix()+"registerGrandArenaResult: computed_values round: "+computed_values.round);
 
 			let sql_query = "INSERT INTO `current_ga`\n"+
 				"(`allycode`, `division`, `type`, `round`, `ground_territory`, `fleet_territory`,"+
