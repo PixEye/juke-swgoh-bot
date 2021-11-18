@@ -1589,7 +1589,6 @@ exports.territoryWarGet = function(player, message) {
 	const sql = "SELECT DATE_FORMAT(created_at, '%Y-%m-%d %T') AS created_time"+
 		", self_guild_name, self_player_cnt, self_score"+
 		", (self_score - opp_score) AS score_diff, opp_score, opp_name"+
-	//	", DATE_FORMAT(updated_at, '%Y-%m-%d %T') AS updated_dt"+
 		" FROM `tw_results` ORDER BY score_diff DESC"; // best guilds first
 	const MINUTES_BEFORE_CLEANUP = 1;
 
@@ -1618,20 +1617,24 @@ exports.territoryWarGet = function(player, message) {
 		result.forEach(record => {
 			// reorder starting with:
 			let newRecord = {
-				"Created at": record.created_hd,
-				"Updated at": record.updated_hd,
+				"Created at": record.created_time,
 				"Self guild name": record.self_guild_name,
-				"Score diff": record.score_diff
+				"Self player count": record.self_player_cnt,
+				"Self score": record.self_score,
+				"Score diff": record.score_diff,
+				"Opp score": record.opp_score,
+				"Opp name": record.opp_name
 			};
 
 			// clean up:
-			delete record.created_at;
-			delete record.created_hd;
-			delete record.id;
+			delete record.created_time;
 			delete record.self_guild_name;
+			delete record.self_player_cnt;
+			delete record.self_score;
 			delete record.score_diff;
-			delete record.updated_at;
-			delete record.updated_hd;
+			delete record.opp_score;
+			delete record.opp_name;
+			delete record.updated_at; // */
 
 			Object.keys(record).forEach((k) => {
 				newRecord[k] = record[k];
@@ -1640,7 +1643,6 @@ exports.territoryWarGet = function(player, message) {
 
 			if (! ln++) lines.push(Object.keys(record).map(exports.trUnderToSpaces).join(sep)); // headers
 
-			record.discord_id = "'" + record.discord_id;
 			lines.push(Object.values(record).join(sep));
 		});
 		console.log(logPrefix()+msg, n, lines.length, filename);
