@@ -1586,12 +1586,11 @@ exports.territoryWarGet = function(player, message) {
 	const filename = "../data/gt.csv";
 	const logPrefix = exports.logPrefix; // shortcut
 	const sep = ";";
-	const sql = "SELECT *"+
-		", DATE_FORMAT(created_at, '%Y-%m-%d %T') AS created_hd"+
-		", DATE_FORMAT(updated_at, '%Y-%m-%d %T') AS updated_hd"+
-		", (self_score - opp_score) AS score_diff"+
-		" FROM `tw_results`"+
-		" ORDER BY id DESC"; // most recent first
+	const sql = "SELECT DATE_FORMAT(created_at, '%Y-%m-%d %T') AS created_time"+
+		", self_guild_name, self_player_cnt, self_score"+
+		", (self_score - opp_score) AS score_diff, opp_score, opp_name"+
+	//	", DATE_FORMAT(updated_at, '%Y-%m-%d %T') AS updated_dt"+
+		" FROM `tw_results` ORDER BY score_diff DESC"; // best guilds first
 	const MINUTES_BEFORE_CLEANUP = 1;
 
 	let lines = [];
