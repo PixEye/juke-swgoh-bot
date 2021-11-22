@@ -38,8 +38,8 @@ const db_pool = mysql.createPool({
  * @param {Object} message The origin message (request)
  */
  exports.checkGrandArenaRegistration = function(player, message) {
-    let allycode = player.allycode;
-	let sql_query = "SELECT count(id) FROM `current_ga` WHERE allycode="+parseInt(allycode)+" AND round=0;"
+	let allycode = player.allycode;
+	let sql_query = "SELECT count(id) AS cnt FROM `current_ga` WHERE allycode="+parseInt(allycode)+" AND round=0;"
 	console.log(logPrefix()+"SQL: "+sql_query);
 
 	db_pool.query(sql_query, function(exc, result) {
@@ -207,10 +207,10 @@ function registerPlayerForGrandArena(player, message) {
 		+ "(`allycode`, `division`, `type`, `round`, `ground_territory`"
 		+ ", `fleet_territory`, `result`, `opponent_score`, `score`, `total_score`"
 		+ ", `gl_faced`, `auto_def`, `defensive_win`, `undersize_win`"
-        +", `total_defensive_win`, `total_undersize_win`)\n"
+		+", `total_defensive_win`, `total_undersize_win`)\n"
 		+ "VALUES ("+parseInt(player.allycode)+", "+division+", 0, 0, 0, 0, 0, 0, 0, "
 		+parseInt(player.gaBannersEarned)+", 0, 0, 0, 0, "+parseInt(player.gaSuccessfulDefends)
-        +", "+parseInt(player.gaUndersizedSquadWins)+");"
+		+", "+parseInt(player.gaUndersizedSquadWins)+");"
 	console.log(logPrefix()+"SQL: "+sql_query);
 
 	db_pool.query(sql_query, function(exc, result) {
@@ -238,23 +238,27 @@ exports.registerGrandArenaResult = function(player, message, initialValues) {
 	// let initialValues = getInitializedGrandArenaValues(player.allycode);
 	let input_data = player.ga_players_input;
 
-    console.log(logPrefix()+"registerGrandArenaResult: getInitializedGrandArenaValues: "+initialValues.length);
+	console.log(logPrefix()+"registerGrandArenaResult: getInitializedGrandArenaValues: "+initialValues.length);
 	if (initialValues.length != 0) {
 		if (parseInt(initialValues[0].gaBannersEarned) == parseInt(player.gaBannersEarned)) {
 			message.channel.send(":red_circle: GA Data aren't updated yet, try again later.");
 			return;
 		} else {
-            let computed_values = {
-                'defensive_win': parseInt(player.gaSuccessfulDefends) - parseInt(initialValues[0].total_defensive_win),
-                'undersize_win': parseInt(player.gaUndersizedSquadWins)-parseInt(initialValues[0].total_undersize_win),
-                'score': parseInt(player.gaBannersEarned) - parseInt(initialValues[0].total_score),
-                'round': parseInt(initialValues[0].round) + 1
-            };
+			let computed_values = {
+				'defensive_win': parseInt(player.gaSuccessfulDefends) - parseInt(initialValues[0].total_defensive_win),
+				'undersize_win': parseInt(player.gaUndersizedSquadWins)-parseInt(initialValues[0].total_undersize_win),
+				'score': parseInt(player.gaBannersEarned) - parseInt(initialValues[0].total_score),
+				'round': parseInt(initialValues[0].round) + 1
+			};
 
-			console.log(logPrefix()+"registerGrandArenaResult: computed_values defensive win: "+computed_values.defensive_win);
-			console.log(logPrefix()+"registerGrandArenaResult: computed_values undersize win: "+computed_values.undersize_win);
-			console.log(logPrefix()+"registerGrandArenaResult: computed_values score: "+computed_values.score);
-			console.log(logPrefix()+"registerGrandArenaResult: computed_values round: "+computed_values.round);
+			console.log(logPrefix()+"registerGrandArenaResult: computed_values defensive win: "
+				+computed_values.defensive_win);
+			console.log(logPrefix()+"registerGrandArenaResult: computed_values undersize win: "
+				+computed_values.undersize_win);
+			console.log(logPrefix()+"registerGrandArenaResult: computed_values score: "
+				+computed_values.score);
+			console.log(logPrefix()+"registerGrandArenaResult: computed_values round: "
+				+computed_values.round);
 
 			let sql_query = "INSERT INTO `current_ga`\n"+
 				"(`allycode`, `division`, `type`, `round`, `ground_territory`, `fleet_territory`,"+
@@ -264,9 +268,9 @@ exports.registerGrandArenaResult = function(player, message, initialValues) {
 				+input_data.type+", "+computed_values.round+", "+input_data.ground_terr
 				+", "+input_data.fleet_terr+", "+input_data.result+", "+input_data.opp_score
 				+", "+computed_values.score+", "+parseInt(player.gaBannersEarned)
-                +", "+input_data.gl_faced+", "+input_data.auto_def
+				+", "+input_data.gl_faced+", "+input_data.auto_def
 				+", "+computed_values.defensive_win+", "+computed_values.undersize_win
-                +", "+parseInt(player.gaSuccessfulDefends)+", "+parseInt(player.gaUndersizedSquadWins)+");"
+				+", "+parseInt(player.gaSuccessfulDefends)+", "+parseInt(player.gaUndersizedSquadWins)+");"
 			console.log(logPrefix()+"SQL: "+sql_query);
 
 			db_pool.query(sql_query, function(exc, result) {
@@ -286,13 +290,13 @@ exports.registerGrandArenaResult = function(player, message, initialValues) {
 			});
 		}
 	} else {
-        let msg = "No GA data registered. Try j.gar command."
+		let msg = "No GA data registered. Try j.gar command."
 
-        console.warn(logPrefix()+msg);
-        message.reply(msg);
+		console.warn(logPrefix()+msg);
+		message.reply(msg);
 
-        return;
-    }
+		return;
+	}
 }
 
 /** Handle ga registration and results delivery in our database
@@ -307,7 +311,8 @@ exports.grandArenaRegistration = function(player, message, registered) {
 		return;
 	}
 
-    console.log(logPrefix()+"grandArenaRegistration : checkGrandArenaRegistration = " +JSON.stringify(registered));
+	console.log(logPrefix()+"grandArenaRegistration : checkGrandArenaRegistration = "+JSON.stringify(registered));
+	registered = registered[0].cnt;
 
 	if (message.words.length == 0) {
 		if (registered != 0) {
@@ -365,7 +370,6 @@ exports.grandArenaRegistration = function(player, message, registered) {
 		msg = "Invalid ga auto defense indicator (not 0 or 1)!";
 	}
 
-
 	if (msg.trim()!=="") {
 		console.log(msg);
 		message.reply(msg);
@@ -385,7 +389,7 @@ exports.grandArenaRegistration = function(player, message, registered) {
 
 	player.ga_players_input = input_data;
 
-    exports.getInitializedGrandArenaValues(player, message);
+	exports.getInitializedGrandArenaValues(player, message);
 
 	return;
 };
