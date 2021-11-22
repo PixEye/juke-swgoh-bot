@@ -311,12 +311,8 @@ exports.grandArenaRegistration = function(player, message, registered) {
 		return;
 	}
 
-<<<<<<< HEAD
-    console.log(logPrefix()+"grandArenaRegistration : checkGrandArenaRegistration = " +JSON.stringify(registered));
-=======
 	console.log(logPrefix()+"grandArenaRegistration : checkGrandArenaRegistration = "+JSON.stringify(registered));
 	registered = registered[0].cnt;
->>>>>>> 85eca186120abb9274bbe4d39d2c04dcf357923b
 
 	if (message.words.length == 0) {
 		if (registered != 0) {
