@@ -235,12 +235,11 @@ function registerPlayerForGrandArena(player, message) {
  * @param {object} message The origin message (request)
  */
 exports.registerGrandArenaResult = function(player, message, initialValues) {
-	// let initialValues = getInitializedGrandArenaValues(player.allycode);
 	let input_data = player.ga_players_input;
 
 	console.log(logPrefix()+"registerGrandArenaResult: getInitializedGrandArenaValues: "+initialValues.length);
 	if (initialValues.length != 0) {
-		if (parseInt(initialValues[0].gaBannersEarned) == parseInt(player.gaBannersEarned)) {
+		if (parseInt(player.gaBannersEarned) == parseInt(initialValues[0].total_score)) {
 			message.channel.send(":red_circle: GA Data aren't updated yet, try again later.");
 			return;
 		} else {
@@ -264,7 +263,7 @@ exports.registerGrandArenaResult = function(player, message, initialValues) {
 				"(`allycode`, `division`, `type`, `round`, `ground_territory`, `fleet_territory`,"+
 				" `result`, `opponent_score`, `score`, `total_score`, `gl_faced`, `auto_def`, `defensive_win`,"+
 				" `undersize_win`, `total_defensive_win`, `total_undersize_win`)\n"+
-				"VALUES ("+parseInt(player.allycode)+", "+initialValues[0].division+" "
+				"VALUES ("+parseInt(player.allycode)+", "+initialValues[0].division+", "
 				+input_data.type+", "+computed_values.round+", "+input_data.ground_terr
 				+", "+input_data.fleet_terr+", "+input_data.result+", "+input_data.opp_score
 				+", "+computed_values.score+", "+parseInt(player.gaBannersEarned)
