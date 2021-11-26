@@ -577,7 +577,7 @@ exports.showPlayerStats = function(player, message) {
 	let lines = [];
 	let logPrefix = exports.logPrefix; // shortcut
 
-	if (!player.name) {
+	if (!player.game_name) {
 		console.log(logPrefix()+"invalid name at V55 for user:", player);
 		return;
 	}
@@ -590,7 +590,7 @@ exports.showPlayerStats = function(player, message) {
 		);
 	});
 
-	let richMsg = new RichEmbed().setTitle(player.name+"'s registered  GAs").setColor("GREEN")
+	let richMsg = new RichEmbed().setTitle(player.game_name+"'s registered  GAs").setColor("GREEN")
 		.setDescription(lines).setTimestamp(player.updated)
 		.setFooter(config.footer.message, config.footer.iconUrl);
 
@@ -614,7 +614,7 @@ exports.showPlayerStats = function(player, message) {
 	let lines = [];
 	let logPrefix = exports.logPrefix; // shortcut
 
-	if (!player.name) {
+	if (!player.game_name) {
 		console.log(logPrefix()+"invalid name at V55 for user:", player);
 		return;
 	}
@@ -622,7 +622,7 @@ exports.showPlayerStats = function(player, message) {
 	lines = [
 		"**Divsion:** "+ga_stats.division,
 		"**Result: ** "+parseInt(ga_stats.result) == 1? "win": "loss"
-			+ " - " + player.name + ": " + ga_stats.score + " vs " + ga_stats.opponent_score,
+			+ " - " + player.game_name + ": " + ga_stats.score + " vs " + ga_stats.opponent_score,
 		"",
 		"**Ground territories efficienty:** "+ ((parseInt(ga_stats.ground_territory)/3).toFixed(1)*100) + "%"
 			+ " - " + "**Fleet territory efficienty:** "+ parseInt(ga_stats.fleet_territory)*100 + "%",
@@ -634,7 +634,7 @@ exports.showPlayerStats = function(player, message) {
 			+ "**Number of defensive wins:** "+ga_stats.defensive_win
 	];
 
-	let richMsg = new RichEmbed().setTitle(player.name+"'s " + parseInt(ga_stats.type) == 5?
+	let richMsg = new RichEmbed().setTitle(player.game_name+"'s " + parseInt(ga_stats.type) == 5?
 		"5v5" : "3v3" + " GA - Round " + ga_stats.round).setColor("GREEN")
 		.setDescription(lines).setTimestamp(player.updated)
 		.setFooter(config.footer.message, config.footer.iconUrl);
