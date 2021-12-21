@@ -350,26 +350,21 @@ exports.showLastEvols = function(player, message, evols) {
 	let i = 0;
 	let lines = [];
 	let low_words = message.words.join("").toLowerCase();
-	let maxDays = 10;
-	let maxDt = 0;
 	let maxLines = 10;
-	let maxPeriod = 24000 * 3600 * maxDays;
 	let n = 0;
-	let now = new Date();
-	let lastEvols = evols.filter(function(evol) {
-		if (typeof(evol.ts)==="string") {
-			evol.ts = new Date(); // was: (evol.ts)
-			++n;
-		}
-		return (now.getTime() - evol.ts) < maxPeriod;
-	});
 	let logPrefix = exports.logPrefix; // shortcut
 
+	evols.forEach((e) => {
+		if (typeof e.ts === "string") {
+			e.ts = new Date(); // was: (evol.ts)
+			++n;
+		}
+	});
 	if (n) {
 		console.warn(logPrefix()+"Had to transform %d string(s) to date(s)", n);
 	}
 
-	n = lastEvols.length;
+	n = evols.length;
 	console.log(logPrefix()+"%d evol(s) found.", n);
 	// console.dir(player.unitsData);
 
@@ -377,20 +372,19 @@ exports.showLastEvols = function(player, message, evols) {
 		let msg = "";
 
 		color = "ORANGE";
-		msg = "No evolution registered in this roster for the last "+maxDays+" days";
+		msg = "No evolution registered in this roster for the moment";
 		console.log(logPrefix()+msg);
 		message.channel.send(msg+".");
 		return;
 	}
 
-	lastEvols.forEach(function(e) {
+	evols.forEach(function(e) {
 		let dt = e.ts.toDateString() // take timestamp from evolution e
 			.replace(/ \d{4}/, ""); // remove the year
 		let msg = "`"+dt+":` ";
 		let uid = e.unit_id;
 
 		msg += unitRealNames[uid] || uid;
-		maxDt = (e.ts>maxDt)? e.ts: maxDt;
 
 		switch(e.type) {
 			case "gear":
@@ -432,15 +426,12 @@ exports.showLastEvols = function(player, message, evols) {
 		++i;
 	});
 
-	if (!maxDt) maxDt = message.createdTimestamp;
-	else maxDt = new Date(maxDt);
-
 	if (giftCnt) {
 		lines.push(giftCnt+" gift(s) of total "+gaveItemsCnt+" item(s) hidden.");
 	}
 
 	let richMsg = new RichEmbed()
-		.setTitle(player.name+"'s "+n+" evolution(s) in the last "+maxDays+" days")
+		.setTitle(player.name+"'s "+n+" last evolution(s)")
 		.setDescription(lines).setColor(color).setTimestamp(player.updated)
 		.setFooter(config.footer.message, config.footer.iconUrl);
 
@@ -640,7 +631,8 @@ exports.showPlayerStats = function(player, message) {
 		"**Number of defensive wins:** "+ga_stats.defensive_win
 	];
 
-	let richMsg = new RichEmbed().setTitle(player.game_name+"'s " + type + " GA - Round " + ga_stats.round).setColor("GREEN")
+	let richMsg = new RichEmbed().setColor("GREEN")
+		.setTitle(player.game_name+"'s " + type + " GA - Round " + ga_stats.round)
 		.setDescription(lines).setTimestamp(player.updated)
 		.setFooter(config.footer.message, config.footer.iconUrl);
 

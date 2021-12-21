@@ -623,7 +623,7 @@ exports.getLastEvolsFromDb = function(player, message) {
 	if (low_words==="hidegifts" || low_words==="hg") {
 		sql += " AND type <> 'newGifts'";
 	}
-	sql += " ORDER BY `ts` DESC LIMIT 50";
+	sql += " ORDER BY `ts` DESC LIMIT 10";
 
 	db_pool.query(sql, function(exc, result) {
 		if (exc) {
