@@ -212,6 +212,7 @@ exports.getPlayerData = async function(users, callback, message) {
 						case 6: unit.gp += 2040 + 4032; break;
 						case 7: unit.gp += 2678 + 5292; break;
 						case 8: unit.gp += 3443 + 6804; break;
+						case 9: unit.gp += 4000 + 7000; break;
 						default:
 							msg = "Invalid relic level for %s (ac=%d):";
 							console.warn(msg, unit.defId, allycode, unit.relics);
