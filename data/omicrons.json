@@ -1,24 +1,25 @@
 {
+	"Description": "Combat type/unit ID/max extra count (zetas + omicrons)",
 	"GA": {
-		"CHIEFCHIRPA": "Chief Chirpa",
-		"DARTHTALON": "Darth Talon",
-		"DASHRENDAR": "Dash Rendar",
-		"QUIGONJINN": "Qui Gon Jinn",
-		"ROSETICO": "Rose Tico",
-		"STARKILLER": "Star Killer",
-		"ZAMWESELL": "Zam Wesell"
+		"CHIEFCHIRPA": 1,
+		"DARTHTALON": 1,
+		"DASHRENDAR": 1,
+		"QUIGONJINN": 1,
+		"ROSETICO": 1,
+		"STARKILLER": 3,
+		"ZAMWESELL": 1
 	},
 	"TB": {
-		"IMPERIALPROBEDROID": "Imperial Probe Droid",
-		"KYLEKATARN": "Kyle Katarn",
-		"HOTHLEIA": "Rebel Officer Leia Organa"
+		"IMPERIALPROBEDROID": 1,
+		"KYLEKATARN": 1,
+		"HOTHLEIA": 2
 	},
 	"TW": {
-		"BOBAFETTOLD": "Boba Fett Scion of Jango",
-		"CHIEFNEBIT": "Chief Nebit",
-		"DARTHSIDIOUS": "Darth Sidious",
-		"HERASYNDULLAS3": "Hera Syndulla S3",
-		"MARAJADE": "Mara Jade",
-		"PHASMA": "Captain Phasma"
+		"BOBAFETTOLD": 3,
+		"CHIEFNEBIT": 1,
+		"DARTHSIDIOUS": 1,
+		"HERASYNDULLAS3": 2,
+		"MARAJADE": 3,
+		"PHASMA": 1
 	}
 }
