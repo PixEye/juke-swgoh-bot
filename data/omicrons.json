@@ -1,24 +1,24 @@
 {
-  "GA": {
-    "CHIEFCHIRPA": "Chief Chirpa",
-    "DARTHTALON": "Darth Talon",
-    "DASHRENDAR": "Dash Rendar",
-    "QUIGONJINN": "Qui Gon Jinn",
-    "ROSETICO": "Rose Tico",
-    "STARKILLER": "Star Killer",
-    "ZAMWESELL": "Zam Wesell"
-  },
-  "TB": {
-    "IMPERIALPROBEDROID": "Imperial Probe Droid",
-    "KYLEKATARN": "Kyle Katarn",
-    "LEIAHOTH": "Rebel Officer Leia Organa"
-  },
-  "TW": {
-    "BOBAFETTOLD": "Boba Fett Scion of Jango",
-    "CHIEFNEBIT": "Chief Nebit",
-    "DARTHSIDIOUS": "Darth Sidious",
-    "HERASYNDULLAS3": "Hera Syndulla S3",
-    "MARAJADE": "Mara Jade",
-    "PHASMA": "Captain Phasma"
-  }
+	"GA": {
+		"CHIEFCHIRPA": "Chief Chirpa",
+		"DARTHTALON": "Darth Talon",
+		"DASHRENDAR": "Dash Rendar",
+		"QUIGONJINN": "Qui Gon Jinn",
+		"ROSETICO": "Rose Tico",
+		"STARKILLER": "Star Killer",
+		"ZAMWESELL": "Zam Wesell"
+	},
+	"TB": {
+		"IMPERIALPROBEDROID": "Imperial Probe Droid",
+		"KYLEKATARN": "Kyle Katarn",
+		"HOTHLEIA": "Rebel Officer Leia Organa"
+	},
+	"TW": {
+		"BOBAFETTOLD": "Boba Fett Scion of Jango",
+		"CHIEFNEBIT": "Chief Nebit",
+		"DARTHSIDIOUS": "Darth Sidious",
+		"HERASYNDULLAS3": "Hera Syndulla S3",
+		"MARAJADE": "Mara Jade",
+		"PHASMA": "Captain Phasma"
+	}
 }
