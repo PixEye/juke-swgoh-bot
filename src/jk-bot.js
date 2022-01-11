@@ -576,7 +576,7 @@ client.on("message", (message) => {
 					let num = ++i;
 					if (num<=9) num = "0"+num;
 					sum += record.nbUnits;
-					lines.push(num + "/ **" + record.nbUnits+"** "+record.player);
+					lines.push("`" + num + "/ " + record.nbUnits+"` "+record.player);
 				});
 				lines.push("**Total number of units with "+minRelics+" relics or more: "+sum+"**");
 
