@@ -573,10 +573,12 @@ client.on("message", (message) => {
 				let i = 0;
 				let sum = 0;
 				records.forEach(record => {
+					let nbu = record.nbUnits>99? record.nbUnits: (" "+record.nbUnits);
 					let num = ++i;
+
 					if (num<=9) num = "0"+num;
+					lines.push("`" + num + "/ " + nbu+"` "+record.player);
 					sum += record.nbUnits;
-					lines.push("`" + num + "/ " + record.nbUnits+"` "+record.player);
 				});
 				lines.push("**Total number of units with "+minRelics+" relics or more: "+sum+"**");
 
