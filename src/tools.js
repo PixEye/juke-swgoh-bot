@@ -94,6 +94,7 @@ exports.checkLegendReq = function(player, message) {
 	if (unitAliasNames[concatUpMsg]) concatUpMsg = unitAliasNames[concatUpMsg];
 	console.log(logPrefix()+"Looking for unit matching '"+concatUpMsg+"'");
 	if (concatUpMsg==="REY") concatUpMsg = "GLREY";
+	player.glCount = 0;
 
 	unitsOfInterest.forEach(unit => {
 		if (found) return;
@@ -131,9 +132,12 @@ exports.checkLegendReq = function(player, message) {
 
 		unit.name = unitRealNames[unit.baseId] || unit.name;
 		if (!locked) {
-			// console.log(logPrefix()+unit.name+" ("+unit.baseId+") is unlocked.");
 			progresses.push(1);
+			if (unit.baseId !== 'JEDIKNIGHTLUKE' && unit.name !== 'Executor') // Not GL exceptions
+				++ player.glCount;
 		} else {
+			if (found) return;
+
 			unit.requiredUnits.forEach(req => {
 				let levels = "";
 				let playerUnit = player.unitsData.find(u => u.name === req.baseId);
@@ -206,7 +210,12 @@ exports.checkLegendReq = function(player, message) {
 			avg = Math.floor(avg);
 			average = avg.toString();
 			while (average.length < 3) average = " " + average;
-			const resume = "~ `" + average + "%` for "+unit.name;
+			let resume = "~ `" + average + "%` for "+unit.name;
+
+			if (playerGl && playerGl.combatType === 2)
+				resume += ' '+playerGl.stars+':star:';
+			else if (playerGl && typeof playerGl.combatType === 'undefined')
+				console.log("Player's GL:", playerGl);
 
 			lines.push(resume);
 			if (avg<100) indicator = '👉';
@@ -227,7 +236,11 @@ exports.checkLegendReq = function(player, message) {
 		}
 	}); // end of loop on units
 
-	if (!found) lines = resumes;
+	if (!found) {
+		lines = resumes;
+		lines.push('');
+		lines.push('GL count: '+player.glCount);
+	}
 
 	let richMsg = new RichEmbed()
 		.setTitle(player.name+"'s unit status")
@@ -2017,18 +2030,31 @@ exports.updatePlayerDataInDb = function(player, message, callback) {
 		let update = new Date(player.updated);
 
 		update = exports.toMySQLdate(update);
-		console.log(logPrefix()+'Data updated at: %s', update);
+		console.log(logPrefix()+"Data updated at: %s", update);
 
-		let sql2 = "UPDATE users SET"+
-			" game_name="+mysql.escape(player.name)+","+
-			" giftCount="+player.giftCount+","+
-			" gp="+player.gp+","+
-			" g12Count="+player.g12Count+","+
-			" g13Count="+player.g13Count+","+
-			" guildRefId="+mysql.escape(player.guildRefId)+","+
-			" zetaCount="+player.zetaCount+","+
-			" ts="+mysql.escape(update)+" "+
-			"WHERE allycode="+allycode;
+		let sql2 = "UPDATE users SET";
+		let mapping = {
+			"game_name": mysql.escape(player.name),
+			"giftCount": player.giftCount,
+			"gp": player.gp,
+			"g12Count": player.g12Count,
+			"g13Count": player.g13Count,
+			"guildRefId": mysql.escape(player.guildRefId),
+			"zetaCount": player.zetaCount,
+			"ts": mysql.escape(update)
+		};
+		if (typeof player.glCount === "number")
+			mapping["glCount"] = player.glCount;
+		if (typeof player.omicronCount === "number")
+			mapping["omicronCount"] = player.omicronCount;
+
+		let newData = [];
+		Object.keys(mapping).forEach(key => {
+			const val = mapping[key];
+			newData.push( " "+key+"="+val );
+		});
+		newData = newData.join(", ");
+		sql2 += newData + " WHERE allycode="+allycode;
 
 		db_pool.query(sql2, function(exc, result) {
 			if (exc) {
