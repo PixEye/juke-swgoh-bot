@@ -165,7 +165,7 @@ exports.guildPlayerStats = function(allycode, message, guild) {
 	// Display the result:
 	message.reply(richMsg).catch(function(ex) {
 		console.warn(ex);
-		message.reply(ex.message);
+		message.reply(ex.message+' (please allow link integration)');
 		message.channel.send(lines);
 	});
 };
@@ -262,7 +262,7 @@ exports.showAbbr = function(message) {
 			richMsg.setDescription(lines).setTitle(i + "/" + nbAliases + " known abbreviations");
 			message.channel.send(richMsg).catch(function(ex) {
 				console.warn(ex);
-				// message.reply(ex.message);
+				// message.reply(ex.message+' (please allow link integration)');
 				message.channel.send(lines);
 			});
 			++nbMsgSent;
@@ -275,7 +275,7 @@ exports.showAbbr = function(message) {
 		richMsg.setDescription(lines).setTitle(i + "/" + nbAliases + " known abbreviations");
 		message.channel.send(richMsg).catch(function(ex) {
 			console.warn(ex);
-			message.reply(ex.message);
+			message.reply(ex.message+' (please allow link integration)');
 			message.channel.send(lines);
 		});
 		++nbMsgSent;
@@ -334,7 +334,7 @@ exports.showGuildStats = function(guild, message) {
 
 	message.reply(richMsg).catch(function(ex) {
 		console.warn(ex);
-		message.reply(ex.message);
+		message.reply(ex.message+' (please allow link integration)');
 	});
 };
 
@@ -437,7 +437,7 @@ exports.showLastEvols = function(player, message, evols) {
 
 	message.channel.send(richMsg).catch(function(ex) {
 		console.warn(ex);
-		message.reply(ex.message);
+		message.reply(ex.message+' (please allow link integration)');
 		message.channel.send(lines);
 	});
 };
@@ -501,7 +501,7 @@ exports.showPlayerRelics = function(player, message) {
 		.setFooter(config.footer.message, config.footer.iconUrl);
 	message.channel.send(richMsg).catch(function(ex) {
 		console.warn(ex);
-		message.reply(ex.message);
+		message.reply(ex.message+' (please allow link integration)');
 		message.channel.send(lines);
 	});
 };
@@ -554,7 +554,7 @@ exports.showPlayerStats = function(player, message) {
 
 	message.reply(richMsg).catch(function(ex) {
 		console.warn(ex);
-		message.reply(ex.message);
+		message.reply(ex.message+' (please allow link integration)');
 		message.channel.send(lines);
 	});
 };
@@ -593,7 +593,7 @@ exports.showPlayerStats = function(player, message) {
 
 	message.reply(richMsg).catch(function(ex) {
 		console.warn(ex);
-		message.reply(ex.message);
+		message.reply(ex.message+' (please allow link integration)');
 		message.channel.send(lines);
 	});
 };
@@ -642,7 +642,7 @@ exports.showPlayerStats = function(player, message) {
 
 	message.reply(richMsg).catch(function(ex) {
 		console.warn(ex);
-		message.reply(ex.message);
+		message.reply(ex.message+' (please allow link integration)');
 		message.channel.send(lines);
 	});
 };
@@ -674,7 +674,7 @@ exports.showRandomTeam = function(player, message) {
 
 	message.reply(richMsg).catch(function(ex) {
 		console.warn(ex);
-		message.reply(ex.message);
+		message.reply(ex.message+' (please allow link integration)');
 		message.channel.send(lines);
 	});
 };
@@ -696,7 +696,7 @@ exports.showSwgohData = function(data, message) {
 
 	message.reply(richMsg).catch(function(ex) {
 		console.warn(ex);
-		message.reply(ex.message);
+		message.reply(ex.message+' (please allow link integration)');
 		message.channel.send(showableData);
 	});
 };
@@ -808,7 +808,7 @@ exports.showUnitInfo = function(player, message, unitName, ct) {
 		richMsg.setDescription(lines).setTitle(player.name+"'s "+unitName);
 		message.reply(richMsg).catch(function(ex) {
 			console.warn(ex);
-			message.reply(ex.message);
+			message.reply(ex.message+' (please allow link integration)');
 			message.channel.send(lines);
 		});
 		return;
@@ -872,7 +872,7 @@ exports.showUnitInfo = function(player, message, unitName, ct) {
 	if (lines.length) richMsg.setDescription(lines);
 	message.channel.send(richMsg).catch(function(ex) {
 		console.warn(ex);
-		message.reply(ex.message);
+		message.reply(ex.message+' (please allow link integration)');
 		message.channel.send(lines);
 	});
 };
@@ -907,7 +907,7 @@ exports.showWhoIs = function(user, nick, message) {
 
 		message.channel.send(richMsg).catch(function(ex) {
 			console.warn(ex);
-			message.reply(ex.message);
+			message.reply(ex.message+' (please allow link integration)');
 			message.channel.send(lines);
 		});
 	});

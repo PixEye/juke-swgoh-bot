@@ -254,7 +254,7 @@ exports.checkLegendReq = function(player, message) {
 
 	message.channel.send(richMsg).catch(function(ex) {
 		console.warn(ex);
-		message.reply(ex.message);
+		message.reply(ex.message+' (please allow link integration)');
 		message.channel.send(lines);
 	});
 };
@@ -316,7 +316,7 @@ exports.checkPlayerMods = function(player, message) {
 
 	message.channel.send(richMsg).catch(function(ex) {
 		console.warn(ex);
-		message.reply(ex.message);
+		message.reply(ex.message+' (please allow link integration)');
 		message.channel.send(lines);
 	});
 };
@@ -373,7 +373,7 @@ exports.checkUnitsGp = function(player, message, limit) {
 
 	message.channel.send(richMsg).catch(function(ex) {
 		console.warn(ex);
-		message.reply(ex.message);
+		message.reply(ex.message+' (please allow link integration)');
 		message.channel.send(lines);
 	});
 
@@ -762,7 +762,7 @@ exports.getPlayerFromDiscordUser = function(user, message, callback) {
 
 			message.reply(richMsg).catch(function(ex) {
 				console.warn(ex);
-				message.reply(ex.message);
+				message.reply(ex.message+' (please allow link integration)');
 				message.reply(title);
 				message.channel.send(lines);
 			});
@@ -942,7 +942,7 @@ exports.getUnregPlayers = function(allycode, message) {
 		}) // send msg
 		.catch(function(exc) {
 			console.error(exc);
-			message.reply(exc);
+			message.reply(exc+' (please allow link integration)');
 		});
 };
 
@@ -1073,7 +1073,7 @@ exports.handleBehaviour = function(guild, message, target) {
 					.setFooter(config.footer.message, config.footer.iconUrl);
 				message.channel.send(richMsg).catch(function(ex) {
 					console.warn(ex);
-					message.reply(ex.message);
+					message.reply(ex.message+' (please allow link integration)');
 					message.channel.send(lines);
 				});
 			});
@@ -1131,7 +1131,7 @@ exports.handleBehaviour = function(guild, message, target) {
 				.setFooter(config.footer.message, config.footer.iconUrl);
 			message.channel.send(richMsg).catch(function(ex) {
 				console.warn(ex);
-				message.reply(ex.message);
+				message.reply(ex.message+' (please allow link integration)');
 				message.channel.send(lines);
 			});
 		});
@@ -1257,7 +1257,7 @@ exports.handleContest = function(guild, message, target) {
 					.setFooter(config.footer.message, config.footer.iconUrl);
 				message.channel.send(richMsg).catch(function(ex) {
 					console.warn(ex);
-					message.reply(ex.message);
+					message.reply(ex.message+' (please allow link integration)');
 					message.channel.send(lines);
 				});
 			});
@@ -1304,7 +1304,7 @@ exports.handleContest = function(guild, message, target) {
 				.setFooter(config.footer.message, config.footer.iconUrl);
 			message.channel.send(richMsg).catch(function(ex) {
 				console.warn(ex);
-				message.reply(ex.message);
+				message.reply(ex.message+' (please allow link integration)');
 				message.channel.send(lines);
 			});
 		});
