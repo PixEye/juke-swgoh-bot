@@ -1393,9 +1393,9 @@ exports.updateOldestPlayer = function() {
 	let logPrefix = exports.logPrefix; // shortcut
 	let deltaInHours = 18;
 	let sql = "SELECT allycode, game_name, ts FROM users"+
-		" WHERE discord_id IS NOT NULL"+        // 63 users.discord_id are NULL on 2020-10-13
-		" AND TIMESTAMPDIFF(HOUR, ts, NOW())>"+deltaInHours+ // 158 users match on 2020-10-13
-		" ORDER BY ts LIMIT 5";             // count() was 178 before the LIMIT on 2020-10-13
+		" WHERE NOT banned AND discord_id IS NOT NULL"+
+		" AND TIMESTAMPDIFF(HOUR, ts, NOW())>"+deltaInHours+
+		" ORDER BY ts LIMIT 5";
 	let start = new Date();
 
 	db_pool.query(sql, function(exc, users) {
@@ -2128,6 +2128,9 @@ exports.updatePlayerDataInDb = function(player, message, callback) {
 
 			let nbr = result.affectedRows; // shortcut for number of records
 			console.log(logPrefix()+"%d TW results updated.", nbr);
+			if (nbr && message) {
+				message.reply(nbr+' TW score updated.');
+			}
 		});
 	});
 };
