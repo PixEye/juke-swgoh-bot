@@ -306,7 +306,7 @@ client.on("message", (message) => {
 					return;
 				}
 
-				console.log(logPrefix()+' found %d banned users', lines.length);
+				console.log(logPrefix()+'Found %d banned users', users.length);
 				// console.dir(users);
 				if (users.length <= 0) {
 					console.log(sql);
@@ -319,7 +319,7 @@ client.on("message", (message) => {
 					users.forEach(user => {
 						lines.push('**'+user.game_name+'** ('+tools.cleanAc(user.allycode)+')');
 					});
-					msg = lines.length+' banned players: '+lines.join(', ');
+					msg = lines.length+' banned players: '+lines.join(', ')+'.';
 					message.channel.send(msg);
 				}
 			});
