@@ -250,11 +250,15 @@ client.on("message", (message) => {
 
 						users.forEach(user => {
 							let gpm = Math.round(user.gp / 1e5) / 10;
-							let msg = " is "+user.game_name+"'s code ("+gpm+"M";
+							let msg = " is ";
+
+							if (user.banned) msg += "[ProXima :no_entry: banned] ";
+							msg += user.game_name+"'s code ("+gpm+"M";
 							if (user.guildRefId && typeof(guildDescr[user.guildRefId])==='string') {
 								msg+= " from guild "+guildDescr[user.guildRefId];
 							}
-							lines.push("`"+tools.cleanAc(user.allycode)+"`"+msg+")");
+							msg += ")";
+							lines.push("`"+tools.cleanAc(user.allycode)+"`"+msg);
 							console.log(logPrefix()+tools.cleanAc(user.allycode)+msg);
 						});
 						message.channel.send(lines);

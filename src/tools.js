@@ -499,7 +499,7 @@ exports.getGuildDbStats = function(player1, message, callback) {
 	}
 
 	sql = "SELECT * FROM `guilds` g"; // get guild
-	sql+= " WHERE swgoh_id IN (SELECT guildRefId from `users` WHERE allycode=?)";
+	sql+= " WHERE swgoh_id IN (SELECT guildRefId FROM `users` WHERE allycode=?)";
 
 	message.channel.send("Looking for DB stats of guild with ally: "+allycode+"...")
 		.then(msg => {
@@ -530,7 +530,7 @@ exports.getGuildDbStats = function(player1, message, callback) {
 				guild.refId = guild.swgoh_id;
 				console.log(logPrefix()+msg, guild.name, guild.refId);
 
-				sql = "SELECT * from `users` WHERE guildRefId=?"; // get players
+				sql = "SELECT * FROM `users` WHERE guildRefId=?"; // get players
 				db_pool.query(sql, [guild.refId], function(exc, result) {
 					if (exc) {
 						let otd = exc.sqlMessage? exc.sqlMessage: exc; // object to display
@@ -558,7 +558,7 @@ exports.getGuildDbStats = function(player1, message, callback) {
 					});
 
 					guild.relics = 0;
-					sql = "SELECT * from `units` WHERE allycode IN (?)"; // get units
+					sql = "SELECT * FROM `units` WHERE allycode IN (?)"; // get units
 					db_pool.query(sql, [allycodes], function(exc, result) {
 						if (exc) {
 							let otd = exc.sqlMessage? exc.sqlMessage: exc; // object to display
@@ -728,7 +728,7 @@ exports.getPlayerFromDiscordUser = function(user, message, callback) {
 	db_pool.query(sql, function(exc, result) {
 		if (exc) {
 			console.log("SQL:", sql);
-			console.log(logPrefix()+"GPFDI Exception:", exc.sqlMessage? exc.sqlMessage: exc);
+			console.log(logPrefix()+"GPFDU Exception:", exc.sqlMessage? exc.sqlMessage: exc);
 			return;
 		}
 
@@ -768,7 +768,12 @@ exports.getPlayerFromDiscordUser = function(user, message, callback) {
 			});
 			if (typeof(callback)==="function") callback(player);
 		} else if (result.length === 1) { // 1 match, perfect!
-			console.log(logPrefix()+"Found allycode: %d (%s)", player.allycode, player.discord_name);
+			if (player.banned) {
+				let msg = player.game_name+' is banned from ProXima alliance!';
+				console.log(logPrefix()+msg);
+				message.reply(':no_entry: '+msg); // wrong way icon
+			}
+			console.log(logPrefix()+"Found allycode: %d (%s)", player.allycode, player.game_name);
 			// console.log(logPrefix()+"Found player: %s", JSON.stringify(player));
 
 			if (typeof(callback)==="function") callback(player);
@@ -777,7 +782,7 @@ exports.getPlayerFromDiscordUser = function(user, message, callback) {
 
 			console.log( "SQL:\n"+sql); // Normal for "self(y)" command
 			console.warn(logPrefix()+"User not found"); // Normal for "self(y)" command
-			message.reply(msg+config.discord.prefix+"register your-ally-code");
+			message.reply(msg+config.discord.prefix+"register an-ally-code");
 		}
 	});
 };
@@ -1442,7 +1447,7 @@ exports.refreshGuildStats = function(allycode, message, callback) {
 
 	let sql = "SELECT * FROM `guilds` g"; // get guild
 
-	sql+= " WHERE swgoh_id IN (SELECT guildRefId from `users` WHERE allycode=?)";
+	sql+= " WHERE swgoh_id IN (SELECT guildRefId FROM `users` WHERE allycode=?)";
 
 	message.channel.send("Looking for DB stats of guild with ally: "+allycode+"...")
 		.then(msg => {
@@ -1473,7 +1478,7 @@ exports.refreshGuildStats = function(allycode, message, callback) {
 				guild.refId = guild.swgoh_id;
 				console.log(logPrefix()+msg, guild.name, guild.refId);
 
-				sql = "SELECT * from `users` WHERE guildRefId=?"; // get players
+				sql = "SELECT * FROM `users` WHERE guildRefId=?"; // get players
 				db_pool.query(sql, [guild.refId], function(exc, result) {
 					if (exc) {
 						let otd = exc.sqlMessage? exc.sqlMessage: exc; // object to display
