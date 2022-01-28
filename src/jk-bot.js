@@ -292,6 +292,39 @@ client.on("message", (message) => {
 			message.channel.send(richMsg);
 			break;
 
+		// case "ban": // TODO
+		case "banlist":
+		case "bl":
+			sql = "SELECT p.* FROM `users` p WHERE banned ORDER BY game_name";
+
+			db_pool.query(sql, (exc, users) => {
+				let msg = "";
+
+				if (exc) {
+					console.log("SQL:", sql);
+					console.log(logPrefix()+"AC Exception:", exc.sqlMessage? exc.sqlMessage: exc);
+					return;
+				}
+
+				console.log(logPrefix()+' found %d banned users', lines.length);
+				// console.dir(users);
+				if (users.length <= 0) {
+					console.log(sql);
+
+					msg = "No match found!";
+					console.log(logPrefix()+msg);
+					message.reply(msg);
+				} else { // 1 or more results:
+					// lines.push("There are "+users.length+" matches:");
+					users.forEach(user => {
+						lines.push('**'+user.game_name+'** ('+tools.cleanAc(user.allycode)+')');
+					});
+					msg = lines.length+' banned players: '+lines.join(', ');
+					message.channel.send(msg);
+				}
+			});
+			break;
+
 		case "behave": // same as behave worst
 		case "behaveadd":
 		case "behaveget":
