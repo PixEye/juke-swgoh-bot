@@ -229,7 +229,7 @@ exports.checkLegendReq = function(player, message) {
 			progressMessages.forEach(r => lines.push(r.msg));
 			lines.push(resume);
 
-				 if (avg< 50) indicator = '🔺';
+				if  (avg< 50) indicator = '🔺';
 			else if (avg< 65) indicator = '🔶';
 			else if (avg< 80) indicator = '🤔';
 			else if (avg<100) { indicator = '👉'; color = "ORANGE"; }
@@ -781,7 +781,7 @@ exports.getPlayerFromDiscordUser = function(user, message, callback) {
 			if (player.banned) {
 				let msg = player.game_name+' is banned from ProXima alliance!';
 				console.log(logPrefix()+msg);
-				message.reply(':no_entry: '+msg); // wrong way icon
+				message.channel.send(':no_entry: '+msg); // wrong way icon
 			}
 			console.log(logPrefix()+"Found allycode: %d (%s)", player.allycode, player.game_name);
 			// console.log(logPrefix()+"Found player: %s", JSON.stringify(player));
