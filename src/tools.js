@@ -258,8 +258,12 @@ exports.checkLegendReq = function(player, message) {
 		.setTimestamp(player.updated)
 		.setFooter(config.footer.message, config.footer.iconUrl);
 
+	if (picture && typeof picture === 'string' && picture.substr(0, 1)==='/') {
+		picture = 'https://swgoh.gg'+picture;
+	}
+
 	if (picture) {
-		richMsg.setThumbnail("https://swgoh.gg"+picture);
+		richMsg.setThumbnail(picture);
 	}
 
 	message.channel.send(richMsg).catch(function(ex) {

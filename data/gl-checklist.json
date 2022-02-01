@@ -167,6 +167,17 @@
 			],
 			"baseId": "TBD_EXECUTOR",
 			"unitName": "Executor"
+		},
+		{
+			"image": "https://game-assets.swgoh.gg/tex.charui_starkiller.png",
+			"requiredUnits": [
+				{"gearLevel": 13, "relicTier": 5, "baseId": "DASHRENDAR"},
+				{"gearLevel": 13, "relicTier": 5, "baseId": "KYLEKATARN"},
+				{"gearLevel": 13, "relicTier": 5, "baseId": "DARTHTALON"},
+				{"gearLevel": 13, "relicTier": 5, "baseId": "MARAJADE"}
+			],
+			"baseId": "TBD_STARKILLER",
+			"unitName": "Star Killer"
 		}
 	]
 }
