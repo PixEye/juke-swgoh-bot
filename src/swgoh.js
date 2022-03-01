@@ -179,6 +179,7 @@ exports.getPlayerData = async function(users, callback, message) {
 
 			let i = 0;
 			let omicronCount = 0;
+			let omicronUnits = [];
 			let unitsByCombatType = {};
 			let unitsCountByGear = {};
 			let zetaCount = 0;
@@ -196,16 +197,30 @@ exports.getPlayerData = async function(users, callback, message) {
 				let unitZetas = 0;
 				unit.skills.forEach(skill => {
 					if (skill.tier===skill.tiers) {
-						if (skill.isOmicron) unitOmicrons++; // isOmicron does not exist yet (2022-03-01)
-						if ( skill.isZeta  ) {
-							unitZetas++;
+						if (skill.isZeta) ++unitZetas;
+						if (skill.tier>8) ++unitOmicrons;
 
-							if (message && message.author.id === config.discord.ownerID && unit.defId === "HOTHLEIA") {
-								console.log("%s's skill:", unit.defId, skill);
+						/* if (skill.isZeta && message && message.author.id === config.discord.ownerID
+						&& unit.defId === "DIRECTORKRENNIC") {
+							console.log("%s's skill:", unit.defId, skill);
+						} /* Examples:
+							DIRECTORKRENNIC's skill: {
+								id: 'leaderskill_DIRECTORKRENNIC',
+								tier: 8,
+								nameKey: 'LEADERABILITY_DIRECTORKRENNIC_NAME',
+								isZeta: true,
+								tiers: 8
 							}
-						}
+							HOTHLEIA's skill: {
+								id: 'uniqueskill_HOTHLEIA01',
+								tier: 8,
+								nameKey: 'UNIQUEABILITY_HOTHLEIA01_NAME',
+								isZeta: true,
+								tiers: 8
+							} */
 					}
 				});
+				if (unitOmicrons) omicronUnits.push(unit.defId);
 				omicronCount += unitOmicrons;
 				zetaCount += unitZetas;
 
@@ -299,6 +314,9 @@ exports.getPlayerData = async function(users, callback, message) {
 
 			// console.log("=====");
 			console.log(logPrefix()+'User "%s" fetched', player.name);
+			if (omicronUnits.length) {
+				console.log(logPrefix()+omicronUnits.length+' omicron units: %s.', omicronUnits.join(', '));
+			}
 
 			player.allycode = allycode;
 			player.charCount = unitsByCombatType[1];
