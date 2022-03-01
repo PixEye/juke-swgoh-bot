@@ -156,7 +156,7 @@ client.on("message", (message) => {
 			break;
 
 		case "admin":
-			if(message.author.id !== config.discord.ownerID) {
+			if (message.author.id !== config.discord.ownerID) {
 				message.reply("You're not my master! :imp:");
 			} else {
 				message.reply("Yes master?");
@@ -411,7 +411,7 @@ client.on("message", (message) => {
 		case "cc":
 		case "checkconfig":
 		case "configcheck":
-			if(message.author.id !== config.discord.ownerID) {
+			if (message.author.id !== config.discord.ownerID) {
 				message.reply("You're not my master! :imp:");
 				return;
 			}
@@ -643,7 +643,7 @@ client.on("message", (message) => {
 		case "stutdown":
 		case "stop":
 		case "stoppe":
-			if(message.author.id !== config.discord.ownerID) {
+			if (message.author.id !== config.discord.ownerID) {
 				message.reply("You're not my master! :imp:");
 			} else {
 				message.reply("Up to your will master. Leaving...");
@@ -1185,7 +1185,7 @@ client.on("message", (message) => {
 		case "rg":
 		case "rgs":
 		case "refreshGuildStats":
-			if(message.author.id !== config.discord.ownerID) {
+			if (message.author.id !== config.discord.ownerID) {
 				message.reply("You're not my master! :imp:");
 				return;
 			}
@@ -1254,7 +1254,7 @@ client.on("message", (message) => {
 		case "sql":
 		case "query":
 		case "request":
-			if(message.author.id !== config.discord.ownerID) {
+			if (message.author.id !== config.discord.ownerID) {
 				message.reply("You're not my master! :imp:");
 				return;
 			}
