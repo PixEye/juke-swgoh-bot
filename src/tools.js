@@ -1580,7 +1580,9 @@ exports.rememberGuildStats = function(g) {
 		}
 
 		let nbr = result.affectedRows; // shortcut for number of records
-		console.log(logPrefix()+"%d TW results updated.", nbr);
+		if (nbr) {
+			console.log(logPrefix()+"%d TW result updated.", nbr);
+		}
 	});
 };
 
@@ -2063,10 +2065,14 @@ exports.updatePlayerDataInDb = function(player, message, callback) {
 			"zetaCount": player.zetaCount,
 			"ts": mysql.escape(update)
 		};
-		if (typeof player.glCount === "number")
+		if (typeof player.glCount === "number") {
 			mapping["glCount"] = player.glCount;
-		if (typeof player.omicronCount === "number")
+			console.log(logPrefix()+'GL count:', player.glCount);
+		}
+		if (typeof player.omicronCount === "number" && player.omicronCount) {
 			mapping["omicronCount"] = player.omicronCount;
+			console.log(logPrefix()+'Omicron count:', player.omicronCount);
+		}
 
 		let newData = [];
 		Object.keys(mapping).forEach(key => {
@@ -2147,8 +2153,8 @@ exports.updatePlayerDataInDb = function(player, message, callback) {
 			}
 
 			let nbr = result.affectedRows; // shortcut for number of records
-			console.log(logPrefix()+"%d TW results updated.", nbr);
 			if (nbr && message) {
+				console.log(logPrefix()+"%d TW result updated.", nbr);
 				message.reply(nbr+' TW score updated.');
 			}
 		});
