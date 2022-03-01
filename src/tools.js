@@ -135,7 +135,8 @@ exports.checkLegendReq = function(player, message) {
 		unit.name = unitRealNames[unit.baseId] || unit.name;
 		if (!locked) {
 			progresses.push(1);
-			if (unit.baseId !== 'JEDIKNIGHTLUKE' && unit.name !== 'Executor') // Not GL exceptions
+			if (unit.baseId !== 'JEDIKNIGHTLUKE' && unit.baseId !== 'STARKILLER'
+			&& unit.name !== 'Executor') // Not GL exceptions
 				++ player.glCount;
 		} else {
 			if (found) return;
