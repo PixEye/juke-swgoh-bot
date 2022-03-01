@@ -386,17 +386,13 @@ exports.checkUnitsGp = function(player, message, limit) {
 		.setTimestamp(player.updated)
 		.setFooter(config.footer.message, config.footer.iconUrl);
 
-	message.channel.send(richMsg).catch(function(ex) {
-		console.warn(ex);
-		message.reply(ex.message+' (please allow link integration)');
-		message.channel.send(lines);
-	});
-
-	player.unitsData.forEach(function(u) { // u = current unit
-		lines.push(
-			[u.allycode, u.name, u.combatType, u.gear, u.gp, u.relic, u.zetaCount]
-		);
-	});
+	message.channel
+		.send(richMsg)
+		.catch(function(ex) {
+			console.warn(ex);
+			message.reply(ex.message+' (please allow link integration)');
+			message.channel.send(lines);
+		});
 };
 
 /** Add 2 minus characters in an ally code for better readability
@@ -2115,14 +2111,15 @@ exports.updatePlayerDataInDb = function(player, message, callback) {
 
 			// See:
 			// https://www.w3schools.com/nodejs/shownodejs_cmd.asp?filename=demo_db_insert_multiple
-			let sql4 = "REPLACE `units` (allycode, name, combatType, gear, gp, relic, stars, zetaCount) VALUES ?";
+			let sql4 = "REPLACE `units` "
+				+ "(allycode, name, combatType, gear, gp, relic, stars, omicronCount, zetaCount) VALUES ?";
 
 			player.unitsData.forEach(function(u) { // u = current unit
 				if (!u.stars) {
 					console.warn(logPrefix()+"Invalid star count for unit:\n ", JSON.stringify(u));
 				}
 				lines.push(
-					[u.allycode, u.name, u.combatType, u.gear, u.gp, u.relic, u.stars, u.zetaCount]
+					[u.allycode, u.name, u.combatType, u.gear, u.gp, u.relic, u.stars, u.omicronCount, u.zetaCount]
 				);
 			}); // end of unit loop
 
