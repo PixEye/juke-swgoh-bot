@@ -90,6 +90,7 @@ client.on("message", (message) => {
 	var lines = [];
 	var nick = "";
 	let player = {};
+	const prefix = config.discord.prefix;
 	var readCommands = ['behave', 'get', 'getrank', 'getscore', 'rank', 'top', 'worst'];
 	var richMsg = {};
 	let search = "";
@@ -100,16 +101,16 @@ client.on("message", (message) => {
 
 	// Filter with the prefix & ignore bots:
 	if ( user.bot ||
-		(message.channel.type!=="dm" && !message.content.toLowerCase().startsWith(config.discord.prefix))) {
+		(message.channel.type!=="dm" && !message.content.toLowerCase().startsWith(prefix))) {
 		return; // stop parsing the message
 	}
 
 	if (message.channel.type==="dm") {
 		words = message.content.trim();
-		let prefixRegExp = new RegExp("^"+config.discord.prefix, "i");
+		let prefixRegExp = new RegExp("^"+prefix, "i");
 		words = words.replace(prefixRegExp, "");
 	} else {
-		words = message.content.slice(config.discord.prefix.length);
+		words = message.content.slice(prefix.length);
 	}
 	words = words.trim().split(/ +/g);
 	command = words.shift().toLowerCase();
