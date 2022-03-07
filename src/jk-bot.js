@@ -1142,7 +1142,7 @@ client.on("message", (message) => {
 			sql = "INSERT INTO `users` (discord_id, discord_name, allycode, game_name) VALUES (?, ?, ?, ?)";
 
 			// Register:
-			db_pool.query(sql, [user.id, nick, allycode, nick], (exc, result) => {
+			db_pool.query(sql, [user.id, user.username, allycode, nick], (exc, result) => {
 				if (exc) {
 					console.log("SQL:", sql);
 					if (exc.sqlMessage) {
