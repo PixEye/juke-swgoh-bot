@@ -135,7 +135,8 @@ exports.checkLegendReq = function(player, message) {
 		unit.name = unitRealNames[unit.baseId] || unit.name;
 		if (!locked) {
 			progresses.push(1);
-			if (unit.baseId !== 'JEDIKNIGHTLUKE' && unit.name !== 'Executor') // Not GL exceptions
+			if (unit.baseId !== 'JEDIKNIGHTLUKE' && unit.baseId !== 'STARKILLER'
+			&& unit.name !== 'Executor') // Not GL exceptions
 				++ player.glCount;
 		} else {
 			if (found) return;
@@ -385,17 +386,13 @@ exports.checkUnitsGp = function(player, message, limit) {
 		.setTimestamp(player.updated)
 		.setFooter(config.footer.message, config.footer.iconUrl);
 
-	message.channel.send(richMsg).catch(function(ex) {
-		console.warn(ex);
-		message.reply(ex.message+' (please allow link integration)');
-		message.channel.send(lines);
-	});
-
-	player.unitsData.forEach(function(u) { // u = current unit
-		lines.push(
-			[u.allycode, u.name, u.combatType, u.gear, u.gp, u.relic, u.zetaCount]
-		);
-	});
+	message.channel
+		.send(richMsg)
+		.catch(function(ex) {
+			console.warn(ex);
+			message.reply(ex.message+' (please allow link integration)');
+			message.channel.send(lines);
+		});
 };
 
 /** Add 2 minus characters in an ally code for better readability
@@ -1579,7 +1576,9 @@ exports.rememberGuildStats = function(g) {
 		}
 
 		let nbr = result.affectedRows; // shortcut for number of records
-		console.log(logPrefix()+"%d TW results updated.", nbr);
+		if (nbr) {
+			console.log(logPrefix()+"%d TW result updated.", nbr);
+		}
 	});
 };
 
@@ -2064,10 +2063,14 @@ exports.updatePlayerDataInDb = function(player, message, callback) {
 			"zetaCount": player.zetaCount,
 			"ts": mysql.escape(update)
 		};
-		if (typeof player.glCount === "number")
+		if (typeof player.glCount === "number") {
 			mapping["glCount"] = player.glCount;
-		if (typeof player.omicronCount === "number")
+			console.log(logPrefix()+'GL count:', player.glCount);
+		}
+		if (typeof player.omicronCount === "number" && player.omicronCount) {
 			mapping["omicronCount"] = player.omicronCount;
+			console.log(logPrefix()+'Omicron count:', player.omicronCount);
+		}
 
 		let newData = [];
 		Object.keys(mapping).forEach(key => {
@@ -2110,14 +2113,15 @@ exports.updatePlayerDataInDb = function(player, message, callback) {
 
 			// See:
 			// https://www.w3schools.com/nodejs/shownodejs_cmd.asp?filename=demo_db_insert_multiple
-			let sql4 = "REPLACE `units` (allycode, name, combatType, gear, gp, relic, stars, zetaCount) VALUES ?";
+			let sql4 = "REPLACE `units` "
+				+ "(allycode, name, combatType, gear, gp, relic, stars, omicronCount, zetaCount) VALUES ?";
 
 			player.unitsData.forEach(function(u) { // u = current unit
 				if (!u.stars) {
 					console.warn(logPrefix()+"Invalid star count for unit:\n ", JSON.stringify(u));
 				}
 				lines.push(
-					[u.allycode, u.name, u.combatType, u.gear, u.gp, u.relic, u.stars, u.zetaCount]
+					[u.allycode, u.name, u.combatType, u.gear, u.gp, u.relic, u.stars, u.omicronCount, u.zetaCount]
 				);
 			}); // end of unit loop
 
@@ -2148,8 +2152,8 @@ exports.updatePlayerDataInDb = function(player, message, callback) {
 			}
 
 			let nbr = result.affectedRows; // shortcut for number of records
-			console.log(logPrefix()+"%d TW results updated.", nbr);
 			if (nbr && message) {
+				console.log(logPrefix()+"%d TW result updated.", nbr);
 				message.reply(nbr+' TW score updated.');
 			}
 		});

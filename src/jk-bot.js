@@ -54,7 +54,7 @@ try {
 	throw exc; // Stop here
 }
 
-let failure_since = false;
+let failure_since = 0;
 let listen_since = new Date;
 let down_time = listen_since - start;
 
@@ -66,7 +66,7 @@ setInterval(tools.periodicalProcess, 213000); // 213'000 ms = 3 minutes 33
 client.on("ready", () => {
 	listen_since = new Date;
 	if (failure_since) down_time += listen_since - failure_since;
-	failure_since = false;
+	failure_since = 0;
 
 	console.log(logPrefix()+"I am ready and listening.");
 	console.log(logPrefix()+"Down time in minutes: "+Math.round(down_time/1000/60));
@@ -90,6 +90,8 @@ client.on("message", (message) => {
 	var lines = [];
 	var nick = "";
 	let player = {};
+	const prefix = config.discord.prefix;
+	const prefixRegExp = new RegExp("^"+prefix, "i");
 	var readCommands = ['behave', 'get', 'getrank', 'getscore', 'rank', 'top', 'worst'];
 	var richMsg = {};
 	let search = "";
@@ -98,19 +100,27 @@ client.on("message", (message) => {
 	var user = message.author;
 	var words = [];
 
-	// Filter with the prefix & ignore bots:
-	if ( user.bot ||
-		(message.channel.type!=="dm" && !message.content.toLowerCase().startsWith(config.discord.prefix))) {
-		return; // stop parsing the message
+	// First filter is to ignore bots (including self authored messages):
+	if (user.bot) return; // do not parse any bot's message: stop here
+
+	if (message.channel.type==="dm") { // private message to the bot
+		words = message.content.trim().replace(prefixRegExp, "");
+	} else // message with bot's tag:
+	if (message.mentions &&
+		message.mentions.users &&
+		message.mentions.users.first() &&
+		message.mentions.users.first().id===config.discord.selfId
+	) {
+		words = message.content.trim();
+		words = words.replace('<@!'+config.discord.selfId+'> ', "");
+		words = words.replace(prefixRegExp, "");
+	} else
+	if (message.content && message.content.toLowerCase().startsWith(prefix)) { // message with bot prefix
+		words = message.content.slice(prefix.length);
+	} else {
+		return;
 	}
 
-	if (message.channel.type==="dm") {
-		words = message.content.trim();
-		let prefixRegExp = new RegExp("^"+config.discord.prefix, "i");
-		words = words.replace(prefixRegExp, "");
-	} else {
-		words = message.content.slice(config.discord.prefix.length);
-	}
 	words = words.trim().split(/ +/g);
 	command = words.shift().toLowerCase();
 	nick = locutus.utf8_decode(user.username);
@@ -156,7 +166,7 @@ client.on("message", (message) => {
 			break;
 
 		case "admin":
-			if(message.author.id !== config.discord.ownerID) {
+			if (message.author.id !== config.discord.ownerID) {
 				message.reply("You're not my master! :imp:");
 			} else {
 				message.reply("Yes master?");
@@ -411,7 +421,7 @@ client.on("message", (message) => {
 		case "cc":
 		case "checkconfig":
 		case "configcheck":
-			if(message.author.id !== config.discord.ownerID) {
+			if (message.author.id !== config.discord.ownerID) {
 				message.reply("You're not my master! :imp:");
 				return;
 			}
@@ -643,7 +653,7 @@ client.on("message", (message) => {
 		case "stutdown":
 		case "stop":
 		case "stoppe":
-			if(message.author.id !== config.discord.ownerID) {
+			if (message.author.id !== config.discord.ownerID) {
 				message.reply("You're not my master! :imp:");
 			} else {
 				message.reply("Up to your will master. Leaving...");
@@ -1141,7 +1151,7 @@ client.on("message", (message) => {
 			sql = "INSERT INTO `users` (discord_id, discord_name, allycode, game_name) VALUES (?, ?, ?, ?)";
 
 			// Register:
-			db_pool.query(sql, [user.id, nick, allycode, nick], (exc, result) => {
+			db_pool.query(sql, [user.id, user.username, allycode, nick], (exc, result) => {
 				if (exc) {
 					console.log("SQL:", sql);
 					if (exc.sqlMessage) {
@@ -1185,7 +1195,7 @@ client.on("message", (message) => {
 		case "rg":
 		case "rgs":
 		case "refreshGuildStats":
-			if(message.author.id !== config.discord.ownerID) {
+			if (message.author.id !== config.discord.ownerID) {
 				message.reply("You're not my master! :imp:");
 				return;
 			}
@@ -1254,7 +1264,7 @@ client.on("message", (message) => {
 		case "sql":
 		case "query":
 		case "request":
-			if(message.author.id !== config.discord.ownerID) {
+			if (message.author.id !== config.discord.ownerID) {
 				message.reply("You're not my master! :imp:");
 				return;
 			}

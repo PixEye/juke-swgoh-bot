@@ -1,13 +1,16 @@
 {
 	"Description": "Combat type/unit ID/max extra count (zetas + omicrons)",
 	"GA": {
-		"CHIEFCHIRPA": 1,
+		"CHIEFCHIRPA": 2,
 		"DARTHTALON": 1,
 		"DASHRENDAR": 1,
+		"DIRECTORKRENNIC": 2,
+		"IDENVERSIO": 2,
+		"PRINCESSLEIA": 2,
 		"QUIGONJINN": 1,
 		"ROSETICO": 1,
 		"STARKILLER": 3,
-		"ZAMWESELL": 1
+		"ZAMWESELL": 2
 	},
 	"TB": {
 		"IMPERIALPROBEDROID": 1,
@@ -15,7 +18,7 @@
 		"HOTHLEIA": 2
 	},
 	"TW": {
-		"BOBAFETTOLD": 3,
+		"BOBAFETTOLD": 4,
 		"CHIEFNEBIT": 1,
 		"DARTHSIDIOUS": 1,
 		"HERASYNDULLAS3": 2,

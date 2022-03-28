@@ -24,13 +24,15 @@ fs.readFile(argv[0], function(err, fcontent) {
 	if (err) throw err;
 
 	console.log("File content weights: %d bytes.", fcontent.length);
-	const obj  = JSON.parse(fcontent);
-	const json = JSON.stringify(obj, null, "\t");
+	const data = JSON.parse(fcontent);
+	const json = JSON.stringify(data, null, "\t"); // new JSON version
 	console.log("JSON content weights: %d bytes.", json.length);
 
 	if (argc < 2) {
-		let jsonPreview = json.substr(0, 256);
-		console.log("New JSON preview:\n%s", jsonPreview);
+		const jsonPreview = json.substr(0, 256);
+
+		console.log("New JSON preview:");
+		console.dir(jsonPreview);
 		return;
 	}
 

@@ -56,7 +56,7 @@ exports.getPlayerData = async function(users, callback, message) {
 		let allycodes = [];
 		let playersByAllycode = {};
 
-		users.forEach(function(user) {
+		users.forEach(user => {
 			allycodes.push(user.allycode);
 			playersByAllycode[user.allycode] = user;
 		});
@@ -127,7 +127,7 @@ exports.getPlayerData = async function(users, callback, message) {
 			'none', 'health', 'attack', 'defense', 'speed', 'crit chance', 'crit damage', 'potency', 'tenacity'
 		]; // */
 
-		result.forEach(function(player) {
+		result.forEach(player => {
 			let clean_stats = {};
 
 			allycode = player.allyCode;
@@ -178,6 +178,8 @@ exports.getPlayerData = async function(users, callback, message) {
 			// Others: gp (int), primaryUnitStat (null), relic {currentTier: 1}
 
 			let i = 0;
+			let omicronCount = 0;
+			let omicronUnits = [];
 			let unitsByCombatType = {};
 			let unitsCountByGear = {};
 			let zetaCount = 0;
@@ -187,14 +189,39 @@ exports.getPlayerData = async function(users, callback, message) {
 			player.unitCount = 0;
 			player.unitsData = [];
 
-			roster.forEach(function(unit) {
+			roster.forEach(unit => {
 				unitsCountByGear[unit.gear]++;
 				unitsByCombatType[unit.combatType]++; // 1 = character, 2 = ship
 
+				let unitOmicrons = 0;
 				let unitZetas = 0;
-				unit.skills.forEach(function(skill) {
-					if (skill.isZeta && skill.tier===skill.tiers) unitZetas++;
+				unit.skills.forEach(skill => {
+					if (skill.tier===skill.tiers) {
+						if (skill.isZeta) ++unitZetas;
+						if (skill.tier>8) ++unitOmicrons;
+
+						/* if (skill.isZeta && message && message.author.id === config.discord.ownerID
+						&& unit.defId === "DIRECTORKRENNIC") {
+							console.log("%s's skill:", unit.defId, skill);
+						} /* Examples:
+							DIRECTORKRENNIC's skill: {
+								id: 'leaderskill_DIRECTORKRENNIC',
+								tier: 8,
+								nameKey: 'LEADERABILITY_DIRECTORKRENNIC_NAME',
+								isZeta: true,
+								tiers: 8
+							}
+							HOTHLEIA's skill: {
+								id: 'uniqueskill_HOTHLEIA01',
+								tier: 8,
+								nameKey: 'UNIQUEABILITY_HOTHLEIA01_NAME',
+								isZeta: true,
+								tiers: 8
+							} */
+					}
 				});
+				if (unitOmicrons) omicronUnits.push(unit.defId);
+				omicronCount += unitOmicrons;
 				zetaCount += unitZetas;
 
 				if (unit.gp) {
@@ -212,7 +239,7 @@ exports.getPlayerData = async function(users, callback, message) {
 						case 6: unit.gp += 2040 + 4032; break;
 						case 7: unit.gp += 2678 + 5292; break;
 						case 8: unit.gp += 3443 + 6804; break;
-						case 9: unit.gp += 4000 + 7000; break;
+						case 9: unit.gp += 4000 + 8000; break;
 						default:
 							msg = "Invalid relic level for %s (ac=%d):";
 							console.warn(msg, unit.defId, allycode, unit.relics);
@@ -229,21 +256,22 @@ exports.getPlayerData = async function(users, callback, message) {
 					}
 
 					player.unitsData.push({
-						"allycode":   allycode,
-						"combatType": unit.combatType, // 1 = character, 2 = ship
-						"gear":       unit.gear,
-						"gp":         unit.gp,
-						"level":      unit.level, // 85
-						"mods":       unit.mods,
-						"name":       unit.defId,
-						"relic":      unit.relics,
-						"stars":      unit.rarity,
-						"zetaCount":  unitZetas
+						"allycode":     allycode,
+						"combatType":   unit.combatType, // 1 = character, 2 = ship
+						"gear":         unit.gear,
+						"gp":           unit.gp,
+						"level":        unit.level, // 85
+						"mods":         unit.mods,
+						"name":         unit.defId,
+						"omicronCount": unitOmicrons,
+						"relic":        unit.relics,
+						"stars":        unit.rarity,
+						"zetaCount":    unitZetas
 					});
 				}
 			});
 
-			stats.forEach(function(stat) {
+			stats.forEach(stat => {
 				if (!stat || stat.nameKey===null) return;
 
 				clean_stats[stat.nameKey.replace("STAT_", "")] = stat.value;
@@ -286,6 +314,9 @@ exports.getPlayerData = async function(users, callback, message) {
 
 			// console.log("=====");
 			console.log(logPrefix()+'User "%s" fetched', player.name);
+			if (omicronUnits.length) {
+				console.log(logPrefix()+omicronUnits.length+' omicron units: %s.', omicronUnits.join(', '));
+			}
 
 			player.allycode = allycode;
 			player.charCount = unitsByCombatType[1];
@@ -298,6 +329,7 @@ exports.getPlayerData = async function(users, callback, message) {
 			player.title = player.titles.selected?
 				player.titles.selected.replace('PLAYERTITLE_', '').replace(/_/g, ' '): 'Default';
 			player.giftCount = clean_stats.TOTAL_GUILD_EXCHANGE_DONATIONS_TU07_2;
+			player.omicronCount = omicronCount;
 			player.zetaCount = zetaCount;
 
 			player.gaTerritoriesDefeated = clean_stats.SEASON_TERRITORIES_DEFEATED_NAME;
@@ -414,7 +446,7 @@ exports.getPlayerGuild = async function(allycodes, message, callback) {
 		delete guild.members; // better named: memberCount
 		delete guild.roster; // better named: players
 
-		rosters.forEach(function(player) {
+		rosters.forEach(player => {
 			guild.gpChar+= player.gpChar;
 			guild.gpShip+= player.gpShip;
 			guild.players[player.allyCode] = player.name;
@@ -485,7 +517,7 @@ exports.fetch = async function(users, message, callback) {
 		let allycodes = [];
 		let playersByAllycode = {};
 
-		users.forEach(function(user) {
+		users.forEach(user => {
 			allycodes.push(user.allycode);
 			playersByAllycode[user.allycode] = user;
 		});
