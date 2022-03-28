@@ -27,6 +27,7 @@
     "locale": "en-EN",
     "ownerID": "012345678901234567",
     "prefix": "jb.",
+    "selfId": "123456789012345678",
     "token": "<your long bot token. See: https://discordapp.com/developers/applications/ >",
     "username": "JsB"
   },
