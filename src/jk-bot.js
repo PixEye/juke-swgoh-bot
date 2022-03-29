@@ -124,19 +124,28 @@ client.on("message", (message) => {
 	words = words.trim().split(/ +/g);
 	command = words.shift().toLowerCase();
 	nick = locutus.utf8_decode(user.username);
+	let wc = words.length; // word count
+	let addon = wc? (": "+words.join(" ")).trim(): "";
 
-	console.log(logPrefix()+"/ \""+nick+"\" sent command: "+message.content);
+	console.log(logPrefix()+'/ "'+nick+'" used command "'+command+'" with '+wc+" args"+addon);
 
 	search = words.join(" ").replace("'", "");
 	searchStr = "p.discord_name LIKE '%"+search+"%' OR p.game_name LIKE '%"+search+"%'";
 
 	// Extract user's tag (if any):
-	if (message.mentions && message.mentions.users && message.mentions.users.first()) {
-		user = message.mentions.users.first();
+	// user = message.mentions.users.first();
+	words.forEach(word => {
+		try {
+			user = getUserFromMention(word);
+		} catch(err) {
+			return;
+		}
+
 		nick = locutus.utf8_decode(user.username);
 		search = user.id;
 		searchStr = "p.discord_id="+search;
-	} else if (words.join("").trim()==="") {
+	});
+	if (words.join("").trim()==="") {
 		search = user.id;
 		searchStr = "p.discord_id="+search;
 	}
@@ -676,7 +685,7 @@ client.on("message", (message) => {
 		case "repeat":
 		case "repete":
 		case "say": {
-			let destChannel = [message.channel];
+			let destChannels = [message.channel];
 			let myMsg = '';
 
 			words.forEach(word => { // ignore channels:
@@ -687,12 +696,12 @@ client.on("message", (message) => {
 
 			let n = message.mentions.channels.array().length;
 			if (n) {
-				destChannel = message.mentions.channels.array();
+				destChannels = message.mentions.channels.array();
 				console.log(logPrefix()+"Found %d destination channel(s).", n);
 			}
 
 			if (myMsg) {
-				destChannel.forEach(channel => channel.send(myMsg));
+				destChannels.forEach(channel => channel.send(myMsg));
 			} else {
 				message.reply("what can I say for you?");
 			}
@@ -1518,20 +1527,14 @@ client.on("message", (message) => {
 			break;
 
 		case "whois":
-			if (message.mentions && message.mentions.users && message.mentions.users.first()) {
-				user = message.mentions.users.first();
+			words.forEach(word => {
+				try {
+					user = getUserFromMention(word);
+				} catch (err) {
+					return;
+				}
 				nick = locutus.utf8_decode(user.username);
-			} else if (command!=="self" && command!=="selfy" && message.mentions && message.mentions.users) {
-				message.reply("Cannot answer for the moment.");
-
-				console.log(logPrefix()+"Mentions:");
-				console.dir(message.mentions.users);
-
-				return;
-			} else if (command!=="self" && command!=="selfy") {
-				message.reply("No user specified!");
-				return;
-			}
+			});
 			view.showWhoIs(user, nick, message);
 			break;
 
@@ -1567,6 +1570,21 @@ client.on("message", (message) => {
 	}
 });
 
+function getUserFromMention(mention) {
+	if (!mention) throw "Word to parse is empty";
+
+	if (mention.startsWith('<@') && mention.endsWith('>')) {
+		mention = mention.slice(2, -1);
+		if (mention.startsWith('!')) {
+			mention = mention.slice(1);
+		}
+
+		return client.users.cache.get(mention);
+	}
+
+	throw "No mention found";
+}
+
 /** Compare tplCfg & config keys
  * @throws String exception in case of problem
  */
@@ -1577,6 +1595,7 @@ function checkConfig() {
 	if (typeof(tplCfg)!=='object') {
 		throw 'Did not find a valid template configuration ("config-template.json" file)!';
 	}
+
 	if (typeof(config)!=='object') {
 		throw 'Did not find a valid configuration ("config.json" file)!';
 	}
