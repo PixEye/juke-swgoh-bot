@@ -25,7 +25,7 @@ Use the "mk-tables.sql" file to create the tables in a MySQL database.
 
 I use to run the bot by simply typing the following command line in a console from the "src" folder:
 
-    node jk-bot.js ;date
+    node .
 
 ## About the author
 
