@@ -7,7 +7,7 @@ $argc = count($argv);
 if (!$argc || $argc>2 || $argv[0]==="-h" || $argv[0]==="--help") {
 	$cmd = basename($cmd);
 	$usage = "$cmd <file-to-indent.json> [<file-to-save-cleaner.json>]";
-	fprintf(STDERR, "Usage:\n\t"."%s%s", $usage, $nl);
+	fprintf(STDERR, "Usage:\n\t%s%s", $usage, $nl);
 	exit(1);
 }
 
@@ -23,24 +23,30 @@ if (trim($fcontent)==='') {
 	exit(3);
 }
 
-$obj = JSON_decode($fcontent);
-if ($obj===null) {
+$data = json_decode($fcontent);
+if ($data===null) {
 	fprintf(STDERR, "The file '%s' does not contain valid JSON!%s", $argv[0], $nl);
 	exit(4);
 }
 
-function human_filesize($bytes, $digits = 0) {
-	$units = 'BKMGTP';
-	$factor = floor((strlen($bytes) - 1) / 3);
+/** Convert a number into the engineer notation
+ * @param  int $number   A number
+ * @param  int $decimals Optional number of decimals
+ * @return string
+ */
+function human_filesize($number, $decimals = 0) {
+	$units = ' KMGTP';
+	$factor = floor((strlen($number) - 1) / 3);
+	$unit = subStr($units, $factor, 1);
 
-	return sprintf("%.{$digits}f", $bytes / pow(1024, $factor)) . @$units[$factor];
+	return trim(sprintf("%.{$decimals}f", $number / pow(1024, $factor)) . $unit);
 }
 
-// var_export($obj);
-$json = json_encode($obj, JSON_PRETTY_PRINT);
-$json = str_replace('    ', "\t", $json);
+// var_export($data);
+$raw_json = json_encode($data, JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES);
+$json = str_replace('    ', "\t", $raw_json);
 if ($argc>1) {
-	$fs1 = human_filesize(strLen($json));
+	$fs1 = human_filesize(strLen($raw_json));
 	printf("First JSON takes %s.%s", $fs1, $nl);
 
 	$fs2 = human_filesize(strLen($json));
@@ -49,7 +55,7 @@ if ($argc>1) {
 	$byteCount = file_put_contents($argv[1], $json);
 	if (!$byteCount) {
 		fprintf(STDERR, "Cannot write to file '%s'!%s", $argv[1], $nl);
-		exit(5);
+		exit(9);
 	}
 
 	$size = human_filesize($byteCount);
@@ -59,4 +65,4 @@ if ($argc>1) {
 }
 exit(0); // success
 
-// vim: noexpandtab shiftwidth=4 softtabstop=4 tabstop=4
+// vim: noexpandtab
