@@ -1,0 +1,567 @@
+[
+	{
+		"base_id": "specialskill_BOBAFETTSCION01",
+		"name": "Dual Barrage",
+		"image": "https://game-assets.swgoh.gg/tex.ability_boba_old_special01.png",
+		"url": "//swgoh.gg/characters/boba-fett-scion-of-jango/#dual-barrage",
+		"tier_max": 8,
+		"is_zeta": false,
+		"is_omega": false,
+		"is_omicron": true,
+		"combat_type": 1,
+		"type": 2,
+		"character_base_id": "BOBAFETTSCION",
+		"ship_base_id": null,
+		"omicron_battle_types": [
+			"TERRITORY_WAR_BATTLE"
+		]
+	},
+	{
+		"base_id": "leaderskill_BOBAFETTSCION",
+		"name": "Dangerous Reputation",
+		"image": "https://game-assets.swgoh.gg/tex.abilityui_passive_mandalorian.png",
+		"url": "//swgoh.gg/characters/boba-fett-scion-of-jango/#dangerous-reputation",
+		"tier_max": 8,
+		"is_zeta": false,
+		"is_omega": false,
+		"is_omicron": true,
+		"combat_type": 1,
+		"type": 3,
+		"character_base_id": "BOBAFETTSCION",
+		"ship_base_id": null,
+		"omicron_battle_types": [
+			"TERRITORY_WAR_BATTLE"
+		]
+	},
+	{
+		"base_id": "uniqueskill_BOBAFETTSCION01",
+		"name": "Fett Legacy",
+		"image": "https://game-assets.swgoh.gg/tex.abilityui_passive_bobafett.png",
+		"url": "//swgoh.gg/characters/boba-fett-scion-of-jango/#fett-legacy",
+		"tier_max": 8,
+		"is_zeta": true,
+		"is_omega": false,
+		"is_omicron": true,
+		"combat_type": 1,
+		"type": 4,
+		"character_base_id": "BOBAFETTSCION",
+		"ship_base_id": null,
+		"omicron_battle_types": [
+			"TERRITORY_WAR_BATTLE"
+		]
+	},
+	{
+		"base_id": "leaderskill_PHASMA",
+		"name": "Fire at Will",
+		"image": "https://game-assets.swgoh.gg/tex.abilityui_leader_default.png",
+		"url": "//swgoh.gg/characters/captain-phasma/#fire-at-will",
+		"tier_max": 9,
+		"is_zeta": true,
+		"is_omega": false,
+		"is_omicron": true,
+		"combat_type": 1,
+		"type": 3,
+		"character_base_id": "PHASMA",
+		"ship_base_id": null,
+		"omicron_battle_types": [
+			"TERRITORY_WAR_BATTLE"
+		]
+	},
+	{
+		"base_id": "leaderskill_DASHRENDAR",
+		"name": "Prepared for Anything",
+		"image": "https://game-assets.swgoh.gg/tex.abilityui_passive_preparedforanything.png",
+		"url": "//swgoh.gg/characters/dash-rendar/#prepared-for-anything",
+		"tier_max": 8,
+		"is_zeta": false,
+		"is_omega": false,
+		"is_omicron": true,
+		"combat_type": 1,
+		"type": 3,
+		"character_base_id": "DASHRENDAR",
+		"ship_base_id": null,
+		"omicron_battle_types": [
+			"TERRITORY_TOURNAMENT_BATTLE"
+		]
+	},
+	{
+		"base_id": "uniqueskill_ROSETICO01",
+		"name": "Valiant Spirit",
+		"image": "https://game-assets.swgoh.gg/tex.abilityui_passive_attack_buff.png",
+		"url": "//swgoh.gg/characters/rose-tico/#valiant-spirit",
+		"tier_max": 9,
+		"is_zeta": true,
+		"is_omega": false,
+		"is_omicron": true,
+		"combat_type": 1,
+		"type": 4,
+		"character_base_id": "ROSETICO",
+		"ship_base_id": null,
+		"omicron_battle_types": [
+			"TERRITORY_TOURNAMENT_BATTLE"
+		]
+	},
+	{
+		"base_id": "leaderskill_CHIEFNEBIT",
+		"name": "Raiding Parties",
+		"image": "https://game-assets.swgoh.gg/tex.abilityui_passive_crit_buff.png",
+		"url": "//swgoh.gg/characters/chief-nebit/#raiding-parties",
+		"tier_max": 8,
+		"is_zeta": false,
+		"is_omega": false,
+		"is_omicron": true,
+		"combat_type": 1,
+		"type": 3,
+		"character_base_id": "CHIEFNEBIT",
+		"ship_base_id": null,
+		"omicron_battle_types": [
+			"TERRITORY_WAR_BATTLE"
+		]
+	},
+	{
+		"base_id": "uniqueskill_KYLEKATARN01",
+		"name": "Blue Milk Run",
+		"image": "https://game-assets.swgoh.gg/tex.abilityui_passive_jediknight.png",
+		"url": "//swgoh.gg/characters/kyle-katarn/#blue-milk-run",
+		"tier_max": 8,
+		"is_zeta": false,
+		"is_omega": false,
+		"is_omicron": true,
+		"combat_type": 1,
+		"type": 4,
+		"character_base_id": "KYLEKATARN",
+		"ship_base_id": null,
+		"omicron_battle_types": [
+			"TERRITORY_COVERT_BATTLE",
+			"TERRITORY_STRIKE_BATTLE"
+		]
+	},
+	{
+		"base_id": "leaderskill_HOTHLEIA",
+		"name": "Battlefront Command",
+		"image": "https://game-assets.swgoh.gg/tex.abilityui_passive_crit_buff.png",
+		"url": "//swgoh.gg/characters/rebel-officer-leia-organa/#battlefront-command",
+		"tier_max": 9,
+		"is_zeta": false,
+		"is_omega": true,
+		"is_omicron": true,
+		"combat_type": 1,
+		"type": 3,
+		"character_base_id": "HOTHLEIA",
+		"ship_base_id": null,
+		"omicron_battle_types": [
+			"TERRITORY_COVERT_BATTLE",
+			"TERRITORY_STRIKE_BATTLE"
+		]
+	},
+	{
+		"base_id": "uniqueskill_DARTHTALON02",
+		"name": "Sith Cruelty",
+		"image": "https://game-assets.swgoh.gg/tex.abilityui_passive_sithcruelty.png",
+		"url": "//swgoh.gg/characters/darth-talon/#sith-cruelty",
+		"tier_max": 8,
+		"is_zeta": false,
+		"is_omega": false,
+		"is_omicron": true,
+		"combat_type": 1,
+		"type": 4,
+		"character_base_id": "DARTHTALON",
+		"ship_base_id": null,
+		"omicron_battle_types": [
+			"TERRITORY_TOURNAMENT_BATTLE"
+		]
+	},
+	{
+		"base_id": "leaderskill_QUIGONJINN",
+		"name": "Agility Training",
+		"image": "https://game-assets.swgoh.gg/tex.abilityui_passive_speed.png",
+		"url": "//swgoh.gg/characters/qui-gon-jinn/#agility-training",
+		"tier_max": 9,
+		"is_zeta": true,
+		"is_omega": false,
+		"is_omicron": true,
+		"combat_type": 1,
+		"type": 3,
+		"character_base_id": "QUIGONJINN",
+		"ship_base_id": null,
+		"omicron_battle_types": [
+			"TERRITORY_TOURNAMENT_BATTLE"
+		]
+	},
+	{
+		"base_id": "uniqueskill_ZAMWESELL01",
+		"name": "Shapeshifter",
+		"image": "https://game-assets.swgoh.gg/tex.abilityui_passive_dodge.png",
+		"url": "//swgoh.gg/characters/zam-wesell/#shapeshifter",
+		"tier_max": 9,
+		"is_zeta": true,
+		"is_omega": false,
+		"is_omicron": true,
+		"combat_type": 1,
+		"type": 4,
+		"character_base_id": "ZAMWESELL",
+		"ship_base_id": null,
+		"omicron_battle_types": [
+			"TERRITORY_TOURNAMENT_BATTLE"
+		]
+	},
+	{
+		"base_id": "leaderskill_CHIEFCHIRPA",
+		"name": "Simple Tactics",
+		"image": "https://game-assets.swgoh.gg/tex.abilityui_passive_speed.png",
+		"url": "//swgoh.gg/characters/chief-chirpa/#simple-tactics",
+		"tier_max": 9,
+		"is_zeta": true,
+		"is_omega": false,
+		"is_omicron": true,
+		"combat_type": 1,
+		"type": 3,
+		"character_base_id": "CHIEFCHIRPA",
+		"ship_base_id": null,
+		"omicron_battle_types": [
+			"TERRITORY_TOURNAMENT_BATTLE"
+		]
+	},
+	{
+		"base_id": "uniqueskill_DARTHSIDIOUS01",
+		"name": "Sadistic Glee",
+		"image": "https://game-assets.swgoh.gg/tex.abilityui_passive_heal.png",
+		"url": "//swgoh.gg/characters/darth-sidious/#sadistic-glee",
+		"tier_max": 9,
+		"is_zeta": true,
+		"is_omega": false,
+		"is_omicron": true,
+		"combat_type": 1,
+		"type": 4,
+		"character_base_id": "DARTHSIDIOUS",
+		"ship_base_id": null,
+		"omicron_battle_types": [
+			"TERRITORY_WAR_BATTLE"
+		]
+	},
+	{
+		"base_id": "uniqueskill_MARAJADE01",
+		"name": "The Emperor's Hand",
+		"image": "https://game-assets.swgoh.gg/tex.abilityui_passive_theemperorshand.png",
+		"url": "//swgoh.gg/characters/mara-jade-the-emperors-hand/#the-emperors-hand",
+		"tier_max": 8,
+		"is_zeta": false,
+		"is_omega": false,
+		"is_omicron": true,
+		"combat_type": 1,
+		"type": 4,
+		"character_base_id": "MARAJADE",
+		"ship_base_id": null,
+		"omicron_battle_types": [
+			"TERRITORY_WAR_BATTLE"
+		]
+	},
+	{
+		"base_id": "specialskill_STARKILLER01",
+		"name": "Boundless Force Throw",
+		"image": "https://game-assets.swgoh.gg/tex.ability_starkiller_special01.png",
+		"url": "//swgoh.gg/characters/starkiller/#boundless-force-throw",
+		"tier_max": 8,
+		"is_zeta": false,
+		"is_omega": false,
+		"is_omicron": true,
+		"combat_type": 1,
+		"type": 2,
+		"character_base_id": "STARKILLER",
+		"ship_base_id": null,
+		"omicron_battle_types": [
+			"TERRITORY_TOURNAMENT_BATTLE"
+		]
+	},
+	{
+		"base_id": "specialskill_STARKILLER02",
+		"name": "Force Repulse",
+		"image": "https://game-assets.swgoh.gg/tex.ability_starkiller_special02.png",
+		"url": "//swgoh.gg/characters/starkiller/#force-repulse",
+		"tier_max": 8,
+		"is_zeta": false,
+		"is_omega": false,
+		"is_omicron": true,
+		"combat_type": 1,
+		"type": 2,
+		"character_base_id": "STARKILLER",
+		"ship_base_id": null,
+		"omicron_battle_types": [
+			"TERRITORY_TOURNAMENT_BATTLE"
+		]
+	},
+	{
+		"base_id": "uniqueskill_STARKILLER02",
+		"name": "There is Much Conflict in You",
+		"image": "https://game-assets.swgoh.gg/tex.abilityui_passive_muchconflictinyou.png",
+		"url": "//swgoh.gg/characters/starkiller/#there-is-much-conflict-in-you",
+		"tier_max": 8,
+		"is_zeta": false,
+		"is_omega": false,
+		"is_omicron": true,
+		"combat_type": 1,
+		"type": 4,
+		"character_base_id": "STARKILLER",
+		"ship_base_id": null,
+		"omicron_battle_types": [
+			"TERRITORY_TOURNAMENT_BATTLE"
+		]
+	},
+	{
+		"base_id": "leaderskill_HERASYNDULLAS3",
+		"name": "Rise Together",
+		"image": "https://game-assets.swgoh.gg/tex.abilityui_passive_phoenix.png",
+		"url": "//swgoh.gg/characters/hera-syndulla/#rise-together",
+		"tier_max": 9,
+		"is_zeta": false,
+		"is_omega": true,
+		"is_omicron": true,
+		"combat_type": 1,
+		"type": 3,
+		"character_base_id": "HERASYNDULLAS3",
+		"ship_base_id": null,
+		"omicron_battle_types": [
+			"TERRITORY_WAR_BATTLE"
+		]
+	},
+	{
+		"base_id": "uniqueskill_IMPERIALPROBEDROID01",
+		"name": "Imperial Logistics",
+		"image": "https://game-assets.swgoh.gg/tex.abilityui_passive_empire.png",
+		"url": "//swgoh.gg/characters/imperial-probe-droid/#imperial-logistics",
+		"tier_max": 9,
+		"is_zeta": true,
+		"is_omega": false,
+		"is_omicron": true,
+		"combat_type": 1,
+		"type": 4,
+		"character_base_id": "IMPERIALPROBEDROID",
+		"ship_base_id": null,
+		"omicron_battle_types": [
+			"TERRITORY_COVERT_BATTLE",
+			"TERRITORY_STRIKE_BATTLE"
+		]
+	},
+	{
+		"base_id": "leaderskill_carthonasi",
+		"name": "Soldier of the Old Republic",
+		"image": "https://game-assets.swgoh.gg/tex.abilityui_passive_def.png",
+		"url": "//swgoh.gg/characters/carth-onasi/#soldier-of-the-old-republic",
+		"tier_max": 9,
+		"is_zeta": true,
+		"is_omega": false,
+		"is_omicron": true,
+		"combat_type": 1,
+		"type": 3,
+		"character_base_id": "CARTHONASI",
+		"ship_base_id": null,
+		"omicron_battle_types": [
+			"TERRITORY_COVERT_BATTLE",
+			"TERRITORY_STRIKE_BATTLE"
+		]
+	},
+	{
+		"base_id": "leaderskill_IDENVERSIOEMPIRE",
+		"name": "Exactly as Planned",
+		"image": "https://game-assets.swgoh.gg/tex.abilityui_passive_empire.png",
+		"url": "//swgoh.gg/characters/iden-versio/#exactly-as-planned",
+		"tier_max": 8,
+		"is_zeta": false,
+		"is_omega": false,
+		"is_omicron": true,
+		"combat_type": 1,
+		"type": 3,
+		"character_base_id": "IDENVERSIOEMPIRE",
+		"ship_base_id": null,
+		"omicron_battle_types": [
+			"TERRITORY_TOURNAMENT_BATTLE"
+		]
+	},
+	{
+		"base_id": "leaderskill_ADMIRALACKBAR",
+		"name": "Rebel Coordination",
+		"image": "https://game-assets.swgoh.gg/tex.abilityui_passive_speed.png",
+		"url": "//swgoh.gg/characters/admiral-ackbar/#rebel-coordination",
+		"tier_max": 8,
+		"is_zeta": false,
+		"is_omega": false,
+		"is_omicron": true,
+		"combat_type": 1,
+		"type": 3,
+		"character_base_id": "ADMIRALACKBAR",
+		"ship_base_id": null,
+		"omicron_battle_types": [
+			"TERRITORY_TOURNAMENT_BATTLE"
+		]
+	},
+	{
+		"base_id": "leaderskill_SECONDSISTER",
+		"name": "They Will Never Be Victorious",
+		"image": "https://game-assets.swgoh.gg/tex.abilityui_passive_jediwillneverbevictorious.png",
+		"url": "//swgoh.gg/characters/second-sister/#they-will-never-be-victorious",
+		"tier_max": 8,
+		"is_zeta": false,
+		"is_omega": false,
+		"is_omicron": true,
+		"combat_type": 1,
+		"type": 3,
+		"character_base_id": "SECONDSISTER",
+		"ship_base_id": null,
+		"omicron_battle_types": [
+			"TERRITORY_WAR_BATTLE"
+		]
+	},
+	{
+		"base_id": "uniqueskill_PRINCESSLEIA01",
+		"name": "Against All Odds",
+		"image": "https://game-assets.swgoh.gg/tex.abilityui_passive_heal_buff.png",
+		"url": "//swgoh.gg/characters/princess-leia/#against-all-odds",
+		"tier_max": 9,
+		"is_zeta": true,
+		"is_omega": false,
+		"is_omicron": true,
+		"combat_type": 1,
+		"type": 4,
+		"character_base_id": "PRINCESSLEIA",
+		"ship_base_id": null,
+		"omicron_battle_types": [
+			"TERRITORY_TOURNAMENT_BATTLE"
+		]
+	},
+	{
+		"base_id": "uniqueskill_DIRECTORKRENNIC01",
+		"name": "Immeasurable Power",
+		"image": "https://game-assets.swgoh.gg/tex.abilityui_passive_crit_buff.png",
+		"url": "//swgoh.gg/characters/director-krennic/#immeasurable-power",
+		"tier_max": 8,
+		"is_zeta": false,
+		"is_omega": false,
+		"is_omicron": true,
+		"combat_type": 1,
+		"type": 4,
+		"character_base_id": "DIRECTORKRENNIC",
+		"ship_base_id": null,
+		"omicron_battle_types": [
+			"TERRITORY_TOURNAMENT_BATTLE"
+		]
+	},
+	{
+		"base_id": "leaderskill_NINTHSISTER",
+		"name": "Can't Stop the Empire",
+		"image": "https://game-assets.swgoh.gg/tex.abilityui_passive_empire.png",
+		"url": "//swgoh.gg/characters/ninth-sister/#cant-stop-the-empire",
+		"tier_max": 8,
+		"is_zeta": true,
+		"is_omega": false,
+		"is_omicron": true,
+		"combat_type": 1,
+		"type": 3,
+		"character_base_id": "NINTHSISTER",
+		"ship_base_id": null,
+		"omicron_battle_types": [
+			"TERRITORY_WAR_BATTLE"
+		]
+	},
+	{
+		"base_id": "uniqueskill_EMBO01",
+		"name": "Way of the Kyuzo",
+		"image": "https://game-assets.swgoh.gg/tex.abilityui_passive_embo.png",
+		"url": "//swgoh.gg/characters/embo/#way-of-the-kyuzo",
+		"tier_max": 9,
+		"is_zeta": true,
+		"is_omega": false,
+		"is_omicron": true,
+		"combat_type": 1,
+		"type": 4,
+		"character_base_id": "EMBO",
+		"ship_base_id": null,
+		"omicron_battle_types": [
+			"TERRITORY_WAR_BATTLE"
+		]
+	},
+	{
+		"base_id": "uniqueskill_WAMPA02",
+		"name": "Cornered Beast",
+		"image": "https://game-assets.swgoh.gg/tex.abilityui_passive_counterattack.png",
+		"url": "//swgoh.gg/characters/wampa/#cornered-beast",
+		"tier_max": 9,
+		"is_zeta": true,
+		"is_omega": false,
+		"is_omicron": true,
+		"combat_type": 1,
+		"type": 4,
+		"character_base_id": "WAMPA",
+		"ship_base_id": null,
+		"omicron_battle_types": [
+			"TERRITORY_TOURNAMENT_BATTLE"
+		]
+	},
+	{
+		"base_id": "uniqueskill_MACEWINDU02",
+		"name": "Sense Weakness",
+		"image": "https://game-assets.swgoh.gg/tex.abilityui_passive_senseweakness.png",
+		"url": "//swgoh.gg/characters/mace-windu/#sense-weakness",
+		"tier_max": 9,
+		"is_zeta": true,
+		"is_omega": false,
+		"is_omicron": true,
+		"combat_type": 1,
+		"type": 4,
+		"character_base_id": "MACEWINDU",
+		"ship_base_id": null,
+		"omicron_battle_types": [
+			"TERRITORY_WAR_BATTLE"
+		]
+	},
+	{
+		"base_id": "leaderskill_SEVENTHSISTER",
+		"name": "Guess Again",
+		"image": "https://game-assets.swgoh.gg/tex.abilityui_passive_dodge.png",
+		"url": "//swgoh.gg/characters/seventh-sister/#guess-again",
+		"tier_max": 8,
+		"is_zeta": true,
+		"is_omega": false,
+		"is_omicron": true,
+		"combat_type": 1,
+		"type": 3,
+		"character_base_id": "SEVENTHSISTER",
+		"ship_base_id": null,
+		"omicron_battle_types": [
+			"TERRITORY_WAR_BATTLE"
+		]
+	},
+	{
+		"base_id": "leaderskill_EIGHTHBROTHER",
+		"name": "More Than Enough",
+		"image": "https://game-assets.swgoh.gg/tex.abilityui_passive_jediwillneverbevictorious.png",
+		"url": "//swgoh.gg/characters/eighth-brother/#more-than-enough",
+		"tier_max": 8,
+		"is_zeta": false,
+		"is_omega": false,
+		"is_omicron": true,
+		"combat_type": 1,
+		"type": 3,
+		"character_base_id": "EIGHTHBROTHER",
+		"ship_base_id": null,
+		"omicron_battle_types": [
+			"TERRITORY_WAR_BATTLE"
+		]
+	},
+	{
+		"base_id": "uniqueskill_t3_m4_02",
+		"name": "Master Gearhead",
+		"image": "https://game-assets.swgoh.gg/tex.abilityui_passive_penetration.png",
+		"url": "//swgoh.gg/characters/t3-m4/#master-gearhead",
+		"tier_max": 9,
+		"is_zeta": true,
+		"is_omega": false,
+		"is_omicron": true,
+		"combat_type": 1,
+		"type": 4,
+		"character_base_id": "T3_M4",
+		"ship_base_id": null,
+		"omicron_battle_types": [
+			"TERRITORY_WAR_BATTLE"
+		]
+	}
+]
