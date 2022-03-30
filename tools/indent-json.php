@@ -38,11 +38,11 @@ function human_filesize($bytes, $digits = 0) {
 
 // var_export($obj);
 $json = json_encode($obj, JSON_PRETTY_PRINT);
+$json = str_replace('    ', "\t", $json);
 if ($argc>1) {
 	$fs1 = human_filesize(strLen($json));
 	printf("First JSON takes %s.%s", $fs1, $nl);
 
-	$json = str_replace('    ', "\t", $json);
 	$fs2 = human_filesize(strLen($json));
 	printf("JSON with tabs instead of spaces takes %s.%s", $fs2, $nl);
 
