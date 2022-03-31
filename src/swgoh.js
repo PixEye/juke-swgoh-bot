@@ -35,6 +35,8 @@ const swapi = new ApiSwgohHelp({
 	"password": config.swapi.pass
 });
 
+const omicronAbilities = require("../data/omicron-abilities");
+
 /** Get player(s)' data from the SWGoH Help API
  * @param {Array} users - An array of users' objects with: [allycode & displayAvatarURL] each
  * @param {function} callback - Function to call once the data is retrieved
@@ -195,10 +197,22 @@ exports.getPlayerData = async function(users, callback, message) {
 
 				let unitOmicrons = 0;
 				let unitZetas = 0;
+				let uoa = omicronAbilities.filter(ab => { // unit omicron abilities
+					return ab.character_base_id === unit.defId // filter on unit key
+				});
+
 				unit.skills.forEach(skill => {
 					if (skill.tier===skill.tiers) {
+						if (uoa) {
+							uoa.forEach((ab) => {
+								if (ab.base_id === skill.id) {
+									++unitOmicrons;
+								}
+							});
+						}
+
 						if (skill.isZeta) ++unitZetas;
-						if (skill.tier>8) ++unitOmicrons;
+						// if (skill.tier>8) ++unitOmicrons;
 
 						/* if (skill.isZeta && message && message.author.id === config.discord.ownerID
 						&& unit.defId === "DIRECTORKRENNIC") {
@@ -330,6 +344,7 @@ exports.getPlayerData = async function(users, callback, message) {
 				player.titles.selected.replace('PLAYERTITLE_', '').replace(/_/g, ' '): 'Default';
 			player.giftCount = clean_stats.TOTAL_GUILD_EXCHANGE_DONATIONS_TU07_2;
 			player.omicronCount = omicronCount;
+			player.omicronUnits = omicronUnits;
 			player.zetaCount = zetaCount;
 
 			player.gaTerritoriesDefeated = clean_stats.SEASON_TERRITORIES_DEFEATED_NAME;
