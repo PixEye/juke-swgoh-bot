@@ -525,10 +525,11 @@ exports.showPlayerStats = function(player, message) {
 		"**Title:** "+locutus.ucwords(player.title.toLowerCase()),
 		"**Guild name:** "+player.guildName,
 		"",
-		"**Zeta count:** "+player.zetaCount+" - "+
-		"**G13 count:** "+player.g13Count,
-		"**G12 count:** "+player.g12Count+" - "+
-		"**G11 count:** "+player.g11Count,
+		"**Omicron count:** "+player.omicronCount+" - "+
+		"**Zeta count:** "+player.zetaCount,
+		"**G13 count:** "+player.g13Count+" - "+
+		"**G12 count:** "+player.g12Count, // +" - "+
+		// "**G11 count:** "+player.g11Count,
 		"",
 		"**Ground arena rank:** "+player.arena.char.rank+" - "+
 		"**Ship rank:** "+player.arena.ship.rank,
