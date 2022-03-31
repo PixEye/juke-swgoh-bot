@@ -112,7 +112,7 @@ client.on("message", (message) => {
 		message.mentions.users.first().id===config.discord.selfId
 	) {
 		words = message.content.trim();
-		words = words.replace('<@!'+config.discord.selfId+'> ', "");
+		words = words.replace(/<[^>]+> +/, "");
 		words = words.replace(prefixRegExp, "");
 	} else
 	if (message.content && message.content.toLowerCase().startsWith(prefix)) { // message with bot prefix
