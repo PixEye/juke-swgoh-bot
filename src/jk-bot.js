@@ -98,7 +98,7 @@ client.on("message", (message) => {
 	let searchStr = "";
 	var sql = "";
 	var user = message.author;
-	var words = [];
+	var words = message.content.trim().split(/ +/g);
 
 	// First filter is to ignore bots (including self authored messages):
 	if (user.bot) return; // do not parse any bot's message: stop here
@@ -106,14 +106,9 @@ client.on("message", (message) => {
 	if (message.channel.type==="dm") { // private message to the bot
 		words = message.content.trim().replace(prefixRegExp, "");
 	} else // message with bot's tag:
-	if (message.mentions &&
-		message.mentions.users &&
-		message.mentions.users.first() &&
-		message.mentions.users.first().id===config.discord.selfId
-	) {
-		words = message.content.trim();
-		words = words.replace(/<[^>]+> +/, "");
-		words = words.replace(prefixRegExp, "");
+	if (words && words.length && words[0].startsWith('<@') && words[0].endsWith(config.discord.selfId+'>')) {
+		words.shift(); // forget first word (bot tag)
+		words = words.join(' ').trim().replace(prefixRegExp, "");
 	} else
 	if (message.content && message.content.toLowerCase().startsWith(prefix)) { // message with bot prefix
 		words = message.content.slice(prefix.length);
