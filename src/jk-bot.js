@@ -7,7 +7,7 @@
 // jshint esversion: 8
 
 // Remember when this program started:
-const start = new Date();
+const start = new Date;
 
 // Extract the required classes from the discord.js module:
 const { Client, RichEmbed } = require("discord.js");
@@ -94,6 +94,7 @@ client.on("message", (message) => {
 	const prefixRegExp = new RegExp("^"+prefix, "i");
 	var readCommands = ['behave', 'get', 'getrank', 'getscore', 'rank', 'top', 'worst'];
 	var richMsg = {};
+	let s = "";
 	let search = "";
 	let searchStr = "";
 	var sql = "";
@@ -119,34 +120,40 @@ client.on("message", (message) => {
 	words = words.trim().split(/ +/g);
 	command = words.shift().toLowerCase();
 	nick = locutus.utf8_decode(user.username);
-	let wc = words.length; // word count
+	const wc = words.length; // word count
 	let addon = wc? (": "+words.join(" ")).trim(): "";
 
-	console.log(logPrefix()+'/ "'+nick+'" used command "'+command+'" with '+wc+" args"+addon);
+	s = wc>1? 's': '';
+	console.log(logPrefix()+'/ "'+nick+'" used command "'+command+'" with '+wc+" arg"+s+addon);
 
 	search = words.join(" ").replace("'", "");
 	searchStr = "p.discord_name LIKE '%"+search+"%' OR p.game_name LIKE '%"+search+"%'";
 
-	// Extract user's tag (if any):
-	// user = message.mentions.users.first();
-	words.forEach(word => {
-		try {
-			user = getUserFromMention(word);
-		} catch(err) {
-			return;
-		}
+	if (!wc) {
+		search = user.id;
+		searchStr = "p.discord_id="+search;
+	} else {
+		// Extract user's tag (if any):
+		// user = message.mentions.users.first();
+		console.log(logPrefix()+"Parsing "+wc+" word"+s+"...");
+		words.forEach(word => {
+			try {
+				user = getUserFromMention(word);
+				// console.log(logPrefix()+"Found user in: "+word);
+			} catch(err) {
+				console.warn(err);
+				return;
+			}
 
-		nick = locutus.utf8_decode(user.username);
-		search = user.id;
-		searchStr = "p.discord_id="+search;
-	});
-	if (words.join("").trim()==="") {
-		search = user.id;
-		searchStr = "p.discord_id="+search;
+			nick = locutus.utf8_decode(user.username);
+			search = user.id;
+			searchStr = "p.discord_id="+search;
+			console.log(logPrefix()+"Found mention "+word+" about uid: "+search);
+		});
 	}
 	allycode = tools.getFirstAllycodeInWords(words);
 	player = {"allycode": allycode, "discord_name": nick};
-	message.words = words;
+	message.words = words; // save what we just computed
 
 	// public commands:
 	switch (command) {
@@ -832,8 +839,8 @@ client.on("message", (message) => {
 
 			db_pool.query(sql, (exc, result) => {
 				let col = "ORANGE";
-				let now = new Date();
-				let update = new Date();
+				let now = new Date;
+				let update = new Date;
 				let title = "Guild board";
 
 				if (exc) {
@@ -1522,14 +1529,6 @@ client.on("message", (message) => {
 			break;
 
 		case "whois":
-			words.forEach(word => {
-				try {
-					user = getUserFromMention(word);
-				} catch (err) {
-					return;
-				}
-				nick = locutus.utf8_decode(user.username);
-			});
 			view.showWhoIs(user, nick, message);
 			break;
 
@@ -1569,12 +1568,18 @@ function getUserFromMention(mention) {
 	if (!mention) throw "Word to parse is empty";
 
 	if (mention.startsWith('<@') && mention.endsWith('>')) {
-		mention = mention.slice(2, -1);
-		if (mention.startsWith('!')) {
-			mention = mention.slice(1);
+		let id = mention.slice(2, -1);
+
+		if (id.startsWith('!')) {
+			id = id.slice(1);
 		}
 
-		return client.users.cache.get(mention);
+		return client.users.cache? client.users.cache.get(id): {
+			"createdAt": new Date(0),
+			"id": id,
+			"presence": {"status": "Unknown"},
+			"username": "User"
+		};
 	}
 
 	throw "No mention found";
