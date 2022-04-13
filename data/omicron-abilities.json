@@ -563,5 +563,22 @@
 		"omicron_battle_types": [
 			"TERRITORY_WAR_BATTLE"
 		]
+	},
+	{
+		"base_id": "uniqueskill_JYNERSO01",
+		"name": "Fierce Determination",
+		"image": "https://game-assets.swgoh.gg/tex.abilityui_passive_potency.png",
+		"url": "//swgoh.gg/characters/jyn-erso/#fierce-determination",
+		"tier_max": 9,
+		"is_zeta": true,
+		"is_omega": false,
+		"is_omicron": true,
+		"combat_type": 1,
+		"type": 4,
+		"character_base_id": "JYNERSO",
+		"ship_base_id": null,
+		"omicron_battle_types": [
+			"TERRITORY_WAR_BATTLE"
+		]
 	}
 ]
