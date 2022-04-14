@@ -1423,7 +1423,7 @@ exports.updateOldestPlayer = function() {
 
 		let now = new Date();
 		let delayInMs = now.getTime() - start.getTime();
-		let msg = "/ UOP check: %d user(s) match (data > %dh; in %d ms)";
+		let msg = "/ UOP check: at least %d user(s) match (data > %dh; in %d ms)";
 
 		console.log(logPrefix()+msg, users.length, deltaInHours, delayInMs);
 		if ( ! users.length ) return;
@@ -2013,6 +2013,16 @@ exports.updatePlayerDataInDb = function(player, message, callback) {
 					msg = begin+"'s "+u.name+" has now "+u.zetaCount+" zeta(s)";
 					console.log(logPrefix()+msg);
 				}
+
+				// Look for new omicrons:
+				if (u.omicronCount>prevUnit.omicronCount) {
+					newEvol.new_value = u.omicronCount;
+					newEvol.type = "omicron";
+					evols.push(exports.clone(newEvol));
+
+					msg = begin+"'s "+u.name+" has now "+u.omicronCount+" omicron(s)";
+					console.log(logPrefix()+msg);
+				}
 			}); // end of unit loop
 			console.log(logPrefix()+"Characters count: "+nbChars);
 
@@ -2067,7 +2077,7 @@ exports.updatePlayerDataInDb = function(player, message, callback) {
 			mapping["glCount"] = player.glCount;
 			console.log(logPrefix()+'GL count:', player.glCount);
 		}
-		if (typeof player.omicronCount === "number" && player.omicronCount) {
+		if (typeof player.omicronCount === "number") {
 			mapping["omicronCount"] = player.omicronCount;
 			console.log(logPrefix()+'Omicron count:', player.omicronCount);
 		}
@@ -2091,10 +2101,10 @@ exports.updatePlayerDataInDb = function(player, message, callback) {
 
 			if (!result.affectedRows) {
 				let sql3 = "INSERT INTO `users`\n"+
-					"(allycode, game_name, gp, g12Count, g13Count, guildRefId, zetaCount)\n"+
+					"(allycode, game_name, gp, g12Count, g13Count, guildRefId, omicronCount, zetaCount)\n"+
 					"VALUES ("+allycode+", "+mysql.escape(player.name)+
 					", "+player.gp+", "+player.g12Count+", "+player.g13Count+
-					", "+mysql.escape(player.guildRefId)+", "+player.zetaCount+")";
+					", "+mysql.escape(player.guildRefId)+", "+player.omicronCount+", "+player.zetaCount+")";
 
 				db_pool.query(sql3, function(exc, result) {
 					if (exc) {
