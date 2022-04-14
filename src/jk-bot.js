@@ -138,7 +138,7 @@ client.on("message", (message) => {
 		console.log(logPrefix()+"Parsing "+wc+" word"+s+"...");
 		words.forEach(word => {
 			try {
-				user = getUserFromMention(word);
+				user = getUserFromMention(word, message);
 				// console.log(logPrefix()+"Found user in: "+word);
 			} catch(err) {
 				console.warn(err);
@@ -1564,7 +1564,7 @@ client.on("message", (message) => {
 	}
 });
 
-function getUserFromMention(mention) {
+function getUserFromMention(mention, message) {
 	if (!mention) throw "Word to parse is empty";
 
 	if (mention.startsWith('<@') && mention.endsWith('>')) {
@@ -1573,8 +1573,36 @@ function getUserFromMention(mention) {
 		if (id.startsWith('!')) {
 			id = id.slice(1);
 		}
+		if (client.users.cache) {
+			return client.users.cache.get(id);
+		}
 
-		return client.users.cache? client.users.cache.get(id): {
+		if (message) {
+			/* Example: [
+					{
+						"id": "204255221017214977",
+						"username": "YAGPDB.xyz",
+						"discriminator": "8760",
+						"avatar": "3b376fff30bfb0be0fac67003e0f8dcf",
+						"bot": true,
+						"lastMessageID": null,
+						"lastMessage": null
+					}
+				]
+			 */
+			let user = message.mentions.users.array().find(u => { return u.id === id; });
+
+			if (user) {
+				console.log(logPrefix()+"Found matching user:", user);
+				if (!user.createdAt) user.createdAt = new Date(0);
+				if (!user.presence ) user.presence  = {"status": "Unknown"};
+
+				return user;
+			}
+		}
+		console.warn("Did not find user with ID: "+id+" (use a generic name)");
+
+		return {
 			"createdAt": new Date(0),
 			"id": id,
 			"presence": {"status": "Unknown"},
