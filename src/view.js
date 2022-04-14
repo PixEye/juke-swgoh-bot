@@ -410,6 +410,7 @@ exports.showLastEvols = function(player, message, evols) {
 			case "star":
 				msg+= " :arrow_right: "+e.new_value+":star:";
 				break;
+			case "omicron":
 			case "zeta":
 				msg+= " get "+e.type+" #"+e.new_value;
 				break;
@@ -435,11 +436,12 @@ exports.showLastEvols = function(player, message, evols) {
 		.setDescription(lines).setColor(color).setTimestamp(player.updated)
 		.setFooter(config.footer.message, config.footer.iconUrl);
 
-	message.channel.send(richMsg).catch(function(ex) {
-		console.warn(ex);
-		message.reply(ex.message+' (please allow link integration)');
-		message.channel.send(lines);
-	});
+	message.channel.send(richMsg)
+		.catch(function(ex) {
+			console.warn(ex);
+			message.reply(ex.message+' (please allow link integration)');
+			message.channel.send(lines);
+		});
 };
 
 /** Show player's relics (relics command)
