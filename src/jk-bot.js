@@ -1003,6 +1003,8 @@ client.on("message", (message) => {
 		case "regterritorywar":
 		case "registerterritorywar":
 		case "twr":
+		case "twreg":
+		case "twregister":
 			if (message.channel.id !== config.twResults.regChanId) {
 				lines = "This command is restricted to <#"+config.twResults.regChanId+
 					"> channel (on the Mercato Discord)!";
