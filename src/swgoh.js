@@ -202,36 +202,25 @@ exports.getPlayerData = async function(users, callback, message) {
 				});
 
 				unit.skills.forEach(skill => {
-					if (skill.tier===skill.tiers) {
-						if (uoa) {
-							uoa.forEach((ab) => {
-								if (ab.base_id === skill.id) {
-									++unitOmicrons;
-								}
-							});
-						}
+					let canBeOmicron = false;
 
-						if (skill.isZeta) ++unitZetas;
-						// if (skill.tier>8) ++unitOmicrons;
-
-						/* if (skill.isZeta && message && message.author.id === config.discord.ownerID
-						&& unit.defId === "DIRECTORKRENNIC") {
-							console.log("%s's skill:", unit.defId, skill);
-						} /* Examples:
-							DIRECTORKRENNIC's skill: {
-								id: 'leaderskill_DIRECTORKRENNIC',
-								tier: 8,
-								nameKey: 'LEADERABILITY_DIRECTORKRENNIC_NAME',
-								isZeta: true,
-								tiers: 8
+					if (uoa) {
+						uoa.forEach((ab) => {
+							if (ab.base_id === skill.id) {
+								canBeOmicron = true;
 							}
-							HOTHLEIA's skill: {
-								id: 'uniqueskill_HOTHLEIA01',
-								tier: 8,
-								nameKey: 'UNIQUEABILITY_HOTHLEIA01_NAME',
-								isZeta: true,
-								tiers: 8
-							} */
+						});
+					}
+
+					if (canBeOmicron && skill.tier===skill.tiers) {
+						if (skill.isZeta) ++unitZetas;
+						++unitOmicrons;
+					} else
+					if (skill.isZeta && skill.tier===skill.tiers) {
+						++unitZetas;
+					} else
+					if (skill.isZeta && canBeOmicron && skill.tier===(skill.tiers - 1)) {
+						++unitZetas;
 					}
 				});
 				if (unitOmicrons) omicronUnits.push(unit.defId);
