@@ -217,10 +217,10 @@ exports.getPlayerData = async function(users, callback, message) {
 						++unitOmicrons;
 					} else
 					if (skill.isZeta && skill.tier===skill.tiers) {
-						++unitZetas;
+						++unitZetas; // zeta without any omicron
 					} else
 					if (skill.isZeta && canBeOmicron && skill.tier===(skill.tiers - 1)) {
-						++unitZetas;
+						++unitZetas; // zeta without the possible omicron
 					}
 				});
 				if (unitOmicrons) omicronUnits.push(unit.defId);
