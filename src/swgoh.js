@@ -182,6 +182,7 @@ exports.getPlayerData = async function(users, callback, message) {
 			let i = 0;
 			let omicronCount = 0;
 			let omicronUnits = [];
+			let omicronSkills = [];
 			let unitsByCombatType = {};
 			let unitsCountByGear = {};
 			let zetaCount = 0;
@@ -202,24 +203,25 @@ exports.getPlayerData = async function(users, callback, message) {
 				});
 
 				unit.skills.forEach(skill => {
-					let canBeOmicron = false;
+					let omicronSkill = null;
 
 					if (uoa) {
 						uoa.forEach((ab) => {
 							if (ab.base_id === skill.id) {
-								canBeOmicron = true;
+								omicronSkill = ab;
 							}
 						});
 					}
 
-					if (canBeOmicron && skill.tier===skill.tiers) {
+					if (omicronSkill && skill.tier===skill.tiers) {
 						if (skill.isZeta) ++unitZetas;
+						omicronSkills.push(omicronSkill);
 						++unitOmicrons;
 					} else
 					if (skill.isZeta && skill.tier===skill.tiers) {
 						++unitZetas; // zeta without any omicron
 					} else
-					if (skill.isZeta && canBeOmicron && skill.tier===(skill.tiers - 1)) {
+					if (skill.isZeta && omicronSkill && skill.tier===(skill.tiers - 1)) {
 						++unitZetas; // zeta without the possible omicron
 					}
 				});
@@ -333,6 +335,7 @@ exports.getPlayerData = async function(users, callback, message) {
 				player.titles.selected.replace('PLAYERTITLE_', '').replace(/_/g, ' '): 'Default';
 			player.giftCount = clean_stats.TOTAL_GUILD_EXCHANGE_DONATIONS_TU07_2;
 			player.omicronCount = omicronCount;
+			player.omicronSkills = omicronSkills;
 			player.omicronUnits = omicronUnits;
 			player.zetaCount = zetaCount;
 
