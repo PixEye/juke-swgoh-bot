@@ -175,6 +175,88 @@ exports.guildPlayerStats = function(allycode, message, guild) {
  * @param {Object} message - The user's message to reply to
  * @param {Object} guild - The user's guild
  */
+exports.listOmicrons = function(player, message) {
+	let color = "GREEN";
+	let lines = [];
+	let logPrefix = exports.logPrefix; // shortcut
+	let omicronByMode = [];
+	let omicronCount = 0;
+	let omicronModes = [
+		"NONE", // 0,
+		"ALL_OMICRON", // 1,
+		"PVE_OMICRON", // 2,
+		"PVP_OMICRON", // 3,
+		"GUILD_RAID_OMICRON", // 4,
+		"TERRITORY_STRIKE_OMICRON", // 5,
+		"TERRITORY_COVERT_OMICRON", // 6,
+		"TERRITORY_BATTLE_BOTH_OMICRON", // 7,
+		"TERRITORY_WAR_OMICRON", // 8,
+		"TERRITORY_TOURNAMENT_OMICRON", // 9,
+		"WAR_OMICRON", // 10,
+		"CONQUEST_OMICRON", // 11,
+		"GALACTIC_CHALLENGE_OMICRON", // 12,
+		"PVE_EVENT_OMICRON", // 13,
+		"TERRITORY_TOURNAMENT_3_OMICRON", // 14,
+		"TERRITORY_TOURNAMENT_5_OMICRON" // 15
+	];
+
+	console.log(logPrefix()+"listOmicrons() just called");
+	if (!player.omicronSkills) {
+		color = "ORANGE";
+		lines.push("No omicronSkills detected for this player!");
+		console.warn(logPrefix()+lines[0]);
+	} else {
+		Object.keys(player.omicronSkills).forEach((key) => {
+			let skill = player.omicronSkills[key];
+
+			++ omicronCount;
+			if (typeof omicronByMode[skill.omicron_mode] !== 'object') {
+				omicronByMode[skill.omicron_mode] = [skill];
+			} else {
+				omicronByMode[skill.omicron_mode].push(skill);
+			}
+		});
+
+		Object.keys(omicronByMode).forEach((mode_code) => {
+			const mode_name = omicronModes[mode_code].replace('_OMICRON', '').replace(/_/g, ' ').toLowerCase();
+			const skills = omicronByMode[mode_code];
+			let omCountByUnit = {};
+
+			skills.forEach((skill) => {
+				let unitName = unitRealNames[skill.character_base_id];
+
+				if (typeof omCountByUnit[unitName] !== 'number') {
+					omCountByUnit[unitName] = 1;
+				} else {
+					omCountByUnit[unitName]++;
+				}
+			});
+			const sortedKeys = Object.keys(omCountByUnit).sort();
+			let unitList = [];
+			sortedKeys.forEach((unitName) => {
+				const cnt = omCountByUnit[unitName];
+
+				if (cnt>1) unitName += ' ('+cnt+')';
+				unitList.push(unitName);
+			});
+
+			lines.push("`In "+mode_name+':` '+unitList.join(', '));
+		});
+	}
+
+	let richMsg = new RichEmbed().setColor(color)
+		.setTitle(player.name+"'s "+omicronCount+" omicron(s)")
+		.setDescription(lines).setTimestamp(player.updated)
+		.setFooter(config.footer.message, config.footer.iconUrl);
+
+	message.channel.send(richMsg);
+};
+
+/** List guild members (LGM command)
+ * @param {Number} allycode - An allycode
+ * @param {Object} message - The user's message to reply to
+ * @param {Object} guild - The user's guild
+ */
 exports.listGuildMembers = function(allycode, message, guild) {
 	let logPrefix = exports.logPrefix; // shortcut
 	let msg = "";
@@ -225,6 +307,9 @@ exports.listGuildMembers = function(allycode, message, guild) {
 	message.channel.send(msg);
 };
 
+/** Get dynamic log prefix (depending on current time)
+ * @return {string}
+ */
 exports.logPrefix = function () {
 	let dt = new Date();
 
