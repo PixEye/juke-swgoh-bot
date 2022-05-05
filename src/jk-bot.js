@@ -141,7 +141,7 @@ client.on("message", (message) => {
 				user = getUserFromMention(word, message);
 				// console.log(logPrefix()+"Found user in: "+word);
 			} catch(err) {
-				console.warn(err);
+				if (err !== 'No mention found') console.warn(err);
 				return;
 			}
 
@@ -1117,6 +1117,19 @@ client.on("message", (message) => {
 				console.log(logPrefix()+"Try with Discord ID:", user.id);
 				tools.getPlayerFromDiscordUser(user, message, player => {
 					tools.getGuildDbStats(player, message, view.listGuildMembers);
+				});
+			}
+			break;
+
+		case "ol":
+		case "omicronlist":
+		case "omicrons":
+			if (allycode) {
+				tools.getPlayerStats(player, message, view.listOmicrons);
+			} else {
+				console.log(logPrefix()+"Try with Discord ID:", user.id);
+				tools.getPlayerFromDiscordUser(user, message, player => {
+					tools.getPlayerStats(player, message, view.listOmicrons);
 				});
 			}
 			break;
