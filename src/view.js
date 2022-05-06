@@ -184,20 +184,20 @@ exports.listOmicrons = function(player, message) {
 	let omicronModes = [
 		"no where",      // 00: "NONE"
 		"all modes",     // 01: "ALL_OMICRON"
-		"PvE",           // 02: "PVE_OMICRON"
-		"PvP",           // 03: "PVP_OMICRON"
+		"PvE.",          // 02: "PVE_OMICRON"
+		"PvP.",          // 03: "PVP_OMICRON"
 		"Guild raids",   // 04: "GUILD_RAID_OMICRON"
 		"T. Strike",     // 05: "TERRITORY_STRIKE_OMICRON"
 		"T. Covert",     // 06: "TERRITORY_COVERT_OMICRON"
-		"T.B",           // 07: "TERRITORY_BATTLE_BOTH_OMICRON"
-		"T.W",           // 08: "TERRITORY_WAR_OMICRON"
-		"GAC",           // 09: "TERRITORY_TOURNAMENT_OMICRON"
-		"war",           // 10: "WAR_OMICRON"
+		"T.B.",          // 07: "TERRITORY_BATTLE_BOTH_OMICRON"
+		"T.W.",          // 08: "TERRITORY_WAR_OMICRON"
+		"GACs",          // 09: "TERRITORY_TOURNAMENT_OMICRON"
+		"war.",          // 10: "WAR_OMICRON"
 		"conquest",      // 11: "CONQUEST_OMICRON"
-		"Gal.Challenge", // 12: "GALACTIC_CHALLENGE_OMICRON"
+		"G.C.",          // 12: "GALACTIC_CHALLENGE_OMICRON"
 		"PvE event",     // 13: "PVE_EVENT_OMICRON"
-		"GAC 3v3",       // 14: "TERRITORY_TOURNAMENT_3_OMICRON"
-		"GAC 5v5"        // 15: "TERRITORY_TOURNAMENT_5_OMICRON"
+		"GAC3",          // 14: "TERRITORY_TOURNAMENT_3_OMICRON"
+		"GAC5"           // 15: "TERRITORY_TOURNAMENT_5_OMICRON"
 	];
 	// */
 
@@ -241,9 +241,10 @@ exports.listOmicrons = function(player, message) {
 				unitList.push(unitName);
 			});
 
-			lines.push("`In "+mode_name+':` '+unitList.join(', '));
+			lines.push("`In "+mode_name+' ('+skills.length+'):` '+unitList.join(', '));
 		});
 	}
+	lines.sort();
 
 	let richMsg = new RichEmbed().setColor(color)
 		.setTitle(player.name+"'s "+omicronCount+" omicron(s)")
