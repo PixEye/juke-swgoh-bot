@@ -182,23 +182,24 @@ exports.listOmicrons = function(player, message) {
 	let omicronByMode = [];
 	let omicronCount = 0;
 	let omicronModes = [
-		"NONE", // 0,
-		"ALL_OMICRON", // 1,
-		"PVE_OMICRON", // 2,
-		"PVP_OMICRON", // 3,
-		"GUILD_RAID_OMICRON", // 4,
-		"TERRITORY_STRIKE_OMICRON", // 5,
-		"TERRITORY_COVERT_OMICRON", // 6,
-		"TERRITORY_BATTLE_BOTH_OMICRON", // 7,
-		"TERRITORY_WAR_OMICRON", // 8,
-		"TERRITORY_TOURNAMENT_OMICRON", // 9,
-		"WAR_OMICRON", // 10,
-		"CONQUEST_OMICRON", // 11,
-		"GALACTIC_CHALLENGE_OMICRON", // 12,
-		"PVE_EVENT_OMICRON", // 13,
-		"TERRITORY_TOURNAMENT_3_OMICRON", // 14,
-		"TERRITORY_TOURNAMENT_5_OMICRON" // 15
+		"no where",      // 00: "NONE"
+		"all modes",     // 01: "ALL_OMICRON"
+		"PvE",           // 02: "PVE_OMICRON"
+		"PvP",           // 03: "PVP_OMICRON"
+		"Guild raids",   // 04: "GUILD_RAID_OMICRON"
+		"T. Strike",     // 05: "TERRITORY_STRIKE_OMICRON"
+		"T. Covert",     // 06: "TERRITORY_COVERT_OMICRON"
+		"T.B",           // 07: "TERRITORY_BATTLE_BOTH_OMICRON"
+		"T.W",           // 08: "TERRITORY_WAR_OMICRON"
+		"GAC",           // 09: "TERRITORY_TOURNAMENT_OMICRON"
+		"war",           // 10: "WAR_OMICRON"
+		"conquest",      // 11: "CONQUEST_OMICRON"
+		"Gal.Challenge", // 12: "GALACTIC_CHALLENGE_OMICRON"
+		"PvE event",     // 13: "PVE_EVENT_OMICRON"
+		"GAC 3v3",       // 14: "TERRITORY_TOURNAMENT_3_OMICRON"
+		"GAC 5v5"        // 15: "TERRITORY_TOURNAMENT_5_OMICRON"
 	];
+	// */
 
 	console.log(logPrefix()+"listOmicrons() just called");
 	if (!player.omicronSkills) {
@@ -218,7 +219,7 @@ exports.listOmicrons = function(player, message) {
 		});
 
 		Object.keys(omicronByMode).forEach((mode_code) => {
-			const mode_name = omicronModes[mode_code].replace('_OMICRON', '').replace(/_/g, ' ').toLowerCase();
+			const mode_name = omicronModes[mode_code];
 			const skills = omicronByMode[mode_code];
 			let omCountByUnit = {};
 
