@@ -1745,34 +1745,35 @@ exports.territoryWarReg = function(player, message) {
 	}
 
 	if (message.words.length < 4) {
-		let example = "Example: twr 48 20000 19500 Our opponents guild name";
-		let usage = "Usage: twr <your player count> <your score> <their score> <their guild name>";
+		let example = "twr 48 20000 19500 Our opponents guild name";
+		let usage = "twr <your player count> <your score> <their score> <their guild name>";
 
-		message.channel.send(":red_circle: "+usage);
-		message.channel.send("👉 "+example);
+		message.channel.send(":red_circle: Usage: "+usage);
+		message.channel.send("👉 Example: "+example);
 
 		return;
 	}
 
 	let msg = "";
 	let self_player_cnt = message.words.shift();
-	let self_score = message.words.shift();
+	let self_score  =  message.words.shift();
 	let opp_score = message.words.shift();
 
 	if (!self_player_cnt.match(/^\d{1,2}$/)) {
 		msg = "Invalid self player count (not a 2 digits integer)!";
-	}
-	self_player_cnt = parseInt(self_player_cnt);
-	if (self_player_cnt<12 || self_player_cnt>50) {
-		msg = "Invalid self player count (not an integer <= 50)!";
+	} else {
+		self_player_cnt = parseInt(self_player_cnt);
+		if (self_player_cnt<25 || self_player_cnt>50) {
+			msg = "Invalid self player count (should be an integer between 25 & 50)!";
+		}
 	}
 
-	if (!self_score.match(/^\d{1,5}$/)) {
+	if (!msg && !self_score.match(/^\d{1,5}$/)) {
 		msg = "Invalid self score!";
 	}
 	self_score = parseInt(self_score);
 
-	if (!opp_score.match(/^\d{1,5}$/)) {
+	if (!msg && !opp_score.match(/^\d{1,5}$/)) {
 		msg = "Invalid opponent score!";
 	}
 	opp_score = parseInt(opp_score);
