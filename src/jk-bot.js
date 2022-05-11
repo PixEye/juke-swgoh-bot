@@ -192,6 +192,7 @@ client.on("message", (message) => {
 					" checkMods (cm), checkUnitsGp (cugp)"+
 					", countGuildTopUnits (cgtu), dis, gacH(istory), (gl)Check (glc), getUnregisteredPlayers (gup),"+
 					" guildBoard (gb), guildStats (gs), help, invite, (last)evols (le), listGuildMembers (lgm),"+
+					" omicronList (ol/omicrons),"+
 					" playerStats (ps), profile (gg), register (reg), relics, repete, self(y), shipInfo (si),"+
 					" sources (src), start, stats, status, unreg(ister), warstats (ws), whoami, whois",
 					"**Commandes de comportement :**",
@@ -1065,6 +1066,7 @@ client.on("message", (message) => {
 					" checkMods (cm), checkUnitsGp"+
 					" (cugp), countGuildTopUnits (cgtu), gacH(istory), (gl)Check (glc), getUnregisteredPlayers (gup),"+
 					" guildBoard (gb), guildStats (gs), help, invite, (last)evols (le), listGuildMembers (lgm),"+
+					" omicronList (ol/omicrons),"+
 					" playerStat (ps), profile (gg), register (reg), relics, repeat, say, self(y), shipInfo (si),"+
 					" sources (src), start, stats, status, unreg(ister), warstats (ws), whoami, whois",
 					"**Behaviour commands:**",
@@ -1457,7 +1459,7 @@ client.on("message", (message) => {
 				}
 
 				nbg = result[0].nbg; // nbg = number of guilds
-				console.log(logPrefix()+"   %d guild(s) registered", nbg);
+				console.log(logPrefix()+"    %d guild(s) registered", nbg);
 
 				sql = "SELECT COUNT(`id`) AS nbp FROM `users`"; // nbp = number of players
 				db_pool.query(sql, (exc, result) => {
@@ -1476,7 +1478,7 @@ client.on("message", (message) => {
 
 					nbp = result[0].nbp; // nbp = number of players
 					let avg = nbg? Math.round(nbp / nbg): nbp; // average per guild
-					console.log(logPrefix()+"  %d user(s) registered (average = %d per guild)", nbp, avg);
+					console.log(logPrefix()+"   %d user(s) registered (average = %d per guild)", nbp, avg);
 
 					sql = "SELECT COUNT(`id`) AS nbu FROM `units`"; // nbp = number of units
 					db_pool.query(sql, (exc, result) => {
