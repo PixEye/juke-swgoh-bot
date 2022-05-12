@@ -779,7 +779,7 @@ exports.getPlayerFromDiscordUser = function(user, message, callback) {
 			});
 			if (typeof(callback)==="function") callback(player);
 		} else if (result.length === 1) { // 1 match, perfect!
-			if (player.banned) {
+			if (player.banned && player.discord_id !== message.author.id) {
 				let msg = player.game_name+' is banned from ProXima alliance!';
 				console.log(logPrefix()+msg);
 				message.channel.send(':no_entry: '+msg); // wrong way icon
