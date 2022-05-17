@@ -722,5 +722,39 @@
 		"omicron_battle_types": [
 			"TERRITORY_TOURNAMENT_BATTLE"
 		]
+	},
+	{
+		"base_id": "leaderskill_50RT",
+		"name": "Spare Parts",
+		"image": "https://game-assets.swgoh.gg/tex.abilityui_leader_spareparts.png",
+		"url": "//swgoh.gg/characters/50r-t/#spare-parts",
+		"tier_max": 8,
+		"is_zeta": true,
+		"is_omega": false,
+		"is_omicron": true,
+		"combat_type": 1,
+		"omicron_mode": 11,
+		"type": 3,
+		"character_base_id": "50RT",
+		"ship_base_id": null,
+		"omicron_battle_types": []
+	},
+	{
+		"base_id": "uniqueskill_FIRSTORDERTIEPILOT01",
+		"name": "Keen Eye",
+		"image": "https://game-assets.swgoh.gg/tex.abilityui_passive_crit_buff.png",
+		"url": "//swgoh.gg/characters/first-order-tie-pilot/#keen-eye",
+		"tier_max": 9,
+		"is_zeta": true,
+		"is_omega": false,
+		"is_omicron": true,
+		"combat_type": 1,
+		"omicron_mode": 9,
+		"type": 4,
+		"character_base_id": "FIRSTORDERTIEPILOT",
+		"ship_base_id": null,
+		"omicron_battle_types": [
+			"TERRITORY_TOURNAMENT_BATTLE"
+		]
 	}
 ]
