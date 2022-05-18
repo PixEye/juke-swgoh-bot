@@ -280,7 +280,7 @@ exports.checkLegendReq = function(player, message) {
  */
 exports.checkPlayerMods = function(player, message) {
 	let logPrefix = exports.logPrefix; // shortcut
-	let maxLines = 5;
+	let maxLines = 10;
 
 	if (!player.name) {
 		console.log(logPrefix()+"invalid name at T50 for user:", player);
