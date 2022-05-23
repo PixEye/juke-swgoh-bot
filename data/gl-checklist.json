@@ -178,6 +178,18 @@
 			],
 			"baseId": "TBD_STARKILLER",
 			"unitName": "Star Killer"
+		},
+		{
+			"baseId": "TBD_GI",
+			"unitName": "Grand Inquisitor",
+			"image": "https://game-assets.swgoh.gg/tex.jg_charui_grandinquisitor.png",
+			"requiredUnits":[
+				{"gearLevel": 13, "relicTier": 5, "baseId": "SECONDSISTER"},
+				{"gearLevel": 13, "relicTier": 5, "baseId": "NINTHSISTER"},
+				{"gearLevel": 13, "relicTier": 5, "baseId": "SEVENTHSISTER"},
+				{"gearLevel": 13, "relicTier": 5, "baseId": "EIGHTHBROTHER"},
+				{"gearLevel": 13, "relicTier": 5, "baseId": "FIFTHBROTHER"}
+			]
 		}
 	]
 }
