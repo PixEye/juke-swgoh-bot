@@ -1616,7 +1616,7 @@ exports.stringsCompare = function(a, b) {
 exports.territoryWarGet = function(player, message) {
 	const now = new Date();
 	const filename = "../data/" + now.toISOString().substr(0, 10) + '_'
-		+ now.toLocaleTimeString().substr(0, 5).replace(':', '') + "_tw.csv";
+		+ now.toISOString().substr(11, 5).replace(':', '') + "_tw.csv";
 	const logPrefix = exports.logPrefix; // shortcut
 	const sep = ";";
 	const sql = "SELECT DATE_FORMAT(created_at, '%Y-%m-%d %T') AS created_time"+
