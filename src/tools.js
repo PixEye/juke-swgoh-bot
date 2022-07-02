@@ -2171,4 +2171,4 @@ exports.updatePlayerDataInDb = function(player, message, callback) {
 	});
 };
 
-// vim: noexpandtab shiftwidth=4 softtabstop=4 tabstop=4
+// vim: noexpandtab

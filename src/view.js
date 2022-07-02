@@ -71,7 +71,7 @@ exports.guildPlayerStats = function(allycode, message, guild) {
 	lines.push(line);
 	// lines.push("`##/  avg  /  max`");
 
-	// Compute statitics:
+	// Compute analytics:
 	config.custom.unitsOfInterest.forEach(function(unitName) {
 		let cpg = {}; // count per gears
 		let cpr = {}; // count per relics
@@ -481,7 +481,7 @@ exports.showLastEvols = function(player, message, evols) {
 				msg+= " :unlock:";
 				break;
 			case "newGifts": {
-				if (low_words==="hidegifts" || low_words==="hg") {
+				if (low_words==="hideGifts".toLowerCase() || low_words==="hg") {
 					gaveItemsCnt += e.new_value;
 					++giftCnt;
 					++i;
@@ -667,7 +667,7 @@ exports.showPlayerStats = function(player, message) {
 		let type = (parseInt(ga.type) == 5) ? "5v5" : "3v3";
 		let result = (parseInt(ga.result) == 1) ? "Result : Win" : "Result : Loss";
 		lines.push(
-			"**Divsion:** "+ga.division + " - "+ type + " - Round " + ga.round,
+			"**Division:** "+ga.division + " - "+ type + " - Round " + ga.round,
 			result + " - " + ga.score + " vs " + ga.opponent_score,
 			""
 		);
@@ -707,12 +707,12 @@ exports.showPlayerStats = function(player, message) {
 	let type = (parseInt(ga_stats.type) == 5) ? "5v5" : "3v3";
 
 	lines = [
-		"**Divsion:** "+ga_stats.division,
+		"**Division:** "+ga_stats.division,
 		result,
 		player.game_name + ": " + ga_stats.score + " vs " + ga_stats.opponent_score,
 		"",
-		"**Ground territories efficienty:** "+ ((parseInt(ga_stats.ground_territory)/3).toFixed(1)*100) + "%",
-		"**Fleet territory efficienty:** "+ parseInt(ga_stats.fleet_territory)*100 + "%",
+		"**Ground territories efficiency:** "+ ((parseInt(ga_stats.ground_territory)/3).toFixed(1)*100) + "%",
+		"**Fleet territory efficiency:** "+ parseInt(ga_stats.fleet_territory)*100 + "%",
 		"",
 		auto_def,
 		"**GL faced on defense:** "+ ga_stats.gl_faced,
@@ -775,19 +775,19 @@ exports.showRandomTeam = function(player, message) {
  */
 exports.showSwgohData = function(data, message) {
 	let now = new Date();
-	let showableData = typeof(data)==="object"?
+	let dataToShow = typeof(data)==="object"?
 		JSON.stringify(data).substr(0, 200): data;
 
 	let richMsg = new RichEmbed().setTitle("SWGoH data").setColor("GREEN")
 		// .setAuthor(config.discord.username)
-		.setDescription(showableData)
+		.setDescription(dataToShow)
 		.setTimestamp(typeof(data)==="object" && data.updated? data.updated: now)
 		.setFooter(config.footer.message, config.footer.iconUrl);
 
 	message.reply(richMsg).catch(function(ex) {
 		console.warn(ex);
 		message.reply(ex.message+' (please allow link integration)');
-		message.channel.send(showableData);
+		message.channel.send(dataToShow);
 	});
 };
 
@@ -853,7 +853,7 @@ exports.showUnitInfo = function(player, message, unitName, ct) {
 			});
 
 			if (!nbFound) {
-				// Tryin full unit names...
+				// Trying full unit names...
 				player.unitsData.forEach(function(unit) {
 					let uid = unit.name;
 					let fullName = unitRealNames[uid] || uid;
@@ -1003,4 +1003,4 @@ exports.showWhoIs = function(user, nick, message) {
 	});
 };
 
-// vim: noexpandtab shiftwidth=4 softtabstop=4 tabstop=4
+// vim: noexpandtab

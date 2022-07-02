@@ -102,4 +102,4 @@ exports.utf8_decode = function (strData) { // eslint-disable-line camelcase
 	return tmpArr.join('')
 }
 
-// vim: noexpandtab shiftwidth=4 softtabstop=4 tabstop=4
+// vim: noexpandtab

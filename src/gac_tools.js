@@ -189,19 +189,19 @@ function registerPlayerForGrandArena(player, message) {
 	let division = getDivFromGP(parseInt(player.gp));
 
 	if ( !division ) {
-		console.log(logPrefix()+"registerPlayerForGrandArena divsion calculation error.")
+		console.log(logPrefix()+"registerPlayerForGrandArena division calculation error.")
 		message.reply(":red_circle: You must be over 1M GP to enter GA!");
 		return;
 	}
 
-	console.log(logPrefix()+"GA Stats : gaTerritoriesDefeated : "
-		+player.gaTerritoriesDefeated+ " - gaBannersEarned : "
-		+player.gaBannersEarned+ " - gaFullCleardRoundWins : "
-		+player.gaFullCleardRoundWins+ " - gaOffensiveBattles : "
-		+player.gaOffensiveBattles+ " - gaSuccessfulDefends : "
-		+player.gaSuccessfulDefends+ " - gaUndersizedSquadWins : "
-		+player.gaUndersizedSquadWins+ " - gaScore : "
-		+player.gaScore)
+	console.log(logPrefix()+
+		"GA Stats: gaTerritoriesDefeated: "+player.gaTerritoriesDefeated+
+		" - gaBannersEarned: "+player.gaBannersEarned+
+		" - gaFullCleardRoundWins: "+player.gaFullCleardRoundWins+
+		" - gaOffensiveBattles: "+player.gaOffensiveBattles+
+		" - gaSuccessfulDefends: "+player.gaSuccessfulDefends+
+		" - gaUndersizedSquadWins: "+player.gaUndersizedSquadWins+
+		" - gaScore: "+player.gaScore)
 
 	let sql_query = "INSERT INTO `current_ga` "
 		+ "(`allycode`, `division`, `type`, `round`, `ground_territory`"
@@ -310,7 +310,7 @@ exports.grandArenaRegistration = function(player, message, registered) {
 		return;
 	}
 
-	console.log(logPrefix()+"grandArenaRegistration : checkGrandArenaRegistration = "+JSON.stringify(registered));
+	console.log(logPrefix()+"grandArenaRegistration: checkGrandArenaRegistration = "+JSON.stringify(registered));
 	registered = registered[0].cnt;
 
 	if (message.words.length == 0) {

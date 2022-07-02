@@ -131,7 +131,7 @@ exports.parseSwgohGgToonList = function(html, result, chunkCnt) {
 	});
 };
 
-exports.parseWarstatGuildList = function(html, result, chunkCnt) {
+exports.parseWarstatsGuildList = function(html, result, chunkCnt) {
 	var fileSize = html.length;
 
 	if (result.statusCode !== 200) {
@@ -159,7 +159,7 @@ exports.parseWarstatGuildList = function(html, result, chunkCnt) {
 	const NbCols = Headers.length;
 
 	console.log("Page title:", Title);
-	console.log("Nb colomns found:", NbCols);
+	console.log("Nb columns found:", NbCols);
 	console.log("Nb data blocks:", NbDataBlocks);
 	console.log("Nb cells found:", DataNodes.length);
 
@@ -222,7 +222,7 @@ exports.wget = function(url, callback) {
 	});
 };
 
-// exports.wget(PROXIMA_GUILDS, exports.parseWarstatGuildList);
+// exports.wget(PROXIMA_GUILDS, exports.parseWarstatsGuildList);
 // exports.wget(SWGOH_TOP_GUILDS, exports.parseSwgohGgGuildList);
 exports.wget(BASE_SPEED_OF_TOONS, exports.parseSwgohGgToonList);
 
