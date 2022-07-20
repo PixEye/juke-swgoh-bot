@@ -94,7 +94,7 @@ exports.checkLegendReq = function(player, message) {
 
 	if (unitAliasNames[concatUpMsg]) concatUpMsg = unitAliasNames[concatUpMsg];
 	console.log(logPrefix()+"Looking for unit matching '"+concatUpMsg+"'");
-	if (concatUpMsg==="REY") concatUpMsg = "GLREY";
+	if (concatUpMsg==="REY") concatUpMsg = "GL"+"REY";
 	player.glCount = 0;
 
 	unitsOfInterest.forEach(unit => {
@@ -111,13 +111,13 @@ exports.checkLegendReq = function(player, message) {
 		unit.baseId = unit.baseId.toUpperCase();
 		switch(unit.baseId) {
 			case "GK":
-				unit.baseId = "JEDIMASTERKENOBI"; break;
+				unit.baseId = "JEDI"+"MASTER"+"KENOBI"; break;
 			case "EXECUTOR":
-				unit.baseId = "CAPITALEXECUTOR"; break;
+				unit.baseId = "CAPITAL"+"EXECUTOR"; break;
 			case "LV":
-				unit.baseId = "LORDVADER"; break;
+				unit.baseId = "LORD"+"VADER"; break;
 			case "REY":
-				unit.baseId = "GLREY"; break;
+				unit.baseId = "GL"+"REY"; break;
 		}
 		if (unitAliasNames[unit.baseId]) unit.baseId = unitAliasNames[unit.baseId];
 
@@ -135,7 +135,7 @@ exports.checkLegendReq = function(player, message) {
 		unit.name = unitRealNames[unit.baseId] || unit.name;
 		if (!locked) {
 			progresses.push(1);
-			if (unit.baseId !== 'JEDIKNIGHTLUKE' && unit.baseId !== 'STARKILLER'
+			if (unit.baseId !== 'JEDI'+'KNIGHT'+'LUKE' && unit.baseId !== 'STAR'+'KILLER'
 			&& unit.name !== 'Executor') // Not GL exceptions
 				++ player.glCount;
 		} else {
@@ -176,7 +176,7 @@ exports.checkLegendReq = function(player, message) {
 					return;
 				}
 
-				if (playerUnit.gear<=9) playerUnit.gear = "0"+playerUnit.gear;
+				if (playerUnit.gear.toString().length<2) playerUnit.gear = "0"+playerUnit.gear;
 				levels = "G"+playerUnit.gear+"/"+req.gearLevel+"; R"+playerUnit.relic+"/"+req.relicTier;
 				msg = "`"+levels+"`: "+unitName;
 
@@ -521,7 +521,7 @@ exports.getGuildDbStats = function(player1, message, callback) {
 					let otd = exc.sqlMessage? exc.sqlMessage: exc; // object to display
 
 					console.log("SQL:", sql);
-					console.log(logPrefix()+"GDDBS Exception:", otd);
+					console.log(logPrefix()+"GGDBS Exception:", otd);
 					message.reply("GGDBS Error: "+otd);
 					return;
 				}
@@ -547,7 +547,7 @@ exports.getGuildDbStats = function(player1, message, callback) {
 						let otd = exc.sqlMessage? exc.sqlMessage: exc; // object to display
 
 						console.log("SQL:", sql);
-						console.warn(logPrefix()+"GDDBS Exception:", otd);
+						console.warn(logPrefix()+"GGDBS Exception:", otd);
 						message.reply("GGDBS Error: "+otd);
 						return;
 					}
@@ -575,7 +575,7 @@ exports.getGuildDbStats = function(player1, message, callback) {
 							let otd = exc.sqlMessage? exc.sqlMessage: exc; // object to display
 
 							console.log("SQL:", sql);
-							console.log(logPrefix()+"GDDBS Exception:", otd);
+							console.log(logPrefix()+"GGDBS Exception:", otd);
 							message.reply("GGDBS Error: "+otd);
 							return;
 						}
@@ -644,7 +644,7 @@ exports.getLastEvolsFromDb = function(player, message) {
 	let low_words = message.words.join("").toLowerCase();
 	let sql = "SELECT * FROM `evols` WHERE allycode="+parseInt(allycode);
 
-	if (low_words==="hidegifts" || low_words==="hg") {
+	if (low_words==="hide"+"gifts" || low_words==="hg") {
 		sql += " AND type <> 'newGifts'";
 	}
 	sql += " ORDER BY `ts` DESC LIMIT 10";
@@ -799,7 +799,7 @@ exports.getPlayerFromDiscordUser = function(user, message, callback) {
 };
 
 /** Get one or more players game stats
- * @param {Object} users - An arry of users
+ * @param {Object} users - An array of users
  * @param {Object} message - The message to reply to
  * @param {Object} callback - The callback function
  */
@@ -1353,7 +1353,7 @@ exports.updateOldestGuildOr = function(callback) {
 	let logPrefix = exports.logPrefix; // shortcut
 	let deltaInHours = 3;
 	let sql = "SELECT * FROM guilds WHERE alliance_id IS NOT NULL"+
-		" AND (officerCount IS NULL OR TIMESTAMPDIFF(HOUR, ts, NOW())>"+deltaInHours+")"+
+		" AND (officerCount IS NULL OR TIMESTAMP"+"DIFF(HOUR, ts, NOW())>"+deltaInHours+")"+
 		" ORDER BY ts";
 	let start = new Date();
 
@@ -1410,7 +1410,7 @@ exports.updateOldestPlayer = function() {
 	let deltaInHours = 18;
 	let sql = "SELECT allycode, game_name, ts FROM users"+
 		" WHERE NOT banned AND discord_id IS NOT NULL"+
-		" AND TIMESTAMPDIFF(HOUR, ts, NOW())>"+deltaInHours+
+		" AND TIMESTAMP"+"DIFF(HOUR, ts, NOW())>"+deltaInHours+
 		" ORDER BY ts LIMIT 5";
 	let start = new Date();
 
@@ -1469,7 +1469,7 @@ exports.refreshGuildStats = function(allycode, message, callback) {
 					let otd = exc.sqlMessage? exc.sqlMessage: exc; // object to display
 
 					console.log("SQL:", sql);
-					console.log(logPrefix()+"GDDBS Exception:", otd);
+					console.log(logPrefix()+"RGS Exception:", otd);
 					message.reply("RGS Error: "+otd);
 					return;
 				}
@@ -1495,7 +1495,7 @@ exports.refreshGuildStats = function(allycode, message, callback) {
 						let otd = exc.sqlMessage? exc.sqlMessage: exc; // object to display
 
 						console.log("SQL:", sql);
-						console.warn(logPrefix()+"GDDBS Exception:", otd);
+						console.warn(logPrefix()+"RGS Exception:", otd);
 						message.reply("RGS Error: "+otd);
 						return;
 					}
@@ -1570,7 +1570,7 @@ exports.rememberGuildStats = function(g) {
 	db_pool.query(sql, [g.name, g.id], function(exc, result) {
 		if (exc) {
 			console.log("SQL UPG:", sql);
-			console.log(logPrefix()+"UGTWR Exception:", exc.sqlMessage? exc.sqlMessage: exc);
+			console.log(logPrefix()+"RGS Exception:", exc.sqlMessage? exc.sqlMessage: exc);
 			console.log("Lines:", JSON.stringify([g.name, g.id]));
 			return;
 		}
@@ -1639,7 +1639,7 @@ exports.territoryWarGet = function(player, message) {
 		}
 
 		let ln = 0;
-		let msg = "%d records embeded in %d lines of %s";
+		let msg = "%d records embedded in %d lines of %s";
 		let n = result.length;
 
 		if (!n) {
@@ -2157,7 +2157,7 @@ exports.updatePlayerDataInDb = function(player, message, callback) {
 		db_pool.query(sql5, lines, function(exc, result) {
 			if (exc) {
 				console.log("SQL5:", sql5);
-				console.log(logPrefix()+"UTWR Exception:", exc.sqlMessage? exc.sqlMessage: exc);
+				console.log(logPrefix()+"UPDIDB Exception:", exc.sqlMessage? exc.sqlMessage: exc);
 				console.log("Lines:", JSON.stringify(lines));
 				return;
 			}
