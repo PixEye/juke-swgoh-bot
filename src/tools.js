@@ -77,7 +77,7 @@ exports.checkLegendReq = function(player, message) {
 	let logPrefix = exports.logPrefix; // shortcut
 	let msg = "";
 	let picture = "";
-	let progressMessages = [];
+	let progressObjects = [];
 	let progressByTopUnit = {};
 	let unitsOfInterest = req.units;
 
@@ -103,7 +103,7 @@ exports.checkLegendReq = function(player, message) {
 		let progresses = [];
 
 		lines = [];
-		progressMessages = [];
+		progressObjects = [];
 		unit.name = unit.unitName;
 		unit.baseId = unit.baseId.replace("TBD_", "").trim();
 		glNames.push(unit.baseId);
@@ -156,7 +156,7 @@ exports.checkLegendReq = function(player, message) {
 					msg = levels+": "+unitName;
 					progresses.push(progress);
 					msg = "❌ "+msg+" is locked! 0%";
-					progressMessages.push({"progress": progress, "msg": msg});
+					progressObjects.push({"progress": progress, "msg": msg});
 					return;
 				}
 
@@ -171,7 +171,7 @@ exports.checkLegendReq = function(player, message) {
 						progress = 1;
 						msg = "✅ "+msg+" is ready.";
 					}
-					progressMessages.push({"progress": progress, "msg": msg});
+					progressObjects.push({"progress": progress, "msg": msg});
 					progresses.push(progress);
 					return;
 				}
@@ -184,7 +184,7 @@ exports.checkLegendReq = function(player, message) {
 				if (playerUnit.stars < 7) {
 					progresses.push(progress);
 					msg = "🔺 "+msg+" is only "+playerUnit.stars+"⭐. "+(progress*100).toFixed()+"%";
-					progressMessages.push({"progress": progress, "msg": msg});
+					progressObjects.push({"progress": progress, "msg": msg});
 					return;
 				}
 
@@ -192,7 +192,7 @@ exports.checkLegendReq = function(player, message) {
 				if (playerUnit.gear < req.gearLevel) {
 					progresses.push(progress);
 					msg = "😕 "+msg+" in progress. "+(progress*100).toFixed()+"%";
-					progressMessages.push({"progress": progress, "msg": msg});
+					progressObjects.push({"progress": progress, "msg": msg});
 					return;
 				}
 
@@ -200,14 +200,14 @@ exports.checkLegendReq = function(player, message) {
 				if (playerUnit.relic < req.relicTier) {
 					progresses.push(progress);
 					msg = "👉 "+msg+" in progress. "+(progress*100).toFixed()+"%";
-					progressMessages.push({"progress": progress, "msg": msg});
+					progressObjects.push({"progress": progress, "msg": msg});
 					return;
 				}
 
 				progress = 1;
 				progresses.push(progress);
 				msg = "✅ "+msg+" is ready.";
-				progressMessages.push({"progress": progress, "msg": msg});
+				progressObjects.push({"progress": progress, "msg": msg});
 			}); // end of loop on requirements
 		}
 
@@ -226,8 +226,8 @@ exports.checkLegendReq = function(player, message) {
 			else if (playerGl && typeof playerGl.combatType === 'undefined')
 				console.log("Player's GL:", playerGl);
 
-			progressMessages.sort((a, b) => b.progress - a.progress); // sort in desc order
-			progressMessages.forEach(r => lines.push(r.msg));
+			progressObjects.sort((a, b) => b.progress - a.progress); // sort in desc order
+			progressObjects.forEach(po => lines.push(po.msg));
 			lines.push(resume);
 
 				if  (avg< 50) indicator = '🔺';
