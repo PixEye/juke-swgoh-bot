@@ -148,27 +148,6 @@
 			"unitName": "Lord Vader"
 		},
 		{
-			"image": "/static/img/assets/journeyguide/tex.jg_charui_executor.png",
-			"requiredUnits": [
-				{"stars": 7, "baseId": "RAZORCREST"},
-				{"stars": 7, "baseId": "SLAVE1"},
-				{"stars": 7, "baseId": "IG2000"},
-				{"stars": 7, "baseId": "HOUNDSTOOTH"},
-				{"stars": 7, "baseId": "TIEADVANCED"},
-				{"stars": 7, "baseId": "TIEBOMBERIMPERIAL"},
-				{"stars": 7, "baseId": "TIEFIGHTERIMPERIAL"},
-				{"gearLevel": 13, "relicTier": 7, "baseId": "VADER"},
-				{"gearLevel": 13, "relicTier": 8, "baseId": "ADMIRALPIETT"},
-				{"gearLevel": 13, "relicTier": 8, "baseId": "BOBAFETT"},
-				{"gearLevel": 13, "relicTier": 5, "baseId": "TIEFIGHTERPILOT"},
-				{"gearLevel": 13, "relicTier": 5, "baseId": "BOSSK"},
-				{"gearLevel": 13, "relicTier": 5, "baseId": "IG88"},
-				{"gearLevel": 13, "relicTier": 5, "baseId": "DENGAR"}
-			],
-			"baseId": "TBD_EXECUTOR",
-			"unitName": "Executor"
-		},
-		{
 			"image": "https://game-assets.swgoh.gg/tex.charui_starkiller.png",
 			"requiredUnits": [
 				{"gearLevel": 13, "relicTier": 5, "baseId": "DASHRENDAR"},
@@ -189,6 +168,58 @@
 				{"gearLevel": 13, "relicTier": 5, "baseId": "SEVENTHSISTER"},
 				{"gearLevel": 13, "relicTier": 5, "baseId": "EIGHTHBROTHER"},
 				{"gearLevel": 13, "relicTier": 5, "baseId": "FIFTHBROTHER"}
+			]
+		},
+		{
+			"baseId": "TBD_JABBA",
+			"unitName": "Jabba the Hutt",
+			"image": "https://game-assets.swgoh.gg/temp.jabba_the_hutt.jpg",
+			"requiredUnits":[
+				{"gearLevel": 13, "relicTier": 8, "baseId": "HANSOLO"},
+				{"gearLevel": 13, "relicTier": 3, "baseId": "GAMORREANGUARD"},
+				{"gearLevel": 13, "relicTier": 6, "baseId": "GREEDO"}
+			]
+		},
+		{
+			"baseId": "TBD_EXECUTOR",
+			"unitName": "Executor",
+			"image": "/static/img/assets/journeyguide/tex.jg_shipui_executor.png",
+			"requiredUnits": [
+				{"stars": 7, "baseId": "RAZORCREST"},
+				{"stars": 7, "baseId": "SLAVE1"},
+				{"stars": 7, "baseId": "IG2000"},
+				{"stars": 7, "baseId": "HOUNDSTOOTH"},
+				{"stars": 7, "baseId": "TIEADVANCED"},
+				{"stars": 7, "baseId": "TIEBOMBERIMPERIAL"},
+				{"stars": 7, "baseId": "TIEFIGHTERIMPERIAL"},
+				{"gearLevel": 13, "relicTier": 7, "baseId": "VADER"},
+				{"gearLevel": 13, "relicTier": 8, "baseId": "ADMIRALPIETT"},
+				{"gearLevel": 13, "relicTier": 8, "baseId": "BOBAFETT"},
+				{"gearLevel": 13, "relicTier": 5, "baseId": "TIEFIGHTERPILOT"},
+				{"gearLevel": 13, "relicTier": 5, "baseId": "BOSSK"},
+				{"gearLevel": 13, "relicTier": 5, "baseId": "IG88"},
+				{"gearLevel": 13, "relicTier": 5, "baseId": "DENGAR"}
+			]
+		},
+		{
+			"baseId": "TBD_PROFUNDITY",
+			"unitName": "Profundity",
+			"image": "/static/img/assets/journeyguide/temp.profundity.jpg",
+			"requiredUnits": [
+				{"stars": 7, "baseId": "OUTRIDER"},
+				{"stars": 7, "baseId": "CASSIANUWING"},
+				{"stars": 7, "baseId": "BIGGSDARKLIGHTER"},
+				{"stars": 7, "baseId": "XWINGRED2"},
+				{"stars": 7, "baseId": "BIGGSDARKLIGHTER"},
+				{"stars": 7, "baseId": "YWINGREBEL"},
+				{"stars": 7, "baseId": "GHOST"},
+				{"gearLevel": 13, "relicTier": 9, "baseId": "ADMIRALRADDUS"},
+				{"gearLevel": 13, "relicTier": 8, "baseId": "CASSIANANDOR"},
+				{"gearLevel": 13, "relicTier": 7, "baseId": "DASHRENDAR"},
+				{"gearLevel": 13, "relicTier": 5, "baseId": "MONMOTHMA"},
+				{"gearLevel": 13, "relicTier": 5, "baseId": "BISTAN"},
+				{"gearLevel": 13, "relicTier": 5, "baseId": "JYNERSO"},
+				{"gearLevel": 13, "relicTier": 5, "baseId": "HERASYNDULLAS3"}
 			]
 		}
 	]
