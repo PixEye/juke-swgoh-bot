@@ -207,8 +207,8 @@
 			"image": "/static/img/assets/journeyguide/temp.profundity.jpg",
 			"requiredUnits": [
 				{"stars": 7, "baseId": "OUTRIDER"},
-				{"stars": 7, "baseId": "CASSIANUWING"},
-				{"stars": 7, "baseId": "BIGGSDARKLIGHTER"},
+				{"stars": 7, "baseId": "UWINGROGUEONE"},
+				{"stars": 7, "baseId": "UWINGSCARIF"},
 				{"stars": 7, "baseId": "XWINGRED2"},
 				{"stars": 7, "baseId": "BIGGSDARKLIGHTER"},
 				{"stars": 7, "baseId": "YWINGREBEL"},
