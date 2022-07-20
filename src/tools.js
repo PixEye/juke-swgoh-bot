@@ -78,6 +78,7 @@ exports.checkLegendReq = function(player, message) {
 	let msg = "";
 	let picture = "";
 	let progressMessages = [];
+	let progressByTopUnit = {};
 	let resumes = [];
 	let unitsOfInterest = req.units;
 
@@ -236,6 +237,7 @@ exports.checkLegendReq = function(player, message) {
 			else if (avg<100) { indicator = '👉'; color = "ORANGE"; }
 
 			resumes.push(indicator+' '+resume);
+			progressByTopUnit[indicator+' '+resume] = avg + (avg * (locked? 0: 1));
 
 			progresses = [];
 		}
@@ -248,7 +250,14 @@ exports.checkLegendReq = function(player, message) {
 	}); // end of loop on units
 
 	if (!found) {
-		lines = resumes;
+		let progressKeys = Object.keys(progressByTopUnit);
+
+		// lines = resumes; // First simple method but without sort
+		progressKeys.sort((k1, k2) => {
+			return progressByTopUnit[k2] - progressByTopUnit[k1];
+		});
+		lines = progressKeys;
+
 		lines.push('');
 		lines.push('GL count: '+player.glCount);
 	}
