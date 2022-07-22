@@ -2,7 +2,7 @@
 	"selfUrl": "https://swgoh.gg/api/gl-checklist/",
 	"units": [
 		{
-			"image": "/static/img/assets/journeyguide/tex.jg_charui_galacticlegend_kylo.png",
+			"image": "https://game-assets.swgoh.gg/tex.jg_charui_galacticlegend_kylo.png",
 			"requiredUnits": [
 				{"stars": 5, "baseId": "CAPITALFINALIZER"},
 				{"gearLevel": 13, "relicTier": 7, "baseId": "KYLORENUNMASKED"},
@@ -22,7 +22,7 @@
 			"unitName": "Kylo"
 		},
 		{
-			"image": "/static/img/assets/journeyguide/tex.jg_charui_whiteroberey.png",
+			"image": "https://game-assets.swgoh.gg/tex.jg_charui_whiteroberey.png",
 			"requiredUnits": [
 				{"stars": 5, "baseId": "CAPITALRADDUS"},
 				{"gearLevel": 13, "relicTier": 7, "baseId": "REYJEDITRAINING"},
@@ -42,7 +42,7 @@
 			"unitName": "Rey"
 		},
 		{
-			"image": "/static/img/assets/journeyguide/tex.jg_charui_jediknightluke.png",
+			"image": "https://game-assets.swgoh.gg/tex.jg_charui_jediknightluke.png",
 			"requiredUnits": [
 				{"stars": 7, "baseId": "MILLENNIUMFALCON"},
 				{"stars": 7, "baseId": "XWINGRED2"},
@@ -60,7 +60,7 @@
 			"unitName": "Jedi Knight Luke"
 		},
 		{
-			"image": "/static/img/assets/journeyguide/tex.jg_charui_luke_grandmaster.png",
+			"image": "https://game-assets.swgoh.gg/tex.jg_charui_luke_grandmaster.png",
 			"requiredUnits": [
 				{"stars": 6, "baseId": "YWINGREBEL"},
 				{"gearLevel": 13, "relicTier": 5, "baseId": "MONMOTHMA"},
@@ -82,7 +82,7 @@
 			"unitName": "Jedi Master Luke Skywalker"
 		},
 		{
-			"image": "/static/img/assets/journeyguide/tex.jg_charui_espalpatine.png",
+			"image": "https://game-assets.swgoh.gg/tex.jg_charui_espalpatine.png",
 			"requiredUnits": [
 				{"stars": 6, "baseId": "TIEBOMBERIMPERIAL"},
 				{"gearLevel": 13, "relicTier": 5, "baseId": "ADMIRALPIETT"},
@@ -104,7 +104,7 @@
 			"unitName": "Sith Eternal Emperor"
 		},
 		{
-			"image": "/static/img/assets/journeyguide/tex.jg_charui_globiwan.png",
+			"image": "https://game-assets.swgoh.gg/tex.jg_charui_globiwan.png",
 			"requiredUnits": [
 				{"gearLevel": 13, "relicTier": 3, "baseId": "AAYLASECURA"},
 				{"gearLevel": 13, "relicTier": 8, "baseId": "GENERALKENOBI"},
@@ -126,7 +126,7 @@
 			"unitName": "Jedi Master Kenobi"
 		},
 		{
-			"image": "/static/img/assets/journeyguide/tex.jg_charui_lordvader.png",
+			"image": "https://game-assets.swgoh.gg/tex.jg_charui_lordvader.png",
 			"requiredUnits": [
 				{"gearLevel": 13, "relicTier": 5, "baseId": "BADBATCHHUNTER"},
 				{"gearLevel": 13, "relicTier": 5, "baseId": "BADBATCHWRECKER"},
@@ -183,7 +183,7 @@
 		{
 			"baseId": "TBD_EXECUTOR",
 			"unitName": "Executor",
-			"image": "/static/img/assets/journeyguide/tex.jg_shipui_executor.png",
+			"image": "https://game-assets.swgoh.gg/tex.jg_shipui_executor.png",
 			"requiredUnits": [
 				{"stars": 7, "baseId": "RAZORCREST"},
 				{"stars": 7, "baseId": "SLAVE1"},
@@ -204,7 +204,7 @@
 		{
 			"baseId": "TBD_PROFUNDITY",
 			"unitName": "Profundity",
-			"image": "/static/img/assets/journeyguide/temp.profundity.jpg",
+			"image": "https://game-assets.swgoh.gg/temp.profundity.jpg",
 			"requiredUnits": [
 				{"stars": 7, "baseId": "OUTRIDER"},
 				{"stars": 7, "baseId": "CASSIANUWING"},
