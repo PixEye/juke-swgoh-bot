@@ -173,7 +173,7 @@
 		{
 			"baseId": "TBD_JABBA",
 			"unitName": "Jabba the Hutt",
-			"image": "https://game-assets.swgoh.gg/temp.jabba_the_hutt.jpg",
+			"image": "https://game-assets.swgoh.gg/temp.jabba_the_hut.jpg",
 			"requiredUnits":[
 				{"gearLevel": 13, "relicTier": 5, "baseId": "KRRSANTAN"},
 				{"gearLevel": 13, "relicTier": 8, "baseId": "HANSOLO"},
