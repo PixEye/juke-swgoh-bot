@@ -126,7 +126,7 @@
 			"unitName": "Jedi Master Kenobi"
 		},
 		{
-			"image": "https://game-assets.swgoh.gg/tex.jg_charui_lordvader.png",
+			"image": "https://game-assets.swgoh.gg/tex.jg_charui_anakin_fallen.png",
 			"requiredUnits": [
 				{"gearLevel": 13, "relicTier": 5, "baseId": "BADBATCHHUNTER"},
 				{"gearLevel": 13, "relicTier": 5, "baseId": "BADBATCHWRECKER"},
