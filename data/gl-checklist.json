@@ -175,9 +175,11 @@
 			"unitName": "Jabba the Hutt",
 			"image": "https://game-assets.swgoh.gg/temp.jabba_the_hutt.jpg",
 			"requiredUnits":[
+				{"gearLevel": 13, "relicTier": 5, "baseId": "KRRSANTAN"},
 				{"gearLevel": 13, "relicTier": 8, "baseId": "HANSOLO"},
 				{"gearLevel": 13, "relicTier": 3, "baseId": "GAMORREANGUARD"},
-				{"gearLevel": 13, "relicTier": 6, "baseId": "GREEDO"}
+				{"gearLevel": 13, "relicTier": 6, "baseId": "GREEDO"},
+				{"stars": 7, "baseId": "OUTRIDER"}
 			]
 		},
 		{
@@ -207,8 +209,8 @@
 			"image": "https://game-assets.swgoh.gg/temp.profundity.jpg",
 			"requiredUnits": [
 				{"stars": 7, "baseId": "OUTRIDER"},
-				{"stars": 7, "baseId": "CASSIANUWING"},
-				{"stars": 7, "baseId": "BIGGSDARKLIGHTER"},
+				{"stars": 7, "baseId": "UWINGROGUEONE"},
+				{"stars": 7, "baseId": "UWINGSCARIF"},
 				{"stars": 7, "baseId": "XWINGRED2"},
 				{"stars": 7, "baseId": "BIGGSDARKLIGHTER"},
 				{"stars": 7, "baseId": "YWINGREBEL"},
