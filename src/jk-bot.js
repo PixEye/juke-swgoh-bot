@@ -1595,22 +1595,18 @@ function getUserFromMention(mention, message) {
 		}
 
 		if (message) {
-			/* Example: [
-					{
-						"id": "204255221017214977",
-						"username": "YAGPDB.xyz",
-						"discriminator": "8760",
-						"avatar": "3b376fff30bfb0be0fac67003e0f8dcf",
-						"bot": true,
-						"lastMessageID": null,
-						"lastMessage": null
-					}
-				]
-			 */
 			let user = message.mentions.users.array().find(u => { return u.id === id; });
 
 			if (user) {
-				console.log(logPrefix()+"Found matching user:", user);
+				// console.log(logPrefix()+"Found matching user:", user);
+				/* Keys example: User {
+					id: '828626977509343302',
+					username: 'kogan',
+					discriminator: '5294',
+					avatar: null,
+					bot: false,
+					lastMessageID: null,
+					lastMessage: null } */
 				if (!user.createdAt) user.createdAt = new Date(0);
 				if (!user.presence ) user.presence  = {"status": "Unknown"};
 
