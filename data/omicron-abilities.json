@@ -932,5 +932,155 @@
 		"omicron_battle_types": [
 			"TERRITORY_TOURNAMENT_BATTLE"
 		]
+	},
+	{
+		"base_id": "uniqueskill_FULCRUMAHSOKA01",
+		"name": "Perseverance",
+		"image": "https://game-assets.swgoh.gg/tex.abilityui_passive_rebel.png",
+		"url": "//swgoh.gg/characters/ahsoka-tano-fulcrum/#perseverance",
+		"tier_max": 9,
+		"is_zeta": false,
+		"is_omega": true,
+		"is_omicron": true,
+		"description": "Ahsoka is immune to Damage Over Time effects and gains 30% Critical Avoidance. At the end of each turn, Ahsoka dispels all debuffs on herself and loses 10% Health for each debuff dispelled, then recovers 5% Health for each buff on her. This Health Loss can't defeat Ahsoka.\n\n[e7e7e7]While in Territory Wars: Ahsoka Tano (Fulcrum) gains 25% Defense, Max Health, Offense, Max Protection, and 35 Speed. If there are no other active allies at the start of battle:\n\n- Ahsoka Tano (Fulcrum) gains an additional 100% Armor Penetration and Critical Avoidance, 75% Defense, Max Health, Offense, Max Protection, and -60% Tenacity.\n- When Ahsoka Tano (Fulcrum) dispels a debuff with Perseverance, grant her the opposite buffs, if any, for 2 turns and 20% Turn Meter and Protection Up (+20%, Stacking) for 2 turns per debuff dispelled this way.\n- Ahsoka Tano (Fulcrum) ignores Taunt effects and enemies defeated by Ahsoka Tano (Fulcrum) can't be revived.",
+		"combat_type": 1,
+		"omicron_mode": 8,
+		"type": 4,
+		"character_base_id": "FULCRUMAHSOKA",
+		"ship_base_id": null,
+		"omicron_battle_types": [
+			"TERRITORY_WAR_BATTLE"
+		]
+	},
+	{
+		"base_id": "uniqueskill_KRRSANTAN01",
+		"name": "Champion of the Fighting Pits",
+		"image": "https://game-assets.swgoh.gg/tex.abilityui_passive_hardware.png",
+		"url": "//swgoh.gg/characters/krrsantan/#champion-of-the-fighting-pits",
+		"tier_max": 8,
+		"is_zeta": true,
+		"is_omega": false,
+		"is_omicron": true,
+		"description": "At the start of battle, Krrsantan gains 30% Defense and Max Health. Whenever Krrsantan loses Taunt, he recovers 10% Health and Protection.\n\nIf all allies were Hutt Cartel at the start of battle: At the start of each encounter, Krrsantan Taunts and gains Speed Up for 2 turns. Whenever he loses Taunt, he gains it for 1 turn if the ally in the Leader slot has more than 50% Protection. The first time he is defeated, he revives with 60% Health and recovers 60% Protection at the end of the ally in the Leader slot's turn. Dismember no longer starts on cooldown, and its cooldown is reset at the start of each encounter.\n\n[E7E7E7]While in Grand Arenas: At the start of battle, Krrsantan gains 40% Max Protection. While he is active, all enemies have -30% Potency.\n\nIf all allies were Hutt Cartel at the start of battle: Krrsantan is immune to Ability Block and cooldown increase and the first time the ally in the Leader slot (excluding himself) falls below 50% Health, Krrsantan Taunts for 2 turns and the ally in the Leader slot recovers 50% Protection.",
+		"combat_type": 1,
+		"omicron_mode": 9,
+		"type": 4,
+		"character_base_id": "KRRSANTAN",
+		"ship_base_id": null,
+		"omicron_battle_types": [
+			"TERRITORY_TOURNAMENT_BATTLE"
+		]
+	},
+	{
+		"base_id": "specialskill_BENSOLO01",
+		"name": "Obscured",
+		"image": "https://game-assets.swgoh.gg/tex.ability_bensolo_special01.png",
+		"url": "//swgoh.gg/characters/ben-solo/#obscured",
+		"tier_max": 8,
+		"is_zeta": false,
+		"is_omega": false,
+		"is_omicron": true,
+		"description": "Deal Special damage to target enemy, remove 100% Turn Meter and, if there is any version of Rey in the allied Leader slot, Blind the target enemy for 2 turns. Gain Offense Up for 2 turns. \n\n[E7E7E7]While in Grand Arenas if all allies were Light Side at the start of battle: When this ability is used, Ben Solo\u2019s cooldowns are reduced by 1. If Galactic Legend Rey is in the allied Leader slot, this attack instead deals true damage and inflicts Healing Immunity for 4 turns, which can\u2019t be copied, dispelled, evaded, or resisted.",
+		"combat_type": 1,
+		"omicron_mode": 9,
+		"type": 2,
+		"character_base_id": "BENSOLO",
+		"ship_base_id": null,
+		"omicron_battle_types": [
+			"TERRITORY_TOURNAMENT_BATTLE"
+		]
+	},
+	{
+		"base_id": "uniqueskill_BENSOLO01",
+		"name": "Redeemed",
+		"image": "https://game-assets.swgoh.gg/tex.abilityui_passive_redeemed.png",
+		"url": "//swgoh.gg/characters/ben-solo/#redeemed",
+		"tier_max": 8,
+		"is_zeta": true,
+		"is_omega": false,
+		"is_omicron": true,
+		"description": "At the start of battle, if all of Ben Solo\u2019s allies were Light Side and there is any version of Rey in the allied Leader slot, Ben Solo gains 15% Max Health and 10 Speed for each Light Side ally (excluding summons). Ben Solo ignores taunt effects during his turn.\n\n[E7E7E7]While in Grand Arenas: Ben Solo's attacks ignore Protection.",
+		"combat_type": 1,
+		"omicron_mode": 9,
+		"type": 4,
+		"character_base_id": "BENSOLO",
+		"ship_base_id": null,
+		"omicron_battle_types": [
+			"TERRITORY_TOURNAMENT_BATTLE"
+		]
+	},
+	{
+		"base_id": "uniqueskill_BENSOLO02",
+		"name": "Force Dyad",
+		"image": "https://game-assets.swgoh.gg/tex.abilityui_passive_forcedyad.png",
+		"url": "//swgoh.gg/characters/ben-solo/#force-dyad",
+		"tier_max": 8,
+		"is_zeta": true,
+		"is_omega": false,
+		"is_omicron": true,
+		"description": "If all allies were Light Side at the start of battle and there is any version of Rey in the allied Leader slot: All allies gain Instant Defeat Immunity for 1 turn at the start of each encounter, which can\u2019t be copied, dispelled, or prevented. While Ben Solo is active, Rey can\u2019t be defeated. Ben Solo can\u2019t be defeated while Rey is above 50% Health.\n\n[E7E7E7]While in Grand Arenas, if Galactic Legend Rey is in the allied Leader slot: If the enemy in the Leader slot begins their turn with Ben Solo defeated and Ben still has an active ally, he revives with 51% Health and all allies gain Instant Defeat Immunity for the rest of the encounter, which can\u2019t be copied, dispelled, or prevented.",
+		"combat_type": 1,
+		"omicron_mode": 9,
+		"type": 4,
+		"character_base_id": "BENSOLO",
+		"ship_base_id": null,
+		"omicron_battle_types": [
+			"TERRITORY_TOURNAMENT_BATTLE"
+		]
+	},
+	{
+		"base_id": "uniqueskill_UNDERCOVERLANDO01",
+		"name": "Agent On The Inside",
+		"image": "https://game-assets.swgoh.gg/tex.abilityui_passive_agentontheinside.png",
+		"url": "//swgoh.gg/characters/skiff-guard-lando-calrissian/#agent-on-the-inside",
+		"tier_max": 8,
+		"is_zeta": false,
+		"is_omega": false,
+		"is_omicron": true,
+		"description": "Skiff Guard (Lando Calrissian) has +15% Defense Penetration. Allies with any stacks of Deep Cover have +15% Defense Penetration and +30% Potency. At the start of his turn, Skiff Guard (Lando Calrissian) gains a stack of Deep Cover (max 5), which can't be copied. If all allies were Hutt Cartel at the start of battle, Skiff Guard (Lando Calrissian) gains 5 stacks of Deep Cover, and while he has 5 stacks of Deep Cover, he gains the granted ability Hutt's Favor.\n\nHutt's Favor: Deal Physical damage to target enemy and consume all stacks of Deep Cover on Skiff Guard (Lando Calrissian). This attack deals 3% of target enemy's Max Health per debuff on them.\u00a0Skiff Guard (Lando Calrissian) gains a stack of Trusted Agent (max 5) for the rest of battle, which can't be copied, dispelled, or prevented\n\nTrusted Agent: +30% Defense Penetration and Offense; at 1 or more stacks, attack again when performing a Basic attack\n\n[E7E7E7]While in Territory Wars: Allies with Deep Cover gain an additional 10% Defense Penetration, 20% Potency, and 20 Speed. When Skiff Guard (Lando Calrissian) gains a stack of Deep Cover, he grants one stack of Deep Cover to a random ally (excluding Galactic Legends) who doesn't have it, which can't be copied.",
+		"combat_type": 1,
+		"omicron_mode": 8,
+		"type": 4,
+		"character_base_id": "UNDERCOVERLANDO",
+		"ship_base_id": null,
+		"omicron_battle_types": [
+			"TERRITORY_WAR_BATTLE"
+		]
+	},
+	{
+		"base_id": "uniqueskill_SAVAGEOPRESS01",
+		"name": "Brute",
+		"image": "https://game-assets.swgoh.gg/tex.abilityui_passive_def.png",
+		"url": "//swgoh.gg/characters/savage-opress/#brute",
+		"tier_max": 9,
+		"is_zeta": true,
+		"is_omega": false,
+		"is_omicron": true,
+		"description": "Whenever Savage takes damage, he gains Defense Up, Heal Over Time, and Offense Up for 2 turns, and gains 30% Turn Meter. At the end of his turn, Savage dispels all debuffs on a random other Sith ally and gains those debuffs for 1 turn. Dispel all debuffs from Savage whenever he is critically hit.\n\n[E7E7E7]While in Grand Arenas: Savage gains 50% Defense, Max Health, and Offense, and 30 Speed. At the start of the encounter, Savage gains 2 stacks of Resilient Defense. At the end of his turn, Savage gains 2 stacks of Resilient Defense (max 10) and 10% Turn Meter (max 50%) for each debuff on other Sith allies.\nWhenever Savage is critically hit, he gains 16% Health Steal and Offense (stacking, max 160%) and all other Sith allies gain 4% Health Steal and Offense (stacking, max 40%), recover 15% Health and Protection, and gain 10% Turn Meter until the end of the encounter.\n\nWhile Savage has Resilient Defense, he has +50% Defense per stack and is inflicted with Vulnerable, which can't be prevented or dispelled. Whenever Savage gains Taunt, he dispels it and gains 2 stacks of Resilient Defense.",
+		"combat_type": 1,
+		"omicron_mode": 9,
+		"type": 4,
+		"character_base_id": "SAVAGEOPRESS",
+		"ship_base_id": null,
+		"omicron_battle_types": [
+			"TERRITORY_TOURNAMENT_BATTLE"
+		]
+	},
+	{
+		"base_id": "uniqueskill_BOUSHH02",
+		"name": "Ubese Ogygian Cloak",
+		"image": "https://game-assets.swgoh.gg/tex.abilityui_passive_ubeseogygiancloak.png",
+		"url": "//swgoh.gg/characters/boushh-leia-organa/#ubese-ogygian-cloak",
+		"tier_max": 8,
+		"is_zeta": false,
+		"is_omega": false,
+		"is_omicron": true,
+		"description": "Boushh and Light Side Smuggler allies gain 5% Armor Penetration, 15% Offense, 10% Potency, and 10 Speed. If the ally in the Leader slot is Hutt Cartel, Boushh and Light Side Smuggler allies are immune to Ability Block and Stun, and these bonuses are doubled. Light Side Smuggler allies gain 20% Critical Chance.\n\n[e7e7e7]While in Raids: The max cooldown of Inventive is reduced by 1. If the ally in the Leader slot is Hutt Cartel, when Fearless inflicts a Thermal Detonator, all Hutt Cartel allies gain 10% Armor Penetration (max 200%), 20% Offense (max 400%), 20% Potency (max 400%), and 10 Speed (max 100).",
+		"combat_type": 1,
+		"omicron_mode": 4,
+		"type": 4,
+		"character_base_id": "BOUSHH",
+		"ship_base_id": null,
+		"omicron_battle_types": []
 	}
 ]
