@@ -23,10 +23,16 @@ Use the "mk-tables.sql" file to create the tables in a MySQL database.
 
 ## Run it
 
-I use to run the bot by simply typing the following command line in a console from the "src" folder:
+### From a Linux box
 
-    $ while true;do git pull && node .;done
+Use the shell script located at: src/jsb.sh
+
+    $ src/jsb.sh
+
+### From Windows OS
+
+Recomendation is to install MINGW64 or Debian from the Windows store and run the same script as the Linux chapter.
 
 ## About the author
 
-Juke M is also known as [PixEye](http://pixeye.net). He is a graduated developer since 1997.
+Juke M is also known as [PixEye](http://pixeye.net).
