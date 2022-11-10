@@ -23,6 +23,7 @@ const locutus  = require("./locutus"); // Functions from locutus.io
 //nst swgohApi = require("./swgoh");  // SWGoH API of this bot
 const tools    = require("./tools"); // Several functions
 const gacTools = require("./gac_tools"); // GAC tracker related functions
+const tr_fr_fr = require("./translation-fr"); // French translations
 const view     = require("./view"); // Functions used to display results
 
 // Get the configuration & its template from a separated JSON files:
@@ -92,7 +93,7 @@ client.on("message", (message) => {
 	let player = {};
 	const prefix = config.discord.prefix;
 	const prefixRegExp = new RegExp("^"+prefix, "i");
-	var readCommands = ['behave', 'get', 'getrank', 'getscore', 'rank', 'top', 'worst'];
+	var readCommands = ['behave', 'get', 'get'+'rank', 'get'+'score', 'rank', 'top', 'worst'];
 	var richMsg = {};
 	let s = "";
 	let search = "";
@@ -121,7 +122,7 @@ client.on("message", (message) => {
 	command = words.shift().toLowerCase();
 	nick = locutus.utf8_decode(user.username);
 	const wc = words.length; // word count
-	let addon = wc? (": "+words.join(" ")).trim(): "";
+	let addon = wc? ": "+JSON.stringify(words): "";
 
 	s = wc>1? 's': '';
 	console.log(logPrefix()+'/ "'+nick+'" used command "'+command+'" with '+wc+" arg"+s+addon);
@@ -185,29 +186,9 @@ client.on("message", (message) => {
 			break;
 
 		case "aide":
-			richMsg = new RichEmbed().setTitle("Liste des commandes")
-				.setDescription([
-					"**Commandes utilisateur :**",
-					" abbr(eviations), aide, allycode (ac), auteur, chan(nelInfo), charInfo (ci),"+
-					" checkMods (cm), checkUnitsGp (cugp)"+
-					", countGuildTopUnits (cgtu), dis, gacH(istory), (gl)Check (glc), getUnregisteredPlayers (gup),"+
-					" guildBoard (gb), guildStats (gs), help, invite, (last)evols (le), listGuildMembers (lgm),"+
-					" omicronList (ol/omicrons),"+
-					" playerStats (ps), profile (gg), register (reg), relics, repete, self(y), shipInfo (si),"+
-					" sources (src), start, stats, status, unreg(ister), warstats (ws), whoami, whois",
-					"**Commandes de comportement :**",
-					"*Ordre : behave|behaviour (sous-commande) (points) (user)*",
-					" behave, behave( )add, behave( )get, behave( )rank, behave( )rem(ove),",
-					" behave( )rank, behave( )worst",
-					"**Commandes du concours :** *Ordre : contest (sous-commande) (points) (user)*",
-					" contest, contest( )add, contest( )get, contest( )rank, contest( )rem(ove),",
-					" contest( )top, rank",
-					"**Commandes pour l'administrateur :**",
-					" admin, configCheck (cc), query/req(uest), stop/stoppe",
-					"**NB1 :** en mp, le préfixe est optionnel.",
-					"**NB2 :** la plupart des commandes accepte un tag ou un code allié (9 chiffres).",
-					"**NB3 :** la \"cible\" par défaut est la personne qui tape la commande (\"me\" inutile).",
-					"**NB4 :** l'ordre des arguments n'importe pas (sauf pour 'contest' et 'behave')."])
+			richMsg = new RichEmbed()
+				.setTitle(tr_fr_fr.commandList)
+				.setDescription(tr_fr_fr.helpContent)
 				.setTimestamp()
 				.setFooter(config.footer.message, config.footer.iconUrl);
 			message.channel.send(richMsg);
@@ -289,13 +270,13 @@ client.on("message", (message) => {
 			});
 			break;
 
-		case "auteur":
-		case "problème":
-			lines.push("Ce bot a été écrit par <@222443133294739456> (aka PixEye).");
-			lines.push("En cas de bug ou de demande d'amélioration, merci de passer par github.");
+		case tr_fr_fr_.author:
+		case tr_fr_fr.problem:
+			lines.push(tr_fr_fr.botWrittenBy+" <@222443133294739456> (aka PixEye).");
+			lines.push(tr_fr_fr.inCaseOfTrouble);
 			lines.push("");
-			lines.push("Cette instance du bot appartient à <@"+config.discord.ownerID+">.");
-			richMsg = new RichEmbed().setTitle("A propos de l'auteur").setColor("GREEN")
+			lines.push(tr_fr_fr.thisBotInstanceBelongsTo+" <@"+config.discord.ownerID+">.");
+			richMsg = new RichEmbed().setTitle(tr_fr_fr.aboutTheAuthor).setColor("GREEN")
 				.setDescription(lines).setTimestamp()
 				.setFooter(config.footer.message, config.footer.iconUrl);
 			message.channel.send(richMsg);
@@ -315,7 +296,7 @@ client.on("message", (message) => {
 			break;
 
 		// case "ban": // TODO
-		case "banlist":
+		case "ban"+"list":
 		case "bl":
 			sql = "SELECT p.* FROM `users` p WHERE banned ORDER BY game_name";
 
@@ -348,25 +329,25 @@ client.on("message", (message) => {
 			break;
 
 		case "behave": // same as behave worst
-		case "behaveadd":
-		case "behaveget":
-		case "behaverank":
-		case "behaverem":
-		case "behaveremove":
-		case "behaveset":
-		case "behaveworst":
+		case "behave"+"add":
+		case "behave"+"get":
+		case "behave"+"rank":
+		case "behave"+"rem":
+		case "behave"+"remove":
+		case "behave"+"set":
+		case "behave"+"worst":
 		case "behaviour": // same as behaviour worst
-		case "behaviouradd":
-		case "behaviourget":
-		case "behaviourgetrank":
-		case "behaviourgetscore":
-		case "behaviourrank":
-		case "behaviourrem":
-		case "behaviourremove":
-		case "behaviourset":
-		case "behaviourworst":
-		// case "behavereset": // TODO
-		// case "behaviourreset": // TODO
+		case "behaviour"+"add":
+		case "behaviour"+"get":
+		case "behaviour"+"get"+"rank":
+		case "behaviour"+"get"+"score":
+		case "behaviour"+"rank":
+		case "behaviour"+"rem":
+		case "behaviour"+"remove":
+		case "behaviour"+"set":
+		case "behaviour"+"worst":
+		// case "behave"+"reset": // TODO
+		// case "behaviour"+"reset": // TODO
 			// console.log(logPrefix()+"command: '%s'", command);
 			// console.log(logPrefix()+"word count:", words.length);
 
@@ -431,8 +412,8 @@ client.on("message", (message) => {
 			break;
 
 		case "cc":
-		case "checkconfig":
-		case "configcheck":
+		case "check"+"config":
+		case "config"+"check":
 			if (message.author.id !== config.discord.ownerID) {
 				message.reply("You're not my master! :imp:");
 				return;
@@ -457,15 +438,15 @@ client.on("message", (message) => {
 
 		case "chan":
 		case "channel":
-		case "channelinfo":
+		case "channel"+"info":
 			lines = ["Channel ID: "+message.channel.id+", type: "+message.channel.type];
 			console.log(logPrefix()+lines);
 			message.channel.send(lines);
 			break;
 
 		case "ci":
-		case "charinfo":
-		case "characterinfo":
+		case "char"+"info":
+		case "character"+"info":
 		case "portrait": {
 			let msg = '';
 			// Look for a character name:
@@ -500,10 +481,10 @@ client.on("message", (message) => {
 		}
 
 		case "cgp":
-		case "cugp":
-		case "chkgp":
-		case "checkgp":
-		case "checkunitsgp": {
+		case "cu"+"gp":
+		case "chk"+"gp":
+		case "check"+"gp":
+		case "check"+"units"+"gp": {
 			let limit = 21;
 			if (allycode) {
 				tools.getPlayerStats(player, message, (player, message) => {
@@ -521,11 +502,11 @@ client.on("message", (message) => {
 		}
 
 		case "cm":
-		case "chkmod":
-		case "chkmods":
-		case "checkmod":
-		case "checkmods":
-		case "checkmodules":
+		case "chk"+"mod":
+		case "chk"+"mods":
+		case "check"+"mod":
+		case "check"+"mods":
+		case "check"+"modules":
 			if (allycode) {
 				tools.getPlayerStats(player, message, tools.checkPlayerMods);
 			} else {
@@ -537,16 +518,16 @@ client.on("message", (message) => {
 			break;
 
 		case "contest": // same as contest top
-		case "contestadd":
-		case "contestget":
-		case "contestgetrank":
-		case "contestgetscore":
-		case "contestrank":
-		case "contestrem":
-		case "contestremove":
-		case "contestreset":
-		case "contestset":
-		case "contesttop":
+		case "contest"+"add":
+		case "contest"+"get":
+		case "contest"+"get"+"rank":
+		case "contest"+"get"+"score":
+		case "contest"+"rank":
+		case "contest"+"rem":
+		case "contest"+"remove":
+		case "contest"+"reset":
+		case "contest"+"set":
+		case "contest"+"top":
 		case "rank": {
 			cmd = command.replace('contest', '');
 
@@ -607,9 +588,9 @@ client.on("message", (message) => {
 			break;
 		}
 
-		case "cgtu":
-		case "ctgu":
-		case "countguildtopunits": {
+		case "cg"+"tu":
+		case "ct"+"gu":
+		case "count"+"guild"+"top"+"units": {
 			let minRelics = 5;
 
 			sql = "SELECT guildRefId FROM `users` WHERE discord_id=" + user.id;
@@ -620,11 +601,11 @@ client.on("message", (message) => {
 				" WHERE p.guildRefId=("+sql+") AND u.relic>="+minRelics+
 				" GROUP BY p.id ORDER BY nbUnits DESC";
 
-			// console.log(logPrefix()+"CGTU SQL:\n"+sql); // for debug only
+			// console.log(logPrefix()+"CG"+"TU SQL:\n"+sql); // for debug only
 			db_pool.query(sql, (exc, records) => {
 				if (exc) {
 					console.log("SQL:", sql);
-					console.log(logPrefix()+"CGTU Exception:", exc.sqlMessage? exc.sqlMessage: exc);
+					console.log(logPrefix()+"CG"+"TU Exception:", exc.sqlMessage? exc.sqlMessage: exc);
 					message.reply("Failed! This command only support tags or self (no allycode mode).");
 					return;
 				}
@@ -662,9 +643,7 @@ client.on("message", (message) => {
 
 		case "destroy":
 		case "leave":
-		case "stutdown":
 		case "stop":
-		case "stoppe":
 			if (message.author.id !== config.discord.ownerID) {
 				message.reply("You're not my master! :imp:");
 			} else {
@@ -686,7 +665,6 @@ client.on("message", (message) => {
 
 		case "dis":
 		case "repeat":
-		case "repete":
 		case "say": {
 			let destChannels = [message.channel];
 			let myMsg = '';
@@ -722,8 +700,8 @@ client.on("message", (message) => {
 			}
 			break;
 
-		case "gach":
-		case "gachistory":
+		case "gac"+"h":
+		case "gac"+"history":
 		case "gg":
 		case "profile": {
 			let link = "";
@@ -779,9 +757,8 @@ client.on("message", (message) => {
 		}
 
 		case "gals":
-		case "lsga":
-		case "lateststatsgrandarena":
-		case "grandarenalateststats":
+		case "latest"+"stats"+"grand"+"arena":
+		case "grand"+"arena"+"latest"+"stats":
 			if (allycode) {
 				gacTools.getPlayerStatsFromLatestGA(player, message, view.showPlayerGAStats);
 			} else {
@@ -794,9 +771,9 @@ client.on("message", (message) => {
 
 		case "gar":
 		case "rga":
-		case "regga":
-		case "reggrandarena":
-		case "registergrandarena":
+		case "reg"+"ga":
+		case "reg"+"grand"+"arena":
+		case "register"+"grand"+"arena":
 			if (allycode) {
 				tools.getPlayerStats(player, message, gacTools.checkGrandArenaRegistration);
 			} else {
@@ -808,9 +785,8 @@ client.on("message", (message) => {
 			break;
 
 		case "gasm":
-		case "smga":
-		case "gashowme":
-		case "showmega":
+		case "ga"+"show"+"me":
+		case "show"+"mega":
 			if (allycode) {
 				gacTools.getPlayerGAs(player, message, view.showPlayerGAs);
 			} else {
@@ -822,7 +798,7 @@ client.on("message", (message) => {
 			break;
 
 		case "gb":
-		case "guildboard": {
+		case "guild"+"board": {
 			let strToLookFor = words.join(" ").trim() || 'ProXima';
 
 			sql = 'SELECT'+
@@ -923,10 +899,10 @@ client.on("message", (message) => {
 
 		case "gl":
 		case "glc":
-		case "glcheck":
-		case "glreq":
+		case "gl"+"check":
+		case "gl"+"req":
 		case "check":
-		case "checkgl":
+		case "check"+"gl":
 		case "checklist":
 		case "cl":
 			if (allycode) {
@@ -944,8 +920,8 @@ client.on("message", (message) => {
 			break;
 
 		case "gs":
-		case "guildstat":
-		case "guildstats":
+		case "guild"+"stat":
+		case "guild"+"stats":
 			if (allycode) {
 				tools.getGuildStats(player, message, view.showGuildStats);
 			} else {
@@ -972,14 +948,14 @@ client.on("message", (message) => {
 			break;
 
 		case "gte":
-		case "gtexport":
+		case "gt"+"export":
 		case "gtg":
-		case "gtget":
-		case "territorywarexport":
-		case "territorywarget":
+		case "gt"+"get":
+		case "territory"+"war"+"export":
+		case "territory"+"war"+"get":
 		case "twe":
 		case "twg":
-		case "twget":
+		case "tw"+"get":
 			if (config.twResults.admins.indexOf(message.author.id)<0) {
 				lines = ["Only TW admins can export the data file!"];
 				console.log(logPrefix()+lines[0]);
@@ -1000,12 +976,12 @@ client.on("message", (message) => {
 		case "gtr":
 		case "rgt":
 		case "rtw":
-		case "regtw":
-		case "regterritorywar":
-		case "registerterritorywar":
+		case "reg"+"tw":
+		case "reg"+"territory"+"war":
+		case "register"+"territory"+"war":
 		case "twr":
-		case "twreg":
-		case "twregister":
+		case "tw"+"reg":
+		case "tw"+"register":
 			if (message.channel.id !== config.twResults.regChanId) {
 				lines = "This command is restricted to <#"+config.twResults.regChanId+
 					"> channel (on the Mercato Discord)!";
@@ -1030,8 +1006,7 @@ client.on("message", (message) => {
 			}
 			break;
 
-		case "gtreset":
-		case "twreset":
+		case "tw"+"reset":
 			if (config.twResults.admins.indexOf(message.author.id)<0) {
 				lines = ["Only TW admins can reset TW data!"];
 				console.log(logPrefix()+lines[0]);
@@ -1045,9 +1020,9 @@ client.on("message", (message) => {
 
 		case "gu":
 		case "gup":
-		case "getunregistered":
-		case "getunregplayers":
-		case "getunregisteredplayers":
+		case "get"+"unregistered":
+		case "get"+"unreg"+"players":
+		case "get"+"unregistered"+"players":
 			if (allycode) {
 				tools.getUnregPlayers(allycode, message);
 			} else {
@@ -1068,7 +1043,7 @@ client.on("message", (message) => {
 					" guildBoard (gb), guildStats (gs), help, invite, (last)evols (le), listGuildMembers (lgm),"+
 					" omicronList (ol/omicrons),"+
 					" playerStat (ps), profile (gg), register (reg), relics, repeat, say, self(y), shipInfo (si),"+
-					" sources (src), start, stats, status, unreg(ister), warstats (ws), whoami, whois",
+					" sources (src), start, stats, status, unreg(ister), war"+"stats (ws), whoami, whois",
 					"**Behaviour commands:**",
 					"*Order : behave|behaviour (subcommand) (points) (user)*",
 					" behave, behave( )add, behave( )get, behave( )rank, behave( )rem(ove),",
@@ -1099,8 +1074,8 @@ client.on("message", (message) => {
 		case "le":
 		case "evol":
 		case "evols":
-		case "lastevol":
-		case "lastevols":
+		case "last"+"evol":
+		case "last"+"evols":
 			if (allycode) {
 				tools.getPlayerStats(player, message, tools.getLastEvolsFromDb);
 			} else {
@@ -1112,7 +1087,7 @@ client.on("message", (message) => {
 			break;
 
 		case "lgm":
-		case "listguildmembers":
+		case "list"+"guild"+"members":
 			if (allycode) {
 				tools.getGuildDbStats(player, message, view.listGuildMembers);
 			} else {
@@ -1124,7 +1099,7 @@ client.on("message", (message) => {
 			break;
 
 		case "ol":
-		case "omicronlist":
+		case "omicron"+"list":
 		case "omicrons":
 			if (allycode) {
 				tools.getPlayerStats(player, message, view.listOmicrons);
@@ -1138,9 +1113,9 @@ client.on("message", (message) => {
 
 		case "pi":
 		case "ps":
-		case "playerinfo":
-		case "playerstat":
-		case "playerstats":
+		case "player"+"info":
+		case "player"+"stat":
+		case "player"+"stats":
 			if (allycode) {
 				tools.getPlayerStats(player, message, view.showPlayerStats);
 			} else {
@@ -1239,7 +1214,7 @@ client.on("message", (message) => {
 			break;
 
 		case "si":
-		case "shipinfo": {
+		case "ship"+"info": {
 			// Look for a ship name:
 			let tmpMsg = '';
 			words.forEach(function(word) {
@@ -1276,8 +1251,8 @@ client.on("message", (message) => {
 		case "rel":
 		case "relic":
 		case "relics":
-		case "topchar":
-		case "topchars":
+		case "top"+"char":
+		case "top"+"chars":
 			if (allycode) {
 				tools.getPlayerStats(player, message, view.showPlayerRelics);
 			} else {
@@ -1367,7 +1342,7 @@ client.on("message", (message) => {
 			break;
 
 		case "stats":
-		case "memstat":
+		case "mem"+"stat":
 			sql = "SELECT COUNT(p.id) AS cnt, g.name";
 			sql+= " FROM `guilds` g, `users` p";
 			sql+= " WHERE p.guildRefId=g.swgoh_id"; // join
@@ -1439,8 +1414,8 @@ client.on("message", (message) => {
 			console.log("Number of servers: "+servers.length);
 			message.channel.send("I am listening to "+servers.length+" servers.");
 
-			let clientguilds = client.guilds.cache();
-			console.log(clientguilds.map(g => g.id) || "None");
+			let clientGuilds = client.guilds.cache();
+			console.log(clientGuilds.map(g => g.id) || "None");
 			message.channel.send("I am listening to those servers: "+JSON.stringify(client.guilds)); // */
 
 			sql = "SELECT COUNT(`id`) AS nbg FROM `guilds`";
@@ -1555,8 +1530,8 @@ client.on("message", (message) => {
 			break;
 
 		case "ws":
-		case "warstat":
-		case "warstats": {
+		case "war"+"stat":
+		case "war"+"stats": {
 			let link = "https://goh.warstats.net/players/view/";
 
 			if ( ! allycode) {
@@ -1670,8 +1645,8 @@ function checkConfig() {
 // Main:
 client.login(config.discord.token);
 
-/* SQL query to request for orphelin players:
+/* SQL query to request for orphan players:
 SELECT allycode, LEFT(ts, 19) AS last_update, game_name FROM `users`
 WHERE guildRefId NOT IN (SELECT DISTINCT swgoh_id FROM `guilds`) */
 
-// vim: noexpandtab shiftwidth=4 softtabstop=4 tabstop=4
+// vim: noexpandtab
