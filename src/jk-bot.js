@@ -19,12 +19,12 @@ const client = new Client();
 const mysql = require("mysql");
 
 // Load other modules:
-const locutus  = require("./locutus"); // Functions from locutus.io
-//nst swgohApi = require("./swgoh");  // SWGoH API of this bot
-const tools    = require("./tools"); // Several functions
-const gacTools = require("./gac_tools"); // GAC tracker related functions
-const tr_fr_fr = require("./translation-fr"); // French translations
-const view     = require("./view"); // Functions used to display results
+const locutus   = require("./locutus"); // Functions from locutus.io
+//nst swgohApi  = require("./swgoh");  // SWGoH API of this bot
+const tools     = require("./tools"); // Several functions
+const gacTools  = require("./gac_tools"); // GAC tracker related functions
+const msg_fr_FR = require("../data/messages-fr_FR"); // French translations
+const view      = require("./view"); // Functions used to display results
 
 // Get the configuration & its template from a separated JSON files:
 let config = require("./config.json");
@@ -187,8 +187,8 @@ client.on("message", (message) => {
 
 		case "aide":
 			richMsg = new RichEmbed()
-				.setTitle(tr_fr_fr.commandList)
-				.setDescription(tr_fr_fr.helpContent)
+				.setTitle(msg_fr_FR.commandList)
+				.setDescription(msg_fr_FR.helpContent)
 				.setTimestamp()
 				.setFooter(config.footer.message, config.footer.iconUrl);
 			message.channel.send(richMsg);
@@ -270,13 +270,13 @@ client.on("message", (message) => {
 			});
 			break;
 
-		case tr_fr_fr_.author:
-		case tr_fr_fr.problem:
-			lines.push(tr_fr_fr.botWrittenBy+" <@222443133294739456> (aka PixEye).");
-			lines.push(tr_fr_fr.inCaseOfTrouble);
+		case msg_fr_FR.author:
+		case msg_fr_FR.problem:
+			lines.push(msg_fr_FR.botWrittenBy+" <@222443133294739456> (aka PixEye).");
+			lines.push(msg_fr_FR.inCaseOfTrouble);
 			lines.push("");
-			lines.push(tr_fr_fr.thisBotInstanceBelongsTo+" <@"+config.discord.ownerID+">.");
-			richMsg = new RichEmbed().setTitle(tr_fr_fr.aboutTheAuthor).setColor("GREEN")
+			lines.push(msg_fr_FR.thisBotInstanceBelongsTo+" <@"+config.discord.ownerID+">.");
+			richMsg = new RichEmbed().setTitle(msg_fr_FR.aboutTheAuthor).setColor("GREEN")
 				.setDescription(lines).setTimestamp()
 				.setFooter(config.footer.message, config.footer.iconUrl);
 			message.channel.send(richMsg);

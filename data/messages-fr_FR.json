@@ -1,14 +1,4 @@
-/**
- * translations-fr.js is the French translation module for Juke's SWGoH Discord bot
- * @author PixEye@pixeye.net
- * @since 2021-05-05
- */
-
-// jshint esversion: 8
-
-exports.lang = 'fr';
-
-exports.translations = {
+{
 	"aboutTheAuthor": "A propos de l'auteur",
 	"author": "auteur",
 	"botWrittenBy": "Ce bot a été écrit par",
@@ -44,6 +34,4 @@ exports.translations = {
 	"Subscribe to this app": "S'abonner à cette appli",
 	"thisBotInstanceBelongsTo": "Cette instance du bot appartient à",
 	"Your name": "Votre nom"
-};
-
-// vim: noexpandtab
+}
