@@ -5,13 +5,7 @@
 	"commandList": "Liste des commandes",
 	"helpContent": [
 		"**Commandes utilisateur :**",
-		" abbr(eviations), aide, allycode (ac), auteur, chan(nelInfo), charInfo (ci),"+
-		" checkMods (cm), checkUnitsGp (cugp)"+
-		", countGuildTopUnits (cgtu), dis, gacH(istory), (gl)Check (glc), getUnregisteredPlayers (gup),"+
-		" guildBoard (gb), guildStats (gs), help, invite, (last)evols (le), listGuildMembers (lgm),"+
-		" omicronList (ol/omicrons),"+
-		" playerStats (ps), profile (gg), register (reg), relics, repete, self(y), shipInfo (si),"+
-		" sources (src), start, stats, status, unreg(ister), warstats (ws), whoami, whois",
+		" abbr(eviations), aide, allycode (ac), auteur, chan(nelInfo), charInfo (ci), checkMods (cm), checkUnitsGp (cugp), countGuildTopUnits (cgtu), dis, gacH(istory), (gl)Check (glc), getUnregisteredPlayers (gup), guildBoard (gb), guildStats (gs), help, invite, (last)evols (le), listGuildMembers (lgm), omicronList (ol/omicrons), playerStats (ps), profile (gg), register (reg), relics, repete, self(y), shipInfo (si), sources (src), start, stats, status, unreg(ister), warstats (ws), whoami, whois",
 		"**Commandes de comportement :**",
 		"*Ordre : behave|behaviour (sous-commande) (points) (user)*",
 		" behave, behave( )add, behave( )get, behave( )rank, behave( )rem(ove),",
