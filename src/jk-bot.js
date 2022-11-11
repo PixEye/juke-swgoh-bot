@@ -1037,13 +1037,13 @@ client.on("message", (message) => {
 			richMsg = new RichEmbed().setTitle("Available commands")
 				.setDescription([
 					"**User commands:**",
-					" abbr(eviations), about, aide, allycode (ac), chan(nelInfo), charInfo (ci),"+
+					" abbr/abbreviations, about, aide, allycode (ac), chan(nelInfo), charInfo (ci),"+
 					" checkMods (cm), checkUnitsGp"+
-					" (cugp), countGuildTopUnits (cgtu), gacH(istory), (gl)Check (glc), getUnregisteredPlayers (gup),"+
+					" (cugp), countGuildTopUnits (cgtu), gacH/gacHistory, (gl)Check (glc), getUnregisteredPlayers (gup),"+
 					" guildBoard (gb), guildStats (gs), help, invite, (last)evols (le), listGuildMembers (lgm),"+
 					" omicronList (ol/omicrons),"+
 					" playerStat (ps), profile (gg), register (reg), relics, repeat, say, self(y), shipInfo (si),"+
-					" sources (src), start, stats, status, unreg(ister), war"+"stats (ws), whoami, whois",
+					" sources (src), start, stats, status, unreg/unregister, war"+"stats (ws), whoami, whois",
 					"**Behaviour commands:**",
 					"*Order : behave|behaviour (subcommand) (points) (user)*",
 					" behave, behave( )add, behave( )get, behave( )rank, behave( )rem(ove),",
@@ -1052,7 +1052,7 @@ client.on("message", (message) => {
 					" contest, contest( )add, contest( )get, contest( )rank, contest( )rem(ove),",
 					" contest( )top, rank",
 					"**Admin commands:**",
-					" admin, configCheck (cc), destroy/leave/shutdown/stop, query/req(uest)",
+					" admin, configCheck (cc), destroy/leave/shutdown/stop, query/req/request",
 					"**NB1:** in DM, prefix is optional.",
 					"**NB2:** most of commands accept a user's tag or an ally code (9 digits).",
 					"**NB3:** the default target is the command writer (\"me\" is useless).",
