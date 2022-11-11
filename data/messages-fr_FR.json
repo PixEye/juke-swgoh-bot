@@ -5,7 +5,7 @@
 	"commandList": "Liste des commandes",
 	"helpContent": [
 		"**Commandes utilisateur :**",
-		" abbr(eviations), aide, allycode (ac), auteur, chan(nelInfo), charInfo (ci), checkMods (cm), checkUnitsGp (cugp), countGuildTopUnits (cgtu), dis, gacH(istory), (gl)Check (glc), getUnregisteredPlayers (gup), guildBoard (gb), guildStats (gs), help, invite, (last)evols (le), listGuildMembers (lgm), omicronList (ol/omicrons), playerStats (ps), profile (gg), register (reg), relics, repete, self(y), shipInfo (si), sources (src), start, stats, status, unreg(ister), warstats (ws), whoami, whois",
+		" abbr(eviations), aide, allycode (ac), auteur, chan(nelInfo), charInfo (ci), checkMods (cm), checkUnitsGp (cugp), countGuildTopUnits (cgtu), dis, gacH(istory), (gl)Check (glc), getUnregisteredPlayers (gup), guildBoard (gb), guildStats (gs), help, invite, (last)evols (le), listGuildMembers (lgm), omicronList (ol/omicrons), playerStats (ps), profile (gg), register (reg), relics, self(y), shipInfo (si), sources (src), start, stats, status, unreg(ister), warstats (ws), whoami, whois",
 		"**Commandes de comportement :**",
 		"*Ordre : behave|behaviour (sous-commande) (points) (user)*",
 		" behave, behave( )add, behave( )get, behave( )rank, behave( )rem(ove),",
@@ -21,11 +21,11 @@
 		"**NB4 :** l'ordre des arguments n'importe pas (sauf pour 'contest' et 'behave')."
 	],
 	"inCaseOfTrouble": "En cas de bug ou de demande d'amélioration, merci de passer par github.",
-	"Last updated at:": "Mis à jour à&nbsp;:",
-	"Loading...": "Chargement...",
-	"Loading stopped": "Chargement arrêté",
+	"lastUpdatedAt": "Mis à jour à&nbsp;:",
+	"loading": "Chargement...",
+	"loadingStopped": "Chargement arrêté",
 	"problem": "problème",
-	"Subscribe to this app": "S'abonner à cette appli",
+	"subscribeToThisApp": "S'abonner à cette appli",
 	"thisBotInstanceBelongsTo": "Cette instance du bot appartient à",
-	"Your name": "Votre nom"
+	"yourName": "Votre nom"
 }
