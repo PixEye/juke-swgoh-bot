@@ -30,10 +30,10 @@ There WAS a ("j.") prefix to use before Discord changes on 2022 summer but it is
 
 Here is a quick list of main commands to know about this bot (do not write the quotes):
 
-* "help" to get a pretty full list of commands available
-* "reg" or "register" with an allycode as required parameter to tells the bot to link an allycode to a Discord account.
-* "ac" or "allycode" to get someone's allycode. It is fast because it dos not use the game API
-* "invite" to invite this bot to your own Discord server
+* "help" to get a pretty full list of commands available. French version is available with "aide" command
+* "reg" or "register" with an allycode as required parameter to tells the bot to link an allycode to a Discord account
+* "ac" or "allycode" to get someone's allycode. It is fast because it does not use the game API
+* "invite" to a get a link in order to invite this bot to your own Discord server
 * "ps" or "playerStats" to get a player's statistics
 * "gs" or "guildStats" to get a player's guild statistics
 * "gl" or "check" to check one or all unit(s) for game requirements
