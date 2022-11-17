@@ -1,38 +1,40 @@
 ![Logo of JsB](Assets/Maul-s-eye_128x128.jpg)
 
-# jsb
+# Juke's SWGoH Bot (JSB)
 
 ## Quick description
 
-Juke's SWGoH [Discord](https://discordapp.com/) bot: a Star Wars Galaxy of Heros helper bot running on Discord. SWGoH is a mobile game (for iOS and Android).
+Juke's SWGoH bot: a Star Wars Galaxy of Heros helper bot running on [Discord](https://discordapp.com/). SWGoH is a mobile game (for Android and iOS).
 
 This bot get players and guilds data through the [SWGoH Help API](https://api.swgoh.help/).
 
-## Technical requirements for installation
+[Installation process](INSTALL.md) is i described on a [dedicated (install) page](INSTALL.md).
 
-[NodeJS](https://nodejs.org/en/) & a [MySQL](https://dev.mysql.com/) SGDB.
-It works (tested) under Windows 10 (but it should also work under Linux) and with NodeJS v10.15.3 (at least).
+## How to use this bot?
 
-JSB requires the following NodeJS modules:
+### Principles
 
-* api-swgoh-help
-* discord.js
-* mysql
+Default target player is the person who types the command but you can specify an allycode (9 digits in either 123456789 or 123-456-789 formats) or instead tag someone else.
 
-Use the "mk-tables.sql" file to create the tables in a MySQL database.
+Commands are not case sensitive. You can type them in lowercase, uppercase or a mix.
 
-## Run it
+There WAS a ("j.") prefix to use before Discord changes on 2022 summer but it is over now. You still _can_ use it, but it is not required anymore. Instead, you can:
 
-### From a Linux box
+* send direct commands to the bot in DM (direct messages) like this:
 
-Use the shell script located at: src/jsb.sh
+    GL Rey
 
-    $ src/jsb.sh
+* or you will have to tag the bot before to write the command you want like this:
 
-### From Windows OS
+    @JsB check profundity
 
-Recomendation is to install MINGW64 or Debian from the Windows store and run the same script as the Linux chapter.
+### Main commands
 
-## About the author
+Here is a quick list of main commands to know about this bot (do not write the quotes):
 
-Juke M is also known as [PixEye](http://pixeye.net).
+* "help" to get a pretty full list of commands available
+* "reg" or "register" with an allycode as required parameter to tells the bot to link an allycode to a Discord account.
+* "ac" or "allycode" to get someone's allycode
+* "invite" to invite this bot to your own Discord server
+* "ps" or "playerStats" to get a player's statistics
+* "gs" or "guildStats" to get a player's guild statistics
