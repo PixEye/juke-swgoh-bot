@@ -1014,8 +1014,7 @@ client.on("message", (message) => {
 				return;
 			}
 
-			message.reply("TODO");
-			tools.territoryWarReset(player, message); // TODO
+			tools.territoryWarReset(player, message);
 			break;
 
 		case "gu":

@@ -1875,6 +1875,27 @@ exports.territoryWarReg = function(player, message) {
 	});
 };
 
+/** Reset TW scores
+ * @param {object} player The target player
+ * @param {object} message The origin message (request)
+ */
+exports.territoryWarReset = function(player, message) {
+	var sql = "delete from tw_results";
+
+	db_pool.query(sql, (exc, result) => {
+		let msg = "TW scores just reset";
+
+		if (exc) {
+			console.log("SQL:", sql);
+			console.log(logPrefix()+"TWReset Exception:", exc.sqlMessage? exc.sqlMessage: exc);
+			return;
+		}
+
+		console.log(logPrefix()+"TWReset done");
+		message.reply(":white_check_mark: "+msg);
+	});
+};
+
 /** Generate a date string in MySQL format (if no date is given, now is used)
  * @param {Date} d
  * @return {string} simplified date
