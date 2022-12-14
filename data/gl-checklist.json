@@ -216,7 +216,7 @@
 		{
 			"baseId": "TBD_PROFUNDITY",
 			"unitName": "Profundity",
-			"image": "https://game-assets.swgoh.gg/temp.profundity.jpg",
+			"image": "https://game-assets.swgoh.gg/tex.jg_shipui_profundity.png",
 			"requiredUnits": [
 				{"stars": 7, "baseId": "OUTRIDER"},
 				{"stars": 7, "baseId": "UWINGROGUEONE"},

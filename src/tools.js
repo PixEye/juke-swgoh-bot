@@ -116,6 +116,8 @@ exports.checkLegendReq = function(player, message) {
 				unit.baseId = "CAPITAL"+"EXECUTOR"; break;
 			case "LV":
 				unit.baseId = "LORD"+"VADER"; break;
+			case "PROFUNDITY":
+				unit.baseId = "CAPITAL"+"PROFUNDITY"; break;
 			case "REY":
 				unit.baseId = "GL"+"REY"; break;
 		}
