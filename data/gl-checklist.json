@@ -233,6 +233,17 @@
 				{"gearLevel": 13, "relicTier": 5, "baseId": "JYNERSO"},
 				{"gearLevel": 13, "relicTier": 5, "baseId": "HERASYNDULLAS3"}
 			]
+		},
+		{
+			"baseId": "DOCTORAPHRA",
+			"unitName": "Doctor Aphra",
+			"image": "https://game-assets.swgoh.gg/tex.charui_doctoraphra.png",
+			"requiredUnits":[
+				{"gearLevel": 13, "relicTier": 5, "baseId": "HONDO"},
+				{"gearLevel": 13, "relicTier": 5, "baseId": "BT1"},
+				{"gearLevel": 13, "relicTier": 5, "baseId": "TRIPLEZERO"},
+				{"gearLevel": 13, "relicTier": 5, "baseId": "SANASTARROS"}
+			]
 		}
 	]
 }
