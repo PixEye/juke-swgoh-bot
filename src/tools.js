@@ -1884,19 +1884,21 @@ exports.territoryWarReg = function(player, message) {
  * @param {object} message The origin message (request)
  */
 exports.territoryWarReset = function(player, message) {
+	let logPrefix = exports.logPrefix; // shortcut
 	var sql = "delete from tw_results";
 
-	db_pool.query(sql, (exc, result) => {
+	db_pool.query(sql, (exc) => {
 		let msg = "TW scores just reset";
 
 		if (exc) {
 			console.log("SQL:", sql);
 			console.log(logPrefix()+"TWReset Exception:", exc.sqlMessage? exc.sqlMessage: exc);
+			if (message) message.reply("Failed!");
 			return;
 		}
 
-		console.log(logPrefix()+"TWReset done");
-		message.reply(":white_check_mark: "+msg);
+		if (message) message.reply(":white_check_mark: "+msg);
+		console.log(logPrefix()+msg);
 	});
 };
 
