@@ -1492,7 +1492,7 @@ client.on("message", (message) => {
 			search = user.id;
 			searchStr = "`discord_id`=" + search;
 			if (allycode) searchStr += " AND `allycode`=" + allycode;
-			sql = "DELETE FROM `users` WHERE " + searchStr;
+			sql = "DELETE FROM `users` WHERE " + searchStr + ' LIMIT 1';
 
 			// Update an existing registration:
 			db_pool.query(sql, [], (exc, result) => {
