@@ -677,7 +677,7 @@
 		"is_zeta": false,
 		"is_omega": false,
 		"is_omicron": true,
-		"description": "Empire allies gain 5% Defense and Max Health. Inquisitorius allies gain an additional 30% Defense and Max Health. If the enemy leader is a Jedi, inflict a stack of Purge on the leader and all non-Jedi enemies at the start of battle (stacking, max 6), which can't be resisted, and whenever Purge expires on non-Jedi enemies (excluding Galactic Legends) they lose 3% Speed (stacking, max 18%) for the rest of the encounter. Whenever an ally Inquisitor uses a Special ability, apply a stack of Purge on target enemy, which can't be evaded or resisted.\n\n[e7e7e7]While in Territory Wars: If the enemy Leader is a Jedi (excluding Galactic Legends), Jedi Leader abilities that grant bonus Speed to non-Jedi allies additionally remove 70 Speed, and whenever a non-Jedi enemy gains Retribution, dispel Retribution and instead inflict Expose for 2 turns, which can't be resisted. Whenever an enemy gains bonus Turn Meter, Inquisitorius allies gain 15% Turn Meter (limit once per turn).",
+		"description": "Empire allies gain 5% Defense and Max Health. Inquisitorius allies gain an additional 30% Defense and Max Health. If the enemy leader is a Jedi, inflict a stack of Purge on the leader and all non-Jedi enemies at the start of battle (stacking, max 6), which can't be resisted, and whenever Purge is consumed or dispelled on non-Jedi enemies (excluding Galactic Legends) they lose 3% Speed (stacking, max 18%) for the rest of the encounter. Whenever an ally Inquisitor uses a Special ability, apply a stack of Purge on target enemy, which can't be evaded or resisted.\n\n[e7e7e7]While in Territory Wars: If the enemy Leader is a Jedi (excluding Galactic Legends), Jedi Leader abilities that grant bonus Speed to non-Jedi allies additionally remove 70 Speed, and whenever a non-Jedi enemy gains Retribution, dispel Retribution and instead inflict Expose for 2 turns, which can't be resisted. Whenever an enemy gains bonus Turn Meter, Inquisitorius allies gain 15% Turn Meter (limit once per turn).",
 		"combat_type": 1,
 		"omicron_mode": 8,
 		"type": 3,
@@ -1082,5 +1082,369 @@
 		"character_base_id": "BOUSHH",
 		"ship_base_id": null,
 		"omicron_battle_types": []
+	},
+	{
+		"base_id": "uniqueskill_CASSIANANDOR01",
+		"name": "Groundwork",
+		"image": "https://game-assets.swgoh.gg/tex.abilityui_passive_rebel.png",
+		"url": "//swgoh.gg/characters/cassian-andor/#groundwork",
+		"tier_max": 9,
+		"is_zeta": true,
+		"is_omega": false,
+		"is_omicron": true,
+		"description": "At the start of each encounter, Rebel allies gain Protection Up (20%) for 3 turns, Rebel Attacker allies gain Defense Up for 3 turns, Rebel Support allies gain Potency Up for 3 turns, and Rebel Tank allies gain Tenacity Up for 3 turns. If K-2SO is present, he gains all of these buffs.\n\n[e7e7e7]While in Territory Battles: At the start of battle, if all allies are Rogue One, Cassian Andor takes a bonus turn to disguise himself as an enemy character until the end of battle. While disguised, Cassian retains his Unique ability and alignment and is part of the Rogue One faction in addition to his disguise's alignment and faction. At the start of each encounter, all Rebel allies gain Defense Up, Potency Up, and Tenacity Up for 3 turns. Whenever Cassian uses an ability, he gains 12% Turn Meter for each debuffed enemy, he inflicts Ability Block and Buff Immunity for 1 turn and Defense Down and Healing Immunity for 2 turns on target enemy, and K-2SO is called to assist, dealing 97.8% more damage.\n\n- Rebel Assault Territory Battle: Cassian disguises as Snowtrooper Ops (Elite).\n- Republic Offensive Territory Battle: Cassian disguises as Wat Tambor.\n- Rise of the Empire Territory Battle: Cassian disguises as a modified version of Magmatrooper.",
+		"combat_type": 1,
+		"omicron_mode": 7,
+		"type": 4,
+		"character_base_id": "CASSIANANDOR",
+		"ship_base_id": null,
+		"omicron_battle_types": [
+			"TERRITORY_COVERT_BATTLE",
+			"TERRITORY_STRIKE_BATTLE"
+		]
+	},
+	{
+		"base_id": "uniqueskill_GAMORREANGUARD01",
+		"name": "Loyal Enforcer",
+		"image": "https://game-assets.swgoh.gg/tex.abilityui_passive_taunt.png",
+		"url": "//swgoh.gg/characters/gamorrean-guard/#loyal-enforcer",
+		"tier_max": 8,
+		"is_zeta": true,
+		"is_omega": false,
+		"is_omicron": true,
+		"description": "At the start of battle, Gamorrean Guard gains 10% Max Health for each other Hutt Cartel ally and a stack of My Kind of Scum. While he is active, enemies have -20% Tenacity.\n\nIf the ally in the Leader slot is Jabba the Hutt: While Gamorrean Guard has Defense Up, he gains 50% Critical Avoidance. Whenever Gamorrean Guard loses Taunt, he gains Defense Up for 2 turns and whenever Jabba uses a Special ability, if Gamorrean Guard is Taunting he recovers 20% Health.\n\nIf the ally in the Leader slot is Hutt Cartel, whenever another Hutt Cartel ally falls below 70% Health while Gamorrean Guard has Defense Up, he Taunts and gains Protection Up (100%) for 2 turns.\n\n[e7e7e7]While in Territory Battles: Gamorrean Guard has +50% Critical Avoidance, Defense, and Tenacity. Other Hutt Cartel allies have +50% Max Health and Max Protection. The first time each other Hutt Cartel ally falls below 50% Health, they gain Damage Immunity for 1 turn, which can't be copied, dispelled, or prevented. If the ally in the Leader slot is Hutt Cartel and not Gamorrean Guard, whenever they use an ability, Gamorrean Guard assists.",
+		"combat_type": 1,
+		"omicron_mode": 7,
+		"type": 4,
+		"character_base_id": "GAMORREANGUARD",
+		"ship_base_id": null,
+		"omicron_battle_types": [
+			"TERRITORY_COVERT_BATTLE",
+			"TERRITORY_STRIKE_BATTLE"
+		]
+	},
+	{
+		"base_id": "uniqueskill_HONDO01",
+		"name": "That's Just Good Business",
+		"image": "https://game-assets.swgoh.gg/tex.abilityui_passive_thatsjustgoodbusiness.png",
+		"url": "//swgoh.gg/characters/hondo-ohnaka/#thats-just-good-business",
+		"tier_max": 8,
+		"is_zeta": true,
+		"is_omega": false,
+		"is_omicron": true,
+		"description": "Hondo has 100% Health Steal. Whenever Hondo evades an attack, he gains a stack of Ransom. If a Captive enemy is defeated and Hondo does not have at least 10 stacks of Ransom, Hondo escapes from battle.\n\nHondo gains bonuses based on the amount of stacks of Ransom:\n\n- 5+ Stacks: Add Expose to the target enemy for 1 turn and gain Foresight for 1 turn on his Basic ability\n- 10+ Stacks: Immune to critical hits\n- 15+ Stacks: Recover 20% Health at the start of his turn\n- 20+ Stacks: Recover 20% Protection at the start of his turn\n\nAt the start of his turn, if there is an enemy with the Captive debuff, Hondo gains 15% Critical Chance, Critical Damage, and Defense Penetration (stacking, max 150%), and 3 Speed (stacking, max 30) for the rest of the encounter.\n\n[E7E7E7]While in Grand Arenas: Hondo starts the encounter with 25% Turn Meter for each other Scoundrel or Smuggler ally. If there is an enemy with the Captive debuff at the start of Hondo's turn, Hondo gains an additional 15% Critical Chance, Critical Damage, and Defense Penetration per turn (stacking, max 150%) and 3 Speed (stacking, max 30).",
+		"combat_type": 1,
+		"omicron_mode": 9,
+		"type": 4,
+		"character_base_id": "HONDO",
+		"ship_base_id": null,
+		"omicron_battle_types": [
+			"TERRITORY_TOURNAMENT_BATTLE"
+		]
+	},
+	{
+		"base_id": "uniqueskill_BADBATCHOMEGA01",
+		"name": "Part of the Squad",
+		"image": "https://game-assets.swgoh.gg/tex.abilityui_passive_badbatchomega.png",
+		"url": "//swgoh.gg/characters/omega/#part-of-the-squad",
+		"tier_max": 9,
+		"is_zeta": true,
+		"is_omega": false,
+		"is_omicron": true,
+		"description": "At the start of the encounter, if all allies are Bad Batch, whenever the allied leader begins their turn, Omega gains 5 Speed and 2% Offense (stacking, max 50 Speed and 20% Offense) for the rest of the encounter.\n\nWhile Omega has Stealth, she has +10% Critical Damage, and when another Bad Batch ally uses a Special ability, Omega assists, dealing 60% less damage. While Omega has Defense Up, she has +10% Critical Chance.\n\nOmega's attacks deal 5% more damage for each buff she has and 5% more damage for each debuff the enemy has.\n\n[e7e7e7]While in Territory Battles: At the start of battle, all Bad Batch allies gain Max Health equal to 10% of their Max Protection for each of their own Relic Amplifier levels (max 100%). Then, they lose all Protection. Bad Batch allies take reduced damage from percent Health damage effects. These bonuses last until the first time Omega is defeated.\n\nAt the start of each encounter, Bad Batch allies gain 10% bonus Protection for 2 turns for each of Omega's Relic Amplifier levels. Whenever Omega uses her Basic ability, she deals damage again for each other Bad Batch ally, dealing 50% less damage.",
+		"combat_type": 1,
+		"omicron_mode": 7,
+		"type": 4,
+		"character_base_id": "BADBATCHOMEGA",
+		"ship_base_id": null,
+		"omicron_battle_types": [
+			"TERRITORY_COVERT_BATTLE",
+			"TERRITORY_STRIKE_BATTLE"
+		]
+	},
+	{
+		"base_id": "specialskill_TRIPLEZERO01",
+		"name": "Specialized in Torture",
+		"image": "https://game-assets.swgoh.gg/tex.ability_000_special01.png",
+		"url": "//swgoh.gg/characters/0-0-0/#specialized-in-torture",
+		"tier_max": 8,
+		"is_zeta": false,
+		"is_omega": false,
+		"is_omicron": true,
+		"description": "Deal Special damage and inflict Torture on target enemy for 1 turn, which can't be copied, dispelled, evaded, or resisted. If the target enemy already had Torture, instead deal Special damage to all enemies and grant all Dark Side allies a stack of Translation (max 3) for 3 turns.\n\n[E7E7E7]While in 3v3 Grand Arenas: Torture lasts for 2 turns. If BT-1 is an active ally, BT-1 and 0-0-0 recover 20% Health and Protection; if this ability defeats an enemy, all Dark Side allies gain 10% Offense (stacking) for the rest of the encounter, doubled for Dark Side Droids.",
+		"combat_type": 1,
+		"omicron_mode": 14,
+		"type": 2,
+		"character_base_id": "TRIPLEZERO",
+		"ship_base_id": null,
+		"omicron_battle_types": [
+			"TERRITORY_TOURNAMENT_BATTLE"
+		]
+	},
+	{
+		"base_id": "uniqueskill_BT101",
+		"name": "Homicidal Counterpart",
+		"image": "https://game-assets.swgoh.gg/tex.abilityui_passive_homicidalcounterpart.png",
+		"url": "//swgoh.gg/characters/bt-1/#homicidal-counterpart",
+		"tier_max": 8,
+		"is_zeta": true,
+		"is_omega": false,
+		"is_omicron": true,
+		"description": "At the start of battle, BT-1 gains 10% Critical Damage for each Droid ally, 10% Potency for each Dark Side ally, and 5 Speed for each Scoundrel ally. If 0-0-0 is an active ally, gain the granted ability Kill Them All. Whenever 0-0-0 uses a Special ability, BT-1 assists dealing 40% less damage.\n\nKill Them All: Deal Physical damage to all enemies and call 0-0-0 to assist\n\n[E7E7E7]While in 3v3 Grand Arenas: Whenever BT-1 or 0-0-0 defeat an enemy, their cooldowns are refreshed and they gain 30% Turn Meter.",
+		"combat_type": 1,
+		"omicron_mode": 14,
+		"type": 4,
+		"character_base_id": "BT1",
+		"ship_base_id": null,
+		"omicron_battle_types": [
+			"TERRITORY_TOURNAMENT_BATTLE"
+		]
+	},
+	{
+		"base_id": "specialskill_LUMINARAUNDULI02",
+		"name": "Master Healer's Blessing",
+		"image": "https://game-assets.swgoh.gg/tex.ability_luminara_special02.png",
+		"url": "//swgoh.gg/characters/luminara-unduli/#master-healers-blessing",
+		"tier_max": 9,
+		"is_zeta": false,
+		"is_omega": true,
+		"is_omicron": true,
+		"description": "Each ally recovers Health equal to 45% of Luminara Unduli's Max Health and gains a stack of Heal Over Time for 2 turns that recovers Health equal to 20% of Luminara's Max Health.\n\n[E7E7E7]While in Grand Arenas: Dispel all debuffs on allies. Allies gain Tenacity Up for 2 turns, and Luminari Unduli gains 50 Speed for 2 turns. Stacks of Heal Over Time gained from this ability trigger whenever any Heal Over Time from this ability triggers (limit once per turn), and whenever they trigger, they also recover 20% Protection. While allies have a stack of Heal Over Time from this ability, they have +100% Critical Avoidance and are immune to Turn Meter reduction. Whenever a stack of Heal Over Time from this ability is dispelled, reduce the cooldown of this ability by 1.\n\nOther allies with Protection Up can't gain these bonuses, and these stacks of Heal Over Time expire on other allies who gain Protection Up.",
+		"combat_type": 1,
+		"omicron_mode": 9,
+		"type": 2,
+		"character_base_id": "LUMINARAUNDULI",
+		"ship_base_id": null,
+		"omicron_battle_types": [
+			"TERRITORY_TOURNAMENT_BATTLE"
+		]
+	},
+	{
+		"base_id": "leaderskill_SANASTARROS",
+		"name": "Rebel Sympathizer",
+		"image": "https://game-assets.swgoh.gg/tex.abilityui_passive_rebelsympathizer.png",
+		"url": "//swgoh.gg/characters/sana-starros/#rebel-sympathizer",
+		"tier_max": 8,
+		"is_zeta": true,
+		"is_omega": false,
+		"is_omicron": true,
+		"description": "Rebel Scoundrel Tanks have +30% Defense, Max Health, and Max Protection and gain 15% Turn Meter whenever a non-Tank Rebel ally or Sana is damaged by an attack. Rebel allies and Sana have +30% Offense and Potency. At the start of battle, Rebel allies and Sana gain Protection Up (100%) until they use an ability.\n\nWhenever a Rebel ally or Sana has less than 100% Turn Meter and gains bonus Turn Meter, they gain 25% Critical Damage (stacking) until they critically hit an enemy. If a Rebel Scoundrel removes Turn Meter from an enemy, that enemy also takes damage equal to 20% of their Max Health, which can't be evaded. This damage can't defeat enemies. The first time each turn Rebel allies and Sana deal damage more than once, they gain 25% Max Health (stacking, max 200%) for the rest of the encounter. Whenever Rebel allies or Sana critically hit an enemy, they inflict Target Lock for 1 turn, which can't be evaded. Whenever an enemy is inflicted with Target Lock, reduce Rebel Scoundrel Tanks' cooldowns by 1.\n\n[e7e7e7]While in Territory Wars: Rebel Scoundrels and Sana are immune to Daze. At the start of battle, Rebel Scoundrel Tanks Taunt for 1 turn and Rebel Scoundrels and Sana start with Tenacity Up for 1 turn. Target Lock can't be resisted from this ability. The first time each turn Rebel allies and Sana deal damage more than once, dispel all buffs on all enemies and inflict Healing Immunity for 1 turn.",
+		"combat_type": 1,
+		"omicron_mode": 8,
+		"type": 3,
+		"character_base_id": "SANASTARROS",
+		"ship_base_id": null,
+		"omicron_battle_types": [
+			"TERRITORY_WAR_BATTLE"
+		]
+	},
+	{
+		"base_id": "specialskill_THIRDSISTER02",
+		"name": "Reckless Sweep",
+		"image": "https://game-assets.swgoh.gg/tex.ability_thirdsister_special02.png",
+		"url": "//swgoh.gg/characters/third-sister/#reckless-sweep",
+		"tier_max": 9,
+		"is_zeta": true,
+		"is_omega": false,
+		"is_omicron": true,
+		"description": "Deal Physical damage to all enemies and consume 1 stack of Purge from each enemy. If all enemies had at least 1 stack of Purge, inflict Defense Down and Healing Immunity on all enemies for 2 turns, which can't be dispelled, evaded or resisted, and all Inquisitorius allies gain 20% Turn Meter. Otherwise, inflict Defense Down and Healing Immunity on all enemies for 2 turns.\n\n[E7E7E7]While in Grand Arenas: All Inquisitorius allies gain Critical Damage Up for 2 turns and have their cooldowns reduced by 1.",
+		"combat_type": 1,
+		"omicron_mode": 9,
+		"type": 2,
+		"character_base_id": "THIRDSISTER",
+		"ship_base_id": null,
+		"omicron_battle_types": [
+			"TERRITORY_TOURNAMENT_BATTLE"
+		]
+	},
+	{
+		"base_id": "leaderskill_THIRDSISTER",
+		"name": "Harbored Aggression",
+		"image": "https://game-assets.swgoh.gg/tex.abilityui_leader_inquisitor.png",
+		"url": "//swgoh.gg/characters/third-sister/#harbored-aggression",
+		"tier_max": 9,
+		"is_zeta": true,
+		"is_omega": false,
+		"is_omicron": true,
+		"description": "Inquisitorius allies gain 40% Max Health, 20% Offense, 30 Speed, and are immune to Stun. At the start of the encounter and whenever an Inquisitorius ally is defeated or defeats an enemy, all enemies are inflicted with 5 stacks of Purge (max 6) for the rest of the encounter, which can't be resisted. Inquisitorius ally attacks always score a critical hit if able against enemies with at least 5 stacks of Purge. Whenever an enemy recovers Protection or gains Protection Up, all enemies lose 2% Defense (stacking, max 50%) for the rest of the encounter.\n\n[E7E7E7]While in Grand Arenas: Whenever an ally or enemy is defeated, all Inquisitorius allies gain Defense Penetration Up for 2 turns. Whenever Purge is dispelled during an enemy's turn, that character (excluding Galactic Legends) gains Deathmark for 2 turns which can't be dispelled or resisted.",
+		"combat_type": 1,
+		"omicron_mode": 9,
+		"type": 3,
+		"character_base_id": "THIRDSISTER",
+		"ship_base_id": null,
+		"omicron_battle_types": [
+			"TERRITORY_TOURNAMENT_BATTLE"
+		]
+	},
+	{
+		"base_id": "uniqueskill_THIRDSISTER01",
+		"name": "Driven by Revenge",
+		"image": "https://game-assets.swgoh.gg/tex.abilityui_passive_drivenbyrevenge.png",
+		"url": "//swgoh.gg/characters/third-sister/#driven-by-revenge",
+		"tier_max": 8,
+		"is_zeta": false,
+		"is_omega": false,
+		"is_omicron": true,
+		"description": "Third Sister gains 30% Max Health and 30 Speed. Third Sister takes reduced damage from percent Health damage effects. At the start of battle and when she's defeated for the first time, she gains Hatred for the rest of the battle. Whenever Third Sister is revived, she gains 100% Offense and Defense (stacking, max 200%), and 25% Critical Chance for the rest of the encounter (stacking, max 50%). Whenever Purge is dispelled during an enemy's turn, or when an enemy uses an attack that damages more than 1 ally, all enemies gain 1 stack of Purge and Third Sister Taunts for 2 turns.\n\n[E7E7E7]While in Grand Arenas: Whenever Third Sister is revived from Hatred, the cooldown of Unyielding Onslaught is refreshed, and she gains 100% Offense until her next attack and ignores taunt effects for 1 turn.",
+		"combat_type": 1,
+		"omicron_mode": 9,
+		"type": 4,
+		"character_base_id": "THIRDSISTER",
+		"ship_base_id": null,
+		"omicron_battle_types": [
+			"TERRITORY_TOURNAMENT_BATTLE"
+		]
+	},
+	{
+		"base_id": "uniqueskill_DARTHTRAYA01",
+		"name": "Lord of Betrayal",
+		"image": "https://game-assets.swgoh.gg/tex.abilityui_passive_bondsofweakness.png",
+		"url": "//swgoh.gg/characters/darth-traya/#lord-of-betrayal",
+		"tier_max": 9,
+		"is_zeta": true,
+		"is_omega": false,
+		"is_omicron": true,
+		"description": "When an ally suffers a debuff, Darth Traya gains +10% Bonus Protection (stacking) until the end of her next turn. At the start of each Sith ally's turn, Traya dispels all debuffs on them and deals damage equal to 5% of their Max Health (max 75%) for each debuff dispelled. When allied Darth Nihilus or Darth Sion are critically hit or inflicted with a debuff, Traya gains +12% Offense (stacking) for 2 turns.\n\n[E7E7E7]While in Grand Arenas and if there are no enemy Dark Side Galactic Legends: Sith allies gain 40% Critical Damage, Max Health, and Offense. When a Sith ally suffers a debuff, they gain 10% Bonus Protection (stacking) until the end of their turn. At the start of each Sith ally's turn, Traya dispels all debuffs on them and all Sith allies gain 5% Critical Damage, Health Steal, Max Health, and Offense (stacking, max 100%) until the end of the encounter. When an allied Darth Talon is critically hit or inflicted with a debuff, Traya gains 12% Offense (stacking) for 2 turns. When an allied Darth Nihilus, Darth Sion, or Darth Talon's Health falls below 90% for the first time, their cooldowns are reset.",
+		"combat_type": 1,
+		"omicron_mode": 9,
+		"type": 4,
+		"character_base_id": "DARTHTRAYA",
+		"ship_base_id": null,
+		"omicron_battle_types": [
+			"TERRITORY_TOURNAMENT_BATTLE"
+		]
+	},
+	{
+		"base_id": "specialskill_DOCTORAPHRA02",
+		"name": "Rogue Archaeology",
+		"image": "https://game-assets.swgoh.gg/tex.ability_doctoraphra_special02.png",
+		"url": "//swgoh.gg/characters/doctor-aphra/#rogue-archaeology",
+		"tier_max": 8,
+		"is_zeta": false,
+		"is_omega": false,
+		"is_omicron": true,
+		"description": "Deal Special damage to all enemies, increase their cooldowns by 1, and inflict Doubt on them for 2 turns. Aphra Siphons Potency from target enemy, which can't be resisted.\n\nThis ability can't be countered.\n\nSiphon Potency: Gain a percentage of Potency equal to this unit's Siphon until the end of the encounter and the target loses that much Potency (stacking, excludes raid bosses and Galactic Legends)\n\n[E7E7E7]While in 5v5 Grand Arenas: Deal bonus damage to target enemy equal to 50% of Aphra's Potency. Inflict Buff Immunity, Healing Immunity, and Stagger on target enemy for 2 turns.",
+		"combat_type": 1,
+		"omicron_mode": 15,
+		"type": 2,
+		"character_base_id": "DOCTORAPHRA",
+		"ship_base_id": null,
+		"omicron_battle_types": [
+			"TERRITORY_TOURNAMENT_BATTLE"
+		]
+	},
+	{
+		"base_id": "leaderskill_DOCTORAPHRA",
+		"name": "Suspended Doctorate",
+		"image": "https://game-assets.swgoh.gg/tex.abilityui_passive_suspendeddoctorate.png",
+		"url": "//swgoh.gg/characters/doctor-aphra/#suspended-doctorate",
+		"tier_max": 8,
+		"is_zeta": true,
+		"is_omega": false,
+		"is_omicron": true,
+		"description": "At the start of battle, Doctor Aphra gains Max Health and Max Protection equal to 30% of her Potency, and if BT-1 or 0-0-0 are an ally, she gains 50% Turn Meter for each. Dark Side allies have +20% Offense. Allied Dark Side Droid, Darth Vader, and Krrsantan also have +20% Max Health.\n\nWhenever a Dark Side ally inflicts a debuff, they gain 5% Offense for 1 turn and Aphra gains 5 Siphon until the end of the encounter. If the Dark Side ally is a Droid, Darth Vader, or Krrsantan, they instead gain 10% Offense for 1 turn and Aphra instead gains 10 Siphon until the end of the encounter. Whenever Doctor Aphra, BT-1, or 0-0-0 inflict a debuff or are critically hit, they gain 10% Turn Meter.\n\nWhenever an enemy falls below 30% Health, they are inflicted with Expose and Speed Down for 2 turns, which can't be evaded or resisted.\n\n[E7E7E7]While in 5v5 Grand Arenas: Dark Side Droid and Dark Side Scoundrel allies have +50% Critical Avoidance and +30 Speed. Aphra has +50% Potency. Whenever a Dark Side Droid or Scoundrel ally inflicts a debuff on an enemy, they gain 10% Turn Meter (limit once per turn).",
+		"combat_type": 1,
+		"omicron_mode": 15,
+		"type": 3,
+		"character_base_id": "DOCTORAPHRA",
+		"ship_base_id": null,
+		"omicron_battle_types": [
+			"TERRITORY_TOURNAMENT_BATTLE"
+		]
+	},
+	{
+		"base_id": "uniqueskill_DOCTORAPHRA01",
+		"name": "Droid Savant",
+		"image": "https://game-assets.swgoh.gg/tex.abilityui_passive_flatmech.png",
+		"url": "//swgoh.gg/characters/doctor-aphra/#droid-savant",
+		"tier_max": 8,
+		"is_zeta": true,
+		"is_omega": false,
+		"is_omicron": true,
+		"description": "At the start of Aphra's turn, she, Dark Side Droid, Dark Side Scoundrel, Darth Vader, and Krrsantan allies gain Defense, Offense, and Tenacity equal to 30% of Doctor Aphra's Potency until the start of her next turn. Hacked Commando Droid ally instead gains 60%. While she is active, if BT-1 or 0-0-0 are allies, they have +20% Potency and +20 Speed.\n\nThe first time a Dark Side Droid ally falls below 50% Health, they gain Protection Up (40%) for 2 turns.\n\n[E7E7E7]While in 5v5 Grand Arenas: The first time a non-Separatist Dark Side Droid or Dark Side Scoundrel ally falls below 20% Health, they gain Damage Immunity for 1 turn. Whenever a Dark Side Droid is defeated, they inflict a Damage Over Time on all enemies for 2 turns. Inflict an additional Damage Over Time for 2 turns for each Relic level that character has.\n\nAphra, non-Separatist Dark Side Droids, Dark Side Scoundrels, and Krrsantan are immune to Ability Block and Healing Immunity.",
+		"combat_type": 1,
+		"omicron_mode": 15,
+		"type": 4,
+		"character_base_id": "DOCTORAPHRA",
+		"ship_base_id": null,
+		"omicron_battle_types": [
+			"TERRITORY_TOURNAMENT_BATTLE"
+		]
+	},
+	{
+		"base_id": "uniqueskill_ZORIIBLISS_V201",
+		"name": "There's More of Us",
+		"image": "https://game-assets.swgoh.gg/tex.abilityui_passive_theresmoreofus.png",
+		"url": "//swgoh.gg/characters/zorii-bliss/#theres-more-of-us",
+		"tier_max": 8,
+		"is_zeta": true,
+		"is_omega": false,
+		"is_omicron": true,
+		"description": "If the ally in the Leader slot is non-Unaligned Force User Resistance:\n\n- Resistance allies have +100% Potency while they have more allies than enemies and have +35 Speed while they have equal or fewer allies than enemies\n- Whenever Zorii uses an ability while Stealthed, the ally in the Leader slot and any Poe Dameron gain Retribution for 1 turn; if Poe is Taunting, he also gains Critical Hit Immunity for 1 turn\n- Whenever a Resistance ally has less than 100% Turn Meter and gains bonus Turn Meter, they gain 35% Offense (stacking) for 1 turn\n- Whenever a non-Unaligned Force User Resistance ally removes Turn Meter from an enemy, they inflict Speed Down for 1 turn\n- Whenever a Resistance ally without Tenacity Up gains Tenacity Up, all other Resistance allies without Tenacity Up gain Tenacity Up for 1 turn\n- While Resistance allies have Tenacity Up, whenever they deal damage to an enemy, they have a 35% chance to inflict Expose for 1 turn\n- Whenever a non-Unaligned Force User Resistance Tank Taunts they gain 15% Max Health (stacking) for the rest of the encounter and whenever Taunt expires on them, they recover 15% Protection\n\n[E7E7E7]While in Grand Arenas if there are no Galactic Legend allies and all allies are Resistance: If the ally in the Leader slot is non-Unaligned Force User Resistance, whenever Zorii is Stealthed at the start of her turn, all enemies without Expose are inflicted with Expose for 1 turn, which can't be evaded or resisted",
+		"combat_type": 1,
+		"omicron_mode": 9,
+		"type": 4,
+		"character_base_id": "ZORIIBLISS_V2",
+		"ship_base_id": null,
+		"omicron_battle_types": [
+			"TERRITORY_TOURNAMENT_BATTLE"
+		]
+	},
+	{
+		"base_id": "basicskill_TRENCH",
+		"name": "Unfinished Business",
+		"image": "https://game-assets.swgoh.gg/tex.ability_admiraltrench_basic.png",
+		"url": "//swgoh.gg/characters/admiral-trench/#unfinished-business",
+		"tier_max": 8,
+		"is_zeta": false,
+		"is_omega": false,
+		"is_omicron": true,
+		"description": "Deal Special damage to target enemy and Shock them for 2 turns. If the target was already Shocked, Stun them for 1 turn.\n\nDuring Trench's turn, allies with Tactical Supremacy gain a Heal Over Time and a Protection Over Time (10%) for 2 turns.\n\n[e7e7e7]While in Territory Wars: During Trench's turn: Inflict Ability Block on target enemy for 1 turn which can't be dispelled or resisted and reduce their Critical Damage by 20% (stacking) until the end of the encounter. If target enemy was already debuffed, remove 50% Turn Meter from them. Non-Droid Separatist allies recover 30% Health and Protection.",
+		"combat_type": 1,
+		"omicron_mode": 8,
+		"type": 1,
+		"character_base_id": "TRENCH",
+		"ship_base_id": null,
+		"omicron_battle_types": [
+			"TERRITORY_WAR_BATTLE"
+		]
+	},
+	{
+		"base_id": "leaderskill_TRENCH",
+		"name": "Feared Tactician",
+		"image": "https://game-assets.swgoh.gg/tex.abilityui_passive_fearedtactician.png",
+		"url": "//swgoh.gg/characters/admiral-trench/#feared-tactician",
+		"tier_max": 8,
+		"is_zeta": true,
+		"is_omega": false,
+		"is_omicron": true,
+		"description": "Separatist allies have +30% Max Health, Max Protection, and Potency and they have +10% Speed (excludes Galactic Legend allies) for each ally with Tech and each enemy with Extortion.\n\nWhenever a Separatist ally inflicts a debuff on an enemy, they gain 20% Offense for 3 turns (stacking, limit once per turn). While a Separatist ally has a Tech, they have +100% Potency. When a non-Geonosian Separatist ally gains Baktoid Shield Generator Tech, they dispel Stealth from themselves and while they have Baktoid Shield Generator Tech, they are immune to Stealth and gain 100% Critical Avoidance and Defense.\n\nWhile a Separatist ally has a Heal Over Time, they have +30% Counter Chance, and while they have a Protection Over Time, they have +30% Defense Penetration. While an enemy has Burning, they can't assist, counter attack, or gain bonus Turn Meter.\n\n[e7e7e7]While in Territory Wars: Non-Droid Separatist allies have +50% Mastery, and +75% Max Health and Max Protection. Separatist allies with Tech can't have their turn meter reduced. Enemies with Extortion will be critically hit if able.\n\nWhenever an enemy dispels a debuff, Separatist allies gain 10% turn meter (limit once per turn). The first time each enemy is reduced below 100% Health (excluding summons), Separatist allies gain 20% Offense (stacking) and +5 Speed (stacking) until the end of the battle.",
+		"combat_type": 1,
+		"omicron_mode": 8,
+		"type": 3,
+		"character_base_id": "TRENCH",
+		"ship_base_id": null,
+		"omicron_battle_types": [
+			"TERRITORY_WAR_BATTLE"
+		]
+	},
+	{
+		"base_id": "uniqueskill_TRENCH01",
+		"name": "I Smell Fear, and It Smells Good",
+		"image": "https://game-assets.swgoh.gg/tex.abilityui_passive_faction_separatist.png",
+		"url": "//swgoh.gg/characters/admiral-trench/#i-smell-fear-and-it-smells-good",
+		"tier_max": 8,
+		"is_zeta": true,
+		"is_omega": false,
+		"is_omicron": true,
+		"description": "At the start of battle, Admiral Trench loses 50% Max Health and gains that much Max Protection. While Trench is active, Separatist allies have +50% Potency. At the start of his turn, he gains a Protection Over Time (10%) for 2 turns. While Trench has Protection Up, he is immune to Buff Immunity and Healing Immunity.\n\nThe first time each enemy loses all Protection, at the end of that turn they are Feared for 1 turn which can't be dispelled, evaded, or resisted.\n\nWhenever another non-Droid Separatist ally is damaged by an attack, defeated, or evades, Trench has a 50% chance to gain 100% Turn Meter (limit once per turn). Whenever an enemy dispels Protection Up from Trench, they are inflicted with Shock for 2 turns which can't be evaded or resisted.\n\n[e7e7e7]While in Territory Wars: Whenever an enemy resists a debuff from a Separatist ally, they lose 10% Critical Damage (stacking) and 10% Tenacity (stacking) for 3 turns. The first time Trench's Health is reduced below 75%, he recovers 100% Health and gains Foresight, Protection Up (50%), and Tenacity Up for 2 turns. While a Separatist ally has a Heal Over Time, Health recovery on them is increased by 15%. While a Separatist ally has a Protection Over Time, Protection recovery on them is increased by 15%.\n\nAllies with Tactical Supremacy have +25 Speed.",
+		"combat_type": 1,
+		"omicron_mode": 8,
+		"type": 4,
+		"character_base_id": "TRENCH",
+		"ship_base_id": null,
+		"omicron_battle_types": [
+			"TERRITORY_WAR_BATTLE"
+		]
 	}
 ]
