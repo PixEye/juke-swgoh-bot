@@ -193,6 +193,8 @@ exports.getPlayerData = async function(users, callback, message) {
 			player.unitsData = [];
 
 			roster.forEach(unit => {
+				if (unit.name==='TIE'+'DEFENDER') unit.combatType = 2;
+
 				unitsCountByGear[unit.gear]++;
 				unitsByCombatType[unit.combatType]++; // 1 = character, 2 = ship
 
