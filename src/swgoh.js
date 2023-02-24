@@ -128,6 +128,7 @@ exports.getPlayerData = async function(users, callback, message) {
 		let numToSkill = [ // from 0 to 8 TODO: use it
 			'none', 'health', 'attack', 'defense', 'speed', 'crit chance', 'crit damage', 'potency', 'tenacity'
 		]; // */
+		let shipsToFix = ['TIE'+'DEFENDER'];
 
 		result.forEach(player => {
 			let clean_stats = {};
@@ -193,7 +194,7 @@ exports.getPlayerData = async function(users, callback, message) {
 			player.unitsData = [];
 
 			roster.forEach(unit => {
-				if (unit.name==='TIE'+'DEFENDER') unit.combatType = 2;
+				if (shipsToFix.includes(unit.defId)) unit.combatType = 2;
 
 				unitsCountByGear[unit.gear]++;
 				unitsByCombatType[unit.combatType]++; // 1 = character, 2 = ship
