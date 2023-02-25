@@ -140,7 +140,7 @@ exports.checkLegendReq = function(player, message) {
 		if (!locked) {
 			progresses.push(1);
 			if (unit.baseId !== 'JEDI'+'KNIGHT'+'LUKE' && unit.baseId !== 'STAR'+'KILLER'
-			&& unit.name !== 'Executor') // Not GL exceptions
+			&& unit.name !== 'Executor' && unit.name !== 'Profundity') // Not GL exceptions
 				++ player.glCount;
 		} else {
 			if (found) return;
