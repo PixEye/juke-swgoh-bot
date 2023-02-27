@@ -22,7 +22,7 @@ const mysql = require("mysql");
 const locutus   = require("./locutus"); // Functions from locutus.io
 //nst swgohApi  = require("./swgoh");  // SWGoH API of this bot
 const tools     = require("./tools"); // Several functions
-const gacTools  = require("./gac_tools"); // GAC tracker related functions
+//nst gacTools  = require("./gac_tools"); // GAC tracker related functions
 const msg_fr_FR = require("../data/messages-fr_FR"); // French translations
 const view      = require("./view"); // Functions used to display results
 
@@ -84,6 +84,9 @@ client.on("error", (exc) => {
 
 // Check for input messages:
 client.on("message", (message) => {
+	const prefix = config.discord.prefix;
+	const prefixRegExp = new RegExp("^"+prefix, "i");
+
 	var allycode = 0;
 	var cmd = "";
 	var command = "";
@@ -91,8 +94,6 @@ client.on("message", (message) => {
 	var lines = [];
 	var nick = "";
 	let player = {};
-	const prefix = config.discord.prefix;
-	const prefixRegExp = new RegExp("^"+prefix, "i");
 	var readCommands = ['behave', 'get', 'get'+'rank', 'get'+'score', 'rank', 'top', 'worst'];
 	var richMsg = {};
 	let s = "";
@@ -109,7 +110,7 @@ client.on("message", (message) => {
 		words = message.content.trim().replace(prefixRegExp, "");
 	} else // message with bot's tag:
 	if (words && words.length && words[0].startsWith('<@') && words[0].endsWith(config.discord.selfId+'>')) {
-		words.shift(); // forget first word (bot tag)
+		words.shift(); // forget first word (self bot tag)
 		words = words.join(' ').trim().replace(prefixRegExp, "");
 	} else
 	if (message.content && message.content.toLowerCase().startsWith(prefix)) { // message with bot prefix
@@ -756,7 +757,7 @@ client.on("message", (message) => {
 			break;
 		}
 
-		case "gals":
+		/* case "gals":
 		case "latest"+"stats"+"grand"+"arena":
 		case "grand"+"arena"+"latest"+"stats":
 			if (allycode) {
@@ -795,7 +796,7 @@ client.on("message", (message) => {
 					gacTools.getPlayerGAs(player, message, view.showPlayerGAs);
 				});
 			}
-			break;
+			break; // */
 
 		case "gb":
 		case "guild"+"board": {
