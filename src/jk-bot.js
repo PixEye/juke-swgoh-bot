@@ -73,7 +73,7 @@ client.on("ready", () => {
 	console.log(logPrefix()+"Down time in minutes: "+Math.round(down_time/1000/60));
 
 	client.user.username = config.discord.username;
-	client.user.setPresence({"game": {"type": "listening", "name": config.discord.prefix + "help"}});
+	client.user.setPresence({"game": {"type": "listening", "name": "help (in DM)"}});
 });
 
 // Get errors (if any):
