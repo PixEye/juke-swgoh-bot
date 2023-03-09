@@ -55,6 +55,7 @@ try {
 	throw exc; // Stop here
 }
 
+let botMsgCount = 0;
 let cmdCount = 0;
 let failure_since = 0;
 let listen_since = new Date;
@@ -107,7 +108,10 @@ client.on("message", (message) => {
 	var words = message.content.trim().split(/ +/g);
 
 	// First filter is to ignore bots (including self authored messages):
-	if (user.bot) return; // do not parse any bot's message: stop here
+	if (user.bot) {
+		++ botMsgCount;
+		return; // do not parse any bot message: stop here
+	}
 
 	++ msgCount;
 
@@ -1403,14 +1407,20 @@ client.on("message", (message) => {
 		case "status": {
 			let nbg = 0; // number of registered guilds
 			let nbp = 0; // number of registered players
-			let percent = msgCount? Math.round(100 * cmdCount / msgCount): 0;
 			// let servers = [];
 
 			lines = [];
-			lines.push("`I was started at....: "+tools.toMySQLdate(start)+" GMT`");
-			lines.push("`I am listening since: "+tools.toMySQLdate(listen_since)+" GMT`");
-			lines.push("I found "+cmdCount+" commands out of "+msgCount+" human messages => "+percent+"%");
+			lines.push("`Started at..: "+tools.toMySQLdate(start)+" GMT`");
+			lines.push("`Listen since: "+tools.toMySQLdate(listen_since)+" GMT`");
 			lines.push("Down time in minutes: "+Math.round(down_time/1000/60));
+			if (message.author.id === config.discord.ownerID) {
+				let percent = msgCount? Math.round(100 * cmdCount / msgCount): 0;
+				let msg = "I found "+cmdCount+" commands" +
+					" out of "+msgCount+" human messages => "+percent+"%";
+
+				lines.push(msg);
+				lines.push("I also found "+botMsgCount+" bot messages.");
+			}
 			console.log(logPrefix()+"Down time in minutes: "+Math.round(down_time/1000/60));
 			message.channel.send(lines);
 
@@ -1470,6 +1480,9 @@ client.on("message", (message) => {
 						let avg = nbp? Math.round(nbu / nbp): nbu; // average per player
 						console.log(logPrefix()+"%d unit(s) registered (average = %d per user)", nbu, avg);
 
+						nbg = locutus.number_format(nbg);
+						nbp = locutus.number_format(nbp);
+						nbu = locutus.number_format(nbu);
 						message.channel.send(nbg+" guilds, "+nbp+" players & "+nbu+" units registered.");
 					})
 				})
