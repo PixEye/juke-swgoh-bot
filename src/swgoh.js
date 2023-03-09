@@ -128,6 +128,7 @@ exports.getPlayerData = async function(users, callback, message) {
 		let numToSkill = [ // from 0 to 8 TODO: use it
 			'none', 'health', 'attack', 'defense', 'speed', 'crit chance', 'crit damage', 'potency', 'tenacity'
 		]; // */
+		let shipsToFix = ['TIE'+'DEFENDER'];
 
 		result.forEach(player => {
 			let clean_stats = {};
@@ -154,16 +155,16 @@ exports.getPlayerData = async function(users, callback, message) {
 			// console.dir(roster[0]);
 			// console.log("First unit's crew of the player's roster:", roster[0].crew); // []
 			//
-			// id (random string), defId 'MAGMATROOPER', nameKey 'UNIT_MAGMATROOPER_NAME',
+			// id (random string), defId 'MAGMA'+'TROOPER', nameKey 'UNIT_MAGMA'+'TROOPER_NAME',
 			// rarity (7), level (85), xp (int: 883025), gear (8), combatType (1)
 			// Array: equipped
 			// { equipmentId: '064', slot: 0, nameKey: 'EQUIPMENT_064_NAME' }
 			// Array: skills
-			// { id: 'specialskill_MAGMATROOPER01', tier: 7,
-			//	nameKey: 'SPECIALABILITY_MAGMATROOPER01_NAME', isZeta: false, tiers: 8 }
+			// { id: 'special'+'skill_MAGMA'+'TROOPER01', tier: 7,
+			//	nameKey: 'SPECIAL'+'ABILITY_MAGMA'+'TROOPER01_NAME', isZeta: false, tiers: 8 }
 			//
 			// Array: mods
-			// { id: 'nsdQon_cSIy44yjeGQVVXw', level: 15, tier: 4, slot: 1, set: 5,
+			// { id: 'some_randomString', level: 15, tier: 4, slot: 1, set: 5,
 			//	pips: 4, primaryStat: [Object], secondaryStat: [Array] }
 			// console.log(logPrefix()+"First unit (%s) first mod:\n ",
 			//	roster[0].defId, roster[0].mods[0]); // ?
@@ -193,6 +194,8 @@ exports.getPlayerData = async function(users, callback, message) {
 			player.unitsData = [];
 
 			roster.forEach(unit => {
+				if (shipsToFix.includes(unit.defId)) unit.combatType = 2;
+
 				unitsCountByGear[unit.gear]++;
 				unitsByCombatType[unit.combatType]++; // 1 = character, 2 = ship
 
@@ -332,7 +335,7 @@ exports.getPlayerData = async function(users, callback, message) {
 			player.game_name = player.name;
 			player.shipCount = unitsByCombatType[2];
 			player.title = player.titles.selected?
-				player.titles.selected.replace('PLAYERTITLE_', '').replace(/_/g, ' '): 'Default';
+				player.titles.selected.replace('PLAYER'+'TITLE_', '').replace(/_/g, ' '): 'Default';
 			player.giftCount = clean_stats.TOTAL_GUILD_EXCHANGE_DONATIONS_TU07_2;
 			player.omicronCount = omicronCount;
 			player.omicronSkills = omicronSkills;
@@ -341,7 +344,7 @@ exports.getPlayerData = async function(users, callback, message) {
 
 			player.gaTerritoriesDefeated = clean_stats.SEASON_TERRITORIES_DEFEATED_NAME;
 			player.gaBannersEarned = clean_stats.SEASON_BANNERS_EARNED_NAME;
-			player.gaFullCleardRoundWins = clean_stats.SEASON_FULL_CLEAR_ROUND_WINS_NAME;
+			player.gaFullClearRoundWins = clean_stats.SEASON_FULL_CLEAR_ROUND_WINS_NAME;
 			player.gaOffensiveBattles = clean_stats.SEASON_OFFENSIVE_BATTLES_WON_NAME;
 			player.gaSuccessfulDefends = clean_stats.SEASON_SUCCESSFUL_DEFENDS_NAME;
 			player.gaUndersizedSquadWins = clean_stats.SEASON_UNDERSIZED_SQUAD_WINS_NAME;
@@ -535,7 +538,7 @@ exports.fetch = async function(users, message, callback) {
 		}
 		allycode = allycodes[0]; // keep only the first one: 1 guild at once
 
-		console.log(logPrefix()+"Fetchind from message with words:", message.words);
+		console.log(logPrefix()+"Fetching from message with words:", message.words);
 		if ( !message.words.length ) {
 			console.warn("No word to parse!");
 			return;
@@ -550,7 +553,7 @@ exports.fetch = async function(users, message, callback) {
 	//	let { result, error, warning } = await swapi.fetch(endpoint, payload); // does not work
 		endpoint = 'fetch'+locutus.ucfirst(endpoint);
 		console.log(logPrefix()+"Payload:", payload);
-		console.log(logPrefix()+"Fetchind SWGoH data with method:", endpoint);
+		console.log(logPrefix()+"Fetching SWGoH data with method:", endpoint);
 		let { result, error } = await swapi[endpoint](payload); // <--
 		let richMsg = null;
 
@@ -604,4 +607,4 @@ exports.fetch = async function(users, message, callback) {
 	}
 };
 
-// vim: noexpandtab shiftwidth=4 softtabstop=4 tabstop=4
+// vim: noexpandtab

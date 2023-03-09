@@ -22,11 +22,11 @@ const mysql = require("mysql");
 const locutus   = require("./locutus"); // Functions from locutus.io
 //nst swgohApi  = require("./swgoh");  // SWGoH API of this bot
 const tools     = require("./tools"); // Several functions
-const gacTools  = require("./gac_tools"); // GAC tracker related functions
+//nst gacTools  = require("./gac_tools"); // GAC tracker related functions
 const msg_fr_FR = require("../data/messages-fr_FR"); // French translations
 const view      = require("./view"); // Functions used to display results
 
-// Get the configuration & its template from a separated JSON files:
+// Get the configuration & its template from separated JSON files:
 let config = require("./config.json");
 let tplCfg = require("./config-template.json");
 
@@ -55,8 +55,11 @@ try {
 	throw exc; // Stop here
 }
 
+let cmdCount = 0;
 let failure_since = 0;
 let listen_since = new Date;
+let msgCount = 0;
+
 let down_time = listen_since - start;
 
 // Run the periodical process:
@@ -73,7 +76,7 @@ client.on("ready", () => {
 	console.log(logPrefix()+"Down time in minutes: "+Math.round(down_time/1000/60));
 
 	client.user.username = config.discord.username;
-	client.user.setPresence({"game": {"type": "listening", "name": config.discord.prefix + "help"}});
+	client.user.setPresence({"game": {"type": "listening", "name": "help (in DM)"}});
 });
 
 // Get errors (if any):
@@ -84,6 +87,9 @@ client.on("error", (exc) => {
 
 // Check for input messages:
 client.on("message", (message) => {
+	const prefix = config.discord.prefix;
+	const prefixRegExp = new RegExp("^"+prefix, "i");
+
 	var allycode = 0;
 	var cmd = "";
 	var command = "";
@@ -91,8 +97,6 @@ client.on("message", (message) => {
 	var lines = [];
 	var nick = "";
 	let player = {};
-	const prefix = config.discord.prefix;
-	const prefixRegExp = new RegExp("^"+prefix, "i");
 	var readCommands = ['behave', 'get', 'get'+'rank', 'get'+'score', 'rank', 'top', 'worst'];
 	var richMsg = {};
 	let s = "";
@@ -105,11 +109,13 @@ client.on("message", (message) => {
 	// First filter is to ignore bots (including self authored messages):
 	if (user.bot) return; // do not parse any bot's message: stop here
 
+	++ msgCount;
+
 	if (message.channel.type==="dm") { // private message to the bot
 		words = message.content.trim().replace(prefixRegExp, "");
 	} else // message with bot's tag:
 	if (words && words.length && words[0].startsWith('<@') && words[0].endsWith(config.discord.selfId+'>')) {
-		words.shift(); // forget first word (bot tag)
+		words.shift(); // forget first word (self bot tag)
 		words = words.join(' ').trim().replace(prefixRegExp, "");
 	} else
 	if (message.content && message.content.toLowerCase().startsWith(prefix)) { // message with bot prefix
@@ -118,6 +124,7 @@ client.on("message", (message) => {
 		return;
 	}
 
+	++ cmdCount;
 	words = words.trim().split(/ +/g);
 	command = words.shift().toLowerCase();
 	nick = locutus.utf8_decode(user.username);
@@ -756,7 +763,7 @@ client.on("message", (message) => {
 			break;
 		}
 
-		case "gals":
+		/* case "gals":
 		case "latest"+"stats"+"grand"+"arena":
 		case "grand"+"arena"+"latest"+"stats":
 			if (allycode) {
@@ -795,7 +802,7 @@ client.on("message", (message) => {
 					gacTools.getPlayerGAs(player, message, view.showPlayerGAs);
 				});
 			}
-			break;
+			break; // */
 
 		case "gb":
 		case "guild"+"board": {
@@ -1396,26 +1403,16 @@ client.on("message", (message) => {
 		case "status": {
 			let nbg = 0; // number of registered guilds
 			let nbp = 0; // number of registered players
+			let percent = msgCount? Math.round(100 * cmdCount / msgCount): 0;
 			// let servers = [];
 
 			lines = [];
-			lines.push("I was started at: "+tools.toMySQLdate(start)+" GMT.");
-			lines.push("I am listening since: "+tools.toMySQLdate(listen_since)+" GMT.");
+			lines.push("`I was started at....: "+tools.toMySQLdate(start)+" GMT`");
+			lines.push("`I am listening since: "+tools.toMySQLdate(listen_since)+" GMT`");
+			lines.push("I found "+cmdCount+" commands out of "+msgCount+" human messages => "+percent+"%");
 			lines.push("Down time in minutes: "+Math.round(down_time/1000/60));
 			console.log(logPrefix()+"Down time in minutes: "+Math.round(down_time/1000/60));
 			message.channel.send(lines);
-
-			/* client.guilds.cache.forEach(guild => {
-				let newServer = (`${guild.name} | ${guild.id}`);
-				servers.push(newServer);
-				console.log(servers.length+"/ "+newServer);
-			})
-			console.log("Number of servers: "+servers.length);
-			message.channel.send("I am listening to "+servers.length+" servers.");
-
-			let clientGuilds = client.guilds.cache();
-			console.log(clientGuilds.map(g => g.id) || "None");
-			message.channel.send("I am listening to those servers: "+JSON.stringify(client.guilds)); // */
 
 			sql = "SELECT COUNT(`id`) AS nbg FROM `guilds`";
 			db_pool.query(sql, (exc, result) => {
@@ -1492,7 +1489,7 @@ client.on("message", (message) => {
 			search = user.id;
 			searchStr = "`discord_id`=" + search;
 			if (allycode) searchStr += " AND `allycode`=" + allycode;
-			sql = "DELETE FROM `users` WHERE " + searchStr;
+			sql = "DELETE FROM `users` WHERE " + searchStr + ' LIMIT 1';
 
 			// Update an existing registration:
 			db_pool.query(sql, [], (exc, result) => {
