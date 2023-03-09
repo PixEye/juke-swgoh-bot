@@ -1,6 +1,6 @@
 # Privacy Policy
 
-This bot is managed by @PixEye
+This bot is managed by @PixEye (a.k.a. Juke#4992 on Discord)
 
 There is no confidential data here.
 The bot only links game ally codes to nicknames as many game bots do.
