@@ -26,7 +26,7 @@ const tools     = require("./tools"); // Several functions
 const msg_fr_FR = require("../data/messages-fr_FR"); // French translations
 const view      = require("./view"); // Functions used to display results
 
-// Get the configuration & its template from a separated JSON files:
+// Get the configuration & its template from separated JSON files:
 let config = require("./config.json");
 let tplCfg = require("./config-template.json");
 
@@ -55,8 +55,11 @@ try {
 	throw exc; // Stop here
 }
 
+let cmdCount = 0;
 let failure_since = 0;
 let listen_since = new Date;
+let msgCount = 0;
+
 let down_time = listen_since - start;
 
 // Run the periodical process:
@@ -106,6 +109,8 @@ client.on("message", (message) => {
 	// First filter is to ignore bots (including self authored messages):
 	if (user.bot) return; // do not parse any bot's message: stop here
 
+	++ msgCount;
+
 	if (message.channel.type==="dm") { // private message to the bot
 		words = message.content.trim().replace(prefixRegExp, "");
 	} else // message with bot's tag:
@@ -119,6 +124,7 @@ client.on("message", (message) => {
 		return;
 	}
 
+	++ cmdCount;
 	words = words.trim().split(/ +/g);
 	command = words.shift().toLowerCase();
 	nick = locutus.utf8_decode(user.username);
@@ -1397,26 +1403,16 @@ client.on("message", (message) => {
 		case "status": {
 			let nbg = 0; // number of registered guilds
 			let nbp = 0; // number of registered players
+			let percent = msgCount? Math.round(100 * cmdCount / msgCount): 0;
 			// let servers = [];
 
 			lines = [];
-			lines.push("I was started at: "+tools.toMySQLdate(start)+" GMT.");
-			lines.push("I am listening since: "+tools.toMySQLdate(listen_since)+" GMT.");
+			lines.push("`I was started at....: "+tools.toMySQLdate(start)+" GMT`");
+			lines.push("`I am listening since: "+tools.toMySQLdate(listen_since)+" GMT`");
+			lines.push("I found "+cmdCount+" commands out of "+msgCount+" human messages => "+percent+"%");
 			lines.push("Down time in minutes: "+Math.round(down_time/1000/60));
 			console.log(logPrefix()+"Down time in minutes: "+Math.round(down_time/1000/60));
 			message.channel.send(lines);
-
-			/* client.guilds.cache.forEach(guild => {
-				let newServer = (`${guild.name} | ${guild.id}`);
-				servers.push(newServer);
-				console.log(servers.length+"/ "+newServer);
-			})
-			console.log("Number of servers: "+servers.length);
-			message.channel.send("I am listening to "+servers.length+" servers.");
-
-			let clientGuilds = client.guilds.cache();
-			console.log(clientGuilds.map(g => g.id) || "None");
-			message.channel.send("I am listening to those servers: "+JSON.stringify(client.guilds)); // */
 
 			sql = "SELECT COUNT(`id`) AS nbg FROM `guilds`";
 			db_pool.query(sql, (exc, result) => {
