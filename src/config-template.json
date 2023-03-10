@@ -39,7 +39,7 @@
       "admins": ["303613660960653312", "351352640028016640", "222443133294739456"],
       "regChanId": "835128266544250890"
   },
-  "swapi": {
+  "swApi": {
     "user": "<your api.swgoh.help login>",
     "pass": "<your api.swgoh.help password>"
   }

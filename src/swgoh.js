@@ -30,9 +30,9 @@ let config = require("./config.json");
 
 // SWGoH Help API connection:
 const ApiSwgohHelp = require("api-swgoh-help");
-const swapi = new ApiSwgohHelp({
-	"username": config.swapi.user,
-	"password": config.swapi.pass
+const swApi = new ApiSwgohHelp({
+	"username": config.swApi.user,
+	"password": config.swApi.pass
 });
 
 const omicronAbilities = require("../data/omicron-abilities");
@@ -50,7 +50,7 @@ exports.getPlayerData = async function(users, callback, message) {
 	let msg = "";
 
 	try {
-		// let acquiredToken = await swapi.connect();
+		// let acquiredToken = await swApi.connect();
 		// console.log(logPrefix()+"Token: ", acquiredToken);
 
 		if ( ! (users instanceof Array) ) users = [users];
@@ -70,7 +70,7 @@ exports.getPlayerData = async function(users, callback, message) {
 		}
 
 		console.log(logPrefix()+"Payload:", payload);
-		let { result, error } = await swapi.fetchPlayer(payload); // <--
+		let { result, error } = await swApi.fetchPlayer(payload); // <--
 		let richMsg = null;
 		let roster = null;
 		let stats = null;
@@ -390,7 +390,7 @@ exports.getPlayerGuild = async function(allycodes, message, callback) {
 		let payload = { "allycodes": allycodes };
 		let locale = config.discord.locale; // shortcut
 		console.log(logPrefix()+"Payload:", payload);
-		let { result, error } = await swapi.fetchGuild(payload); // <--
+		let { result, error } = await swApi.fetchGuild(payload); // <--
 		let richMsg = null;
 		let rosters = null;
 
@@ -550,11 +550,11 @@ exports.fetch = async function(users, message, callback) {
 			endpoint = firstLCWord;
 		}
 
-	//	let { result, error, warning } = await swapi.fetch(endpoint, payload); // does not work
+	//	let { result, error, warning } = await swApi.fetch(endpoint, payload); // does not work
 		endpoint = 'fetch'+locutus.ucfirst(endpoint);
 		console.log(logPrefix()+"Payload:", payload);
 		console.log(logPrefix()+"Fetching SWGoH data with method:", endpoint);
-		let { result, error } = await swapi[endpoint](payload); // <--
+		let { result, error } = await swApi[endpoint](payload); // <--
 		let richMsg = null;
 
 		if (error) {
