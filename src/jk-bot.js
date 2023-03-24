@@ -65,7 +65,7 @@ let down_time = listen_since - start;
 
 // Run the periodical process:
 tools.periodicalProcess(true); // true to identify the first time
-setInterval(tools.periodicalProcess, 213000); // 213'000 ms = 3 minutes 33
+const timer = setInterval(tools.periodicalProcess, 213000); // 213'000 ms = 3 minutes 33
 
 // Start listening:
 client.on("ready", () => {
@@ -664,6 +664,7 @@ client.on("message", (message) => {
 
 				msg += "I was listening since: "+tools.toMySQLdate(listen_since)+" GMT.";
 				console.log(logPrefix()+msg);
+				clearInterval(timer);
 				message.channel.send(msg).then(() => {
 					console.log(logPrefix()+"STOPPING!");
 
