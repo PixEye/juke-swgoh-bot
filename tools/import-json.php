@@ -39,7 +39,7 @@ if ($json===false) {
 }
 
 $export = json_decode($json, true);
-// We asume that JSON export is in MySQL format
+// We assume that JSON export is in MySQL format
 $nb_blocks = count($export);
 printf("%d block(s) found in export:%s", $nb_blocks, PHP_EOL);
 
@@ -64,23 +64,23 @@ forEach($export as $i => $block) {
 		$sql.= "INSERT INTO `$table`\n(".$keys.") VALUES";
 		// printf("First SQL lines:\n %s%s", $sql, PHP_EOL);
 
-		$values = array();
+		$fewValues = array();
 		forEach($block['data'] as $j => $record) {
 			// printf("%2d/ record: %s%s", $j+1, var_export($record, true), PHP_EOL);
 
-			$vals = array_values($record);
-			array_shift($vals); // drop ID (useless in my case)
+			$values = array_values($record);
+			array_shift($values); // drop ID (useless in my case)
 
-			forEach($vals as $k => $val) {
-				if (!is_numeric($val)) $vals[$k] = '"'.$val.'"';
+			forEach($values as $k => $val) {
+				if (!is_numeric($val)) $values[$k] = '"'.$val.'"';
 			}
-			$vals = implode(', ', $vals);
-			$values[] = "($vals)";
+			$values = implode(', ', $values);
+			$fewValues[] = "($values)";
 		}
 		printf('%s', PHP_EOL);
-		// printf("Last SQL line:\n (%s)%s", $vals, PHP_EOL);
-		printf("First and last SQL lines:\n\n%s\n...\n(%s)%s%s", $sql, $vals, PHP_EOL, PHP_EOL);
-		$sql.= "\n".implode(",\n", $values);
+		// printf("Last SQL line:\n (%s)%s", $values, PHP_EOL);
+		printf("First and last SQL lines:\n\n%s\n...\n(%s)%s%s", $sql, $values, PHP_EOL, PHP_EOL);
+		$sql.= "\n".implode(",\n", $fewValues);
 		printf("SQL now contains %d line feeds.%s", substr_count($sql, "\n"), PHP_EOL);
 	}
 }
@@ -93,16 +93,17 @@ if ($mysqli->connect_errno) { // Check connection
 }
 
 // Execute SQL query:
-if ($result = $mysqli->query($sql)) {
-	printf("Result is about %d line(s).%s", $result->affected_rows, PHP_EOL);
+$result = $mysqli->query($sql);
+if (is_bool($result)) {
+	fprintf(STDERR, "DB error: %s%s", $mysqli->error, PHP_EOL);
+} elseIf (is_object($result)) {
+	printf("Result is about %d line(s).%s", $mysqli->affected_rows, PHP_EOL);
 
 	$result->close(); // Free result memory
-} else {
-	fprintf(STDERR, "DB error: %s%s", $mysqli->error, PHP_EOL);
 }
 
 $mysqli->close(); // Close DB connection
 
 exit(0); // Normal exit
 
-// vim: noexpandtab shiftwidth=4 softtabstop=4 tabstop=4
+// vim: noexpandtab
