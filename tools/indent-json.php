@@ -11,19 +11,19 @@ if (!$argc || $argc>2 || $argv[0]==="-h" || $argv[0]==="--help") {
 	exit(1);
 }
 
-$fcontent = file_get_contents($argv[0], true);
-$err = ($fcontent === false);
+$fileContent = file_get_contents($argv[0], true);
+$err = ($fileContent === false);
 if ($err) {
 	fprintf(STDERR, "Cannot read file '%s'!%s", $argv[0], $nl);
 	exit(2);
 }
 
-if (trim($fcontent)==='') {
+if (trim($fileContent)==='') {
 	fprintf(STDERR, "The file '%s' is empty!%s", $argv[0], $nl);
 	exit(3);
 }
 
-$data = json_decode($fcontent);
+$data = json_decode($fileContent);
 if ($data===null) {
 	fprintf(STDERR, "The file '%s' does not contain valid JSON!%s", $argv[0], $nl);
 	exit(4);
@@ -34,7 +34,7 @@ if ($data===null) {
  * @param  int $decimals Optional number of decimals
  * @return string
  */
-function human_filesize($number, $decimals = 0) {
+function engineer_format($number, $decimals = 0) {
 	$units = ' KMGTP';
 	$factor = floor((strlen($number) - 1) / 3);
 	$unit = subStr($units, $factor, 1);
@@ -46,10 +46,10 @@ function human_filesize($number, $decimals = 0) {
 $raw_json = json_encode($data, JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES);
 $json = str_replace('    ', "\t", $raw_json);
 if ($argc>1) {
-	$fs1 = human_filesize(strLen($raw_json));
+	$fs1 = engineer_format(strLen($raw_json));
 	printf("First JSON takes %s.%s", $fs1, $nl);
 
-	$fs2 = human_filesize(strLen($json));
+	$fs2 = engineer_format(strLen($json));
 	printf("JSON with tabs instead of spaces takes %s.%s", $fs2, $nl);
 
 	$byteCount = file_put_contents($argv[1], $json);
@@ -58,7 +58,7 @@ if ($argc>1) {
 		exit(9);
 	}
 
-	$size = human_filesize($byteCount);
+	$size = engineer_format($byteCount);
 	printf("Wrote to file '%s'%s.%s", $argv[1], " ($size)", $nl);
 } else {
 	print($json.$nl);
