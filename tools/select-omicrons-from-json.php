@@ -23,7 +23,7 @@ if (trim($fContent)==='') {
 	exit(3);
 }
 
-$data = json_decode($fContent, true);
+$data = json_decode($fContent, false); // to array of objects
 if ($data===null) {
 	fprintf(STDERR, "The file '%s' does not contain valid JSON!%s", $argv[0], $nl);
 	exit(4);
@@ -49,7 +49,8 @@ if (!is_array($data)) {
 
 $new_data = [];
 forEach ($data as $i => $ability) {
-	if ($ability['is_omicron']) {
+	if ($ability->is_omicron) {
+		unset($ability->description); // save memory
 		$new_data[] = $ability;
 	}
 	unset($data[$i]); // free some memory
