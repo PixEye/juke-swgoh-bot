@@ -42,10 +42,10 @@ exports.fetchPlayer = async function(payload) {
 	const allycode = payload.allycodes.shift();
 	const url = "http://api.swgoh.gg/player/" + allycode;
 
-	let myResponse = await fetch(url);
-	let myJson = await myResponse.text();
+	let response = await fetch(url);
+	let json = await response.text();
 
-	return JSON.parse(myJson); // JSON to object
+	return JSON.parse(json); // JSON to object
 };
 
 /** Fetch a guild data
@@ -59,10 +59,10 @@ exports.fetchGuild = async function(payload) {
 
 	const url = "https://swgoh.gg/api/guild-profile/" + guild_id;
 
-	let myResponse = await fetch(url);
-	let myJson = await myResponse.text();
+	let response = await fetch(url);
+	let json = await response.text();
 
-	return JSON.parse(myJson); // JSON to object
+	return JSON.parse(json); // JSON to object
 };
 
 // vim: noexpandtab
