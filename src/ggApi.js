@@ -7,7 +7,7 @@
 // jshint esversion: 8
 
 // Extract the required classes from the discord.js module:
-const { RichEmbed } = require("discord.js");
+//nst { RichEmbed } = require("discord.js");
 
 // Create an instance of a Discord client:
 //const client = new Client();
@@ -19,9 +19,9 @@ const { RichEmbed } = require("discord.js");
 //const mysql = require("mysql");
 
 // Load other modules:
-const locutus = require("./locutus"); // Functions from locutus.io
+//nst locutus = require("./locutus"); // Functions from locutus.io
 //nst swgoh   = require("./swgoh");  // SWGoH API of this bot (self file)
-const tools   = require("./tools"); // Several functions
+//nst tools   = require("./tools"); // Several functions
 //nst view    = require("./view"); // Functions used to display results
 
 // Get the configuration & its template from a separated JSON files:
