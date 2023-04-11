@@ -6,30 +6,6 @@
 
 // jshint esversion: 8
 
-// Extract the required classes from the discord.js module:
-//nst { RichEmbed } = require("discord.js");
-
-// Create an instance of a Discord client:
-//const client = new Client();
-
-// Remember when this program started:
-//const start = Date();
-
-// Database connection:
-//const mysql = require("mysql");
-
-// Load other modules:
-//nst locutus = require("./locutus"); // Functions from locutus.io
-//nst swgoh   = require("./swgoh");  // SWGoH API of this bot (self file)
-//nst tools   = require("./tools"); // Several functions
-//nst view    = require("./view"); // Functions used to display results
-
-// Get the configuration & its template from a separated JSON files:
-// let config = require("./config.json");
-// let tplCfg = require("./config-template.json");
-
-// const omicronAbilities = require("../data/omicron-abilities");
-
 exports.connect = function() {
 	// TODO
 };
@@ -43,9 +19,8 @@ exports.fetchPlayer = async function(payload) {
 	const url = "http://api.swgoh.gg/player/" + allycode;
 
 	let response = await fetch(url);
-	let json = await response.text();
 
-	return JSON.parse(json); // JSON to object
+	return response.json();
 };
 
 /** Fetch a guild data
@@ -60,9 +35,8 @@ exports.fetchGuild = async function(payload) {
 	const url = "https://swgoh.gg/api/guild-profile/" + guild_id;
 
 	let response = await fetch(url);
-	let json = await response.text();
 
-	return JSON.parse(json); // JSON to object
+	return response.json();
 };
 
 // vim: noexpandtab
