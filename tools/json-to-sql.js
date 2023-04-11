@@ -28,11 +28,11 @@ if (argv[0]==='-t') {
 	argc -= 2;
 }
 
-fs.readFile(argv[0], function(err, fcontent) {
+fs.readFile(argv[0], function(err, fContent) {
 	if (err) throw err;
 
-	console.log("File content weights: %d bytes.", fcontent.length);
-	const inputObj = JSON.parse(fcontent);
+	console.log("File content weights: %d bytes.", fContent.length);
+	const inputObj = JSON.parse(fContent);
 	let output = 'TRUNCATE `' + table + "`;\n\n";
 
 	output += 'INSERT INTO `' + table + '` (uid, real_name) VALUES';
@@ -57,4 +57,4 @@ fs.readFile(argv[0], function(err, fcontent) {
 	});
 });
 
-// vim: noexpandtab shiftwidth=4 softtabstop=4 tabstop=4
+// vim: noexpandtab

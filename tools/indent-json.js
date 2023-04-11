@@ -20,11 +20,11 @@ if (argc < 1 || argc > 2 || argv[0]==="-h" || argv[0]==="--help") {
 
 const fs = require('fs'); // File system module
 
-fs.readFile(argv[0], function(err, fcontent) {
+fs.readFile(argv[0], function(err, fContent) {
 	if (err) throw err;
 
-	console.log("File content weights: %d bytes.", fcontent.length);
-	const data = JSON.parse(fcontent);
+	console.log("File content weights: %d bytes.", fContent.length);
+	const data = JSON.parse(fContent);
 	const json = JSON.stringify(data, null, "\t"); // new JSON version
 	console.log("JSON content weights: %d bytes.", json.length);
 
@@ -43,4 +43,4 @@ fs.readFile(argv[0], function(err, fcontent) {
 	});
 });
 
-// vim: noexpandtab shiftwidth=4 softtabstop=4 tabstop=4
+// vim: noexpandtab
