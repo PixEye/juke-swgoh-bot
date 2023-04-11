@@ -28,12 +28,13 @@ const tools   = require("./tools"); // Several functions
 let config = require("./config.json");
 // let tplCfg = require("./config-template.json");
 
-// SWGoH Help API connection:
-const ApiSwgohHelp = require("api-swgoh-help");
+// SWGoH API connection:
+/* const ApiSwgohHelp = require("api-swgoh-help");
 const swApi = new ApiSwgohHelp({
 	"username": config.swApi.user,
 	"password": config.swApi.pass
-});
+}); // */
+const swApi = require("./ggApi");
 
 const omicronAbilities = require("../data/omicron-abilities");
 
