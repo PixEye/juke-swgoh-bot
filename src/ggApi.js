@@ -1,30 +1,41 @@
 /**
- * swgoh.js is SWGoH module for Juke's SWGoH Discord bot
+ * ggApi.js is a module for Juke's SWGoH Discord bot to interact with the swgoh.gg API
  * @author PixEye@pixeye.net
  * @since  2023-04-11
  */
 
 // jshint esversion: 8
 
-exports.connect = function() {
+/* exports.connect = function() {
 	// TODO
-};
+}; // */
 
 /** Fetch a player data
  * @param object payload Payload with key: allycodes
+ * @return Promise
  */
 exports.fetchPlayer = async function(payload) {
-	// const allycodes = payload.allycodes;
 	const allycode = payload.allycodes.shift();
-	const url = "http://api.swgoh.gg/player/" + allycode;
+	const url = "https://api.swgoh.gg/player/" + allycode;
 
-	let response = await fetch(url);
+	try {
+		let response = await fetch(url);
+		if (!response.ok) {
+			let txt = await response.text();
+			console.warn(url + ' failed!', txt);
 
-	return response.json();
+			return {}
+		}
+
+		return response.json();
+	} catch (e) {
+		console.warn("fetchPlayer: Warning >", e);
+	}
 };
 
 /** Fetch a guild data
  * @param object payload Payload with key: allycodes
+ * @return Promise
  */
 exports.fetchGuild = async function(payload) {
 	let player = await exports.fetchPlayer(payload);
@@ -34,9 +45,19 @@ exports.fetchGuild = async function(payload) {
 
 	const url = "https://swgoh.gg/api/guild-profile/" + guild_id;
 
-	let response = await fetch(url);
+	try {
+		let response = await fetch(url);
+		if (!response.ok) {
+			let txt = await response.text();
+			console.warn(url + ' failed!', txt);
 
-	return response.json();
+			return {}
+		}
+
+		return response.json();
+	} catch (e) {
+		console.warn("fetchGuild: Warning >", e);
+	}
 };
 
 // vim: noexpandtab
