@@ -63,9 +63,9 @@ let msgCount = 0;
 
 let down_time = listen_since - start;
 
-// Run the periodical process:
+/* Run the periodical process:
 tools.periodicalProcess(true); // true to identify the first time
-const timer = setInterval(tools.periodicalProcess, 213000); // 213'000 ms = 3 minutes 33
+const timer = setInterval(tools.periodicalProcess, 213000); // 213'000 ms = 3 minutes 33 */
 
 // Start listening:
 client.on("ready", () => {
@@ -996,7 +996,7 @@ client.on("message", (message) => {
 		case "tw"+"register":
 			if (message.channel.id !== config.twResults.regChanId) {
 				lines = "This command is restricted to <#"+config.twResults.regChanId+
-					"> channel (on the Mercato Discord)!";
+					"> channel (on the Mercato Discord)";
 				console.log(logPrefix()+lines);
 				message.reply(lines);
 				return;
@@ -1008,8 +1008,8 @@ client.on("message", (message) => {
 				console.log(logPrefix()+"Trying with Discord ID:", user.id);
 				tools.getPlayerFromDiscordUser(user, message, player => {
 					if (!player.allycode) {
-						console.log(logPrefix()+"Please register first with: j.reg your-ally-code")
-						message.reply("Please register first with: j.reg your-ally-code")
+						console.log(logPrefix()+"Please register first with: reg your-ally-code")
+						message.reply("Please register first with: reg your-ally-code")
 						return;
 					}
 
