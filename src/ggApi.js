@@ -1,11 +1,9 @@
 /**
  * ggApi.js is a module for Juke's SWGoH Discord bot to interact with the swgoh.gg API
- * @author PixEye@pixeye.net
  * @since  2023-04-11
  */
 
-// const fetch = require('node-fetch');
-// const https = require('https');
+const debug = true;
 
 /* exports.connect = function() {
 	// TODO
@@ -17,9 +15,10 @@
  */
 exports.fetchPlayer = async function(payload) {
 	const allycode = payload.allycodes.shift();
-	const url = "https://api.swgoh.gg/player/" + allycode;
+	const url = "https://swgoh.gg/api/player/" + allycode;
 
 	try {
+		console.log('GET', url);
 		let response = await fetch(url); // needs NodeJS 12 or +
 		if (!response.ok) {
 			let txt = await response.text();
@@ -28,24 +27,13 @@ exports.fetchPlayer = async function(payload) {
 			return {}
 		}
 
-		return response.json();
+		let data = await response.json();
+		if (debug) console.log('Response is OK');
+
+		return data
 	} catch(e) {
 		console.warn("fetchPlayer() with fetch() -", e);
-	} // */
-
-	/* https.get(url, (response) => {
-		console.log('statusCode:', response.statusCode);
-		console.log('headers:', response.headers);
-
-		response.on('data', (d) => {
-			console.log('OK, got data');
-			return JSON.parse(d);
-		});
-	}).on('error', (e) => {
-		console.warn("fetchPlayer() with https -", e);
-		// { Error: write EPROTO 9208:error:1408F10B:SSL routines:ssl3_get_record:wrong version number:c:\ws\deps\openssl\openssl\ssl\record\ssl3_record.c:332:
-    	// at WriteWrap.afterWrite [as oncomplete] (net.js:788:14) errno: 'EPROTO', code: 'EPROTO', syscall: 'write' }
-	}); // */
+	}
 };
 
 /** Fetch a guild data
@@ -61,6 +49,7 @@ exports.fetchGuild = async function(payload) {
 	const url = "https://swgoh.gg/api/guild-profile/" + guild_id;
 
 	try {
+		console.log('GET', url);
 		let response = await fetch(url);
 		if (!response.ok) {
 			let txt = await response.text();
