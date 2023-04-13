@@ -100,7 +100,7 @@ const db_pool = mysql.createPool({
 				}
 
 				if (result.length == 0) {
-					msg = "No GA data registered. Try j.gar command."
+					msg = "No GA data registered. Try: gar command."
 					console.warn(logPrefix()+"msg");
 					message.reply(msg);
 					return;
@@ -135,7 +135,7 @@ exports.getPlayerStatsFromLatestGA = function(player, message, callback) {
 				}
 
 				if (result.length == 0) {
-					msg = "No GA data registered. Try j.gar command."
+					msg = "No GA data registered. Try: gar command."
 					console.warn(logPrefix()+"msg");
 					message.reply(msg);
 					return;
@@ -289,7 +289,7 @@ exports.registerGrandArenaResult = function(player, message, initialValues) {
 			});
 		}
 	} else {
-		let msg = "No GA data registered. Try j.gar command."
+		let msg = "No GA data registered. Try: gar command."
 
 		console.warn(logPrefix()+msg);
 		message.reply(msg);
