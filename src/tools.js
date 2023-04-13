@@ -1793,16 +1793,16 @@ exports.territoryWarReg = function(player, message) {
 	}
 
 	let sql = "INSERT INTO `"+table+"` (#)\n VALUES (?)";
-	let str = x => '"'+x+'"'; // quick function to add double quotes around strings
+	let quote = x => '"'+x+'"'; // quick function to add double quotes around strings
 	let params = {
-		"discord_id": str(player.discord_id),
+		"discord_id": quote(player.discord_id),
 		"allycode": player.allycode,
-		"self_guild_id": str(player.guildRefId),
-		"self_guild_name": str(player.guildName),
+		"self_guild_id": quote(player.guildRefId),
+		"self_guild_name": quote(player.guildName),
 		"self_player_cnt": self_player_cnt,
 		"self_score": self_score,
 		"opp_score": opp_score,
-		"opp_name": str(message.words.join(" "))
+		"opp_name": quote(message.words.join(" "))
 	};
 
 	// let color = typeof player.guildName === "undefined"? "ORANGE": "GREEN";
