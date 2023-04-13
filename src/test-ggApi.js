@@ -4,11 +4,9 @@
  * @since  2023-04-11
  */
 
-// jshint esversion: 8
-
-const allycode = "649-159-626".replace('-', '');
 const swgohApi = require("./ggApi");
 
+let allycode = "649-159-626".replace('-', '');
 let payload = {"allycodes": [allycode]};
 let player = swgohApi.fetchPlayer(payload);
 

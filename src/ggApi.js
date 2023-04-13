@@ -4,9 +4,8 @@
  * @since  2023-04-11
  */
 
-// jshint esversion: 8
-
-const https = require('https');
+// const fetch = require('node-fetch');
+// const https = require('https');
 
 /* exports.connect = function() {
 	// TODO
@@ -20,7 +19,7 @@ exports.fetchPlayer = async function(payload) {
 	const allycode = payload.allycodes.shift();
 	const url = "https://api.swgoh.gg/player/" + allycode;
 
-	/* try {
+	try {
 		let response = await fetch(url); // needs NodeJS 12 or +
 		if (!response.ok) {
 			let txt = await response.text();
@@ -29,20 +28,24 @@ exports.fetchPlayer = async function(payload) {
 			return {}
 		}
 
-		return response.json(); // */
-	https.get(url, (res) => {
-		console.log('statusCode:', res.statusCode);
-		console.log('headers:', res.headers);
+		return response.json();
+	} catch(e) {
+		console.warn("fetchPlayer() with fetch() -", e);
+	} // */
 
-		res.on('data', (d) => {
+	/* https.get(url, (response) => {
+		console.log('statusCode:', response.statusCode);
+		console.log('headers:', response.headers);
+
+		response.on('data', (d) => {
 			console.log('OK, got data');
 			return JSON.parse(d);
 		});
 	}).on('error', (e) => {
-		console.warn("fetchPlayer: Warning >", e);
-		/* { Error: write EPROTO 9208:error:1408F10B:SSL routines:ssl3_get_record:wrong version number:c:\ws\deps\openssl\openssl\ssl\record\ssl3_record.c:332:
-    at WriteWrap.afterWrite [as oncomplete] (net.js:788:14) errno: 'EPROTO', code: 'EPROTO', syscall: 'write' } // */
-	});
+		console.warn("fetchPlayer() with https -", e);
+		// { Error: write EPROTO 9208:error:1408F10B:SSL routines:ssl3_get_record:wrong version number:c:\ws\deps\openssl\openssl\ssl\record\ssl3_record.c:332:
+    	// at WriteWrap.afterWrite [as oncomplete] (net.js:788:14) errno: 'EPROTO', code: 'EPROTO', syscall: 'write' }
+	}); // */
 };
 
 /** Fetch a guild data
@@ -68,7 +71,7 @@ exports.fetchGuild = async function(payload) {
 
 		return response.json();
 	} catch (e) {
-		console.warn("fetchGuild: Warning >", e);
+		console.warn("fetchGuild() -", e);
 	}
 };
 
