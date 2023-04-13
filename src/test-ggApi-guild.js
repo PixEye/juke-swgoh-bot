@@ -7,7 +7,7 @@ const swgohApi = require("./ggApi");
 const guildMapping = {
 	"ally_code": "c",
 	"member_level": "l",
-	"galactic_power": "g",
+	"galactic_power": "gp",
 	"player_name": "n",
 	// "guild_join_time": "",
 	// "lifetime_season_score": "",
@@ -35,10 +35,10 @@ swgohApi.fetchGuild(payload)
 		arr[i] = plainMember;
 		if (member.member_level>2) ++ offCount;
 	});
-	guild.data.members.sort((a, b) => b.g - a.g);
+	guild.data.members.sort((a, b) => b.gp - a.gp);
 	guild.data.members.forEach((member, i, arr) => {
 		member.i = i<9? '0'+(i+1): ''+(i+1);
-		member.n = member.n.substr(-15);
+		member.n = member.n.substr(-15); // shorten too long nicknames
 		arr[i] = member;
 	});
 	guild.data.officer_count = offCount;
