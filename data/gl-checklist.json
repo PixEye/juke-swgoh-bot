@@ -162,7 +162,7 @@
 			"baseId": "TBD_GI",
 			"unitName": "Grand Inquisitor",
 			"image": "https://game-assets.swgoh.gg/tex.jg_charui_grandinquisitor.png",
-			"requiredUnits":[
+			"requiredUnits": [
 				{"gearLevel": 13, "relicTier": 5, "baseId": "SECONDSISTER"},
 				{"gearLevel": 13, "relicTier": 5, "baseId": "NINTHSISTER"},
 				{"gearLevel": 13, "relicTier": 5, "baseId": "SEVENTHSISTER"},
@@ -174,7 +174,7 @@
 			"baseId": "TBD_JABBA",
 			"unitName": "Jabba the Hutt",
 			"image": "https://game-assets.swgoh.gg/temp.jabba_the_hut.jpg",
-			"requiredUnits":[
+			"requiredUnits": [
 				{"gearLevel": 13, "relicTier": 5, "baseId": "KRRSANTAN"},
 				{"gearLevel": 13, "relicTier": 8, "baseId": "HANSOLO"},
 				{"gearLevel": 13, "relicTier": 3, "baseId": "GAMORREANGUARD"},
@@ -238,11 +238,21 @@
 			"baseId": "DOCTORAPHRA",
 			"unitName": "Doctor Aphra",
 			"image": "https://game-assets.swgoh.gg/tex.charui_doctoraphra.png",
-			"requiredUnits":[
+			"requiredUnits": [
 				{"gearLevel": 13, "relicTier": 5, "baseId": "HONDO"},
 				{"gearLevel": 13, "relicTier": 5, "baseId": "BT1"},
 				{"gearLevel": 13, "relicTier": 5, "baseId": "TRIPLEZERO"},
 				{"gearLevel": 13, "relicTier": 5, "baseId": "SANASTARROS"}
+			]
+		},
+		{
+			"baseId": "TBD_CALKESTISSURVIVOR",
+			"unitName": "Cal Kestis",
+			"image": "https://game-assets.swgoh.gg/tex.jg_charui_calkestissurvivor_preview.png",
+			"requiredUnits": [
+				{"baseId": "CALKESTIS","gearLevel": 12,"relicTier": 0},
+				{"baseId": "CEREJUNDA","gearLevel": 12,"relicTier": 0},
+				{"baseId": "MERRIN","gearLevel": 12,"relicTier": 0}
 			]
 		}
 	]
