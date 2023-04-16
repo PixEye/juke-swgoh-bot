@@ -46,11 +46,11 @@ swgohApi.fetchGuild(payload)
 });
 
 /** Sample: {
-  guild_id: 'r8F1wrr4SXaafHtSsINaYw',
+  guild_id: 'r8F1wrr4S...fHtSsINaYw',
   name: 'Delirium',
-  external_message: 'HL familial. https://discord.gg/azssYb7 REQUIS + 6M5 PG & >= 3 GLs+Executor ou Pfdty',
+  external_message: 'HL familial. https://discord.gg/azssYb7 REQUIRED + 6M5 PG & >= 3 GLs+Executor ou Profundity',
   banner_color_id: 'white_red',
-  banner_logo_id: 'guild_icon_niteowl',
+  banner_logo_id: 'guild_icon_niteOwl',
   enrollment_status: 2,
   galactic_power: 403344143,
   guild_type: '',
