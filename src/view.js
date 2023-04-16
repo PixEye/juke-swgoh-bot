@@ -612,7 +612,7 @@ exports.showPlayerStats = function(player, message) {
 		"**Level:** "+player.level+" - "+
 		"**GP:** "+(player.gp.toLocaleString(config.discord.locale)),
 		"**Title:** "+locutus.ucwords(player.title.toLowerCase()),
-		"**Guild name:** "+player.guildName,
+		"**Guild name:** "+player.guild.name,
 		"",
 		"**Omicron count:** "+player.omicronCount+" - "+
 		"**Zeta count:** "+player.zetaCount,

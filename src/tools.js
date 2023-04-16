@@ -1798,14 +1798,14 @@ exports.territoryWarReg = function(player, message) {
 		"discord_id": quote(player.discord_id),
 		"allycode": player.allycode,
 		"self_guild_id": quote(player.guildRefId),
-		"self_guild_name": quote(player.guildName),
+		"self_guild_name": quote(player.guild.name),
 		"self_player_cnt": self_player_cnt,
 		"self_score": self_score,
 		"opp_score": opp_score,
 		"opp_name": quote(message.words.join(" "))
 	};
 
-	// let color = typeof player.guildName === "undefined"? "ORANGE": "GREEN";
+	// let color = typeof player.guild.name === "undefined"? "ORANGE": "GREEN";
 	let lines = [];
 	Object.keys(params).forEach(k => {
 		lines.push("**"+k.replace(/_/g, " ")+":** "+params[k]);
@@ -1828,7 +1828,7 @@ exports.territoryWarReg = function(player, message) {
 		if ( ! exc) {
 			let n = result.affectedRows;
 			console.log(logPrefix()+"%d record inserted.", n);
-			message.channel.send("✅ Saved for guild: "+player.guildName);
+			message.channel.send("✅ Saved for guild: "+player.guild.name);
 
 			return;
 		}
@@ -1865,9 +1865,9 @@ exports.territoryWarReg = function(player, message) {
 			message.channel.send(richMsg)
 			.then(() => {
 				if (color==="GREEN") {
-					message.channel.send("✅ Score updated with success for guild: "+player.guildName);
+					message.channel.send("✅ Score updated with success for guild: "+player.guild.name);
 				} else {
-					message.reply(":red_circle: Update failed for guild: "+player.guildName);
+					message.reply(":red_circle: Update failed for guild: "+player.guild.name);
 				}
 			})
 			.catch(function(ex) {
@@ -2183,7 +2183,7 @@ exports.updatePlayerDataInDb = function(player, message, callback) {
 		let sql5 = "UPDATE `tw_results` SET self_guild_id=?, self_guild_name=?"+
 			" WHERE allycode=? AND (self_guild_name='null' OR self_guild_name IS NULL)";
 
-		lines = [player.guildRefId, player.guildName, allycode];
+		lines = [player.guildRefId, player.guild.name, allycode];
 		db_pool.query(sql5, lines, function(exc, result) {
 			if (exc) {
 				console.log("SQL5:", sql5);

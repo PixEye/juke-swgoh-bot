@@ -36,6 +36,7 @@ const mapping = {
 		"guild_exchange_donations": "giftCount",
 		"league_name": "leagueName",
 		"division_number": "leagueNumber",
+		"level": "level",
 		"name": "name",
 		"title": "title",
 		"last_updated": "updated"
