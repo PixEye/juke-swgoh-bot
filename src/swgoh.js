@@ -204,13 +204,13 @@ exports.getPlayerData = async function(users, callback, message) {
 				unitsCountByGear[unit.gear]++;
 				unitsByCombatType[unit.combatType]++; // 1 = character, 2 = ship
 
-				let unitOmicrons = 0;
-				let unitZetas = 0;
-				let uoa = omicronAbilities.filter(ab => { // unit omicron abilities
+				let unitOmicrons = unit.omicron_abilities.length; // was: 0
+				let unitZetas = unit.zeta_abilities.length; // was: 0
+				/* let uoa = omicronAbilities.filter(ab => { // unit omicron abilities
 					return ab.character_base_id === unit.defId // filter on unit key
 				});
 
-				unit.skills.forEach(skill => {
+				unit.ability_data.forEach(skill => {
 					let omicronSkill = null;
 
 					if (uoa) {
@@ -223,7 +223,7 @@ exports.getPlayerData = async function(users, callback, message) {
 
 					if (omicronSkill && skill.tier===skill.tiers) {
 						if (skill.isZeta) ++unitZetas;
-						// omicronSkills.push(omicronSkill);
+						omicronSkills.push(omicronSkill);
 						++unitOmicrons;
 					} else
 					if (skill.isZeta && skill.tier===skill.tiers) {
@@ -232,10 +232,10 @@ exports.getPlayerData = async function(users, callback, message) {
 					if (skill.isZeta && omicronSkill && skill.tier===(skill.tiers - 1)) {
 						++unitZetas; // zeta without the possible omicron
 					}
-				});
+				}); // */
 				// if (unitOmicrons) omicronUnits.push(unit.defId);
 				// omicronCount += unitOmicrons;
-				zetaCount += unitZetas;
+				// zetaCount += unitZetas;
 
 				if (unit.gp) {
 					player.unitCount++;
