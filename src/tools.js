@@ -1810,7 +1810,7 @@ exports.territoryWarReg = function(player, message) {
 	let params = {
 		"discord_id": quote(player.discord_id),
 		"allycode": player.allycode,
-		"self_guild_id": quote(player.guildRefId),
+		"self_guild_id"  : quote(player.guild.id),
 		"self_guild_name": quote(player.guild.name),
 		"self_player_cnt": self_player_cnt,
 		"self_score": self_score,
