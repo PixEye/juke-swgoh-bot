@@ -12,7 +12,7 @@ const mapping = {
 		"galactic_power": "gp",
 		"member_count": "memberCount",
 		"members": "members",
-		"external_message": "message",
+		"external_message": "desc",
 		"last_sync": "updated"
 		// "guild_join_time": "",
 		// "lifetime_season_score": "",
