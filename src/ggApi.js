@@ -66,6 +66,7 @@ exports.fetchPlayer = async function(payload) {
 
 		if (debug) console.log('Response is OK for payload:', payload);
 		let result = await response.json();
+		let zetaCount = 0;
 
 		// if (debug) return Object.keys(result) // [ 'units', 'mods', 'data'+'crons', 'data' ]
 		/* if (debug) return Object.keys(result.units[0].data) // returns: [
@@ -111,6 +112,7 @@ exports.fetchPlayer = async function(payload) {
 				omicronUnits[unit.base_id] = unit.omicron_abilities.length;
 				player.omicronCount += unit.omicron_abilities.length;
 			}
+			zetaCount += unit.zeta_abilities.length;
 
 			let ct = unit.combat_type;
 			if (!unitCountByCombatType.hasOwnProperty(ct))
@@ -133,6 +135,7 @@ exports.fetchPlayer = async function(payload) {
 		// player.toonCount = unitCountByCombatType[1];
 		player.unitCount = result.units.length;
 		player.unitCountByCombatType = unitCountByCombatType;
+		player.zetaCount = zetaCount;
 
 		return player
 	} catch(e) {
@@ -163,7 +166,7 @@ exports.fetchGuild = async function(payload) {
 			return {}
 		}
 
-		if (debug) console.log('Response is OK for payload:', payload);
+		if (debug) console.log('Response is OK for guild:', guild_id);
 
 		let guild = await response.json();
 
