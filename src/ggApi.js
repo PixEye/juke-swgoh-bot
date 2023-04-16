@@ -14,6 +14,12 @@ const mapping = {
 		"members": "members",
 		"external_message": "desc",
 		"last_sync": "updated"
+	},
+	"guildMember": {
+		"ally_code": "allyCode",
+		"member_level": "guildMemberLevel",
+		"galactic_power": "gp",
+		"player_name": "name",
 		// "guild_join_time": "",
 		// "lifetime_season_score": "",
 		// "player_level": "",
@@ -23,12 +29,6 @@ const mapping = {
 		// "portrait_image": "",
 		// "title": "",
 		// "squad_power": ""
-	},
-	"guildMember": {
-		"ally_code": "allyCode",
-		"member_level": "guildMemberLevel",
-		"galactic_power": "gp",
-		"player_name": "name",
 	},
 	"player": {
 		"ally_code": "allyCode",
