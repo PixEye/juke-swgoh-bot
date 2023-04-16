@@ -87,9 +87,9 @@ exports.fetchPlayer = async function(payload) {
 			"arena": result.data.arena,
 			"fleet_arena": result.data.fleet_arena,
 			"guild": {
-				"id": result.data.guild_id,
+				"id"  : result.data.guild_id,
 				"name": result.data.guild_name,
-				"url": result.data.guild_url,
+				"url" : result.data.guild_url,
 			},
 			"units": [],
 			"allyCode": allycode,
