@@ -1347,7 +1347,10 @@ exports.handleContest = function(guild, message, target) {
 exports.logPrefix = function () {
 	let dt = new Date();
 
-	return dt.toString().replace(/ GMT.*$$/, "")+" - ";
+	return dt.toString()
+		.replace(/ GMT.*$$/, "") // remove timezone
+		.replace(/.* /, '') // remove date (keep time only)
+		+" - ";
 };
 
 /** Run the periodical process */
@@ -1755,7 +1758,7 @@ exports.territoryWarReg = function(player, message) {
 	let allycode = player.allycode;
 	let logPrefix = exports.logPrefix; // shortcut
 
-	console.log(logPrefix()+"player: ", player);
+	console.log(logPrefix()+"player: ", JSON.stringify(player));
 	if (!allycode) {
 		message.reply(":red_circle: Invalid or missing allycode!");
 		return;

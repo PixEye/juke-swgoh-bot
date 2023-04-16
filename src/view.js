@@ -41,7 +41,7 @@ exports.guildPlayerStats = function(allycode, message, guild) {
 	let line = '';
 	let lines = [];
 	let locale = config.discord.locale; // shortcut
-	let logPrefix = exports.logPrefix; // shortcut
+	let logPrefix = tools.logPrefix; // shortcut
 	let players = {};
 	let shipMinStars = config.custom.shipMinStars;
 	let toonMinStars = config.custom.toonMinStars;
@@ -178,7 +178,7 @@ exports.guildPlayerStats = function(allycode, message, guild) {
 exports.listOmicrons = function(player, message) {
 	let color = "GREEN";
 	let lines = [];
-	let logPrefix = exports.logPrefix; // shortcut
+	let logPrefix = tools.logPrefix; // shortcut
 	let omicronByMode = [];
 	let omicronCount = 0;
 	let omicronModes = [
@@ -260,7 +260,7 @@ exports.listOmicrons = function(player, message) {
  * @param {Object} guild - The user's guild
  */
 exports.listGuildMembers = function(allycode, message, guild) {
-	let logPrefix = exports.logPrefix; // shortcut
+	let logPrefix = tools.logPrefix; // shortcut
 	let msg = "";
 
 	if (!allycode) {
@@ -309,15 +309,6 @@ exports.listGuildMembers = function(allycode, message, guild) {
 	message.channel.send(msg);
 };
 
-/** Get dynamic log prefix (depending on current time)
- * @return {string}
- */
-exports.logPrefix = function () {
-	let dt = new Date();
-
-	return dt.toString().replace(/ GMT.*$$/, "")+" - ";
-};
-
 /** Show known abbreviations / acronyms
  * @param {Object} message - The user's message to reply to
  */
@@ -326,7 +317,7 @@ exports.showAbbr = function(message) {
 	let chunkSize = 20;
 	let i = 0;
 	let lines = [];
-	let logPrefix = exports.logPrefix; // shortcut
+	let logPrefix = tools.logPrefix; // shortcut
 	let nbAliases = Object.keys(unitAliasNames).length;
 	let nbMsgSent = 0;
 	let newAlias = '';
@@ -377,7 +368,7 @@ exports.showAbbr = function(message) {
  */
 exports.showGuildStats = function(guild, message) {
 	let locale = config.discord.locale; // shortcut
-	let logPrefix = exports.logPrefix; // shortcut
+	let logPrefix = tools.logPrefix; // shortcut
 	let msg = "";
 
 	if (!guild.gp) {
@@ -442,7 +433,7 @@ exports.showLastEvols = function(player, message, evols) {
 	let low_words = message.words.join("").toLowerCase();
 	let maxLines = 10;
 	let n = 0;
-	let logPrefix = exports.logPrefix; // shortcut
+	let logPrefix = tools.logPrefix; // shortcut
 
 	evols.forEach((e) => {
 		if (typeof e.ts === "string") {
@@ -539,7 +530,7 @@ exports.showLastEvols = function(player, message, evols) {
  * @param {Object} message - The user's message to reply to
  */
 exports.showPlayerRelics = function(player, message) {
-	let logPrefix = exports.logPrefix; // shortcut
+	let logPrefix = tools.logPrefix; // shortcut
 	let maxLines = 10;
 
 	if (!player.name) {
@@ -604,7 +595,7 @@ exports.showPlayerRelics = function(player, message) {
  */
 exports.showPlayerStats = function(player, message) {
 	let lines = [];
-	let logPrefix = exports.logPrefix; // shortcut
+	let logPrefix = tools.logPrefix; // shortcut
 
 	if (!player.name) {
 		console.log(logPrefix()+"invalid name at V55 for user:", player);
@@ -659,7 +650,7 @@ exports.showPlayerStats = function(player, message) {
  */
  exports.showPlayerGAs = function(player, message, gas) {
 	let lines = [];
-	let logPrefix = exports.logPrefix; // shortcut
+	let logPrefix = tools.logPrefix; // shortcut
 
 	if (!player.game_name) {
 		console.log(logPrefix()+"invalid name at V55 for user:", player);
@@ -698,7 +689,7 @@ exports.showPlayerStats = function(player, message) {
  */
  exports.showPlayerGAStats = function(player, message, ga_stats) {
 	let lines = [];
-	let logPrefix = exports.logPrefix; // shortcut
+	let logPrefix = tools.logPrefix; // shortcut
 
 	if (!player.game_name) {
 		console.log(logPrefix()+"invalid name at V55 for user:", player);
@@ -746,7 +737,7 @@ exports.showPlayerStats = function(player, message) {
  */
 exports.showRandomTeam = function(player, message) {
 	let lines = [];
-	let logPrefix = exports.logPrefix; // shortcut
+	let logPrefix = tools.logPrefix; // shortcut
 
 	if (!player.name) {
 		console.log(logPrefix()+"invalid name at V55 for user:", player);
@@ -805,7 +796,7 @@ exports.showUnitInfo = function(player, message, unitName, ct) {
 	let foundUnit = null;
 	let hiddenFields = ["allycode", "combatType", "name"];
 	let lines = [];
-	let logPrefix = exports.logPrefix; // shortcut
+	let logPrefix = tools.logPrefix; // shortcut
 	let matchingNames = [];
 	let msg = "";
 	let nbFound = 0;
