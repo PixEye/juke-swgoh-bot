@@ -189,7 +189,7 @@ exports.getPlayerData = async function(users, callback, message) {
 			// let omicronSkills = [];
 			let unitsByCombatType = {};
 			let unitsCountByGear = {};
-			let zetaCount = 0;
+			// let zetaCount = 0;
 
 			for(i=0; i<20; i++) unitsCountByGear[i] = 0;
 			for(i=1; i< 3; i++) unitsByCombatType[i] = 0;
@@ -348,7 +348,7 @@ exports.getPlayerData = async function(users, callback, message) {
 			// player.omicronCount = omicronCount;
 			// player.omicronSkills = omicronSkills;
 			// player.omicronUnits = omicronUnits;
-			player.zetaCount = zetaCount;
+			// player.zetaCount = zetaCount;
 
 			/*
 			player.gaTerritoriesDefeated = clean_stats.SEASON_TERRITORIES_DEFEATED_NAME;
@@ -457,18 +457,18 @@ exports.getPlayerGuild = async function(allycodes, message, callback) {
 		guild.gpChar = 0;
 		guild.gpShip = 0;
 		guild.leader = {};
-		guild.memberCount = guild.members;
+		// guild.memberCount = guild.members;
 		guild.officerNames = [];
 		guild.players = {}; // allycode => (IG nick) name
 		guild.refId = guild.id;
 		guild.swgoh_id = guild.id;
 
-		delete guild.members; // better named: memberCount
+		// delete guild.members; // better named: memberCount
 		delete guild.roster; // better named: players
 
 		rosters.forEach(player => {
-			guild.gpChar+= player.gpChar;
-			guild.gpShip+= player.gpShip;
+			guild.gpChar+= player.gpChar? player.gpChar: 0;
+			guild.gpShip+= player.gpShip? player.gpShip: 0;
 			guild.players[player.allyCode] = player.name;
 
 			if (player.gp > guild.biggestPlayer.gp) guild.biggestPlayer = player;
@@ -498,7 +498,7 @@ exports.getPlayerGuild = async function(allycodes, message, callback) {
 
 		console.log(logPrefix()+"Ship GP before fix: %s", guild.gpShip.toLocaleString(locale));
 		guild.gpShip = guild.gp - guild.gpChar; // fix
-		console.log(logPrefix()+"Ship GP after  fix: %s", guild.gpShip.toLocaleString(locale));
+		console.log(logPrefix()+"Ship GP after  fix: %s", guild.gpShip.toLocaleString(locale)); // */
 
 		console.log(logPrefix()+"Found %d players in guild:", Object.keys(guild.players).length, guild.name);
 
