@@ -134,7 +134,7 @@ exports.getPlayerData = async function(users, callback, message) {
 		result = [result];
 
 		result.forEach(player => {
-			let clean_stats = {};
+			// let clean_stats = {};
 
 			allycode = player.allyCode;
 			roster  = player.units; // was: player.roster;
@@ -284,11 +284,11 @@ exports.getPlayerData = async function(users, callback, message) {
 				}
 			});
 
-			stats.forEach(stat => {
+			/* stats.forEach(stat => {
 				if (!stat || stat.nameKey===null) return;
 
 				clean_stats[stat.nameKey.replace("STAT_", "")] = stat.value;
-			});
+			}); // */
 
 			// console.log("-----");
 			// console.log("Clean stats:");
