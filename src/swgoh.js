@@ -241,7 +241,8 @@ exports.getPlayerData = async function(users, callback, message) {
 
 				if (unit.gp) {
 					player.unitCount++;
-					unit.relics = (unit.relic && unit.relic.currentTier>1)? unit.relic.currentTier-2: 0;
+					// unit.relics = (unit.relic && unit.relic.currentTier>1)? unit.relic.currentTier-2: 0;
+					unit.relics = unit.relic_tier>1? unit.relic_tier-2: 0;
 
 					// Fix: increase GP if relics
 					switch(unit.relics) {
