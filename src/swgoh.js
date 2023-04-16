@@ -47,6 +47,7 @@ exports.getPlayerData = async function(users, callback, message) {
 	const ERR_TO_DETECT = 'Could not find any players affiliated with these allycodes';
 
 	let allycode = 0;
+	let error = 0;
 	let logPrefix = tools.logPrefix;
 	let msg = "";
 
@@ -383,6 +384,7 @@ exports.getPlayerData = async function(users, callback, message) {
  */
 exports.getPlayerGuild = async function(allycodes, message, callback) {
 	let allycode = 0;
+	let error = 0;
 	let logPrefix = tools.logPrefix;
 	let msg = "";
 
