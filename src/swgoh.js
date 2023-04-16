@@ -28,12 +28,13 @@ const tools   = require("./tools"); // Several functions
 let config = require("./config.json");
 // let tplCfg = require("./config-template.json");
 
-// SWGoH Help API connection:
+/* SWGoH Help API connection:
 const ApiSwgohHelp = require("api-swgoh-help");
 const swApi = new ApiSwgohHelp({
 	"username": config.swApi.user,
 	"password": config.swApi.pass
-});
+}); // */
+const swApi = require("./ggApi");
 
 const omicronAbilities = require("../data/omicron-abilities");
 
@@ -70,7 +71,7 @@ exports.getPlayerData = async function(users, callback, message) {
 		}
 
 		console.log(logPrefix()+"Payload:", payload);
-		let { result, error } = await swApi.fetchPlayer(payload); // <--
+		let result = await swApi.fetchPlayer(payload); // <--
 		let richMsg = null;
 		let roster = null;
 		let stats = null;
@@ -129,12 +130,13 @@ exports.getPlayerData = async function(users, callback, message) {
 			'none', 'health', 'attack', 'defense', 'speed', 'crit chance', 'crit damage', 'potency', 'tenacity'
 		]; // */
 		let shipsToFix = ['TIE'+'DEFENDER'];
+		result = [result];
 
 		result.forEach(player => {
 			let clean_stats = {};
 
 			allycode = player.allyCode;
-			roster  = player.roster;
+			roster  = player.units; // was: player.roster;
 			stats  = player.stats;
 
 			player.displayAvatarURL = playersByAllycode[allycode].displayAvatarURL;
@@ -181,9 +183,9 @@ exports.getPlayerData = async function(users, callback, message) {
 			// Others: gp (int), primaryUnitStat (null), relic {currentTier: 1}
 
 			let i = 0;
-			let omicronCount = 0;
-			let omicronUnits = [];
-			let omicronSkills = [];
+			// let omicronCount = 0;
+			// let omicronUnits = [];
+			// let omicronSkills = [];
 			let unitsByCombatType = {};
 			let unitsCountByGear = {};
 			let zetaCount = 0;
@@ -194,8 +196,10 @@ exports.getPlayerData = async function(users, callback, message) {
 			player.unitsData = [];
 
 			roster.forEach(unit => {
+				unit.combatType = unit.combat_type;
 				if (shipsToFix.includes(unit.defId)) unit.combatType = 2;
 
+				unit.gear = unit.gear_level;
 				unitsCountByGear[unit.gear]++;
 				unitsByCombatType[unit.combatType]++; // 1 = character, 2 = ship
 
@@ -218,7 +222,7 @@ exports.getPlayerData = async function(users, callback, message) {
 
 					if (omicronSkill && skill.tier===skill.tiers) {
 						if (skill.isZeta) ++unitZetas;
-						omicronSkills.push(omicronSkill);
+						// omicronSkills.push(omicronSkill);
 						++unitOmicrons;
 					} else
 					if (skill.isZeta && skill.tier===skill.tiers) {
@@ -228,8 +232,8 @@ exports.getPlayerData = async function(users, callback, message) {
 						++unitZetas; // zeta without the possible omicron
 					}
 				});
-				if (unitOmicrons) omicronUnits.push(unit.defId);
-				omicronCount += unitOmicrons;
+				// if (unitOmicrons) omicronUnits.push(unit.defId);
+				// omicronCount += unitOmicrons;
 				zetaCount += unitZetas;
 
 				if (unit.gp) {
@@ -322,33 +326,34 @@ exports.getPlayerData = async function(users, callback, message) {
 
 			// console.log("=====");
 			console.log(logPrefix()+'User "%s" fetched', player.name);
-			if (omicronUnits.length) {
-				console.log(logPrefix()+omicronUnits.length+' omicron units: %s.', omicronUnits.join(', '));
+			if (player.omicronUnits.length) {
+				console.log(logPrefix()+player.omicronUnits.length+' omicron units: %s.', player.omicronUnits.join(', '));
 			}
 
 			player.allycode = allycode;
-			player.charCount = unitsByCombatType[1];
-			player.gp = clean_stats.GALACTIC_POWER_ACQUIRED_NAME;
+			player.charCount = player.unitCountByCombatType[1]; // was: unitsByCombatType[1];
+			// player.gp = clean_stats.GALACTIC_POWER_ACQUIRED_NAME;
 			player.g11Count = unitsCountByGear[11];
 			player.g12Count = unitsCountByGear[12];
 			player.g13Count = unitsCountByGear[13];
 			player.game_name = player.name;
-			player.shipCount = unitsByCombatType[2];
-			player.title = player.titles.selected?
-				player.titles.selected.replace('PLAYER'+'TITLE_', '').replace(/_/g, ' '): 'Default';
-			player.giftCount = clean_stats.TOTAL_GUILD_EXCHANGE_DONATIONS_TU07_2;
-			player.omicronCount = omicronCount;
-			player.omicronSkills = omicronSkills;
-			player.omicronUnits = omicronUnits;
+			player.shipCount = player.unitCountByCombatType[2]; // was: unitsByCombatType[2];
+			/* player.title = player.titles.selected?
+				player.titles.selected.replace('PLAYER'+'TITLE_', '').replace(/_/g, ' '): 'Default'; // */
+			// player.giftCount = clean_stats.TOTAL_GUILD_EXCHANGE_DONATIONS_TU07_2;
+			// player.omicronCount = omicronCount;
+			// player.omicronSkills = omicronSkills;
+			// player.omicronUnits = omicronUnits;
 			player.zetaCount = zetaCount;
 
+			/*
 			player.gaTerritoriesDefeated = clean_stats.SEASON_TERRITORIES_DEFEATED_NAME;
 			player.gaBannersEarned = clean_stats.SEASON_BANNERS_EARNED_NAME;
 			player.gaFullClearRoundWins = clean_stats.SEASON_FULL_CLEAR_ROUND_WINS_NAME;
 			player.gaOffensiveBattles = clean_stats.SEASON_OFFENSIVE_BATTLES_WON_NAME;
 			player.gaSuccessfulDefends = clean_stats.SEASON_SUCCESSFUL_DEFENDS_NAME;
 			player.gaUndersizedSquadWins = clean_stats.SEASON_UNDERSIZED_SQUAD_WINS_NAME;
-			player.gaScore = clean_stats.SEASON_LEAGUE_SCORE_NAME;
+			player.gaScore = clean_stats.SEASON_LEAGUE_SCORE_NAME; // */
 
 			if (typeof(callback)==="function") {
 				callback(player, message);
@@ -390,7 +395,7 @@ exports.getPlayerGuild = async function(allycodes, message, callback) {
 		let payload = { "allycodes": allycodes };
 		let locale = config.discord.locale; // shortcut
 		console.log(logPrefix()+"Payload:", payload);
-		let { result, error } = await swApi.fetchGuild(payload); // <--
+		let result = await swApi.fetchGuild(payload); // <--
 		let richMsg = null;
 		let rosters = null;
 
@@ -423,9 +428,9 @@ exports.getPlayerGuild = async function(allycodes, message, callback) {
 			return;
 		}
 
-		let guild = result[0];
+		let guild = result.data; // was: result[0];
 
-		rosters = guild.roster;
+		rosters = guild.members; // was: guild.roster;
 		console.log(logPrefix()+'Data updated at: %s', guild.updated);
 
 		/*

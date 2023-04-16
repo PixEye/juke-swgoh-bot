@@ -8,12 +8,13 @@ const { base_parse } = require("node-html-parser/dist/nodes/html");
 const debug = true;
 const mapping = {
 	"player": {
-		"ally_code": "allycode",
+		"ally_code": "allyCode",
 		"galactic_power": "gp",
 		"guild_exchange_donations": "giftCount",
 		"league_name": "leagueName",
 		"division_number": "leagueNumber",
-		"name": "name"
+		"name": "name",
+		"title": "title"
 	}
 };
 
@@ -57,7 +58,8 @@ exports.fetchPlayer = async function(payload) {
 			'has_ultimate',   'is_galactic_legend'
 			] */
 
-		let omicronList = {};
+		let omicronCount = 0;
+		let omicronUnits = {};
 		let player = {
 			"guild": {
 				"id": result.data.guild_id,
@@ -65,7 +67,7 @@ exports.fetchPlayer = async function(payload) {
 				"url": result.data.guild_url,
 			},
 			"units": [],
-			"allycode": allycode,
+			"allyCode": allycode,
 			"glHasUltimate": []
 		};
 		let unitCountByCombatType = {};
@@ -76,7 +78,8 @@ exports.fetchPlayer = async function(payload) {
 			delete unit.power;
 			player.units.push(unit);
 			if (unit.omicron_abilities.length) {
-				omicronList[unit.base_id] = unit.omicron_abilities.length;
+				omicronUnits[unit.base_id] = unit.omicron_abilities.length;
+				omicronCount += unit.omicron_abilities.length;
 			}
 
 			let ct = unit.combat_type;
@@ -93,7 +96,7 @@ exports.fetchPlayer = async function(payload) {
 			let target = mapping.player[initKey];
 			player[target] = result.data[initKey];
 		});
-		player.omicronList = omicronList;
+		player.omicronUnits = omicronUnits;
 		// player.shipCount = unitCountByCombatType[2];
 		// player.toonCount = unitCountByCombatType[1];
 		player.unitCount = result.units.length;
