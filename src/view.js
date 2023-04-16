@@ -932,7 +932,7 @@ exports.showUnitInfo = function(player, message, unitName, ct) {
 					if (ct===2) return; // ignore for ships
 
 					// console.log("Modules:", val); // verbose!
-					val = val.length;
+					val = val? val.length: val;
 					break;
 
 				case "stars":
