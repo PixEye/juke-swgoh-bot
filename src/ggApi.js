@@ -75,9 +75,15 @@ exports.fetchPlayer = async function(payload) {
 
 		result.units.forEach(unit => {
 			unit = unit.data;
+
 			unit.gp = unit.power;
 			delete unit.power;
+
+			unit.mods = unit.mod_set_ids;
+			delete unit.mod_set_ids;
+
 			player.units.push(unit);
+
 			if (unit.omicron_abilities.length) {
 				omicronUnits[unit.base_id] = unit.omicron_abilities.length;
 				player.omicronCount += unit.omicron_abilities.length;
