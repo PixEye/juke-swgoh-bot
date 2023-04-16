@@ -394,9 +394,12 @@ exports.showGuildStats = function(guild, message) {
 			"**Officers ("+guild.officerNames.length+"):** "+
 				guild.officerNames.sort(tools.stringsCompare).join(", ")
 		])
-		.addField("GP:", guild.gp.toLocaleString(locale), true)
-		.addField("Toon GP:", guild.gpChar.toLocaleString(locale), true)
-		.addField("Ship GP:", guild.gpShip.toLocaleString(locale), true)
+		.addField("GP:", guild.gp.toLocaleString(locale), true);
+
+	if (guild.gpChar) richMsg.addField("Toon GP:", guild.gpChar.toLocaleString(locale), true);
+	if (guild.gpShip) richMsg.addField("Ship GP:", guild.gpShip.toLocaleString(locale), true);
+
+	richMsg
 		.addField("Member count:", guild.memberCount, true)
 		.addField("GP average:",
 			Math.round(guild.gp/guild.memberCount).toLocaleString(locale), true)
