@@ -4,46 +4,20 @@
  */
 
 const swgohApi = require("./ggApi");
-const guildMapping = {
-	"ally_code": "c",
-	"member_level": "l",
-	"galactic_power": "gp",
-	"player_name": "n",
-	// "guild_join_time": "",
-	// "lifetime_season_score": "",
-	// "player_level": "",
-	// "league_id": "",
-	// "league_name": "league",
-	// "league_frame_image": "",
-	// "portrait_image": "",
-	// "title": "",
-	// "squad_power": ""
-};
 
 let allycode = "649-159-626".replace(/-/g, '');
 let payload = {"allycodes": [allycode]};
 
 swgohApi.fetchGuild(payload)
 .then(guild => {
-	let offCount = 0;
+	/* guild.members.sort((a, b) => b.gp - a.gp);
 
-	guild = guild.data;
-	guild.members.forEach((member, i, arr) => {
-		let plainMember = {"i": 0};
-
-		Object.keys(guildMapping).forEach(key => {
-			plainMember[guildMapping[key]] = member[key];
-		})
-		arr[i] = plainMember;
-		if (member.member_level>2) ++ offCount;
-	});
-	guild.members.sort((a, b) => b.gp - a.gp);
 	guild.members.forEach((member, i, arr) => {
 		member.i = i<9? '0'+(i+1): ''+(i+1);
-		member.n = member.n.substr(-15); // shorten too long nicknames
+		member.name = member.name.substr(-15); // shorten too long nicknames
 		arr[i] = member;
-	});
-	guild.officer_count = offCount;
+	}); // */
+	guild.members = "Array of "+guild.members.length+" members";
 	console.log("Guild:", guild);
 });
 
