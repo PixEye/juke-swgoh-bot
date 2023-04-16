@@ -198,6 +198,8 @@ exports.getPlayerData = async function(users, callback, message) {
 
 			roster.forEach(unit => {
 				unit.combatType = unit.combat_type;
+				unit.defId = unit.base_id;
+
 				if (shipsToFix.includes(unit.defId)) unit.combatType = 2;
 
 				unit.gear = unit.gear_level;

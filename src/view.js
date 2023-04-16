@@ -620,8 +620,8 @@ exports.showPlayerStats = function(player, message) {
 		"**G12 count:** "+player.g12Count, // +" - "+
 		// "**G11 count:** "+player.g11Count,
 		"",
-		"**Ground arena rank:** "+player.arena.char.rank+" - "+
-		"**Ship rank:** "+player.arena.ship.rank,
+		"**Ground arena rank:** "+player.arena.rank+" - "+
+		"**Ship rank:** "+player.fleet_arena.rank,
 		"",
 		"**Number of chars:** "+player.charCount+" - "+
 		"**Number of ships:** "+player.shipCount,

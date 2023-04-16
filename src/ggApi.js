@@ -14,7 +14,8 @@ const mapping = {
 		"league_name": "leagueName",
 		"division_number": "leagueNumber",
 		"name": "name",
-		"title": "title"
+		"title": "title",
+		"last_updated": "updated"
 	}
 };
 
@@ -43,8 +44,6 @@ exports.fetchPlayer = async function(payload) {
 		if (debug) console.log('Response is OK for payload:', payload);
 		let result = await response.json();
 
-		result.data.arena = {};
-		result.data.fleet_arena = {};
 		// if (debug) return Object.keys(result) // [ 'units', 'mods', 'data'+'crons', 'data' ]
 		/* if (debug) return Object.keys(result.units[0].data) // returns: [
 			'base_id',        'name',
@@ -58,9 +57,10 @@ exports.fetchPlayer = async function(payload) {
 			'has_ultimate',   'is_galactic_legend'
 			] */
 
-		let omicronCount = 0;
 		let omicronUnits = {};
 		let player = {
+			"arena": result.data.arena,
+			"fleet_arena": result.data.fleet_arena,
 			"guild": {
 				"id": result.data.guild_id,
 				"name": result.data.guild_name,
@@ -68,7 +68,8 @@ exports.fetchPlayer = async function(payload) {
 			},
 			"units": [],
 			"allyCode": allycode,
-			"glHasUltimate": []
+			"glHasUltimate": [],
+			"omicronCount": 0
 		};
 		let unitCountByCombatType = {};
 
@@ -79,7 +80,7 @@ exports.fetchPlayer = async function(payload) {
 			player.units.push(unit);
 			if (unit.omicron_abilities.length) {
 				omicronUnits[unit.base_id] = unit.omicron_abilities.length;
-				omicronCount += unit.omicron_abilities.length;
+				player.omicronCount += unit.omicron_abilities.length;
 			}
 
 			let ct = unit.combat_type;
