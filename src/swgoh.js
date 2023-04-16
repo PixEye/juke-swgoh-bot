@@ -433,7 +433,7 @@ exports.getPlayerGuild = async function(allycodes, message, callback) {
 			return;
 		}
 
-		let guild = result.data; // was: result[0];
+		let guild = result; // was: result[0];
 
 		rosters = guild.members; // was: guild.roster;
 		console.log(logPrefix()+'Data updated at: %s', guild.updated);
