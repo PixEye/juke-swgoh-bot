@@ -26,7 +26,9 @@ let payload = {"allycodes": [allycode]};
 swgohApi.fetchGuild(payload)
 .then(guild => {
 	let offCount = 0;
-	guild.data.members.forEach((member, i, arr) => {
+
+	guild = guild.data;
+	guild.members.forEach((member, i, arr) => {
 		let plainMember = {"i": 0};
 
 		Object.keys(guildMapping).forEach(key => {
@@ -35,14 +37,14 @@ swgohApi.fetchGuild(payload)
 		arr[i] = plainMember;
 		if (member.member_level>2) ++ offCount;
 	});
-	guild.data.members.sort((a, b) => b.gp - a.gp);
-	guild.data.members.forEach((member, i, arr) => {
+	guild.members.sort((a, b) => b.gp - a.gp);
+	guild.members.forEach((member, i, arr) => {
 		member.i = i<9? '0'+(i+1): ''+(i+1);
 		member.n = member.n.substr(-15); // shorten too long nicknames
 		arr[i] = member;
 	});
-	guild.data.officer_count = offCount;
-	console.log("Guild data:", guild.data);
+	guild.officer_count = offCount;
+	console.log("Guild:", guild);
 });
 
 /** Sample: {
