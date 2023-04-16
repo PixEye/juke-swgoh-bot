@@ -10,9 +10,7 @@ let payload = {"allycodes": [allycode]};
 
 swgohApi.fetchPlayer(payload)
 	.then(player => {
-		player.data.arena = {};
-		player.data.fleet_arena = {};
-		console.log("Player's data:", player.data);
+		console.log("Player's data:", player);
 	});
 
 // vim: noexpandtab
