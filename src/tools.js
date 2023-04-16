@@ -754,6 +754,7 @@ exports.getPlayerFromDiscordUser = function(user, message, callback) {
 			{"discord_id": user.id, "discord_name": user.username};
 
 		player.displayAvatarURL = user.displayAvatarURL;
+		player.guild = {};
 		console.log(logPrefix()+result.length+" record(s) match(es) user's ID:", discord_id);
 		if (result.length > 1) {
 			let color  = "ORANGE";
@@ -767,7 +768,11 @@ exports.getPlayerFromDiscordUser = function(user, message, callback) {
 				let msg = " is allycode of: **"+user.game_name+"**";
 
 				if (user.guildRefId) {
-					if (user.guild_name) msg+= " (from guild: "+user.guild_name+")";
+					player.guild.id = user.guildRefId;
+					if (user.guildName) {
+						msg+= " (from guild: "+user.guildName+")";
+						player.guild.name = user.guildName;
+					}
 					guilds[user.guildRefId] = user.guildRefId;
 				}
 				console.log(logPrefix()+user.allycode+msg);
@@ -786,6 +791,10 @@ exports.getPlayerFromDiscordUser = function(user, message, callback) {
 			});
 			if (typeof(callback)==="function") callback(player);
 		} else if (result.length === 1) { // 1 match, perfect!
+			player.guild.id = player.guildRefId;
+			if (player.guildName) {
+				player.guild.name = player.guildName;
+			}
 			if (player.banned && player.discord_id !== message.author.id) {
 				let msg = player.game_name+' is banned from ProXima alliance!';
 				console.log(logPrefix()+msg);
@@ -1746,6 +1755,7 @@ exports.territoryWarReg = function(player, message) {
 	let allycode = player.allycode;
 	let logPrefix = exports.logPrefix; // shortcut
 
+	console.log(logPrefix()+"player: ", player);
 	if (!allycode) {
 		message.reply(":red_circle: Invalid or missing allycode!");
 		return;
