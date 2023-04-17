@@ -737,7 +737,7 @@ client.on("message", (message) => {
 						message.reply(msg);
 
 						if (allycode) {
-							link = command.substr(1, 1)==='a'?
+							link = command.slice(1, 2)==='a'?
 								"https://swgoh.gg/p/"+allycode+"/gac-history/":
 								"https://swgoh.gg/p/"+allycode+"/";
 							console.log(logPrefix()+link);
@@ -752,11 +752,11 @@ client.on("message", (message) => {
 						});
 						message.reply(lines);
 					} else { // 1 result here
-						let label = command.substr(1, 1)==='a'? "GAC history": "profile";
+						let label = command.slice(1, 2)==='a'? "GAC history": "profile";
 
 						user = result[0];
 						allycode = user.allycode;
-						link = command.substr(1, 1)==='a'?
+						link = command.slice(1, 2)==='a'?
 							"https://swgoh.gg/p/"+allycode+"/gac-history/":
 							"https://swgoh.gg/p/"+allycode+"/";
 						msg = user.game_name+"'s "+label+" is: "+link;
@@ -880,8 +880,8 @@ client.on("message", (message) => {
 					lines.push(''); // blank line
 					lines.push(msg+' ('+seats_left+' seats left)');
 
-					let day = update.toISOString().substr(0, 10); // keep date only (forget time)
-					let today = now.toISOString().substr(0, 10); // keep date only (forget time)
+					let day = update.toISOString().slice(0, 10); // keep date only (forget time)
+					let today = now.toISOString().slice(0, 10); // keep date only (forget time)
 
 					console.log(logPrefix()+"Today:", today);
 					console.log(logPrefix()+"_ day:", day);

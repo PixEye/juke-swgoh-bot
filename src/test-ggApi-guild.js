@@ -14,7 +14,7 @@ swgohApi.fetchGuild(payload)
 
 	guild.members.forEach((member, i, arr) => {
 		member.i = i<9? '0'+(i+1): ''+(i+1);
-		member.name = member.name.substr(-15); // shorten too long nicknames
+		member.name = member.name.slice(-15); // shorten too long nicknames
 		arr[i] = member;
 	}); // */
 	guild.members = "Array of "+guild.members.length+" members";

@@ -770,7 +770,7 @@ exports.showRandomTeam = function(player, message) {
 exports.showSwgohData = function(data, message) {
 	let now = new Date();
 	let dataToShow = typeof(data)==="object"?
-		JSON.stringify(data).substr(0, 200): data;
+		JSON.stringify(data).slice(0, 200): data;
 
 	let richMsg = new RichEmbed().setTitle("SWGoH data").setColor("GREEN")
 		// .setAuthor(config.discord.username)

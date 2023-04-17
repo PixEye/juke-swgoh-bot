@@ -94,7 +94,7 @@ exports.ucfirst = function (str) {
 	str += ''
 	var f = str.charAt(0).toUpperCase()
 
-	return f + str.substr(1)
+	return f + str.slice(1)
 };
 
 exports.ucwords = function (str) {

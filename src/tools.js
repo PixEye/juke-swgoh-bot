@@ -266,7 +266,7 @@ exports.checkLegendReq = function(player, message) {
 		.setTimestamp(player.updated)
 		.setFooter(config.footer.message, config.footer.iconUrl);
 
-	if (picture && typeof picture === 'string' && picture.substr(0, 1)==='/') {
+	if (picture && typeof picture === 'string' && picture.slice(0, 1)==='/') {
 		picture = 'https://swgoh.gg'+picture;
 	}
 
@@ -409,10 +409,10 @@ exports.checkUnitsGp = function(player, message, limit) {
 exports.cleanAc = function(allyCode) {
 	var ret = allyCode.toString();
 
-	ret = ret.substr(0, 3) + "-" + ret.substr(3, 3) + "-" + ret.substr(6, 3);
+	ret = ret.slice(0, 3) + "-" + ret.slice(3, 6) + "-" + ret.slice(6, 9);
 
 	return ret;
-}
+};
 
 /** Cloner (mainly for objects)
  * @param {object} x The object to clone
@@ -420,7 +420,7 @@ exports.cleanAc = function(allyCode) {
  */
 exports.clone = function(x) {
 	return JSON.parse(JSON.stringify(x));
-}
+};
 
 /** Close database connexion
  * @param {object} exc Potential exception
@@ -1634,8 +1634,8 @@ exports.stringsCompare = function(a, b) {
  */
 exports.territoryWarGet = function(player, message) {
 	const now = new Date();
-	const filename = now.toISOString().substr(0, 10) + '_' +
-		now.toISOString().substr(11, 5).replace(':', '') + "_tw.csv";
+	const filename = now.toISOString().slice(0, 10) + '_' +
+		now.toISOString().slice(11, 16).replace(':', '') + "_tw.csv";
 	const logPrefix = exports.logPrefix; // shortcut
 	const sep = ";";
 	const sql = "SELECT DATE_FORMAT(created_at, '%Y-%m-%d %T') AS created_time"+
@@ -1924,7 +1924,7 @@ exports.toMySQLdate = function(d) {
 		d = new Date();
 	}
 
-	// d = d.toISOString("en-ZA").replace(/\//g, "-").replace(",", "").substr(0, 19);
+	// d = d.toISOString("en-ZA").replace(/\//g, "-").replace(",", "").slice(0, 19);
 	// toLocaleString("en-ZA"):
 	//	2020/05/07, 16:13:45
 

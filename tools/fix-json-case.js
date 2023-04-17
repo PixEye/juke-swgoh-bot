@@ -39,7 +39,7 @@ fs.readFile(argv[0], function(err, fContent) {
 	console.log("New JSON content weights: %d bytes.", json.length);
 
 	if (argc < 2) {
-		let jsonPreview = json.substr(0, 256);
+		let jsonPreview = json.slice(0, 256);
 		console.log("New JSON preview:\n%s", jsonPreview);
 		return;
 	}
