@@ -13,6 +13,7 @@ const mapping = {
 		"member_count": "memberCount",
 		"members": "members",
 		"external_message": "desc",
+		"level_requirement": "required",
 		"last_sync": "updated"
 	},
 	"guildMember": {
@@ -98,6 +99,8 @@ exports.fetchPlayer = async function(payload) {
 		};
 		let unitCountByCombatType = {};
 
+		// console.log("player.guild.id:", player.guild.id);
+
 		result.units.forEach(unit => {
 			unit = unit.data;
 
@@ -179,6 +182,8 @@ exports.fetchGuild = async function(payload) {
 			guild[mapping.guild[key]] = guild[key];
 			if (targetKey!==key) delete guild[key];
 		})
+
+		// console.log("guild.id:", guild.id);
 
 		guild.officerCount = 0;
 		guild.members.forEach((member, i) => {
