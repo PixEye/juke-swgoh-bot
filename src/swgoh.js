@@ -136,6 +136,8 @@ exports.getPlayerData = async function(users, callback, message) {
 		result.forEach(player => {
 			// let clean_stats = {};
 
+			console.log(logPrefix()+"player.guild.id:", player.guild.id);
+
 			allycode = player.allyCode;
 			roster  = player.units; // was: player.roster;
 			stats  = player.stats;
@@ -435,6 +437,8 @@ exports.getPlayerGuild = async function(allycodes, message, callback) {
 
 		let guild = result; // was: result[0];
 
+		console.log(logPrefix()+"guild.id:", guild.id);
+
 		rosters = guild.members; // was: guild.roster;
 		console.log(logPrefix()+'Data updated at: %s', guild.updated);
 
@@ -469,6 +473,7 @@ exports.getPlayerGuild = async function(allycodes, message, callback) {
 		rosters.forEach(player => {
 			guild.gpChar+= player.gpChar? player.gpChar: 0;
 			guild.gpShip+= player.gpShip? player.gpShip: 0;
+
 			guild.players[player.allyCode] = player.name;
 
 			if (player.gp > guild.biggestPlayer.gp) guild.biggestPlayer = player;
