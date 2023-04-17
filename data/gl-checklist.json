@@ -250,9 +250,9 @@
 			"unitName": "Cal Kestis",
 			"image": "https://game-assets.swgoh.gg/tex.jg_charui_calkestissurvivor_preview.png",
 			"requiredUnits": [
-				{"baseId": "CALKESTIS","gearLevel": 12,"relicTier": 0},
-				{"baseId": "CEREJUNDA","gearLevel": 12,"relicTier": 0},
-				{"baseId": "MERRIN","gearLevel": 12,"relicTier": 0}
+				{"gearLevel": 12, "relicTier": 0, "baseId": "CALKESTIS"},
+				{"gearLevel": 12, "relicTier": 0, "baseId": "CEREJUNDA"},
+				{"gearLevel": 12, "relicTier": 0, "baseId": "MERRIN"}
 			]
 		}
 	]

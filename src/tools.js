@@ -47,7 +47,7 @@ exports.alreadyFetchedGuildIds = [];
 
 /** Shuffle an array
  * @param {Array} anArr The array to shuffle
- * @see: https://www.w3schools.com/js/js_array_sort.asp
+ * @link https://www.w3schools.com/js/js_array_sort.asp
  */
 exports.arrayShuffle = function(anArr) {
 	var i, j, t;
@@ -1475,9 +1475,8 @@ exports.refreshGuildStats = function(allycode, message, callback) {
 		return;
 	}
 
-	let sql = "SELECT * FROM `guilds` g"; // get guild
-
-	sql+= " WHERE swgoh_id IN (SELECT guildRefId FROM `users` WHERE allycode=?)";
+	let sql = "SELECT * FROM `guilds` g" // get guild
+		+ " WHERE swgoh_id IN (SELECT guildRefId FROM `users` WHERE allycode=?)";
 
 	message.channel.send("Looking for DB stats of guild with ally: "+allycode+"...")
 		.then(msg => {
@@ -1580,7 +1579,7 @@ exports.rememberGuildStats = function(g) {
 		}
 
 		let n = result.affectedRows;
-		console.log(logPrefix()+"%d guild records updated (DEL+ADD).", n);
+		console.log(logPrefix()+"%d guild record(s) added.", n);
 	});
 
 	sql = "UPDATE `tw_results` SET self_guild_name=?"+
