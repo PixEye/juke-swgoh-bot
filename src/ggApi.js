@@ -85,19 +85,27 @@ exports.fetchPlayer = async function(payload) {
 
 		let omicronUnits = {};
 		let player = {
+			"allyCode": allycode,
 			"arena": result.data.arena,
 			"fleet_arena": result.data.fleet_arena,
+			"glHasUltimate": [],
 			"guild": {
 				"id"  : result.data.guild_id,
 				"name": result.data.guild_name,
 				"url" : result.data.guild_url,
 			},
-			"units": [],
-			"allyCode": allycode,
-			"glHasUltimate": [],
-			"omicronCount": 0
+			"omicronCount": 0,
+			"units": []
 		};
 		let unitCountByCombatType = {};
+		let modsByUnit = {};
+
+		result.mods.forEach(mod => {
+			if (!modsByUnit.hasOwnProperty(mod.character)) {
+				modsByUnit[mod.character] = [];
+			}
+			modsByUnit[mod.character].push(mod);
+		});
 
 		// console.log("player.guild.id:", player.guild.id);
 
@@ -107,8 +115,8 @@ exports.fetchPlayer = async function(payload) {
 			unit.gp = unit.power;
 			delete unit.power;
 
-			unit.mods = unit.mod_set_ids;
-			delete unit.mod_set_ids;
+			unit.mods = modsByUnit[unit.base_id]; // was: unit.mod_set_ids;
+			// delete unit.mod_set_ids;
 
 			player.units.push(unit);
 
