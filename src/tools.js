@@ -2112,7 +2112,7 @@ exports.updatePlayerDataInDb = function(player, message, callback) {
 			"gp": player.gp,
 			"g12Count": player.g12Count,
 			"g13Count": player.g13Count,
-			"guildRefId": mysql.escape(player.guildRefId),
+			"guildRefId": mysql.escape(player.guild.id),
 			"zetaCount": player.zetaCount,
 			"ts": mysql.escape(update)
 		};
