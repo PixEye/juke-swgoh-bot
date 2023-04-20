@@ -1559,9 +1559,10 @@ exports.rememberGuildStats = function(g) {
 
 			// Retry with an UPDATE:
 			sql = "UPDATE `guilds`"+
-				" SET name=?, gp=?, memberCount=?, officerCount=?, gm_allycode=?, ts=?"+
-				" WHERE swgoh_id=?";
-			values = [g.name, g.gp, g.memberCount, g.officerCount, g.leader.allyCode, update, g.id];
+				" SET swgoh_id=?, gp=?, memberCount=?, officerCount=?, gm_allycode=?, ts=? WHERE name=?";
+			//	" SET name=?, gp=?, memberCount=?, officerCount=?, gm_allycode=?, ts=? WHERE swgoh_id=?";
+			// values = [g.name, g.gp, g.memberCount, g.officerCount, g.leader.allyCode, update, g.id];
+			values = [g.id, g.gp, g.memberCount, g.officerCount, g.leader.allyCode, update, g.name];
 
 			db_pool.query(sql, values, function(exc, result) {
 				if (exc) {
