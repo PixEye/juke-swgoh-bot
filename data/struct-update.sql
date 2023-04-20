@@ -11,3 +11,5 @@ ALTER TABLE `users` CHANGE `zetaCount` `zetaCount` INT(4) UNSIGNED NULL DEFAULT 
 
 ALTER TABLE `users` CHANGE `guildRefId` `guildRefId` VARCHAR(25) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT NULL;
 ALTER TABLE `guilds` CHANGE `swgoh_id` `swgoh_id` VARCHAR(25) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL;
+
+ALTER TABLE `guilds` ADD UNIQUE(`name`);
