@@ -633,7 +633,7 @@ exports.getGuildStats = function(player, message, callback) {
 				if (typeof msg.delete==="function") msg.delete();
 
 				// Remember stats of the guild:
-				exports.rememberGuildStats(guild);
+				exports.rememberGuildStats(guild, message);
 
 				if (typeof(callback)==="function") callback(guild, message, player);
 			});
@@ -879,7 +879,7 @@ exports.getUnregPlayers = function(allycode, message) {
 				}
 
 				// Remember stats of the guild:
-				exports.rememberGuildStats(guild);
+				exports.rememberGuildStats(guild, message);
 
 				let sql = "SELECT * FROM `users` WHERE allycode IN (?)";
 				let guildAllycodes = Object.keys(guild.players);
@@ -1416,7 +1416,7 @@ exports.updateOldestGuildOr = function(callback) {
 		swgoh.getPlayerGuild(g.gm_allycode, message, function(guild) {
 
 			// Remember stats of the guild:
-			exports.rememberGuildStats(guild);
+			exports.rememberGuildStats(guild, message);
 
 			console.log(logPrefix()+'\\ End UOG process about '+guild.name);
 		});
@@ -1543,7 +1543,7 @@ exports.refreshGuildStats = function(allycode, message, callback) {
 /** Remember stats of the guild
  * @param object g The guild object to save in the database
  */
-exports.rememberGuildStats = function(g) {
+exports.rememberGuildStats = function(g, message) {
 
 	let logPrefix = exports.logPrefix; // shortcut
 	let sql = "INSERT INTO `guilds` (swgoh_id, name, gp, memberCount, officerCount, gm_allycode, ts) VALUES ?";
@@ -1583,10 +1583,10 @@ exports.rememberGuildStats = function(g) {
 		console.log(logPrefix()+"%d guild record(s) added.", n);
 	});
 
-	sql = "UPDATE `tw_results` SET self_guild_name=?"+
-		" WHERE self_guild_id=? AND (self_guild_name='null' OR self_guild_name IS NULL)";
+	sql = "UPDATE `tw_results` SET self_guild_id=?, self_guild_name=?"+
+		" WHERE self_guild_id=? OR self_guild_name=?";
 
-	db_pool.query(sql, [g.name, g.id], function(exc, result) {
+	db_pool.query(sql, [g.id, g.name, g.id, g.name], function(exc, result) {
 		if (exc) {
 			console.log("SQL UPG:", sql);
 			console.log(logPrefix()+"RGS Exception:", exc.sqlMessage? exc.sqlMessage: exc);
@@ -1597,6 +1597,7 @@ exports.rememberGuildStats = function(g) {
 		let nbr = result.affectedRows; // shortcut for number of records
 		if (nbr) {
 			console.log(logPrefix()+"%d TW result updated.", nbr);
+			if (message) message.reply(nbr+" TW result updated.");
 		}
 	});
 };
@@ -2194,7 +2195,7 @@ exports.updatePlayerDataInDb = function(player, message, callback) {
 		} else	if (typeof(callback)==="function") callback(player, message);
 
 		let sql5 = "UPDATE `tw_results` SET self_guild_id=?, self_guild_name=?"+
-			" WHERE allycode=? AND (self_guild_name='null' OR self_guild_name IS NULL)";
+			" WHERE allycode=? AND (self_guild_id IS NULL OR self_guild_name='undefined')";
 
 		lines = [player.guildRefId, player.guild.name, allycode];
 		db_pool.query(sql5, lines, function(exc, result) {
