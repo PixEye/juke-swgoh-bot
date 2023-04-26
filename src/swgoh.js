@@ -75,7 +75,6 @@ exports.getPlayerData = async function(users, callback, message) {
 		let result = await swApi.fetchPlayer(payload); // <--
 		let richMsg = null;
 		let roster = null;
-		let stats = null;
 
 		/* if (warning) { // useless
 			if (warning.error && warning.error===warning.message) {
