@@ -63,7 +63,7 @@ let msgCount = 0;
 
 let down_time = listen_since - start;
 
-/* Run the periodical process:
+// Run the periodical process:
 tools.periodicalProcess(true); // true to identify the first time
 const timer = setInterval(tools.periodicalProcess, 213000); // 213'000 ms = 3 minutes 33 */
 
