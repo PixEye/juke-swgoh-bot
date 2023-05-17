@@ -88,6 +88,11 @@ exports.getPlayerData = async function(users, callback, message) {
 			allycode = allycodes[0];
 		}
 
+		if (result.detail==="Not found.") {
+			if (message) message.reply(result.detail);
+			return;
+		}
+
 		if (error) {
 			if (error.error && error.error===error.message) {
 				delete error.error; // avoid to log duplicated data
@@ -135,6 +140,7 @@ exports.getPlayerData = async function(users, callback, message) {
 		result.forEach(player => {
 			// let clean_stats = {};
 
+			if (!player.guild) player.guild = {"id": 0, "name": "none"};
 			console.log(logPrefix()+"player.guild.id:", player.guild.id);
 
 			allycode = player.allyCode;
