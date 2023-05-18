@@ -140,6 +140,8 @@ exports.getPlayerData = async function(users, callback, message) {
 		result.forEach(player => {
 			// let clean_stats = {};
 
+			if (!player) return; // if player is not found, it is undefined
+
 			if (!player.guild) player.guild = {"id": 0, "name": "none"};
 			console.log(logPrefix()+"player.guild.id:", player.guild.id);
 
