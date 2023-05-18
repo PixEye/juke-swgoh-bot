@@ -72,7 +72,16 @@ exports.getPlayerData = async function(users, callback, message) {
 		}
 
 		console.log(logPrefix()+"Payload:", payload);
-		let result = await swApi.fetchPlayer(payload); // <--
+		let result = {};
+		try {
+			result = await swApi.fetchPlayer(payload); // <--
+		} catch(exc) {
+			let msg = "Fetching this allycode failed!";
+			console.warn(msg);
+			if (message) message.reply(msg);
+			return;
+		}
+
 		let richMsg = null;
 		let roster = null;
 
@@ -122,7 +131,8 @@ exports.getPlayerData = async function(users, callback, message) {
 				.setDescription([msg])
 				.setFooter(config.footer.message, config.footer.iconUrl);
 
-			message.channel.send(richMsg).catch(function(ex) {
+			message.channel.send(richMsg)
+			.catch(function(ex) {
 				console.warn(ex);
 				message.reply(ex.message);
 				message.channel.send(msg);
@@ -140,14 +150,20 @@ exports.getPlayerData = async function(users, callback, message) {
 		result.forEach(player => {
 			// let clean_stats = {};
 
-			if (!player) return; // if player is not found, it is undefined
-
 			if (!player.guild) player.guild = {"id": 0, "name": "none"};
 			console.log(logPrefix()+"player.guild.id:", player.guild.id);
 
 			allycode = player.allyCode;
 			roster  = player.units; // was: player.roster;
 			stats  = player.stats;
+
+			if (!playersByAllycode[allycode]) {
+				let msg = player.detail? player.detail: "Player not found!";
+				console.warn(msg);
+				console.dir(player);
+				if (message) message.reply(msg);
+				return;
+			}
 
 			player.displayAvatarURL = playersByAllycode[allycode].displayAvatarURL;
 
@@ -381,7 +397,8 @@ exports.getPlayerData = async function(users, callback, message) {
 			.setDescription([msg])
 			.setFooter(config.footer.message, config.footer.iconUrl)
 			.setTimestamp(message.createdTimestamp);
-		message.channel.send(richMsg).catch(function(ex) {
+		message.channel.send(richMsg)
+		.catch(function(ex) {
 			console.warn(ex);
 			message.reply(ex.message);
 			message.channel.send(msg);
@@ -434,7 +451,8 @@ exports.getPlayerGuild = async function(allycodes, message, callback) {
 			richMsg = new RichEmbed().setTitle("Warning!").setColor("ORANGE")
 				.setDescription([msg])
 				.setFooter(config.footer.message, config.footer.iconUrl);
-			message.channel.send(richMsg).catch(function(ex) {
+			message.channel.send(richMsg)
+			.catch(function(ex) {
 				console.warn(ex);
 				message.reply(ex.message);
 				message.channel.send(msg);
@@ -523,7 +541,8 @@ exports.getPlayerGuild = async function(allycodes, message, callback) {
 		let richMsg = new RichEmbed().setTitle("Error!").setColor("RED")
 			.setDescription([msg])
 			.setFooter(config.footer.message, config.footer.iconUrl);
-		message.channel.send(richMsg).catch(function(ex) {
+		message.channel.send(richMsg)
+		.catch(function(ex) {
 			console.warn(ex);
 			message.reply(ex.message);
 			message.channel.send(msg);
@@ -589,7 +608,8 @@ exports.fetch = async function(users, message, callback) {
 			richMsg = new RichEmbed().setTitle("Error!").setColor("RED")
 				.setDescription(msg)
 				.setFooter(config.footer.message, config.footer.iconUrl);
-			message.channel.send(richMsg).catch(function(ex) {
+			message.channel.send(richMsg)
+			.catch(function(ex) {
 				console.warn(ex);
 				message.reply(ex.message);
 				message.channel.send(msg);
@@ -604,7 +624,8 @@ exports.fetch = async function(users, message, callback) {
 			richMsg = new RichEmbed().setTitle("Warning!").setColor("ORANGE")
 				.setDescription([msg])
 				.setFooter(config.footer.message, config.footer.iconUrl);
-			message.channel.send(richMsg).catch(function(ex) {
+			message.channel.send(richMsg)
+			.catch(function(ex) {
 				console.warn(ex);
 				message.reply(ex.message);
 				message.channel.send(msg);
@@ -621,7 +642,8 @@ exports.fetch = async function(users, message, callback) {
 		let richMsg = new RichEmbed().setTitle("Error!").setColor("RED")
 			.setDescription([msg])
 			.setFooter(config.footer.message, config.footer.iconUrl);
-		message.channel.send(richMsg).catch(function(ex) {
+		message.channel.send(richMsg)
+		.catch(function(ex) {
 			console.warn(ex);
 			message.reply(ex.message);
 			message.channel.send(msg);
