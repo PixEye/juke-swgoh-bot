@@ -218,7 +218,7 @@ exports.listOmicrons = function(player, message) {
 			}
 		});
 
-		Object.keys(omicronByMode).forEach((mode_code) => {
+		/* Object.keys(omicronByMode).forEach((mode_code) => {
 			const mode_name = omicronModes[mode_code];
 			const skills = omicronByMode[mode_code];
 			let omCountByUnit = {};
@@ -242,12 +242,16 @@ exports.listOmicrons = function(player, message) {
 			});
 
 			lines.push("`In "+mode_name+' ('+skills.length+'):` '+unitList.join(', '));
-		});
+		}); // */
+		Object.keys(player.omicronUnits).forEach((base_id) => {
+			let omicronCnt = player.omicronUnits[base_id];
+			lines.push(unitRealNames[base_id]+': '+omicronCnt);
+		}); // */
 	}
 	lines.sort();
 
 	let richMsg = new RichEmbed().setColor(color)
-		.setTitle(player.name+"'s "+omicronCount+" omicron(s)")
+		.setTitle(player.name+"'s "+player.omicronCount+" omicron(s)")
 		.setDescription(lines).setTimestamp(player.updated)
 		.setFooter(config.footer.message, config.footer.iconUrl);
 

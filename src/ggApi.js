@@ -83,7 +83,6 @@ exports.fetchPlayer = async function(payload) {
 			'has_ultimate',   'is_galactic_legend'
 			] */
 
-		let omicronUnits = {};
 		let player = {
 			"allyCode": allycode,
 			"arena": result.data.arena,
@@ -95,6 +94,8 @@ exports.fetchPlayer = async function(payload) {
 				"url" : result.data.guild_url,
 			},
 			"omicronCount": 0,
+			"omicronSkills": [],
+			"omicronUnits": {},
 			"units": []
 		};
 		let unitCountByCombatType = {};
@@ -121,8 +122,9 @@ exports.fetchPlayer = async function(payload) {
 			player.units.push(unit);
 
 			if (unit.omicron_abilities.length) {
-				omicronUnits[unit.base_id] = unit.omicron_abilities.length;
 				player.omicronCount += unit.omicron_abilities.length;
+				player.omicronSkills = unit.omicron_abilities;
+				player.omicronUnits[unit.base_id] = unit.omicron_abilities.length;
 			}
 			zetaCount += unit.zeta_abilities.length;
 
@@ -142,7 +144,6 @@ exports.fetchPlayer = async function(payload) {
 			player[targetKey] = result.data[key];
 		});
 
-		player.omicronUnits = omicronUnits;
 		// player.shipCount = unitCountByCombatType[2];
 		// player.toonCount = unitCountByCombatType[1];
 		player.unitCount = result.units.length;
