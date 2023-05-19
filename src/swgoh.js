@@ -162,6 +162,7 @@ exports.getPlayerData = async function(users, callback, message) {
 				console.warn(msg);
 				console.dir(player);
 				if (message) message.reply(msg);
+				tools.removeAllycode(allycode);
 				return;
 			}
 
