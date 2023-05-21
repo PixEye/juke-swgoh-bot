@@ -1609,14 +1609,25 @@ exports.removeAllycode = function(allycode) {
 	let logPrefix = exports.logPrefix; // shortcut
 	let sql = "DELETE FROM users WHERE allycode=? LIMIT 1";
 
-	db_pool.query(sql, [allycode], function(exc /*, result */) {
+	console.log(logPrefix()+sql+" // with allycode="+allycode);
+	if (!allycode) {
+		console.warn("Wrong allycode!");
+		return;
+	}
+
+	db_pool.query(sql, [allycode], function(exc, result) {
 		if (exc) {
 			console.log(sql);
 			console.warn(logPrefix()+"DelAC error: "+exc);
 			return;
 		}
 
-		console.log(logPrefix()+"Allycode "+allycode+" deleted from the DB.");
+		let nbr = result.affectedRows; // shortcut for number of records
+		if (nbr) {
+			console.log(logPrefix()+"User deleted from the DB.");
+		} else {
+			console.log(logPrefix()+"User not found in DB.");
+		} // */
 	});
 };
 

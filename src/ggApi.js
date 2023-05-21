@@ -43,6 +43,7 @@ const mapping = {
 		"last_updated": "updated"
 	}
 };
+const tools   = require("./tools"); // Several functions
 
 /* exports.connect = function() {
 	// TODO
@@ -56,8 +57,10 @@ exports.fetchPlayer = async function(payload) {
 	const allycode = payload.allycodes[0];
 	const url = "https://swgoh.gg/api/player/" + allycode;
 
+	let logPrefix = tools.logPrefix;
+
 	try {
-		console.log('GET', url);
+		console.log(logPrefix()+'GET', url);
 		let response = await fetch(url); // needs NodeJS 12 or +
 		if (!response.ok) {
 			let txt = await response.text();
@@ -66,7 +69,7 @@ exports.fetchPlayer = async function(payload) {
 			return {}
 		}
 
-		if (debug) console.log('Response is OK for payload:', payload);
+		if (debug) console.log(logPrefix()+'Response is OK for payload:', payload);
 		let result = await response.json();
 		let zetaCount = 0;
 
@@ -107,8 +110,6 @@ exports.fetchPlayer = async function(payload) {
 			}
 			modsByUnit[mod.character].push(mod);
 		});
-
-		// console.log("player.guild.id:", player.guild.id);
 
 		result.units.forEach(unit => {
 			unit = unit.data;
@@ -162,15 +163,16 @@ exports.fetchPlayer = async function(payload) {
  * @return Promise
  */
 exports.fetchGuild = async function(payload) {
+	let logPrefix = tools.logPrefix;
 	let player = await exports.fetchPlayer(payload);
 
 	const guild_id = player.guild.id;
-	player = {}; // free some memory
-
 	const url = "https://swgoh.gg/api/guild-profile/" + guild_id;
 
+	player = {}; // free some memory
+
 	try {
-		console.log('GET', url);
+		console.log(logPrefix()+'GET', url);
 		let response = await fetch(url);
 		if (!response.ok) {
 			let txt = await response.text();
@@ -191,8 +193,6 @@ exports.fetchGuild = async function(payload) {
 			guild[mapping.guild[key]] = guild[key];
 			if (targetKey!==key) delete guild[key];
 		})
-
-		// console.log("guild.id:", guild.id);
 
 		guild.officerCount = 0;
 		guild.members.forEach((member, i) => {

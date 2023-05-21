@@ -61,8 +61,9 @@ exports.getPlayerData = async function(users, callback, message) {
 		let playersByAllycode = {};
 
 		users.forEach(user => {
-			allycodes.push(user.allycode);
-			playersByAllycode[user.allycode] = user;
+			allycode = user.allycode
+			allycodes.push(allycode);
+			playersByAllycode[allycode] = user;
 		});
 
 		let payload = { "allycodes": allycodes };
@@ -77,7 +78,7 @@ exports.getPlayerData = async function(users, callback, message) {
 			result = await swApi.fetchPlayer(payload); // <--
 		} catch(exc) {
 			let msg = "Fetching this allycode failed!";
-			console.warn(msg);
+			console.warn(msg+' '+exc);
 			if (message) message.reply(msg);
 			return;
 		}
@@ -113,9 +114,8 @@ exports.getPlayerData = async function(users, callback, message) {
 				message.channel.send(error.message);
 			} else {
 				message.channel.send("**"+error.message+":** "+error.description);
-				if ( allycodes.length === 1 && error.description === ERR_TO_DETECT ) {
-					// Remove this allycode
-					tools.removeAllycode(allycode);
+				if ( allycode && error.description === ERR_TO_DETECT ) {
+					tools.removeAllycode(allycode); // Remove this allycode
 				}
 			}
 			return;
@@ -144,25 +144,27 @@ exports.getPlayerData = async function(users, callback, message) {
 		let numToSkill = [ // from 0 to 8 TODO: use it
 			'none', 'health', 'attack', 'defense', 'speed', 'crit chance', 'crit damage', 'potency', 'tenacity'
 		]; // */
+		let i = 0;
 		let shipsToFix = ['TIE'+'DEFENDER'];
 		result = [result];
 
 		result.forEach(player => {
 			// let clean_stats = {};
 
+			if (!player.allycode) player.allycode = users[i++].allycode;
 			if (!player.guild) player.guild = {"id": 0, "name": "none"};
-			console.log(logPrefix()+"player.guild.id:", player.guild.id);
+			console.log(logPrefix()+"player.guild.name:", player.guild.name);
 
 			allycode = player.allyCode;
 			roster  = player.units; // was: player.roster;
 			stats  = player.stats;
 
 			if (!playersByAllycode[allycode]) {
-				let msg = player.detail? player.detail: "Player not found!";
+				let msg = player.detail? player.detail: "Player with allycode "+allycode+" not found!";
 				console.warn(msg);
 				console.dir(player);
 				if (message) message.reply(msg);
-				tools.removeAllycode(allycode);
+				if (allycode) tools.removeAllycode(allycode);
 				return;
 			}
 
@@ -209,7 +211,7 @@ exports.getPlayerData = async function(users, callback, message) {
 			// Array: crew ([])
 			// Others: gp (int), primaryUnitStat (null), relic {currentTier: 1}
 
-			let i = 0;
+			let j = 0;
 			// let omicronCount = 0;
 			// let omicronUnits = [];
 			// let omicronSkills = [];
@@ -217,8 +219,8 @@ exports.getPlayerData = async function(users, callback, message) {
 			let unitsCountByGear = {};
 			// let zetaCount = 0;
 
-			for(i=0; i<20; i++) unitsCountByGear[i] = 0;
-			for(i=1; i< 3; i++) unitsByCombatType[i] = 0;
+			for(j=0; j<20; j++) unitsCountByGear[j] = 0;
+			for(j=1; j< 3; j++) unitsByCombatType[j] = 0;
 			player.unitCount = 0;
 			player.unitsData = [];
 
