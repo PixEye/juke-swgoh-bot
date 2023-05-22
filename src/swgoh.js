@@ -151,7 +151,7 @@ exports.getPlayerData = async function(users, callback, message) {
 		result.forEach(player => {
 			// let clean_stats = {};
 
-			if (!player.allycode) player.allycode = users[i++].allycode;
+			if (!player.allyCode) player.allyCode = users[i++].allycode; // I have a bad feeling about this
 			if (!player.guild) player.guild = {"id": 0, "name": "none"};
 			console.log(logPrefix()+"player.guild.name:", player.guild.name);
 
@@ -159,7 +159,7 @@ exports.getPlayerData = async function(users, callback, message) {
 			roster  = player.units; // was: player.roster;
 			stats  = player.stats;
 
-			if (!playersByAllycode[allycode]) {
+			if (!playersByAllycode[allycode] || !player.units) {
 				let msg = player.detail? player.detail: "Player with allycode "+allycode+" not found!";
 				console.warn(msg);
 				console.dir(player);
@@ -358,7 +358,7 @@ exports.getPlayerData = async function(users, callback, message) {
 
 			// console.log("=====");
 			console.log(logPrefix()+'User "%s" fetched', player.name);
-			if (player.omicronUnits.length) {
+			if (player.omicronUnits && player.omicronUnits.length) {
 				console.log(logPrefix()+player.omicronUnits.length+' omicron units: %s.', player.omicronUnits.join(', '));
 			}
 
