@@ -209,7 +209,8 @@ client.on("message", (message) => {
 		case "allycode":
 			sql = "SELECT p.* FROM `users` p"+
 				// " LEFT JOIN `guilds` g ON p.guildRefId=g.swgoh_id"+
-				" WHERE "+searchStr;
+				" WHERE "+searchStr+
+				" ORDER BY RAND() LIMIT 10";
 
 			db_pool.query(sql, (exc, users) => {
 				let guildIds = {};
