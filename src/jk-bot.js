@@ -209,8 +209,7 @@ client.on("message", (message) => {
 		case "allycode":
 			sql = "SELECT p.* FROM `users` p"+
 				// " LEFT JOIN `guilds` g ON p.guildRefId=g.swgoh_id"+
-				" WHERE "+searchStr+
-				" ORDER BY RAND() LIMIT 10";
+				" WHERE "+searchStr; // +" ORDER BY RAND() LIMIT 10";
 
 			db_pool.query(sql, (exc, users) => {
 				let guildIds = {};
@@ -231,12 +230,19 @@ client.on("message", (message) => {
 					console.log(logPrefix()+msg);
 					message.reply(msg);
 				} else { // 1 or more results:
-					// lines.push("There are "+users.length+" matches:");
+					if (users.length>1) lines.push("There are "+users.length+" total matches:");
+
 					users.forEach(user => {
 						if (user.guildRefId) {
 							guildIds[user.guildRefId] = user.guildRefId;
 						}
 					});
+
+					if (users.length>10) {
+						lines = ['Here are 10 random matches out of '+users.length+':'];
+						users.sort(function () { return 0.5 - Math.random() }); // pseudo shuffle
+						users = users.slice(0, 9);
+					}
 
 					sql = "SELECT * from `guilds` WHERE swgoh_id IN (?)";
 					guildIds = Object.keys(guildIds); // convert object to array
