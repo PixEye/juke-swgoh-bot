@@ -254,6 +254,18 @@
 				{"gearLevel": 12, "relicTier": 0, "baseId": "CEREJUNDA"},
 				{"gearLevel": 12, "relicTier": 0, "baseId": "MERRIN"}
 			]
+		},
+		{
+			"baseId": "TBD_REVA",
+			"unitName": "Reva",
+			"image": "https://game-assets.swgoh.gg/tex.charui_thirdsister.png",
+			"requiredUnits": [
+				{"gearLevel": 13, "relicTier": 7, "baseId": "GRANDINQUISITOR"},
+				{"gearLevel": 13, "relicTier": 7, "baseId": "NINTHSISTER"},
+				{"gearLevel": 13, "relicTier": 7, "baseId": "SEVENTHSISTER"},
+				{"gearLevel": 13, "relicTier": 7, "baseId": "EIGHTHBROTHER"},
+				{"gearLevel": 13, "relicTier": 7, "baseId": "FIFTHBROTHER"}
+			]
 		}
 	]
 }
