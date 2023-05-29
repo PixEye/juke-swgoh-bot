@@ -252,7 +252,9 @@
 			"requiredUnits": [
 				{"gearLevel": 12, "relicTier": 0, "baseId": "CALKESTIS"},
 				{"gearLevel": 12, "relicTier": 0, "baseId": "CEREJUNDA"},
-				{"gearLevel": 12, "relicTier": 0, "baseId": "MERRIN"}
+				{"gearLevel": 12, "relicTier": 0, "baseId": "MERRIN"},
+				{"gearLevel": 12, "relicTier": 0, "baseId": "TARFFUL"},
+				{"gearLevel": 12, "relicTier": 0, "baseId": "SAWGERRERA"}
 			]
 		},
 		{
