@@ -72,7 +72,6 @@ exports.checkLegendReq = function(player, message) {
 	let concatUpMsg = message.words.filter(word => !word.includes('<'))
 		.join("").trim().toUpperCase();
 	let found = false;
-	let glNames = [];
 	let lines = [];
 	let logPrefix = exports.logPrefix; // shortcut
 	let msg = "";
@@ -106,7 +105,6 @@ exports.checkLegendReq = function(player, message) {
 		progressObjects = [];
 		unit.name = unit.unitName;
 		unit.baseId = unit.baseId.replace("TBD_", "").trim();
-		glNames.push(unit.baseId);
 
 		unit.baseId = unit.baseId.toUpperCase();
 		switch(unit.baseId) {
@@ -139,8 +137,12 @@ exports.checkLegendReq = function(player, message) {
 		unit.name = unitRealNames[unit.baseId] || unit.name;
 		if (!locked) {
 			progresses.push(1);
-			if (unit.baseId !== 'JEDI'+'KNIGHT'+'LUKE' && unit.baseId !== 'STAR'+'KILLER'
-			&& unit.name !== 'Executor' && unit.name !== 'Profundity') // Not GL exceptions
+			if (unit.baseId !== 'GRAND'+'INQUISITOR'
+			 && unit.baseId !== 'JEDI'+'KNIGHT'+'LUKE'
+			 && unit.baseId !== 'STAR'+'KILLER'
+			 && unit.baseId !== 'THIRD'+'SISTER'
+			 && unit.name !== 'Executor'
+			 && unit.name !== 'Profundity') // Not GL exceptions
 				++ player.glCount;
 		} else {
 			if (found) return;
