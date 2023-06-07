@@ -268,6 +268,29 @@
 				{"gearLevel": 13, "relicTier": 7, "baseId": "EIGHTHBROTHER"},
 				{"gearLevel": 13, "relicTier": 7, "baseId": "FIFTHBROTHER"}
 			]
+		},
+		{
+			"baseId": "TBD_LEVIATHAN",
+			"unitName": "Leviathan",
+			"image": "https://game-assets.swgoh.gg/tex.jg_shipui_leviathan.png",
+			"requiredUnits": [
+				{"gearLevel": 13, "relicTier": 9, "baseId": "DARTHREVAN"},
+				{"gearLevel": 13, "relicTier": 9, "baseId": "DARTHMALAK"},
+				{"gearLevel": 13, "relicTier": 7, "baseId": "SITHTROOPER"},
+				{"gearLevel": 13, "relicTier": 7, "baseId": "FOSITHTROOPER"},
+				{"gearLevel": 13, "relicTier": 7, "baseId": "DARTHMAUL"},
+				{"gearLevel": 13, "relicTier": 7, "baseId": "HK47"},
+				{"gearLevel": 13, "relicTier": 7, "baseId": "BASTILASHAN"},
+				{"gearLevel": 13, "relicTier": 5, "baseId": "SITHASSASSIN"},
+				{"gearLevel": 13, "relicTier": 5, "baseId": "50RT"},
+				{"stars": 7, "baseId": "FURYCLASSINTERCEPTOR"},
+				{"stars": 7, "baseId": "MARKVIINTERCEPTOR"},
+				{"stars": 7, "baseId": "TIEDAGGER"},
+				{"stars": 7, "baseId": "B28EXTINCTIONCLASSBOMBER"},
+				{"stars": 7, "baseId": "SCIMITAR"},
+				{"stars": 7, "baseId": "SITHFIGHTER"},
+				{"stars": 7, "baseId": "EBONHAWK"}
+			]
 		}
 	]
 }
