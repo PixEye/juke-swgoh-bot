@@ -319,6 +319,7 @@ exports.checkPlayerMods = function(player, message) {
 	} else {
 		color = "ORANGE";
 		unitsWithoutAllModules.forEach(function(unit, i) {
+			if (!unit.mods) unit.mods = [];
 			tpmmc += maxModsCount - unit.mods.length;
 			if (i<maxLines) {
 				let uGp = unit.gp < 1e4 ? '0' + unit.gp : unit.gp;
