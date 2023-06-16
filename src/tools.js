@@ -302,7 +302,9 @@ exports.checkPlayerMods = function(player, message) {
 	let minCharLevel = 50;
 	let n = 0;
 	let unitsWithoutAllModules = player.unitsData.filter(unit => { // Main filter:
-		return unit.combatType===1 && unit.level>=minCharLevel && unit.mods.length<maxModsCount;
+		return unit.combatType===1 &&
+			unit.level>=minCharLevel &&
+			(!unit.mods || unit.mods.length<maxModsCount);
 	}).sort((a, b) => b.gp - a.gp); // sort by descending galactic power (GP)
 
 	let tpmmc = 0; // total player's missing modules count
