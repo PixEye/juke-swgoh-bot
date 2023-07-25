@@ -114,6 +114,8 @@ exports.checkLegendReq = function(player, message) {
 				unit.baseId = "CAPITAL"+"EXECUTOR"; break;
 			case "JABBA":
 				unit.baseId = "JABBA"+"THE"+"HUTT"; break;
+			case "LEVIATHAN":
+				unit.baseId = "CAPITAL"+"LEVIATHAN"; break;
 			case "LV":
 				unit.baseId = "LORD"+"VADER"; break;
 			case "PROFUNDITY":
@@ -142,7 +144,8 @@ exports.checkLegendReq = function(player, message) {
 			 && unit.baseId !== 'STAR'+'KILLER'
 			 && unit.baseId !== 'THIRD'+'SISTER'
 			 && unit.name !== 'Executor'
-			 && unit.name !== 'Profundity') // Not GL exceptions
+			 && unit.name !== 'Profundity'
+			 && unit.name !== 'Leviathan') // Not GL exceptions
 				++ player.glCount;
 		} else {
 			if (found) return;
