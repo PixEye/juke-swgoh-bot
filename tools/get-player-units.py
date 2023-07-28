@@ -3,7 +3,9 @@
 import requests
 import sys
 
-# Usage example:    python get-player-units 123456789 > player.csv
+if len(sys.argv)!=2 or sys.argv[1]=='-h' or sys.argv[1]=='--help':
+    cmd = sys.argv[0]
+    sys.exit(f"Usage:\n\t{cmd} ally_code > guild.csv")
 
 # list of user parameters :
 allycode = sys.argv[1]
