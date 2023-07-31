@@ -36,7 +36,7 @@ const swApi = new ApiSwgohHelp({
 }); // */
 const swApi = require("./ggApi");
 
-const omicronAbilities = require("../data/omicron-abilities");
+// const omicronAbilities = require("../data/omicron-abilities");
 
 /** Get player(s)' data from the SWGoH Help API
  * @param {Array} users - An array of users' objects with: [allycode & displayAvatarURL] each

@@ -3,8 +3,6 @@
  * @since  2023-04-11
  */
 
-const { base_parse } = require("node-html-parser/dist/nodes/html");
-
 const debug = true;
 const mapping = {
 	"guild": {
@@ -43,7 +41,7 @@ const mapping = {
 		"last_updated": "updated"
 	}
 };
-const tools   = require("./tools"); // Several functions
+const tools = require("./tools"); // Several functions
 
 /* exports.connect = function() {
 	// TODO
