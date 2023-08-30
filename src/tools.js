@@ -2135,7 +2135,7 @@ exports.updatePlayerDataInDb = function(player, message, callback) {
 			"g13Count": player.g13Count,
 			"guildRefId": mysql.escape(player.guild.id),
 			"zetaCount": player.zetaCount,
-			"ts": mysql.escape(update)
+			"ts": 'NOW()' // = MySQL function. Was: mysql.escape(update)
 		};
 		if (typeof player.glCount === "number") {
 			mapping["glCount"] = player.glCount;
