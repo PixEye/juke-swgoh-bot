@@ -41,7 +41,7 @@ const db_pool = mysql.createPool({
 });
 
 // Behaviour icons (about players):
-const behaveIcons   = [':green_heart:', ':large_orange_diamond:', ':red_circle:'];
+const behaveIcons   = [":green_heart:", ":large_orange_diamond:", ":red_circle:"];
 
 exports.alreadyFetchedGuildIds = [];
 
@@ -69,7 +69,7 @@ exports.checkLegendReq = function(player, message) {
 	const req = require("../data/gl-checklist");
 
 	let color = "GREEN";
-	let concatUpMsg = message.words.filter(word => !word.includes('<'))
+	let concatUpMsg = message.words.filter(word => !word.includes("<"))
 		.join("").trim().toUpperCase();
 	let found = false;
 	let lines = [];
@@ -134,18 +134,18 @@ exports.checkLegendReq = function(player, message) {
 		const uid = unitAliasNames[unit.baseId] || unit.baseId;
 		const playerGl = player.unitsData.find(u => u.name === uid);
 		const locked = ! playerGl;
-		let indicator = locked? ':green_circle:': ':white_check_mark:';
+		let indicator = locked? ":green_circle:": ":white_check_mark:";
 
 		unit.name = unitRealNames[unit.baseId] || unit.name;
 		if (!locked) {
 			progresses.push(1);
-			if (unit.baseId !== 'GRAND'+'INQUISITOR'
-			 && unit.baseId !== 'JEDI'+'KNIGHT'+'LUKE'
-			 && unit.baseId !== 'STAR'+'KILLER'
-			 && unit.baseId !== 'THIRD'+'SISTER'
-			 && unit.name !== 'Executor'
-			 && unit.name !== 'Profundity'
-			 && unit.name !== 'Leviathan') // Not GL exceptions
+			if (unit.baseId !== "GRAND"+"INQUISITOR"
+			 && unit.baseId !== "JEDI"+"KNIGHT"+"LUKE"
+			 && unit.baseId !== "STAR"+"KILLER"
+			 && unit.baseId !== "THIRD"+"SISTER"
+			 && unit.name !== "Executor"
+			 && unit.name !== "Profundity"
+			 && unit.name !== "Leviathan") // Not GL exceptions
 				++ player.glCount;
 		} else {
 			if (found) return;
@@ -231,20 +231,20 @@ exports.checkLegendReq = function(player, message) {
 			let resume = "~ `" + average + "%` for "+unit.name;
 
 			if (playerGl && playerGl.combatType === 2)
-				resume += ' '+playerGl.stars+':star:';
-			else if (playerGl && typeof playerGl.combatType === 'undefined')
+				resume += " "+playerGl.stars+":star:";
+			else if (playerGl && typeof playerGl.combatType === "undefined")
 				console.log("Player's GL:", playerGl);
 
 			progressObjects.sort((a, b) => b.progress - a.progress); // sort in desc order
 			progressObjects.forEach(po => lines.push(po.msg));
 			lines.push(resume);
 
-				if  (avg< 50) indicator = '🔺';
-			else if (avg< 65) indicator = '🔶';
-			else if (avg< 80) indicator = '🤔';
-			else if (avg<100) { indicator = '👉'; color = "ORANGE"; }
+				if  (avg< 50) indicator = "🔺";
+			else if (avg< 65) indicator = "🔶";
+			else if (avg< 80) indicator = "🤔";
+			else if (avg<100) { indicator = "👉"; color = "ORANGE"; }
 
-			progressByTopUnit[indicator+' '+resume] = avg + (avg * (locked? 0: 1));
+			progressByTopUnit[indicator+" "+resume] = avg + (avg * (locked? 0: 1));
 
 			progresses = [];
 		}
@@ -261,8 +261,8 @@ exports.checkLegendReq = function(player, message) {
 		lines.sort((k1, k2) => {
 			return progressByTopUnit[k2] - progressByTopUnit[k1];
 		});
-		lines.push('');
-		lines.push('GL count: '+player.glCount);
+		lines.push("");
+		lines.push("GL count: "+player.glCount);
 	}
 
 	let richMsg = new RichEmbed()
@@ -271,8 +271,8 @@ exports.checkLegendReq = function(player, message) {
 		.setTimestamp(player.updated)
 		.setFooter(config.footer.message, config.footer.iconUrl);
 
-	if (picture && typeof picture === 'string' && picture.slice(0, 1)==='/') {
-		picture = 'https://swgoh.gg'+picture;
+	if (picture && typeof picture === "string" && picture.slice(0, 1)==="/") {
+		picture = "https://swgoh.gg"+picture;
 	}
 
 	if (picture) {
@@ -281,7 +281,7 @@ exports.checkLegendReq = function(player, message) {
 
 	message.channel.send(richMsg).catch(function(ex) {
 		console.warn(ex);
-		message.reply(ex.message+' (please allow link integration)');
+		message.reply(ex.message+" (please allow link integration)");
 		message.channel.send(lines);
 	});
 };
@@ -325,7 +325,7 @@ exports.checkPlayerMods = function(player, message) {
 			if (!unit.mods) unit.mods = [];
 			tpmmc += maxModsCount - unit.mods.length;
 			if (i<maxLines) {
-				let uGp = unit.gp < 1e4 ? '0' + unit.gp : unit.gp;
+				let uGp = unit.gp < 1e4 ? "0" + unit.gp : unit.gp;
 				let uid = unit.name;
 				let fullName = unitRealNames[uid] || uid;
 				let nbMissMods = maxModsCount - unit.mods.length;
@@ -346,7 +346,7 @@ exports.checkPlayerMods = function(player, message) {
 
 	message.channel.send(richMsg).catch(function(ex) {
 		console.warn(ex);
-		message.reply(ex.message+' (please allow link integration)');
+		message.reply(ex.message+" (please allow link integration)");
 		message.channel.send(lines);
 	});
 };
@@ -405,7 +405,7 @@ exports.checkUnitsGp = function(player, message, limit) {
 		.send(richMsg)
 		.catch(function(ex) {
 			console.warn(ex);
-			message.reply(ex.message+' (please allow link integration)');
+			message.reply(ex.message+" (please allow link integration)");
 			message.channel.send(lines);
 		});
 };
@@ -440,7 +440,7 @@ exports.db_close = function(exc) {
 		console.warn(logPrefix()+"DB closing exception:", exc);
 	}
 
-	if (db_pool && typeof db_pool.end==='function') db_pool.end();
+	if (db_pool && typeof db_pool.end==="function") db_pool.end();
 
 	console.log(logPrefix()+"DB connections stopped.");
 };
@@ -793,7 +793,7 @@ exports.getPlayerFromDiscordUser = function(user, message, callback) {
 
 			message.reply(richMsg).catch(function(ex) {
 				console.warn(ex);
-				message.reply(ex.message+' (please allow link integration)');
+				message.reply(ex.message+" (please allow link integration)");
 				message.reply(title);
 				message.channel.send(lines);
 			});
@@ -804,9 +804,9 @@ exports.getPlayerFromDiscordUser = function(user, message, callback) {
 				player.guild.name = player.guildName;
 			}
 			if (player.banned && player.discord_id !== message.author.id) {
-				let msg = player.game_name+' is banned from ProXima alliance!';
+				let msg = player.game_name+" is banned from ProXima alliance!";
 				console.log(logPrefix()+msg);
-				message.channel.send(':no_entry: '+msg); // wrong way icon
+				message.channel.send(":no_entry: "+msg); // wrong way icon
 			}
 			console.log(logPrefix()+"Found allycode: %d (%s)", player.allycode, player.game_name);
 			// console.log(logPrefix()+"Found player: %s", JSON.stringify(player));
@@ -982,7 +982,7 @@ exports.getUnregPlayers = function(allycode, message) {
 		}) // send msg
 		.catch(function(exc) {
 			console.error(exc);
-			message.reply(exc+' (please allow link integration)');
+			message.reply(exc+" (please allow link integration)");
 		});
 };
 
@@ -1004,7 +1004,7 @@ exports.handleBehaviour = function(guild, message, target) {
 
 	// Get author's allycode
 	exports.getPlayerFromDiscordUser(message.author, message, function(author) {
-		let sql = '';
+		let sql = "";
 
 		if (readCommands.indexOf(cmd)<0 && target.allycode!==author.allycode) {
 			// SECURITY checks:
@@ -1037,7 +1037,7 @@ exports.handleBehaviour = function(guild, message, target) {
 					console.warn(logPrefix()+
 						"Author's allycode="+author.allycode+" / target's allycode="+target.allycode);
 					console.warn(logPrefix()+
-						"Author found="+(authorFound? 'Y': 'N')+" / target found="+(targetFound? 'Y': 'N'));
+						"Author found="+(authorFound? "Y": "N")+" / target found="+(targetFound? "Y": "N"));
 					let msg = "You are NOT part of the same guild!";
 					console.warn(msg);
 					message.reply(msg);
@@ -1046,11 +1046,11 @@ exports.handleBehaviour = function(guild, message, target) {
 			}
 		}
 
-		if (cmd==='add') {
+		if (cmd==="add") {
 			sql = "UPDATE `users` SET `warnLevel`=`warnLevel`+? WHERE `allycode`=?";
-		} else if (['rem', 'remove'].indexOf(cmd)>=0) {
+		} else if (["rem", "remove"].indexOf(cmd)>=0) {
 			sql = "UPDATE `users` SET `warnLevel`=`warnLevel`-? WHERE `allycode`=?";
-		} else if (cmd==='set') {
+		} else if (cmd==="set") {
 			sql = "UPDATE `users` SET `warnLevel`=? WHERE `allycode`=?";
 		}
 
@@ -1075,16 +1075,16 @@ exports.handleBehaviour = function(guild, message, target) {
 					return;
 				}
 
-				msg = target.game_name+' successfully updated.';
+				msg = target.game_name+" successfully updated.";
 				console.log(logPrefix()+msg);
-				message.reply(':white_check_mark: '+msg);
+				message.reply(":white_check_mark: "+msg);
 				return;
 			});
 			return;
 		}
 
-		if (cmd==='reset') {
-			console.log(logPrefix()+args.length+" unparsed arg(s):", args.join(' '));
+		if (cmd==="reset") {
+			console.log(logPrefix()+args.length+" unparsed arg(s):", args.join(" "));
 
 			sql = "UPDATE `users` SET `warnLevel`=0 WHERE `guildRefId`=?";
 			db_pool.query(sql, [guild.refId], function(exc, result) {
@@ -1102,7 +1102,7 @@ exports.handleBehaviour = function(guild, message, target) {
 				}
 
 				let n = result.affectedRows;
-				let s = n===1? '': 's';
+				let s = n===1? "": "s";
 				let msg = n+" updated player"+s;
 				let title = "Behaviour reset";
 
@@ -1113,21 +1113,21 @@ exports.handleBehaviour = function(guild, message, target) {
 					.setFooter(config.footer.message, config.footer.iconUrl);
 				message.channel.send(richMsg).catch(function(ex) {
 					console.warn(ex);
-					message.reply(ex.message+' (please allow link integration)');
+					message.reply(ex.message+" (please allow link integration)");
 					message.channel.send(lines);
 				});
 			});
 			return;
 		}
 
-		let title = '';
+		let title = "";
 
-		if (cmd!=='worst') {
+		if (cmd!=="worst") {
 			limit = 50;
 			title = target.game_name+"'s behavior rank in: "+guild.name;
 		}
 		sql = "SELECT * FROM `users` WHERE guildRefId=?";
-		if (cmd==='worst') sql+= " AND warnLevel>0";
+		if (cmd==="worst") sql+= " AND warnLevel>0";
 		sql+= " ORDER BY warnLevel DESC, game_name ASC LIMIT ?";
 		db_pool.query(sql, [guild.refId, limit], function(exc, result) {
 			let logPrefix = exports.logPrefix; // shortcut
@@ -1148,21 +1148,21 @@ exports.handleBehaviour = function(guild, message, target) {
 
 			console.log(logPrefix()+"%d matches found", result.length);
 			if (!result.length) {
-				lines = [':white_check_mark: No behaviour problem registered.'];
+				lines = [":white_check_mark: No behaviour problem registered."];
 			} else {
 				result.forEach(player => {
 					let playerIcon = behaveIcons[player.warnLevel];
 					let addon = player.warnLevel? "**": "";
 
 					// if (player.warnLevel!==lastScore) ++rank;
-					if (cmd==='worst' || player.allycode===target.allycode)
+					if (cmd==="worst" || player.allycode===target.allycode)
 						lines.push(playerIcon+" "+addon+player.game_name+addon);
 					// lastScore = player.warnLevel;
 				});
 				n = Math.min(limit, lines.length);
 			}
 
-			let s = n===1? '': 's';
+			let s = n===1? "": "s";
 			let as = n===1? "'s": "s'";
 			title = n+" player"+as+" behaviour"+s+" in: "+guild.name;
 			console.log(logPrefix()+"%d line%s displayed", lines.length, s);
@@ -1171,7 +1171,7 @@ exports.handleBehaviour = function(guild, message, target) {
 				.setFooter(config.footer.message, config.footer.iconUrl);
 			message.channel.send(richMsg).catch(function(ex) {
 				console.warn(ex);
-				message.reply(ex.message+' (please allow link integration)');
+				message.reply(ex.message+" (please allow link integration)");
 				message.channel.send(lines);
 			});
 		});
@@ -1196,7 +1196,7 @@ exports.handleContest = function(guild, message, target) {
 
 	// Get author's allycode
 	exports.getPlayerFromDiscordUser(message.author, message, function(author) {
-		let sql = '';
+		let sql = "";
 
 		if (readCommands.indexOf(cmd)<0 && target.allycode!==author.allycode) {
 			// SECURITY checks:
@@ -1225,7 +1225,7 @@ exports.handleContest = function(guild, message, target) {
 					console.warn(logPrefix()+
 						"Author's allycode="+author.allycode+" / target's allycode="+target.allycode);
 					console.warn(logPrefix()+
-						"Author found="+(authorFound? 'Y': 'N')+" / target found="+(targetFound? 'Y': 'N'));
+						"Author found="+(authorFound? "Y": "N")+" / target found="+(targetFound? "Y": "N"));
 					let msg = "You are NOT part of the same guild!";
 					console.warn(msg);
 					message.reply(msg);
@@ -1234,11 +1234,11 @@ exports.handleContest = function(guild, message, target) {
 			}
 		}
 
-		if (cmd==='add') {
+		if (cmd==="add") {
 			sql = "UPDATE `users` SET `contestPoints`=`contestPoints`+? WHERE `allycode`=?";
-		} else if (['rem', 'remove'].indexOf(cmd)>=0) {
+		} else if (["rem", "remove"].indexOf(cmd)>=0) {
 			sql = "UPDATE `users` SET `contestPoints`=`contestPoints`-? WHERE `allycode`=?";
-		} else if (cmd==='set') {
+		} else if (cmd==="set") {
 			sql = "UPDATE `users` SET `contestPoints`=? WHERE `allycode`=?";
 		}
 
@@ -1259,16 +1259,16 @@ exports.handleContest = function(guild, message, target) {
 					return;
 				}
 
-				let msg = target.game_name+' successfully updated.';
+				let msg = target.game_name+" successfully updated.";
 				console.log(logPrefix()+msg);
-				message.reply(':white_check_mark: '+msg);
+				message.reply(":white_check_mark: "+msg);
 				return;
 			});
 			return;
 		}
 
-		if (cmd==='reset') {
-			console.log(logPrefix()+args.length+" unparsed arg(s):", args.join(' '));
+		if (cmd==="reset") {
+			console.log(logPrefix()+args.length+" unparsed arg(s):", args.join(" "));
 
 			sql = "UPDATE `users` SET `contestPoints`=0 WHERE `guildRefId`=?";
 			db_pool.query(sql, [guild.refId], function(exc, result) {
@@ -1286,7 +1286,7 @@ exports.handleContest = function(guild, message, target) {
 				}
 
 				let n = result.affectedRows;
-				let s = n===1? '': 's';
+				let s = n===1? "": "s";
 				let msg = n+" updated player"+s;
 				let title = "Contest reset";
 
@@ -1297,7 +1297,7 @@ exports.handleContest = function(guild, message, target) {
 					.setFooter(config.footer.message, config.footer.iconUrl);
 				message.channel.send(richMsg).catch(function(ex) {
 					console.warn(ex);
-					message.reply(ex.message+' (please allow link integration)');
+					message.reply(ex.message+" (please allow link integration)");
 					message.channel.send(lines);
 				});
 			});
@@ -1306,7 +1306,7 @@ exports.handleContest = function(guild, message, target) {
 
 		let title = "Top "+limit+" of contest for: "+guild.name;
 
-		if (cmd!=='top') {
+		if (cmd!=="top") {
 			limit = 50;
 			title = target.game_name+"'s contest rank in: "+guild.name;
 		}
@@ -1329,12 +1329,12 @@ exports.handleContest = function(guild, message, target) {
 			console.log(logPrefix()+"%d matches found", result.length);
 			result.forEach(function(player) {
 				if (player.contestPoints!==lastScore) ++rank;
-				if (cmd==='top' || player.allycode===target.allycode)
+				if (cmd==="top" || player.allycode===target.allycode)
 					lines.push("**"+rank+"/** "+player.contestPoints+" pts for: **"+player.game_name+"**");
 				lastScore = player.contestPoints;
 			});
 
-			let s = lines.length===1? '': 's';
+			let s = lines.length===1? "": "s";
 			console.log(logPrefix()+"%d line%s to display", lines.length, s);
 			if (!lines.length) {
 				lines = ["Every member of this guild has a contest score at zero."];
@@ -1344,7 +1344,7 @@ exports.handleContest = function(guild, message, target) {
 				.setFooter(config.footer.message, config.footer.iconUrl);
 			message.channel.send(richMsg).catch(function(ex) {
 				console.warn(ex);
-				message.reply(ex.message+' (please allow link integration)');
+				message.reply(ex.message+" (please allow link integration)");
 				message.channel.send(lines);
 			});
 		});
@@ -1357,7 +1357,7 @@ exports.logPrefix = function () {
 
 	return dt.toString()
 		.replace(/ GMT.*$$/, "") // remove timezone
-		.replace(/.* /, '') // remove date (keep time only)
+		.replace(/.* /, "") // remove date (keep time only)
 		+" - ";
 };
 
@@ -1397,7 +1397,7 @@ exports.updateOldestGuildOr = function(callback) {
 
 		console.log(logPrefix()+msg, guilds.length, deltaInHours, delayInMs);
 		if ( ! guilds.length ) {
-			if (typeof(callback)==='function' ) {
+			if (typeof(callback)==="function" ) {
 				return callback();
 			} else {
 				return;
@@ -1426,7 +1426,7 @@ exports.updateOldestGuildOr = function(callback) {
 			// Remember stats of the guild:
 			exports.rememberGuildStats(guild, message);
 
-			console.log(logPrefix()+'\\ End UOG process about '+guild.name);
+			console.log(logPrefix()+"\\ End UOG process about "+guild.name);
 		});
 	});
 };
@@ -1645,7 +1645,7 @@ exports.removeAllycode = function(allycode) {
  * @return {number}
  */
 exports.stringsCompare = function(a, b) {
-	return a.localeCompare(b, undefined, {sensitivity: 'base'});
+	return a.localeCompare(b, undefined, {sensitivity: "base"});
 };
 
 /** Get guild territory war results from the database to an attached file
@@ -1654,8 +1654,8 @@ exports.stringsCompare = function(a, b) {
  */
 exports.territoryWarGet = function(player, message) {
 	const now = new Date();
-	const filename = now.toISOString().slice(0, 10) + '_' +
-		now.toISOString().slice(11, 16).replace(':', '') + "_tw.csv";
+	const filename = now.toISOString().slice(0, 10) + "_" +
+		now.toISOString().slice(11, 16).replace(":", "") + "_tw.csv";
 	const logPrefix = exports.logPrefix; // shortcut
 	const sep = ";";
 	const sql = "SELECT DATE_FORMAT(created_at, '%Y-%m-%d %T') AS created_time"+
@@ -1734,7 +1734,7 @@ exports.territoryWarGet = function(player, message) {
 				return;
 			}
 
-			console.log(logPrefix()+'File saved in: %s', filename);
+			console.log(logPrefix()+"File saved in: %s", filename);
 
 			setTimeout(() => { // Auto clean up:
 				fs.unlink(filename, function (err) {
@@ -1743,10 +1743,10 @@ exports.territoryWarGet = function(player, message) {
 						return;
 					}
 
-					console.log(logPrefix()+'File '+filename+' deleted.');
+					console.log(logPrefix()+"File "+filename+" deleted.");
 				});
 			}, MINUTES_BEFORE_CLEANUP * 60000); // Converts minutes to ms
-			console.log(logPrefix()+'Will clean it up in %d minute(s)...', MINUTES_BEFORE_CLEANUP);
+			console.log(logPrefix()+"Will clean it up in %d minute(s)...", MINUTES_BEFORE_CLEANUP);
 
 			const basename = filename.replace(/^.*\//, "");
 
@@ -1835,7 +1835,7 @@ exports.territoryWarReg = function(player, message) {
 		"self_player_cnt": self_player_cnt,
 		"self_score": self_score,
 		"opp_score": opp_score,
-		"opp_name": quote(message.words.join(" "))
+		"opp_name": quote(message.words.join(" ").replace(/[\?]/, "-"))
 	};
 
 	// let color = typeof player.guild.name === "undefined"? "ORANGE": "GREEN";
@@ -1845,8 +1845,8 @@ exports.territoryWarReg = function(player, message) {
 		console.log(logPrefix()+k+": "+params[k]);
 	});
 
-	sql = sql.replace('#', Object.keys( params ).join(", "));
-	sql = sql.replace('?', Object.values(params).join(", "));
+	sql = sql.replace("#", Object.keys( params ).join(", "));
+	sql = sql.replace("?", Object.values(params).join(", "));
 	console.log(logPrefix()+"SQL: "+sql);
 
 	let values = [Object.values(params)];
@@ -1871,7 +1871,7 @@ exports.territoryWarReg = function(player, message) {
 		console.log("SQL:", sql);
 		console.log(logPrefix()+"RTW Exception:", err_msg);
 
-		message.reply('Failed: '+err_msg);
+		message.reply("Failed: "+err_msg);
 
 		return; // ========== stop here for the moment ==========
 
@@ -1960,7 +1960,7 @@ exports.toMySQLdate = function(d) {
  * @return {string} String with spaces
  */
 exports.trUnderToSpaces = function(inputStr) {
-	return inputStr.replace(/_/g, ' ')
+	return inputStr.replace(/_/g, " ")
 };
 
 /** Store a player's data in our database
@@ -2135,15 +2135,15 @@ exports.updatePlayerDataInDb = function(player, message, callback) {
 			"g13Count": player.g13Count,
 			"guildRefId": mysql.escape(player.guild.id),
 			"zetaCount": player.zetaCount,
-			"ts": 'NOW()' // = MySQL function. Was: mysql.escape(update)
+			"ts": "NOW()" // = MySQL function. Was: mysql.escape(update)
 		};
 		if (typeof player.glCount === "number") {
 			mapping["glCount"] = player.glCount;
-			console.log(logPrefix()+'GL count:', player.glCount);
+			console.log(logPrefix()+"GL count:", player.glCount);
 		}
 		if (typeof player.omicronCount === "number") {
 			mapping["omicronCount"] = player.omicronCount;
-			console.log(logPrefix()+'Omicron count:', player.omicronCount);
+			console.log(logPrefix()+"Omicron count:", player.omicronCount);
 		}
 
 		let newData = [];
@@ -2228,7 +2228,7 @@ exports.updatePlayerDataInDb = function(player, message, callback) {
 			let nbr = result.affectedRows; // shortcut for number of records
 			if (nbr && message) {
 				console.log(logPrefix()+"%d TW result updated.", nbr);
-				message.reply(nbr+' TW score updated.');
+				message.reply(nbr+" TW score updated.");
 			}
 		});
 	});
