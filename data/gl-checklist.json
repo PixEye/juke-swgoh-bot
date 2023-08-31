@@ -310,7 +310,8 @@
 				{"gearLevel": 13, "relicTier": 7, "baseId": "COMMANDERLUKESKYWALKER"},
 				{"gearLevel": 13, "relicTier": 5, "baseId": "BOUSHH"},
 				{"gearLevel": 13, "relicTier": 7, "baseId": "C3POCHEWBACCA"},
-				{"gearLevel": 13, "relicTier": 3, "baseId": "LOBOT"}
+				{"gearLevel": 13, "relicTier": 3, "baseId": "LOBOT"},
+				{"gearLevel": 13, "relicTier": 7, "baseId": "CAPTAINDROGAN"}
 			]
 		}
 	]
