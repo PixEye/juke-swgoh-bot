@@ -1835,7 +1835,7 @@ exports.territoryWarReg = function(player, message) {
 		"self_player_cnt": self_player_cnt,
 		"self_score": self_score,
 		"opp_score": opp_score,
-		"opp_name": quote(message.words.join(" ").replace(/[\?]/, "-"))
+		"opp_name": quote(message.words.join(" ").replace("?", "-"))
 	};
 
 	// let color = typeof player.guild.name === "undefined"? "ORANGE": "GREEN";
