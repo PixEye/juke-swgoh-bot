@@ -910,7 +910,7 @@ exports.showUnitInfo = function(player, message, unitName, ct) {
 	// Start with stars:
 	let key = 'stars';
 	let val = foundUnit[key];
-	key+= " ("+val+")";
+	// key+= " ("+val+")";
 	val = ":star:".repeat(val) + ":low_brightness:".repeat(7-val);
 	val = "**"+locutus.ucfirst(key)+":** "+val;
 	lines.push(val);
