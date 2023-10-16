@@ -1,6 +1,6 @@
 #! env bash
 
-datetime=`date +'%Y-%m-%d-%H%i'`
+datetime=`date +'%Y-%m-%d-%H%M'`
 
 mkdir -p ../data/Private
 
