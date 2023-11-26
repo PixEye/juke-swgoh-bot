@@ -108,6 +108,8 @@ exports.checkLegendReq = function(player, message) {
 
 		unit.baseId = unit.baseId.toUpperCase();
 		switch(unit.baseId) {
+			case "CAL"+"KESTIS"+"SURVIVOR":
+				unit.baseId = "JEDI"+"KNIGHT"+"CAL"; break;
 			case "GK":
 				unit.baseId = "JEDI"+"MASTER"+"KENOBI"; break;
 			case "EXECUTOR":
