@@ -74,6 +74,7 @@ exports.checkLegendReq = function(player, message) {
 	let found = false;
 	let lines = [];
 	let logPrefix = exports.logPrefix; // shortcut
+	let maxGlCount = 0;
 	let msg = "";
 	let picture = "";
 	let progressObjects = [];
@@ -141,6 +142,7 @@ exports.checkLegendReq = function(player, message) {
 		let indicator = locked? ":green_circle:": ":white_check_mark:";
 
 		unit.name = unitRealNames[unit.baseId] || unit.name;
+		if (unit.isGL) ++ maxGlCount;
 		if (!locked) {
 			progresses.push(1);
 			if (unit.isGL) ++ player.glCount;
@@ -259,7 +261,7 @@ exports.checkLegendReq = function(player, message) {
 			return progressByTopUnit[k2] - progressByTopUnit[k1];
 		});
 		lines.push("");
-		lines.push("GL count: "+player.glCount);
+		lines.push("GL count: "+player.glCount+"/"+maxGlCount);
 	}
 
 	let richMsg = new RichEmbed()
