@@ -143,15 +143,7 @@ exports.checkLegendReq = function(player, message) {
 		unit.name = unitRealNames[unit.baseId] || unit.name;
 		if (!locked) {
 			progresses.push(1);
-			if (unit.baseId !== "GRAND"+"INQUISITOR"
-			 && unit.baseId !== "JEDI"+"KNIGHT"+"LUKE"
-			 && unit.baseId !== "STAR"+"KILLER"
-			 && unit.baseId !== "THIRD"+"SISTER"
-			 && unit.name !== "Cal Kestis"
-			 && unit.name !== "Executor"
-			 && unit.name !== "Profundity"
-			 && unit.name !== "Leviathan") // Not GL exceptions
-				++ player.glCount;
+			if (unit.isGL) ++ player.glCount;
 		} else {
 			if (found) return;
 

@@ -3,6 +3,7 @@
 	"units": [
 		{
 			"image": "https://game-assets.swgoh.gg/tex.jg_charui_galacticlegend_kylo.png",
+			"isGL": true,
 			"requiredUnits": [
 				{"stars": 5, "baseId": "CAPITALFINALIZER"},
 				{"gearLevel": 13, "relicTier": 7, "baseId": "KYLORENUNMASKED"},
@@ -23,6 +24,7 @@
 		},
 		{
 			"image": "https://game-assets.swgoh.gg/tex.jg_charui_whiteroberey.png",
+			"isGL": true,
 			"requiredUnits": [
 				{"stars": 5, "baseId": "CAPITALRADDUS"},
 				{"gearLevel": 13, "relicTier": 7, "baseId": "REYJEDITRAINING"},
@@ -43,6 +45,7 @@
 		},
 		{
 			"image": "https://game-assets.swgoh.gg/tex.jg_charui_jediknightluke.png",
+			"isGL": false,
 			"requiredUnits": [
 				{"stars": 7, "baseId": "MILLENNIUMFALCON"},
 				{"stars": 7, "baseId": "XWINGRED2"},
@@ -61,6 +64,7 @@
 		},
 		{
 			"image": "https://game-assets.swgoh.gg/tex.jg_charui_luke_grandmaster.png",
+			"isGL": true,
 			"requiredUnits": [
 				{"stars": 6, "baseId": "YWINGREBEL"},
 				{"gearLevel": 13, "relicTier": 5, "baseId": "MONMOTHMA"},
@@ -83,6 +87,7 @@
 		},
 		{
 			"image": "https://game-assets.swgoh.gg/tex.jg_charui_espalpatine.png",
+			"isGL": true,
 			"requiredUnits": [
 				{"stars": 6, "baseId": "TIEBOMBERIMPERIAL"},
 				{"gearLevel": 13, "relicTier": 5, "baseId": "ADMIRALPIETT"},
@@ -105,6 +110,7 @@
 		},
 		{
 			"image": "https://game-assets.swgoh.gg/tex.jg_charui_globiwan.png",
+			"isGL": true,
 			"requiredUnits": [
 				{"gearLevel": 13, "relicTier": 3, "baseId": "AAYLASECURA"},
 				{"gearLevel": 13, "relicTier": 8, "baseId": "GENERALKENOBI"},
@@ -127,6 +133,7 @@
 		},
 		{
 			"image": "https://game-assets.swgoh.gg/tex.jg_charui_anakin_fallen.png",
+			"isGL": true,
 			"requiredUnits": [
 				{"gearLevel": 13, "relicTier": 5, "baseId": "BADBATCHHUNTER"},
 				{"gearLevel": 13, "relicTier": 5, "baseId": "BADBATCHWRECKER"},
@@ -149,6 +156,7 @@
 		},
 		{
 			"image": "https://game-assets.swgoh.gg/tex.charui_starkiller.png",
+			"isGL": false,
 			"requiredUnits": [
 				{"gearLevel": 13, "relicTier": 5, "baseId": "DASHRENDAR"},
 				{"gearLevel": 13, "relicTier": 5, "baseId": "KYLEKATARN"},
@@ -162,6 +170,7 @@
 			"baseId": "TBD_GI",
 			"unitName": "Grand Inquisitor",
 			"image": "https://game-assets.swgoh.gg/tex.jg_charui_grandinquisitor.png",
+			"isGL": false,
 			"requiredUnits": [
 				{"gearLevel": 13, "relicTier": 5, "baseId": "SECONDSISTER"},
 				{"gearLevel": 13, "relicTier": 5, "baseId": "NINTHSISTER"},
@@ -174,6 +183,7 @@
 			"baseId": "TBD_JABBA",
 			"unitName": "Jabba the Hutt",
 			"image": "https://game-assets.swgoh.gg/temp.jabba_the_hut.jpg",
+			"isGL": true,
 			"requiredUnits": [
 				{"gearLevel": 13, "relicTier": 5, "baseId": "KRRSANTAN"},
 				{"gearLevel": 13, "relicTier": 8, "baseId": "HANSOLO"},
@@ -196,6 +206,7 @@
 			"baseId": "TBD_EXECUTOR",
 			"unitName": "Executor",
 			"image": "https://game-assets.swgoh.gg/tex.jg_shipui_executor.png",
+			"isGL": false,
 			"requiredUnits": [
 				{"stars": 7, "baseId": "RAZORCREST"},
 				{"stars": 7, "baseId": "SLAVE1"},
@@ -217,6 +228,7 @@
 			"baseId": "TBD_PROFUNDITY",
 			"unitName": "Profundity",
 			"image": "https://game-assets.swgoh.gg/tex.jg_shipui_profundity.png",
+			"isGL": false,
 			"requiredUnits": [
 				{"stars": 7, "baseId": "OUTRIDER"},
 				{"stars": 7, "baseId": "UWINGROGUEONE"},
@@ -238,6 +250,7 @@
 			"baseId": "DOCTORAPHRA",
 			"unitName": "Doctor Aphra",
 			"image": "https://game-assets.swgoh.gg/tex.charui_doctoraphra.png",
+			"isGL": false,
 			"requiredUnits": [
 				{"gearLevel": 13, "relicTier": 5, "baseId": "HONDO"},
 				{"gearLevel": 13, "relicTier": 5, "baseId": "BT1"},
@@ -249,6 +262,7 @@
 			"baseId": "TBD_CALKESTISSURVIVOR",
 			"unitName": "Cal Kestis",
 			"image": "https://game-assets.swgoh.gg/tex.jg_charui_calkestissurvivor_preview.png",
+			"isGL": false,
 			"requiredUnits": [
 				{"gearLevel": 12, "relicTier": 0, "baseId": "CALKESTIS"},
 				{"gearLevel": 12, "relicTier": 0, "baseId": "CEREJUNDA"},
@@ -261,6 +275,7 @@
 			"baseId": "TBD_REVA",
 			"unitName": "Reva",
 			"image": "https://game-assets.swgoh.gg/tex.charui_thirdsister.png",
+			"isGL": false,
 			"requiredUnits": [
 				{"gearLevel": 13, "relicTier": 7, "baseId": "GRANDINQUISITOR"},
 				{"gearLevel": 13, "relicTier": 7, "baseId": "NINTHSISTER"},
@@ -273,6 +288,7 @@
 			"baseId": "TBD_LEVIATHAN",
 			"unitName": "Leviathan",
 			"image": "https://game-assets.swgoh.gg/tex.jg_shipui_leviathan.png",
+			"isGL": false,
 			"requiredUnits": [
 				{"gearLevel": 13, "relicTier": 9, "baseId": "DARTHREVAN"},
 				{"gearLevel": 13, "relicTier": 9, "baseId": "DARTHMALAK"},
@@ -296,6 +312,7 @@
 			"baseId": "TBD_GLLEIAORGANA",
 			"unitName": "Leia Organa",
 			"image": "https://game-assets.swgoh.gg/tex.jg_charui_leiagl_preview.png",
+			"isGL": true,
 			"requiredUnits": [
 				{"gearLevel": 13, "relicTier": 7, "baseId": "CAPTAINREX"},
 				{"gearLevel": 13, "relicTier": 7, "baseId": "PRINCESSKNEESAA"},
