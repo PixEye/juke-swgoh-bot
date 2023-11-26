@@ -143,6 +143,7 @@ exports.checkLegendReq = function(player, message) {
 			 && unit.baseId !== "JEDI"+"KNIGHT"+"LUKE"
 			 && unit.baseId !== "STAR"+"KILLER"
 			 && unit.baseId !== "THIRD"+"SISTER"
+			 && unit.name !== "Cal Kestis"
 			 && unit.name !== "Executor"
 			 && unit.name !== "Profundity"
 			 && unit.name !== "Leviathan") // Not GL exceptions
