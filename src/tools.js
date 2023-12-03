@@ -31,8 +31,8 @@ let config = require("./config.json");
 const unitRealNames  = require("../data/unit-names");
 const unitAliasNames = require("../data/unit-aliases");
 
-// Define cumulated shards required for star 0,1,2,3,4,5,6,7
-// Use to the progress compuation, to distinct invest between each stars
+// Define cumulated shards required for each star (from 0 to 7)
+// Use to the progress computation, to distinct invest between each star
 const starTotalsShards = [0, 10, 25, 50, 80, 145, 230, 330]
 
 // Define cumulated evaluation to represent difficulty to upgrade a gear.
@@ -207,7 +207,7 @@ exports.checkLegendReq = function(player, message) {
 
 				progress = (starTotalsShards[playerUnit.stars] / starTotalsShards[7]) * starPonderation;
 				progress += (gearDifficultyEvaluation[parseInt(playerUnit.gear)] / gearDifficultyEvaluation[parseInt(req.gearLevel)]) * gearPonderation;
-				// Actuallz all characted required for a GL need relics, but in case of we can control if req.relictier is greater than 0. 
+				// Actuallz all characted required for a GL need relics, but in case of we can control if req.relictier is greater than 0.
 				// Ponderation will already consider all progress to gear, but we will avoid to divide by zero.
 				if (req.relicTier > 0) {
 					progress += (relicDifficultyEvaluation[playerUnit.relic] / relicDifficultyEvaluation[req.relicTier]) * relicPonderation;
