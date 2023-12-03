@@ -31,6 +31,18 @@ let config = require("./config.json");
 const unitRealNames  = require("../data/unit-names");
 const unitAliasNames = require("../data/unit-aliases");
 
+// Define cumulated shards required for star 0,1,2,3,4,5,6,7
+// Use to the progress compuation, to distinct invest between each stars
+const starTotalsShards = [0, 10, 25, 50, 80, 145, 230, 330]
+
+// Define cumulated evaluation to represent difficulty to upgrade a gear.
+// We get the Gear level power 2.
+const gearDifficultyEvaluation = [0, 1, 4, 9, 16, 25, 36, 49, 64, 81, 100, 121, 144, 169]
+
+// Define cumulated evaluation to represent difficulty to upgrade a relic.
+// We get the Relic level power 2.
+const relicDifficultyEvaluation = [0, 1, 4, 9, 16, 25, 36, 49, 64, 81]
+
 // Prepare DB connection pool:
 const db_pool = mysql.createPool({
 	connectionLimit: config.db.conMaxCount,
@@ -188,7 +200,18 @@ exports.checkLegendReq = function(player, message) {
 				levels = "G"+playerUnit.gear+"/"+req.gearLevel+"; R"+playerUnit.relic+"/"+req.relicTier;
 				msg = "`"+levels+"`: "+unitName;
 
-				progress = playerUnit.stars / 10;
+				// Distribute ponderation > Star is fixed to 30%, for a 9 relic it-s 15%, under R9 we take his ratio.
+				const starPonderation = 0.25
+				const relicPonderation = 0.20 * req.relicTier / 9
+				const gearPonderation = 1 - starPonderation - relicPonderation
+
+				progress = (starTotalsShards[playerUnit.stars] / starTotalsShards[7]) * starPonderation;
+				progress += (gearDifficultyEvaluation[parseInt(playerUnit.gear)] / gearDifficultyEvaluation[parseInt(req.gearLevel)]) * gearPonderation;
+				// Actuallz all characted required for a GL need relics, but in case of we can control if req.relictier is greater than 0. 
+				// Ponderation will already consider all progress to gear, but we will avoid to divide by zero.
+				if (req.relicTier > 0) {
+					progress += (relicDifficultyEvaluation[playerUnit.relic] / relicDifficultyEvaluation[req.relicTier]) * relicPonderation;
+				}
 				if (playerUnit.stars < 7) {
 					progresses.push(progress);
 					msg = "🔺 "+msg+" is only "+playerUnit.stars+"⭐. "+(progress*100).toFixed()+"%";
@@ -196,7 +219,6 @@ exports.checkLegendReq = function(player, message) {
 					return;
 				}
 
-				progress = playerUnit.gear / (req.gearLevel + req.relicTier);
 				if (playerUnit.gear < req.gearLevel) {
 					progresses.push(progress);
 					msg = "😕 "+msg+" in progress. "+(progress*100).toFixed()+"%";
@@ -204,7 +226,6 @@ exports.checkLegendReq = function(player, message) {
 					return;
 				}
 
-				progress = .9 + .1*(playerUnit.relic/req.relicTier);
 				if (playerUnit.relic < req.relicTier) {
 					progresses.push(progress);
 					msg = "👉 "+msg+" in progress. "+(progress*100).toFixed()+"%";
