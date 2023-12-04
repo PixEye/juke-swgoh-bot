@@ -200,17 +200,17 @@ exports.checkLegendReq = function(player, message) {
 				levels = "G"+playerUnit.gear+"/"+req.gearLevel+"; R"+playerUnit.relic+"/"+req.relicTier;
 				msg = "`"+levels+"`: "+unitName;
 
-				// Distribute ponderation > Star is fixed to 30%, for a 9 relic it-s 15%, under R9 we take his ratio.
-				const starPonderation = 0.25
-				const relicPonderation = 0.20 * req.relicTier / 9
-				const gearPonderation = 1 - starPonderation - relicPonderation
+				// Distribute weight > Star is fixed to 30%, for a 9 relic it-s 15%, under R9 we take his ratio.
+				const starWeight = 0.25
+				const relicWeight = 0.20 * req.relicTier / 9
+				const gearWeight = 1 - starWeight - relicWeight
 
-				progress = (starTotalsShards[playerUnit.stars] / starTotalsShards[7]) * starPonderation;
-				progress += (gearDifficultyEvaluation[parseInt(playerUnit.gear)] / gearDifficultyEvaluation[parseInt(req.gearLevel)]) * gearPonderation;
-				// Actuallz all characted required for a GL need relics, but in case of we can control if req.relictier is greater than 0.
-				// Ponderation will already consider all progress to gear, but we will avoid to divide by zero.
+				progress = (starTotalsShards[playerUnit.stars] / starTotalsShards[7]) * starWeight;
+				progress += (gearDifficultyEvaluation[parseInt(playerUnit.gear)] / gearDifficultyEvaluation[parseInt(req.gearLevel)]) * gearWeight;
+				// Update all character required for a GL need relics, but in case of we can control if req.relicTier is greater than 0.
+				// Weight will already consider all progress to gear, but we will avoid to divide by zero.
 				if (req.relicTier > 0) {
-					progress += (relicDifficultyEvaluation[playerUnit.relic] / relicDifficultyEvaluation[req.relicTier]) * relicPonderation;
+					progress += (relicDifficultyEvaluation[playerUnit.relic] / relicDifficultyEvaluation[req.relicTier]) * relicWeight;
 				}
 				if (playerUnit.stars < 7) {
 					progresses.push(progress);
