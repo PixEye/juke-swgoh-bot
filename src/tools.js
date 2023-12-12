@@ -122,23 +122,32 @@ exports.checkLegendReq = function(player, message) {
 		unit.baseId = unit.baseId.toUpperCase();
 		switch(unit.baseId) {
 			case "CAL"+"KESTIS"+"SURVIVOR":
-				unit.baseId = "JEDI"+"KNIGHT"+"CAL"; break;
+				unit.baseId = "JEDI"+"KNIGHT"+"CAL";
+				break;
 			case "GK":
-				unit.baseId = "JEDI"+"MASTER"+"KENOBI"; break;
+				unit.baseId = "JEDI"+"MASTER"+"KENOBI";
+				break;
 			case "EXECUTOR":
-				unit.baseId = "CAPITAL"+"EXECUTOR"; break;
+				unit.baseId = "CAPITAL"+"EXECUTOR";
+				break;
 			case "GL"+"LEIA"+"ORGANA":
-				unit.baseId = "GL"+"LEIA"; break;
+				unit.baseId = "GL"+"LEIA";
+				break;
 			case "JABBA":
-				unit.baseId = "JABBA"+"THE"+"HUTT"; break;
+				unit.baseId = "JABBA"+"THE"+"HUTT";
+				break;
 			case "LEVIATHAN":
-				unit.baseId = "CAPITAL"+"LEVIATHAN"; break;
+				unit.baseId = "CAPITAL"+"LEVIATHAN";
+				break;
 			case "LV":
-				unit.baseId = "LORD"+"VADER"; break;
+				unit.baseId = "LORD"+"VADER";
+				break;
 			case "PROFUNDITY":
-				unit.baseId = "CAPITAL"+"PROFUNDITY"; break;
+				unit.baseId = "CAPITAL"+"PROFUNDITY";
+				break;
 			case "REY":
-				unit.baseId = "GL"+"REY"; break;
+				unit.baseId = "GL"+"REY";
+				break;
 		}
 		if (unitAliasNames[unit.baseId]) unit.baseId = unitAliasNames[unit.baseId];
 
@@ -1587,10 +1596,10 @@ exports.rememberGuildStats = function(g, message) {
 
 			// Retry with an UPDATE:
 			sql = "UPDATE `guilds`"+
-				" SET swgoh_id=?, gp=?, memberCount=?, officerCount=?, gm_allycode=?, ts=? WHERE name=? OR swgoh_id=?";
+				" SET swgoh_id=?, gp=?, memberCount=?, name=?, officerCount=?, gm_allycode=?, ts=? WHERE name=? OR swgoh_id=?";
 			//	" SET name=?, gp=?, memberCount=?, officerCount=?, gm_allycode=?, ts=? WHERE swgoh_id=?";
 			// values = [g.name, g.gp, g.memberCount, g.officerCount, g.leader.allyCode, update, g.id];
-			values = [g.id, g.gp, g.memberCount, g.officerCount, g.leader.allyCode, update, g.name, g.id];
+			values = [g.id, g.gp, g.memberCount, g.name, g.officerCount, g.leader.allyCode, update, g.name, g.id];
 
 			db_pool.query(sql, values, function(exc, result) {
 				if (exc) {
