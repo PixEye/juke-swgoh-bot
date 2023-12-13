@@ -28,7 +28,8 @@ const tools   = require("./tools");  // Several functions
 let config = require("./config.json");
 // let tplCfg = require("./config-template.json");
 
-const unitRealNames  = require("../data/unit-names");
+const omicronAbilities = require("../data/omicron-abilities");
+const unitRealNames   = require("../data/unit-names");
 const unitAliasNames = require("../data/unit-aliases");
 
 /** List guild members
@@ -179,27 +180,26 @@ exports.listOmicrons = function(player, message) {
 	let color = "GREEN";
 	let lines = [];
 	let logPrefix = tools.logPrefix; // shortcut
-	let omicronByMode = [];
+	let omicronByMode = {};
 	let omicronCount = 0;
 	let omicronModes = [
-		"no where",      // 00: "NONE"
-		"all modes",     // 01: "ALL_OMICRON"
-		"PvE.",          // 02: "PVE_OMICRON"
-		"PvP.",          // 03: "PVP_OMICRON"
-		"Guild raids",   // 04: "GUILD_RAID_OMICRON"
-		"T. Strike",     // 05: "TERRITORY_STRIKE_OMICRON"
-		"T. Covert",     // 06: "TERRITORY_COVERT_OMICRON"
-		"T.B.",          // 07: "TERRITORY_BATTLE_BOTH_OMICRON"
-		"T.W.",          // 08: "TERRITORY_WAR_OMICRON"
-		"GACs",          // 09: "TERRITORY_TOURNAMENT_OMICRON"
-		"war.",          // 10: "WAR_OMICRON"
-		"conquest",      // 11: "CONQUEST_OMICRON"
-		"G.C.",          // 12: "GALACTIC_CHALLENGE_OMICRON"
-		"PvE event",     // 13: "PVE_EVENT_OMICRON"
-		"GAC3",          // 14: "TERRITORY_TOURNAMENT_3_OMICRON"
-		"GAC5"           // 15: "TERRITORY_TOURNAMENT_5_OMICRON"
-	];
-	// */
+		"NONE",   // 00: "NONE"
+		"ALL.",   // 01: "ALL_OMICRON"
+		"PvE.",   // 02: "PVE_OMICRON"
+		"PvP.",   // 03: "PVP_OMICRON"
+		"Raid",   // 04: "GUILD_RAID_OMICRON"
+		"Strike", // 05: "TERRITORY_STRIKE_OMICRON"
+		"Covert", // 06: "TERRITORY_COVERT_OMICRON"
+		"T.B.",   // 07: "TERRITORY_BATTLE_BOTH_OMICRON"
+		"T.W.",   // 08: "TERRITORY_WAR_OMICRON"
+		"GACs",   // 09: "TERRITORY_TOURNAMENT_OMICRON"
+		"Wars",   // 10: "WAR_OMICRON"
+		"Conq",   // 11: "CONQUEST_OMICRON"
+		"G.C.",   // 12: "GALACTIC_CHALLENGE_OMICRON"
+		"PvEv",   // 13: "PVE_EVENT_OMICRON"
+		"GAC3",   // 14: "TERRITORY_TOURNAMENT_3_OMICRON"
+		"GAC5"    // 15: "TERRITORY_TOURNAMENT_5_OMICRON"
+	]; // */
 
 	console.log(logPrefix()+"listOmicrons() just called");
 	if (!player.omicronSkills) {
@@ -208,21 +208,33 @@ exports.listOmicrons = function(player, message) {
 		console.warn(logPrefix()+lines[0]);
 	} else {
 		Object.keys(player.omicronSkills).forEach((key) => {
-			let skill = player.omicronSkills[key];
+			let skill_ids = player.omicronSkills[key];
 
-			++ omicronCount;
-			if (typeof omicronByMode[skill.omicron_mode] !== 'object') {
-				omicronByMode[skill.omicron_mode] = [skill];
-			} else {
-				omicronByMode[skill.omicron_mode].push(skill);
-			}
+			skill_ids.forEach(skill_id => {
+				let skill = omicronAbilities.find(sk => sk.base_id === skill_id);
+
+				if (!skill) {
+					console.warn("Did not find skill with ID:", skill_id);
+					return;
+				}
+
+				++ omicronCount;
+				if (typeof omicronByMode[skill.omicron_mode] !== 'object') {
+					omicronByMode[skill.omicron_mode] = [skill];
+				} else {
+					omicronByMode[skill.omicron_mode].push(skill);
+				}
+			});
 		});
+		// console.log("omicronByMode:", omicronByMode);
+		console.log("Omicron found count:", omicronCount);
 
-		/* Object.keys(omicronByMode).forEach((mode_code) => {
+		Object.keys(omicronByMode).forEach((mode_code) => {
 			const mode_name = omicronModes[mode_code];
-			const skills = omicronByMode[mode_code];
+			const skills  =  omicronByMode[mode_code];
 			let omCountByUnit = {};
 
+			console.log("Omicron mode name:", mode_name);
 			skills.forEach((skill) => {
 				let unitName = unitRealNames[skill.character_base_id];
 
@@ -241,9 +253,16 @@ exports.listOmicrons = function(player, message) {
 				unitList.push(unitName);
 			});
 
-			lines.push("`In "+mode_name+' ('+skills.length+'):` '+unitList.join(', '));
+			let countForThisMode = skills.length;
+			let percent = Math.round(100 * skills.length / omicronCount);
+
+			percent = percent<=9? '0'+percent: ''+percent;
+			countForThisMode = countForThisMode<=9? '0'+countForThisMode: ''+countForThisMode;
+
+			lines.push("`"+percent+"% in "+mode_name+' ('+countForThisMode+'):` '+unitList.join(', '));
 		}); // */
-		Object.keys(player.omicronUnits).forEach((base_id) => {
+
+		/* Object.keys(player.omicronUnits).forEach((base_id) => {
 			let omicronCnt = player.omicronUnits[base_id];
 			lines.push(unitRealNames[base_id]+': '+omicronCnt);
 		}); // */
