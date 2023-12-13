@@ -115,15 +115,15 @@ exports.fetchPlayer = async function(payload) {
 			unit.gp = unit.power;
 			delete unit.power;
 
-			unit.mods = modsByUnit[unit.base_id]; // was: unit.mod_set_ids;
+			unit.mods = modsByUnit[unit.character_base_id]; // was: unit.mod_set_ids;
 			// delete unit.mod_set_ids;
 
 			player.units.push(unit);
 
 			if (unit.omicron_abilities.length) {
 				player.omicronCount += unit.omicron_abilities.length;
-				player.omicronSkills = unit.omicron_abilities;
-				player.omicronUnits[unit.base_id] = unit.omicron_abilities.length;
+				player.omicronSkills.push(unit.omicron_abilities);
+				player.omicronUnits[unit.character_base_id] = unit.omicron_abilities.length;
 			}
 			zetaCount += unit.zeta_abilities.length;
 
@@ -132,8 +132,9 @@ exports.fetchPlayer = async function(payload) {
 				unitCountByCombatType[ct] = 1;
 			else
 				++ unitCountByCombatType[ct];
+
 			if (unit.is_galactic_legend) {
-				player.glHasUltimate[unit.base_id] = unit.has_ultimate;
+				player.glHasUltimate[unit.character_base_id] = unit.has_ultimate;
 			}
 		});
 
