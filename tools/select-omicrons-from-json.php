@@ -23,8 +23,8 @@ if (trim($fContent)==='') {
 	exit(3);
 }
 
-$data = json_decode($fContent, false); // to array of objects
-if ($data===null) {
+$abilities = json_decode($fContent, false); // to array of objects
+if ($abilities===null) {
 	fprintf(STDERR, "The file '%s' does not contain valid JSON!%s", $argv[0], $nl);
 	exit(4);
 }
@@ -42,18 +42,18 @@ function engineer_format($number, $decimals = 0) {
 	return trim(sprintf("%.{$decimals}f", $number / pow(1024, $factor)) . $unit);
 }
 
-if (!is_array($data)) {
-	fprintf(STDERR, "File '%s' does not contain an array: %s%s", $argv[1], getType($data), $nl);
+if (!is_array($abilities)) {
+	fprintf(STDERR, "File '%s' does not contain an array: %s%s", $argv[1], getType($abilities), $nl);
 	exit(5);
 }
 
 $new_data = [];
-forEach ($data as $i => $ability) {
+forEach ($abilities as $i => $ability) {
 	if ($ability->is_omicron) {
 		unset($ability->description); // save memory
 		$new_data[] = $ability;
 	}
-	unset($data[$i]); // free some memory
+	unset($abilities[$i]); // free some memory
 }
 
 $raw_json = json_encode($new_data, JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES);
