@@ -112,7 +112,7 @@ exports.fetchPlayer = async function(payload) {
 		result.units.forEach(unit => {
 			unit = unit.data;
 
-			unit.gp = unit.power;
+			unit.gp = unit.power; // power => gp
 			delete unit.power;
 
 			unit.mods = modsByUnit[unit.base_id]; // was: unit.mod_set_ids;

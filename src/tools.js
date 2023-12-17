@@ -21,15 +21,15 @@ const mysql = require("mysql");
 // Load other module(s):
 const locutus = require("./locutus"); // Functions from locutus.io
 const swgoh   = require("./swgoh");  // SWGoH API
-//nst tools   = require("./tools"); // Several functions (self file)
+//    tools   = require("./tools"); // Several functions (self file)
 const view    = require("./view"); // Functions used to display results
 
 // Get the configuration & its template from a separated JSON files:
 let config = require("./config.json");
 // let tplCfg = require("./config-template.json");
 
-const unitRealNames  = require("../data/unit-names");
-const unitAliasNames = require("../data/unit-aliases");
+const unitAliasNames  = require("../data/unit-aliases");
+const unitRealNames   = require("../data/unit-names");
 
 // Define cumulated shards required for each star (from 0 to 7)
 // Use to the progress computation, to distinct invest between each star

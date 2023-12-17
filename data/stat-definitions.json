@@ -1,0 +1,374 @@
+[
+	{
+		"stat_id": 0,
+		"name": "Self Link",
+		"detailed_name": "Max Health",
+		"value": "https://swgoh.gg/api/stat-definitions/"
+	},
+	{
+		"stat_id": 1,
+		"name": "Health",
+		"detailed_name": "Max Health",
+		"is_decimal": false
+	},
+	{
+		"stat_id": 2,
+		"name": "Strength",
+		"detailed_name": "Strength",
+		"is_decimal": false
+	},
+	{
+		"stat_id": 3,
+		"name": "Agility",
+		"detailed_name": "Agility",
+		"is_decimal": false
+	},
+	{
+		"stat_id": 4,
+		"name": "Tactics",
+		"detailed_name": "Tactics",
+		"is_decimal": false
+	},
+	{
+		"stat_id": 5,
+		"name": "Speed",
+		"detailed_name": "Speed",
+		"is_decimal": false
+	},
+	{
+		"stat_id": 6,
+		"name": "Physical Damage",
+		"detailed_name": "Physical Damage",
+		"is_decimal": false
+	},
+	{
+		"stat_id": 7,
+		"name": "Special Damage",
+		"detailed_name": "Special Damage",
+		"is_decimal": false
+	},
+	{
+		"stat_id": 8,
+		"name": "Armor",
+		"detailed_name": "Armor",
+		"is_decimal": false
+	},
+	{
+		"stat_id": 9,
+		"name": "Resistance",
+		"detailed_name": "Resistance",
+		"is_decimal": false
+	},
+	{
+		"stat_id": 10,
+		"name": "Armor Penetration",
+		"detailed_name": "Armor Penetration",
+		"is_decimal": false
+	},
+	{
+		"stat_id": 11,
+		"name": "Resistance Penetration",
+		"detailed_name": "Resistance Penetration",
+		"is_decimal": false
+	},
+	{
+		"stat_id": 12,
+		"name": "Dodge Chance",
+		"detailed_name": "Dodge Rating",
+		"is_decimal": false
+	},
+	{
+		"stat_id": 13,
+		"name": "Deflection Chance",
+		"detailed_name": "Deflection Rating",
+		"is_decimal": false
+	},
+	{
+		"stat_id": 14,
+		"name": "Physical Critical Chance",
+		"detailed_name": "Physical Critical Rating",
+		"is_decimal": false
+	},
+	{
+		"stat_id": 15,
+		"name": "Special Critical Chance",
+		"detailed_name": "Special Critical Rating",
+		"is_decimal": false
+	},
+	{
+		"stat_id": 16,
+		"name": "Critical Damage",
+		"detailed_name": "Critical Damage",
+		"is_decimal": true
+	},
+	{
+		"stat_id": 17,
+		"name": "Potency",
+		"detailed_name": "Potency",
+		"is_decimal": true
+	},
+	{
+		"stat_id": 18,
+		"name": "Tenacity",
+		"detailed_name": "Tenacity",
+		"is_decimal": true
+	},
+	{
+		"stat_id": 19,
+		"name": "Dodge",
+		"detailed_name": "Dodge Percent Additive",
+		"is_decimal": true
+	},
+	{
+		"stat_id": 20,
+		"name": "Deflection",
+		"detailed_name": "Deflection Percent Additive",
+		"is_decimal": true
+	},
+	{
+		"stat_id": 21,
+		"name": "Physical Critical Chance",
+		"detailed_name": "Physical Critical Percent Additive",
+		"is_decimal": true
+	},
+	{
+		"stat_id": 22,
+		"name": "Special Critical Chance",
+		"detailed_name": "Special Critical Percent Additive",
+		"is_decimal": true
+	},
+	{
+		"stat_id": 23,
+		"name": "Armor",
+		"detailed_name": "Armor Percent Additive",
+		"is_decimal": true
+	},
+	{
+		"stat_id": 24,
+		"name": "Resistance",
+		"detailed_name": "Resistance Percent Additive",
+		"is_decimal": true
+	},
+	{
+		"stat_id": 25,
+		"name": "Armor Penetration",
+		"detailed_name": "Armor Penetration Percent Additive",
+		"is_decimal": true
+	},
+	{
+		"stat_id": 26,
+		"name": "Resistance Penetration",
+		"detailed_name": "Resistance Penetration Percent Additive",
+		"is_decimal": true
+	},
+	{
+		"stat_id": 27,
+		"name": "Health Steal",
+		"detailed_name": "Health Steal",
+		"is_decimal": true
+	},
+	{
+		"stat_id": 28,
+		"name": "Protection",
+		"detailed_name": "Max Protection",
+		"is_decimal": false
+	},
+	{
+		"stat_id": 29,
+		"name": "Protection Ignore",
+		"detailed_name": "Protection Ignore",
+		"is_decimal": true
+	},
+	{
+		"stat_id": 30,
+		"name": "Health Regen",
+		"detailed_name": "Health Regen",
+		"is_decimal": true
+	},
+	{
+		"stat_id": 31,
+		"name": "Physical Damage",
+		"detailed_name": "Physical Damage Percent Additive",
+		"is_decimal": true
+	},
+	{
+		"stat_id": 32,
+		"name": "Special Damage",
+		"detailed_name": "Special Damage Percent Additive",
+		"is_decimal": true
+	},
+	{
+		"stat_id": 33,
+		"name": "Physical Accuracy",
+		"detailed_name": "Dodge Negate Percent Additive",
+		"is_decimal": true
+	},
+	{
+		"stat_id": 34,
+		"name": "Special Accuracy",
+		"detailed_name": "Deflection Negate Percent Additive",
+		"is_decimal": true
+	},
+	{
+		"stat_id": 35,
+		"name": "Physical Accuracy",
+		"detailed_name": "Physical Critical Negate Percent Additive",
+		"is_decimal": true
+	},
+	{
+		"stat_id": 36,
+		"name": "Special Accuracy",
+		"detailed_name": "Special Critical Negate Percent Additive",
+		"is_decimal": true
+	},
+	{
+		"stat_id": 37,
+		"name": "Physical Accuracy",
+		"detailed_name": "Dodge Negate Rating",
+		"is_decimal": false
+	},
+	{
+		"stat_id": 38,
+		"name": "Special Accuracy",
+		"detailed_name": "Deflection Negate Rating",
+		"is_decimal": false
+	},
+	{
+		"stat_id": 39,
+		"name": "Physical Critical Avoidance",
+		"detailed_name": "Physical Critical Negate Rating",
+		"is_decimal": false
+	},
+	{
+		"stat_id": 40,
+		"name": "Special Critical Avoidance",
+		"detailed_name": "Special Critical Negate Rating",
+		"is_decimal": false
+	},
+	{
+		"stat_id": 41,
+		"name": "Offense",
+		"detailed_name": "Offense",
+		"is_decimal": false
+	},
+	{
+		"stat_id": 42,
+		"name": "Defense",
+		"detailed_name": "Defense",
+		"is_decimal": false
+	},
+	{
+		"stat_id": 43,
+		"name": "Defense Penetration",
+		"detailed_name": "Defense Penetration",
+		"is_decimal": false
+	},
+	{
+		"stat_id": 44,
+		"name": "Evasion",
+		"detailed_name": "Evasion Rating",
+		"is_decimal": false
+	},
+	{
+		"stat_id": 45,
+		"name": "Critical Chance",
+		"detailed_name": "Critical Rating",
+		"is_decimal": false
+	},
+	{
+		"stat_id": 46,
+		"name": "Accuracy",
+		"detailed_name": "Evasion Negate Rating",
+		"is_decimal": false
+	},
+	{
+		"stat_id": 47,
+		"name": "Critical Avoidance",
+		"detailed_name": "Critical Negate Rating",
+		"is_decimal": false
+	},
+	{
+		"stat_id": 48,
+		"name": "Offense",
+		"detailed_name": "Offense Percent Additive",
+		"is_decimal": true
+	},
+	{
+		"stat_id": 49,
+		"name": "Defense",
+		"detailed_name": "Defense Percent Additive",
+		"is_decimal": true
+	},
+	{
+		"stat_id": 50,
+		"name": "Defense Penetration",
+		"detailed_name": "Defense Penetration Percent Additive",
+		"is_decimal": true
+	},
+	{
+		"stat_id": 51,
+		"name": "Evasion",
+		"detailed_name": "Evasion Percent Additive",
+		"is_decimal": true
+	},
+	{
+		"stat_id": 52,
+		"name": "Accuracy",
+		"detailed_name": "Evasion Negate Percent Additive",
+		"is_decimal": true
+	},
+	{
+		"stat_id": 53,
+		"name": "Critical Chance",
+		"detailed_name": "Critical Chance Percent Additive",
+		"is_decimal": true
+	},
+	{
+		"stat_id": 54,
+		"name": "Critical Avoidance",
+		"detailed_name": "Critical Negate Chance Percent Additive",
+		"is_decimal": true
+	},
+	{
+		"stat_id": 55,
+		"name": "Health",
+		"detailed_name": "Max Health Percent Additive",
+		"is_decimal": true
+	},
+	{
+		"stat_id": 56,
+		"name": "Protection",
+		"detailed_name": "Max Protection Percent Additive",
+		"is_decimal": true
+	},
+	{
+		"stat_id": 57,
+		"name": "Speed",
+		"detailed_name": "Speed Percent Additive",
+		"is_decimal": true
+	},
+	{
+		"stat_id": 58,
+		"name": "Counter Attack",
+		"detailed_name": "Counter Attack Rating",
+		"is_decimal": true
+	},
+	{
+		"stat_id": 59,
+		"name": "Taunt",
+		"detailed_name": "Taunt",
+		"is_decimal": true
+	},
+	{
+		"stat_id": 60,
+		"name": "Target Defense Penetration",
+		"detailed_name": "Target Defense Penetration Percent Additive",
+		"is_decimal": true
+	},
+	{
+		"stat_id": 61,
+		"name": "Mastery",
+		"detailed_name": "Mastery",
+		"is_decimal": true
+	}
+]

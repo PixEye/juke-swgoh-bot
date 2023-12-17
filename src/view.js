@@ -29,8 +29,9 @@ let config = require("./config.json");
 // let tplCfg = require("./config-template.json");
 
 const omicronAbilities = require("../data/omicron-abilities");
-const unitRealNames   = require("../data/unit-names");
-const unitAliasNames = require("../data/unit-aliases");
+const statDefinitions  = require("../data/stat-definitions");
+const unitRealNames    = require("../data/unit-names");
+const unitAliasNames   = require("../data/unit-aliases");
 
 /** List guild members
  * @param {Number} allycode - An allycode
@@ -922,6 +923,8 @@ exports.showUnitInfo = function(player, message, unitName, ct) {
 	}
 
 	unitName = foundUnit.name;
+	let gameUnit = player.units.find(u => u.base_id === unitName);
+
 	unitName = unitRealNames[unitName] || unitName;
 	richMsg.setThumbnail("https://game-assets.swgoh.gg/tex.charui_"+foundUnit.name.toLowerCase()+".png")
 		.setTitle(player.name+"'s "+unitName);
@@ -929,51 +932,83 @@ exports.showUnitInfo = function(player, message, unitName, ct) {
 	// Start with stars:
 	let key = 'stars';
 	let val = foundUnit[key];
+
 	// key+= " ("+val+")";
 	val = ":star:".repeat(val) + ":low_brightness:".repeat(7-val);
 	val = "**"+locutus.ucfirst(key)+":** "+val;
 	lines.push(val);
 
+	let statLabels = {};
+
+	statDefinitions.forEach(function(def) {
+		statLabels[def.stat_id] = def.name;
+	});
+	// console.log(logPrefix()+' statLabels:', statLabels);
+
 	// Continue with others keys:
 	Object.keys(foundUnit).sort((a, b) => b-a).forEach(function(key) {
 		var val = foundUnit[key];
 
-		if (hiddenFields.indexOf(key)<0) {
-			switch(key) {
-				case "gp":
-					key = "GP";
-					val = val.toLocaleString();
-					break;
+		if (hiddenFields.indexOf(key) >= 0) return; // hide few fields
 
-				case "mods":
-					if (ct===2) return; // ignore for ships
+		switch(key) {
+			case "gp":
+				key = "GP";
+				val = val.toLocaleString();
+				break;
 
-					// console.log("Modules:", val); // verbose!
-					val = val? val.length: val;
-					break;
+			case "mods":
+				if (ct===2) return; // ignore for ships
 
-				case "stars":
-					return; // already done at first line
+				// console.log("Modules:", val); // verbose!
+				val = val? val.length: val;
+				break;
 
-				case "gear":
-				case "relic":
-					if (ct===2) return; // ignore for ships
-					break;
+			case "stars":
+				return; // already done at first line
 
-				case "zetaCount":
-					if (ct===2) return; // ignore for ships
-					key = "zeta";
-					break;
-			}
+			case "gear":
+			case "relic":
+				if (ct===2) return; // ignore for ships
+				break;
 
-			// richMsg.addField(locutus.ucfirst(key)+":", val, true);
-			val = "**"+locutus.ucfirst(key)+":** "+val;
-			if (lines.length && lines[lines.length-1].length<30)
-				lines[lines.length-1] += " ; "+val;
-			else
-				lines.push(val);
+			case "zetaCount":
+				if (ct===2) return; // ignore for ships
+				key = "zeta";
+				break;
+
+			default: // level, omicronCount
+				console.warn(logPrefix()+'Did not find label for player key:', key);
 		}
+
+		// richMsg.addField(locutus.ucfirst(key)+":", val, true);
+		val = "**"+locutus.ucfirst(key)+":** "+val;
+		if (lines.length && lines[lines.length-1].length<30)
+			lines[lines.length-1] += " ; "+val;
+		else
+			lines.push(val);
 	});
+
+	if (!gameUnit) {
+		console.warn('Did not find unit:', unitName);
+	} else {
+		Object.keys(gameUnit.stats).forEach(k => {
+			if (statLabels[k]) {
+				let label = statLabels[k];
+				let v = gameUnit.stats[k];
+				let val = label+': '+(Number.isInteger(v)? v: v.toFixed(2));
+
+				if (label==='Speed') val = '**'+val+'**';
+
+				if (lines.length && lines[lines.length-1].length<30)
+					lines[lines.length-1] += " ; "+val;
+				else
+					lines.push(val);
+			} else {
+				console.warn(logPrefix()+'Did not find label for stat key:', k);
+			}
+		});
+	}
 
 	// Build the message & show it:
 	if (lines.length) richMsg.setDescription(lines);
