@@ -994,9 +994,12 @@ exports.showUnitInfo = function(player, message, unitName, ct) {
 	} else {
 		Object.keys(gameUnit.stats).forEach(k => {
 			if (statLabels[k]) {
-				let label = statLabels[k];
 				let v = gameUnit.stats[k];
-				let val = label+': '+(Number.isInteger(v)? v: v.toFixed(2));
+
+				if (v===0) return;
+
+				let label = statLabels[k];
+				let val = label+': '+(Number.isInteger(v)? locutus.number_format(v): v.toFixed(2));
 
 				if (label==='Speed') val = '**'+val+'**';
 
