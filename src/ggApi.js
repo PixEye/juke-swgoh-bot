@@ -43,10 +43,6 @@ const mapping = {
 };
 const tools = require("./tools"); // Several functions
 
-/* exports.connect = function() {
-	// TODO
-}; // */
-
 /** Fetch a player data
  * @param object payload Payload with key: allycodes
  * @return Promise

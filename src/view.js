@@ -923,8 +923,6 @@ exports.showUnitInfo = function(player, message, unitName, ct) {
 	}
 
 	unitName = foundUnit.name;
-	let gameUnit = player.units.find(u => u.base_id === unitName);
-
 	unitName = unitRealNames[unitName] || unitName;
 	richMsg.setThumbnail("https://game-assets.swgoh.gg/tex.charui_"+foundUnit.name.toLowerCase()+".png")
 		.setTitle(player.name+"'s "+unitName);
@@ -989,27 +987,34 @@ exports.showUnitInfo = function(player, message, unitName, ct) {
 			lines.push(val);
 	});
 
+	let gameUnit = player.units.find(u => u.base_id === foundUnit.name);
 	if (!gameUnit) {
 		console.warn('Did not find unit:', unitName);
 	} else {
 		Object.keys(gameUnit.stats).forEach(k => {
-			if (statLabels[k]) {
-				let v = gameUnit.stats[k];
-
-				if (v===0) return;
-
-				let label = statLabels[k];
-				let val = label+': '+(Number.isInteger(v)? locutus.number_format(v): v.toFixed(2));
-
-				if (label==='Speed') val = '**'+val+'**';
-
-				if (lines.length && lines[lines.length-1].length<30)
-					lines[lines.length-1] += " ; "+val;
-				else
-					lines.push(val);
-			} else {
+			if (!statLabels[k]) {
 				console.warn(logPrefix()+'Did not find label for stat key:', k);
+				return;
 			}
+
+			let d = gameUnit.stat_diffs[k];
+			let v = gameUnit.stats[k];
+			let label = statLabels[k];
+			let val = Number.isInteger(v)? locutus.number_format(v): v.toFixed(2);
+
+			if (v===0) return; // hide zero values
+
+			val = label+': '+val;
+			if (label==='Speed') val = '**'+val+'**';
+			if (d) {
+				d = Number.isInteger(d)? locutus.number_format(d): d.toFixed(2);
+				val+= ' ('+d+')';
+			}
+
+			if (lines.length && lines[lines.length-1].length<30)
+				lines[lines.length-1] += "; "+val;
+			else
+				lines.push(val);
 		});
 	}
 
