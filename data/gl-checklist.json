@@ -330,6 +330,18 @@
 				{"gearLevel": 13, "relicTier": 3, "baseId": "LOBOT"},
 				{"gearLevel": 13, "relicTier": 7, "baseId": "CAPTAINDROGAN"}
 			]
+		},
+		{
+			"baseId": "TBD_BOKATAN_MANDALOR",
+			"unitName": "Bo-Katan (Mand'alor)",
+			"image": "https://game-assets.swgoh.gg/tex.jg_charui_mandalorbokatan.png",
+			"isGL": false,
+			"requiredUnits": [
+				{ "gearLevel": 13, "relicTier": 7, "baseId": "THEMANDALORIANBESKARARMOR" },
+				{ "gearLevel": 13, "relicTier": 7, "baseId": "PAZVIZSLA" },
+				{ "gearLevel": 13, "relicTier": 7, "baseId": "IG12" },
+				{ "gearLevel": 13, "relicTier": 7, "baseId": "KELLERANBEQ" }
+			]
 		}
 	]
 }
