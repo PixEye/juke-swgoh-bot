@@ -868,11 +868,11 @@ client.on("message", (message) => {
 						if (gp <100) gp = ' ' +gp;
 
 						tot_player_cnt += g.memberCount;
+						if (g.memberCount<=9) g.memberCount = ' '+g.memberCount;
 						if (g.officerCount) {
 							if (g.officerCount<=9) g.officerCount = ' '+g.officerCount;
 							lines.push('`'+gp+'M '+g.officerCount+' off/'+g.memberCount+'` '+g.name);
 						} else {
-							if (g.memberCount<=9) g.memberCount = ' '+g.memberCount;
 							lines.push('`'+gp+'M '+g.memberCount+' ppl/50` '+g.name);
 						}
 
