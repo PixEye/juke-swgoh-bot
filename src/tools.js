@@ -93,8 +93,9 @@ exports.checkLegendReq = function(player, message) {
 	let progressByTopUnit = {};
 	let unitsOfInterest = req.units;
 
-	if (typeof player === "undefined") player = message.author;
-
+	if (typeof player === "undefined") {
+		player = message.author;
+	}
 	if (typeof player.game_name === "undefined") {
 		player.game_name = message.author.username;
 	}
@@ -121,6 +122,9 @@ exports.checkLegendReq = function(player, message) {
 
 		unit.baseId = unit.baseId.toUpperCase();
 		switch(unit.baseId) {
+			case "BOKATAN"+"_"+"MANDALOR":
+				unit.baseId = "MANDALOR"+"BOKATAN";
+				break;
 			case "CAL"+"KESTIS"+"SURVIVOR":
 				unit.baseId = "JEDI"+"KNIGHT"+"CAL";
 				break;
