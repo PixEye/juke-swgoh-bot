@@ -1589,6 +1589,9 @@ exports.rememberGuildStats = function(g, message) {
 	let logPrefix = exports.logPrefix; // shortcut
 	let sql = "INSERT INTO `guilds` (swgoh_id, name, gp, memberCount, officerCount, gm_allycode, ts) VALUES ?";
 	let update = new Date(g.updated);
+
+	if (g.id==='Kzz2FEuNQwOo6RmCV5gCSA') g.name = 'doob SATURN';
+
 	let values = [[g.id, g.name, g.gp, g.memberCount, g.officerCount, g.leader.allyCode, update]];
 
 	db_pool.query(sql, [values], function(exc, result) {
