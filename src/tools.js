@@ -28,8 +28,9 @@ const view    = require("./view"); // Functions used to display results
 let config = require("./config.json");
 // let tplCfg = require("./config-template.json");
 
-const unitAliasNames  = require("../data/unit-aliases");
-const unitRealNames   = require("../data/unit-names");
+const specialGuilds  = require("../data/special-guilds");
+const unitAliasNames = require("../data/unit-aliases");
+const unitRealNames  = require("../data/unit-names");
 
 // Define cumulated shards required for each star (from 0 to 7)
 // Use to the progress computation, to distinct invest between each star
@@ -1590,7 +1591,7 @@ exports.rememberGuildStats = function(g, message) {
 	let sql = "INSERT INTO `guilds` (swgoh_id, name, gp, memberCount, officerCount, gm_allycode, ts) VALUES ?";
 	let update = new Date(g.updated);
 
-	if (g.id==='Kzz2FEuNQwOo6RmCV5gCSA') g.name = 'doob SATURN';
+	if (specialGuilds[g.id]) g.name = specialGuilds[g.id].name;
 
 	let values = [[g.id, g.name, g.gp, g.memberCount, g.officerCount, g.leader.allyCode, update]];
 
