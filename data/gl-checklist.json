@@ -342,6 +342,17 @@
 				{ "gearLevel": 13, "relicTier": 7, "baseId": "IG12" },
 				{ "gearLevel": 13, "relicTier": 7, "baseId": "KELLERANBEQ" }
 			]
+		},
+		{
+			"baseId": "TBD_JARJAR",
+			"unitName": "Jar Jar Binks",
+			"image": "https://game-assets.swgoh.gg/tex.jg_charui_jarjarbinks_preview.png",
+			"requiredUnits": [
+				{ "gearLevel": 13, "relicTier": 5, "baseId": "BOSSNASS" },
+				{ "gearLevel": 13, "relicTier": 5, "baseId": "CAPTAINTARPALS" },
+				{ "gearLevel": 13, "relicTier": 5, "baseId": "BOOMADIER" },
+				{ "gearLevel": 13, "relicTier": 5, "baseId": "GUNGANPHALANX" }
+			]
 		}
 	]
 }
