@@ -1000,15 +1000,23 @@ exports.showUnitInfo = function(player, message, unitName, ct) {
 			let d = gameUnit.stat_diffs[k];
 			let v = gameUnit.stats[k];
 			let label = statLabels[k];
-			let val = Number.isInteger(v)? locutus.number_format(v): v.toFixed(2);
+			let val = 0;
+
+			if (Math.abs(v)<2) val = (v*100).toFixed(1)+'%';
+			else val = Number.isInteger(v)? locutus.number_format(v): v.toFixed(2);
 
 			if (v===0) return; // hide zero values
 
 			val = label+': '+val;
+
 			if (label==='Speed') val = '**'+val+'**';
 			if (d) {
-				d = Number.isInteger(d)? locutus.number_format(d): d.toFixed(2);
-				val+= ' ('+d+')';
+				let plus = d>=0? '+': '';
+
+				if (Math.abs(d)<2) d = (d*100).toFixed(1)+'%';
+				else d = Number.isInteger(d)? locutus.number_format(d): d.toFixed(2);
+
+				val+= ' ('+plus+d+')';
 			}
 
 			if (lines.length && lines[lines.length-1].length<30)
