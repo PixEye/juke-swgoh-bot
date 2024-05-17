@@ -28,7 +28,6 @@ const tools   = require("./tools");  // Several functions
 let config = require("./config.json");
 // let tplCfg = require("./config-template.json");
 
-const apiTz = 'UTC'; // Source API time zone
 const omicronAbilities = require("../data/omicron-abilities");
 const statDefinitions  = require("../data/stat-definitions");
 const unitRealNames    = require("../data/unit-names");
@@ -162,7 +161,7 @@ exports.guildPlayerStats = function(allycode, message, guild) {
 		}
 	});
 
-	richMsg.setColor("GREEN").setDescription(lines).setTimestamp(guild.updated+' '+apiTz)
+	richMsg.setColor("GREEN").setDescription(lines).setTimestamp(guild.updated)
 		.setFooter(config.footer.message, config.footer.iconUrl);
 
 	// Display the result:
@@ -273,7 +272,7 @@ exports.listOmicrons = function(player, message) {
 
 	let richMsg = new RichEmbed().setColor(color)
 		.setTitle(player.name+"'s "+player.omicronCount+" omicron(s)")
-		.setDescription(lines).setTimestamp(player.updated+' '+apiTz)
+		.setDescription(lines).setTimestamp(player.updated)
 		.setFooter(config.footer.message, config.footer.iconUrl);
 
 	message.channel.send(richMsg);
@@ -423,7 +422,7 @@ exports.showGuildStats = function(guild, message) {
 			" (GP: "+ guild.leader.gp.toLocaleString(locale)+")", true)
 		.addField("Biggest GP:", guild.biggestPlayer.name+
 			" (GP: "+guild.biggestPlayer.gp.toLocaleString(locale)+")", true)
-		.setTimestamp(guild.updated+' '+apiTz)
+		.setTimestamp(guild.updated)
 		.setFooter(config.footer.message, config.footer.iconUrl);
 
 	if (guild.bannerLogo) {
@@ -539,7 +538,7 @@ exports.showLastEvols = function(player, message, evols) {
 
 	let richMsg = new RichEmbed()
 		.setTitle(player.name+"'s "+n+" last evolution(s)")
-		.setDescription(lines).setColor(color).setTimestamp(player.updated+' '+apiTz)
+		.setDescription(lines).setColor(color).setTimestamp(player.updated)
 		.setFooter(config.footer.message, config.footer.iconUrl);
 
 	message.channel.send(richMsg)
@@ -605,7 +604,7 @@ exports.showPlayerRelics = function(player, message) {
 	let richMsg = new RichEmbed()
 		.setTitle(player.name+" has "+n+" unit"+su+" with relics:")
 		.setDescription(lines).setColor(color)
-		.setTimestamp(player.updated+' '+apiTz)
+		.setTimestamp(player.updated)
 		.setFooter(config.footer.message, config.footer.iconUrl);
 	message.channel.send(richMsg).catch(function(ex) {
 		console.warn(ex);
@@ -654,7 +653,7 @@ exports.showPlayerStats = function(player, message) {
 		lines.push("**Gift count:** "+(player.giftCount.toLocaleString(config.discord.locale)));
 
 	let richMsg = new RichEmbed().setTitle(player.name+"'s profile").setColor("GREEN")
-		.setDescription(lines).setTimestamp(player.updated+' '+apiTz)
+		.setDescription(lines).setTimestamp(player.updated)
 		.setFooter(config.footer.message, config.footer.iconUrl);
 
 	if (player.displayAvatarURL) {
@@ -693,7 +692,7 @@ exports.showPlayerStats = function(player, message) {
 	});
 
 	let richMsg = new RichEmbed().setTitle(player.game_name+"'s registered  GAs").setColor("GREEN")
-		.setDescription(lines).setTimestamp(player.updated+' '+apiTz)
+		.setDescription(lines).setTimestamp(player.updated)
 		.setFooter(config.footer.message, config.footer.iconUrl);
 
 	if (player.displayAvatarURL) {
@@ -742,7 +741,7 @@ exports.showPlayerStats = function(player, message) {
 
 	let richMsg = new RichEmbed().setColor("GREEN")
 		.setTitle(player.game_name+"'s " + type + " GA - Round " + ga_stats.round)
-		.setDescription(lines).setTimestamp(player.updated+' '+apiTz)
+		.setDescription(lines).setTimestamp(player.updated)
 		.setFooter(config.footer.message, config.footer.iconUrl);
 
 	if (player.displayAvatarURL) {
@@ -774,7 +773,7 @@ exports.showRandomTeam = function(player, message) {
 	];
 
 	let richMsg = new RichEmbed().setTitle(player.name+"'s profile").setColor("GREEN")
-		.setDescription(lines).setTimestamp(player.updated+' '+apiTz)
+		.setDescription(lines).setTimestamp(player.updated)
 		.setFooter(config.footer.message, config.footer.iconUrl);
 
 	if (player.displayAvatarURL) {
@@ -800,7 +799,7 @@ exports.showSwgohData = function(data, message) {
 	let richMsg = new RichEmbed().setTitle("SWGoH data").setColor("GREEN")
 		// .setAuthor(config.discord.username)
 		.setDescription(dataToShow)
-		.setTimestamp(typeof(data)==="object" && data.updated? data.updated+' '+apiTz: now)
+		.setTimestamp(typeof(data)==="object" && data.updated? data.updated: now)
 		.setFooter(config.footer.message, config.footer.iconUrl);
 
 	message.reply(richMsg).catch(function(ex) {
@@ -889,7 +888,7 @@ exports.showUnitInfo = function(player, message, unitName, ct) {
 	}
 
 	color = nbFound===1? "GREEN": "ORANGE";
-	let richMsg = new RichEmbed().setTimestamp(player.updated+' '+apiTz).setColor(color)
+	let richMsg = new RichEmbed().setTimestamp(player.updated).setColor(color)
 		.setFooter(config.footer.message, config.footer.iconUrl);
 
 	unitName = locutus.ucwords(unitName);
