@@ -145,6 +145,7 @@ exports.fetchPlayer = async function(payload) {
 		player.unitCount = result.units.length;
 		player.unitCountByCombatType = unitCountByCombatType;
 		player.zetaCount = zetaCount;
+		player.updated += 'Z'; // gg times are in UTC
 
 		return player
 	} catch(e) {
@@ -187,7 +188,8 @@ exports.fetchGuild = async function(payload) {
 
 			guild[mapping.guild[key]] = guild[key];
 			if (targetKey!==key) delete guild[key];
-		})
+		});
+		guild.updated += 'Z'; // gg times are in UTC
 
 		guild.officerCount = 0;
 		guild.members.forEach((member, i) => {
