@@ -892,7 +892,7 @@ exports.showUnitInfo = function(player, message, unitName, ct) {
 		.setFooter(config.footer.message, config.footer.iconUrl);
 
 	unitName = locutus.ucwords(unitName);
-	msg = nbFound+" units with '"+unitName+"' found in this roster";
+	msg = nbFound+" units with '"+unitName+"' found in this roster: "+matchingNames.join(', ');
 	console.log(logPrefix()+msg);
 	if (nbFound!==1) {
 		let addon = '';
