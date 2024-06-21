@@ -16,7 +16,7 @@
   "license": "ISC",
   "repository": "https://github.com/PixEye/juke-swgoh-bot",
   "dependencies": {
-    "discord.js": "^11.",
-    "mysql": "^2."
+    "discord.js": "11.*",
+    "mysql": "2.*"
   }
 }
