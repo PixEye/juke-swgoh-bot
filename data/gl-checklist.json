@@ -347,6 +347,7 @@
 			"baseId": "TBD_JARJAR",
 			"unitName": "Jar Jar Binks",
 			"image": "https://game-assets.swgoh.gg/textures/tex.jg_charui_jarjarbinks_preview.png",
+			"isGL": false,
 			"requiredUnits": [
 				{ "gearLevel": 13, "relicTier": 5, "baseId": "BOSSNASS" },
 				{ "gearLevel": 13, "relicTier": 5, "baseId": "CAPTAINTARPALS" },
@@ -358,6 +359,7 @@
 			"baseId": "TBD_GLAT",
 			"unitName": "Ahsoka Tano",
 			"image": "https://game-assets.swgoh.gg/textures/tex.jg_charui_glahsoka_preview.png",
+			"isGL": true,
 			"requiredUnits": [
 				{ "gearLevel": 13, "relicTier": 9, "baseId": "AHSOKATANO" },
 				{ "gearLevel": 13, "relicTier": 8, "baseId": "GENERALSKYWALKER" },
