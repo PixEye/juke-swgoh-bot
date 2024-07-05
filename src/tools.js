@@ -141,8 +141,8 @@ exports.checkLegendReq = function(player, message) {
 			case "JABBA":
 				unit.baseId = "JABBA"+"THE"+"HUTT";
 				break;
-			case "JARJAR":
-				unit.baseId = "JARJAR"+"BINKS";
+			case "JAR"+"JAR":
+				unit.baseId = "JAR"+"JAR"+"BIN"+"KS";
 				break;
 			case "LEVIATHAN":
 				unit.baseId = "CAPITAL"+"LEVIATHAN";
