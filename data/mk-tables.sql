@@ -4,14 +4,13 @@
 --
 -- Host:  127.0.0.1:3306
 -- Generated on:  jeu. 04 nov. 2021 à 15:51
--- Version du serveur :  5.7.24
--- Version de PHP :  7.2.14
+-- Version du server:  5.7.24
+-- Version de PHP:  7.2.14
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET AUTOCOMMIT = 0;
 START TRANSACTION;
 SET time_zone = "+00:00";
-
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -147,6 +146,24 @@ CREATE TABLE IF NOT EXISTS `units` (
   KEY `allycode` (`allycode`),
   KEY `combatType` (`combatType`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Structure of table `unitNames`
+--
+
+DROP TABLE IF EXISTS `unitNames`;
+CREATE TABLE IF NOT EXISTS `unitNames` (
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `code` varchar(32) COLLATE utf8_unicode_ci NOT NULL,
+  `name` varchar(32) COLLATE utf8_unicode_ci NOT NULL,
+  `createdAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updatedAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `code` (`code`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+COMMIT;
 
 -- --------------------------------------------------------
 
