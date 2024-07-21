@@ -58,6 +58,28 @@ const behaveIcons   = [":green_heart:", ":large_orange_diamond:", ":red_circle:"
 exports.alreadyFetchedGuildIds = [];
 exports.unitRealNames = {};
 
+/** Add a unit real name in the database
+ * @param string code Unit key string
+ * @param string name Unit game name
+ */
+exports.addUnitName = function(code, name) {
+	let logPrefix = exports.logPrefix; // shortcut
+	let sql = "INSERT INTO `unitNames` (code, name) VALUES ?";
+	let values = [[code, name]];
+
+	db_pool.query(sql, [values], function(exc, result) {
+		if (exc) {
+			let otd = exc.sqlMessage? exc.sqlMessage: exc; // object to display
+
+			console.log("SQL:", sql);
+			console.log(logPrefix()+"AUN Exception:", otd);
+			return;
+		}
+
+		console.log(logPrefix()+"%d unit name(s) inserted.", result.affectedRows);
+	});
+};
+
 /** Shuffle an array
  * @param {Array} anArr The array to shuffle
  * @link https://www.w3schools.com/js/js_array_sort.asp
