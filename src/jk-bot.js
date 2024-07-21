@@ -78,6 +78,7 @@ client.on("ready", () => {
 
 	client.user.username = config.discord.username;
 	client.user.setPresence({"game": {"type": "listening", "name": "help (in DM)"}});
+	tools.loadUnitNames();
 });
 
 // Get errors (if any):
@@ -774,47 +775,6 @@ client.on("message", (message) => {
 			});
 			break;
 		}
-
-		/* case "gals":
-		case "latest"+"stats"+"grand"+"arena":
-		case "grand"+"arena"+"latest"+"stats":
-			if (allycode) {
-				gacTools.getPlayerStatsFromLatestGA(player, message, view.showPlayerGAStats);
-			} else {
-				console.log(logPrefix()+"Try with Discord ID:", user.id);
-				tools.getPlayerFromDiscordUser(user, message, player => {
-					gacTools.getPlayerStatsFromLatestGA(player, message, view.showPlayerGAStats);
-				});
-			}
-			break;
-
-		case "gar":
-		case "rga":
-		case "reg"+"ga":
-		case "reg"+"grand"+"arena":
-		case "register"+"grand"+"arena":
-			if (allycode) {
-				tools.getPlayerStats(player, message, gacTools.checkGrandArenaRegistration);
-			} else {
-				console.log(logPrefix()+"Try with Discord ID:", user.id);
-				tools.getPlayerFromDiscordUser(user, message, player => {
-					tools.getPlayerStats(player, message, gacTools.checkGrandArenaRegistration);
-				});
-			}
-			break;
-
-		case "gasm":
-		case "ga"+"show"+"me":
-		case "show"+"mega":
-			if (allycode) {
-				gacTools.getPlayerGAs(player, message, view.showPlayerGAs);
-			} else {
-				console.log(logPrefix()+"Try with Discord ID:", user.id);
-				tools.getPlayerFromDiscordUser(user, message, player => {
-					gacTools.getPlayerGAs(player, message, view.showPlayerGAs);
-				});
-			}
-			break; // */
 
 		case "gb":
 		case "guild"+"board": {

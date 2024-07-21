@@ -1,5 +1,4 @@
-/**
- * tools.js is the functions module for Juke's SWGoH Discord bot
+/** tools.js is the functions module for Juke's SWGoH Discord bot
  * @author PixEye@pixeye.net
  * @since 2019-12-09
  */
@@ -30,7 +29,7 @@ let config = require("./config.json");
 
 const specialGuilds  = require("../data/special-guilds");
 const unitAliasNames = require("../data/unit-aliases");
-const unitRealNames  = require("../data/unit-names");
+// const unitRealNames  = require("../data/unit-names");
 
 // Define cumulated shards required for each star (from 0 to 7)
 // Use to the progress computation, to distinct invest between each star
@@ -57,6 +56,7 @@ const db_pool = mysql.createPool({
 const behaveIcons   = [":green_heart:", ":large_orange_diamond:", ":red_circle:"];
 
 exports.alreadyFetchedGuildIds = [];
+exports.unitRealNames = {};
 
 /** Shuffle an array
  * @param {Array} anArr The array to shuffle
@@ -170,7 +170,7 @@ exports.checkLegendReq = function(player, message) {
 		const locked = ! playerGl;
 		let indicator = locked? ":green_circle:": ":white_check_mark:";
 
-		unit.name = unitRealNames[unit.baseId] || unit.name;
+		unit.name = exports.unitRealNames[unit.baseId] || unit.name;
 		if (unit.isGL) ++ maxGlCount;
 		if (!locked) {
 			progresses.push(1);
@@ -182,7 +182,7 @@ exports.checkLegendReq = function(player, message) {
 				let levels = "";
 				let playerUnit = player.unitsData.find(u => u.name === req.baseId);
 				let progress = 0;
-				let unitName = unitRealNames[req.baseId] || req.baseId;
+				let unitName = exports.unitRealNames[req.baseId] || req.baseId;
 
 				if (!playerUnit) {
 					playerUnit = {"gear": 0, "relic": 0, "stars": 0};
@@ -364,7 +364,7 @@ exports.checkPlayerMods = function(player, message) {
 			if (i<maxLines) {
 				let uGp = unit.gp < 1e4 ? "0" + unit.gp : unit.gp;
 				let uid = unit.name;
-				let fullName = unitRealNames[uid] || uid;
+				let fullName = exports.unitRealNames[uid] || uid;
 				let nbMissMods = maxModsCount - unit.mods.length;
 
 				lines.push(nbMissMods+" missing module(s) on: (GP=`"+uGp+"`) "+fullName);
@@ -1385,6 +1385,49 @@ exports.handleContest = function(guild, message, target) {
 				message.channel.send(lines);
 			});
 		});
+	});
+};
+
+/** Get unit names from the database
+ * @param {object} player The target player
+ * @param {object} message The origin message (request)
+ * @param {function} callback Function to call with fetched data
+ */
+exports.loadUnitNames = function(player = null, message = null, callback = null) {
+	let logPrefix = exports.logPrefix; // shortcut
+	let sql = "SELECT code, name FROM `unitNames`"; // get guild
+
+	if (exports.unitRealNames['50RT'] && typeof(callback)==="function") {
+		callback(player, message, exports.unitRealNames);
+		return;
+	}
+
+	exports.unitRealNames = {};
+
+	db_pool.query(sql, function(exc, result) {
+		if (exc) {
+			console.log("SQL:", sql);
+			console.log(logPrefix()+"GUN Exception:", exc.sqlMessage? exc.sqlMessage: exc);
+			return;
+		}
+
+		if (!result.length)
+			console.warn(logPrefix()+"GUN Just loaded %d unit names", result.length);
+		 else {
+			console.log( logPrefix()+"GUN Just loaded %d unit names", result.length );
+
+			result.forEach(function(u) {
+				exports.unitRealNames[u.code] = u.name;
+			});
+
+			let fewCodes = ['50RT', 'ZEB'+'S3'];
+			fewCodes.forEach(function(code) {
+				console.log( logPrefix()+"GUN code of "+code+":", exports.unitRealNames[code]);
+			});
+		 }
+
+		if (typeof(callback)==="function")
+			callback(player, message, exports.unitRealNames);
 	});
 };
 

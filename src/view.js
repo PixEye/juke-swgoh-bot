@@ -30,8 +30,8 @@ let config = require("./config.json");
 
 const omicronAbilities = require("../data/omicron-abilities");
 const statDefinitions  = require("../data/stat-definitions");
-const unitRealNames    = require("../data/unit-names");
 const unitAliasNames   = require("../data/unit-aliases");
+// const unitRealNames = require("../data/unit-names");
 
 /** List guild members
  * @param {Number} allycode - An allycode
@@ -237,7 +237,7 @@ exports.listOmicrons = function(player, message) {
 
 			console.log("Omicron mode name:", mode_name);
 			skills.forEach((skill) => {
-				let unitName = unitRealNames[skill.character_base_id];
+				let unitName = tools.unitRealNames[skill.character_base_id] || skill.character_base_id;
 
 				if (typeof omCountByUnit[unitName] !== 'number') {
 					omCountByUnit[unitName] = 1;
@@ -265,7 +265,7 @@ exports.listOmicrons = function(player, message) {
 
 		/* Object.keys(player.omicronUnits).forEach((base_id) => {
 			let omicronCnt = player.omicronUnits[base_id];
-			lines.push(unitRealNames[base_id]+': '+omicronCnt);
+			lines.push(tools.unitRealNames[base_id]+': '+omicronCnt);
 		}); // */
 	}
 	lines.sort();
@@ -352,7 +352,7 @@ exports.showAbbr = function(message) {
 	console.log(logPrefix() + "showAbbr() called to show: " + nbAliases + " aliases.")
 
 	Object.keys(unitAliasNames).sort().forEach(alias => {
-		newAlias = alias + ': ' + unitRealNames[unitAliasNames[alias]];
+		newAlias = alias + ': ' + tools.unitRealNames[unitAliasNames[alias]];
 		if (buffer==='') {
 			buffer = newAlias;
 		} else {
@@ -483,53 +483,57 @@ exports.showLastEvols = function(player, message, evols) {
 		return;
 	}
 
-	evols.forEach(function(e) {
-		let dt = e.ts.toDateString() // take timestamp from evolution e
-			.replace(/ \d{4}/, ""); // remove the year
-		let msg = "`"+dt+":` ";
-		let uid = e.unit_id;
+	player.evols = evols;
 
-		msg += unitRealNames[uid] || uid;
+	tools.loadUnitNames(player, message, function(player, message, unitRealNames) {
+		player.evols.forEach(function(e) {
+			let dt = e.ts.toDateString() // take timestamp from evolution e
+				.replace(/ \d{4}/, ""); // remove the year
+			let msg = "`"+dt+":` ";
+			let uid = e.unit_id;
 
-		switch(e.type) {
-			case "gear":
-				msg+= " :arrow_right: G"+e.new_value;
-				break;
-			case "new":
-				msg+= " :unlock:";
-				break;
-			case "newGifts": {
-				if (low_words==="hideGifts".toLowerCase() || low_words==="hg") {
-					gaveItemsCnt += e.new_value;
-					++giftCnt;
-					++i;
-					return;
+			msg += unitRealNames[uid] || uid;
+
+			switch(e.type) {
+				case "gear":
+					msg+= " :arrow_right: G"+e.new_value;
+					break;
+				case "new":
+					msg+= " :unlock:";
+					break;
+				case "newGifts": {
+					if (low_words==="hideGifts".toLowerCase() || low_words==="hg") {
+						gaveItemsCnt += e.new_value;
+						++giftCnt;
+						++i;
+						return;
+					}
+
+					msg = "`"+dt+":` player gave "+e.new_value+" :gift:";
+					break;
 				}
-
-				msg = "`"+dt+":` player gave "+e.new_value+" :gift:";
-				break;
+				case "relic":
+					msg+= " :arrow_right: R"+e.new_value;
+					break;
+				case "star":
+					msg+= " :arrow_right: "+e.new_value+":star:";
+					break;
+				case "omicron":
+				case "zeta":
+					msg+= " get "+e.type+" #"+e.new_value;
+					break;
+				default:
+					msg+= " :arrow_right: "+e.type+" to: "+e.new_value;
+					console.warn("Unexpected evolution type '%s' at ID %d", e.type, e.id);
 			}
-			case "relic":
-				msg+= " :arrow_right: R"+e.new_value;
-				break;
-			case "star":
-				msg+= " :arrow_right: "+e.new_value+":star:";
-				break;
-			case "omicron":
-			case "zeta":
-				msg+= " get "+e.type+" #"+e.new_value;
-				break;
-			default:
-				msg+= " :arrow_right: "+e.type+" to: "+e.new_value;
-				console.warn("Unexpected evolution type '%s' at ID %d", e.type, e.id);
-		}
 
-		if (i<maxLines) {
-			lines.push(msg);
-		} else if (i===maxLines) {
-			lines.push("And some more...");
-		}
-		++i;
+			if (i<maxLines) {
+				lines.push(msg);
+			} else if (i===maxLines) {
+				lines.push("And some more...");
+			}
+			++i;
+		});
 	});
 
 	if (giftCnt) {
@@ -588,7 +592,7 @@ exports.showPlayerRelics = function(player, message) {
 			if (i<maxLines) {
 				let uid = unit.name;
 
-				uid = unitRealNames[uid] || uid;
+				uid = tools.unitRealNames[uid] || uid;
 				msg = "`R"+unit.relic+", "+unit.zetaCount+"z & GP="+unit.gp+"` on: "+uid;
 				lines.push(msg);
 			} else if (i===maxLines)
@@ -874,7 +878,7 @@ exports.showUnitInfo = function(player, message, unitName, ct) {
 				// Trying full unit names...
 				player.unitsData.forEach(function(unit) {
 					let uid = unit.name;
-					let fullName = unitRealNames[uid] || uid;
+					let fullName = tools.unitRealNames[uid] || uid;
 
 					fullName = fullName.toUpperCase().replace(/ /g, '');
 					if (unit.combatType===ct && fullName.indexOf(strToLookFor)>=0) {
@@ -909,7 +913,7 @@ exports.showUnitInfo = function(player, message, unitName, ct) {
 			matchingNames.sort();
 			matchingNames.forEach(function(matchingName, i) {
 				i = (i+1<=9 && nbFound>9)? "0"+(i+1): i+1;
-				matchingName = unitRealNames[matchingName] || matchingName;
+				matchingName = tools.unitRealNames[matchingName] || matchingName;
 				lines.push("`"+i+"/ "+matchingName+"`");
 			});
 		}
@@ -923,7 +927,7 @@ exports.showUnitInfo = function(player, message, unitName, ct) {
 	}
 
 	unitName = foundUnit.name;
-	unitName = unitRealNames[unitName] || unitName;
+	unitName = tools.unitRealNames[unitName] || unitName;
 	richMsg.setThumbnail("https://game-assets.swgoh.gg/tex.charui_"+foundUnit.name.toLowerCase()+".png")
 		.setTitle(player.name+"'s "+unitName);
 
