@@ -129,8 +129,10 @@ exports.checkLegendReq = function(player, message) {
 	console.log(logPrefix()+msg);
 
 	if (unitAliasNames[concatUpMsg]) concatUpMsg = unitAliasNames[concatUpMsg];
-	console.log(logPrefix()+"Looking for unit matching '"+concatUpMsg+"'");
-	if (concatUpMsg==="REY") concatUpMsg = "GL"+"REY";
+	if (concatUpMsg) {
+		console.log(logPrefix()+"Looking for unit matching '"+concatUpMsg+"'");
+		if (concatUpMsg==="REY") concatUpMsg = "GL"+"REY";
+	}
 	player.glCount = 0;
 
 	unitsOfInterest.forEach(unit => {
