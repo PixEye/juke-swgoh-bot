@@ -132,6 +132,10 @@ exports.fetchPlayer = async function(payload) {
 			if (unit.is_galactic_legend) {
 				player.glHasUltimate[unit.base_id] = unit.has_ultimate;
 			}
+
+			if (!tools.unitRealNames[unit.base_id]) {
+				tools.addUnitName(unit.base_id, unit.name);
+			}
 		});
 
 		Object.keys(mapping.player).forEach(key => {
