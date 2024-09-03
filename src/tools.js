@@ -1469,12 +1469,12 @@ exports.logPrefix = function () {
 };
 
 /** Run the periodical process */
-exports.periodicalProcess = function() {
+exports.periodicalProcess = function(firstTime = false) {
 	let now = new Date();
 
 	if (now.getHours() === 6)
 		exports.updateOldestGuildOr(exports.updateOldestPlayer);
-	else {
+	else if (!firstTime) {
 		exports.alreadyFetchedGuildIds = [];
 		exports.updateOldestPlayer();
 	}
