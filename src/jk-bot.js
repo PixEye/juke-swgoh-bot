@@ -536,6 +536,23 @@ client.on("message", (message) => {
 			}
 			break;
 
+		case "ccu":
+		case "check"+"conquest":
+		case "check"+"conquest"+"units":
+			if (allycode) {
+				tools.getPlayerStats(player, message,
+					(player, message) => tools.checkConquestUnits(player, message)
+				);
+			} else {
+				console.log(logPrefix()+"Try with Discord ID:", user.id);
+				tools.getPlayerFromDiscordUser(user, message, player => {
+					tools.getPlayerStats(player, message,
+						(player, message) => tools.checkConquestUnits(player, message)
+					);
+				});
+			}
+			break;
+
 		case "contest": // same as contest top
 		case "contest"+"add":
 		case "contest"+"get":

@@ -100,6 +100,221 @@ exports.arrayShuffle = function(anArr) {
  * @param {object} player The target player
  * @param {object} message The origin message (request)
  */
+exports.checkConquestUnits = function(player, message) {
+	const conquestUnits = require("../data/conquest-units");
+
+	let color = "GREEN";
+	let concatUpMsg = message.words.filter(word => !word.includes("<"))
+		.join("").trim().toUpperCase();
+	let found = false;
+	let lines = [];
+	let logPrefix = exports.logPrefix; // shortcut
+	let maxGlCount = 0;
+	let msg = "";
+	let picture = "";
+	let progressObjects = [];
+	let progressByTopUnit = {};
+
+	if (typeof player === "undefined") {
+		player = message.author;
+	}
+	if (typeof player.game_name === "undefined") {
+		player.game_name = message.author.username;
+	}
+	if (typeof player.name === "undefined") {
+		player.name = player.game_name;
+	}
+	msg = "checkConquestUnits() called about player: " + player.game_name;
+	console.log(logPrefix()+msg);
+
+	if (unitAliasNames[concatUpMsg]) concatUpMsg = unitAliasNames[concatUpMsg];
+	if (concatUpMsg) {
+		console.log(logPrefix()+"Looking for unit matching '"+concatUpMsg+"'");
+		if (concatUpMsg==="REY") concatUpMsg = "GL"+"REY";
+	}
+
+	conquestUnits.forEach(unit => {
+		if (found) return;
+
+		let progresses = [];
+		let unitNickname = unit.trim().toUpperCase();
+
+		lines = [];
+		progressObjects = [];
+		unit = {
+			"baseId": unitNickname,
+			"name":   unitNickname,
+			"requiredUnits": [{"baseId": unitNickname}]
+		};
+		if (unitAliasNames[unit.baseId]) unit.baseId = unitAliasNames[unit.baseId];
+
+		msg = "Checking unit: " + unit.name+" ("+unit.baseId+")";
+		console.log(logPrefix()+msg);
+
+		msg = "Checking unit: **" + unit.name+"**";
+		lines.push(msg);
+
+		const uid = unitAliasNames[unit.baseId] || unit.baseId;
+		const playerMainUnit = player.unitsData.find(u => u.name === uid);
+		const locked = ! playerMainUnit;
+		let indicator = locked? ":green_circle:": ":white_check_mark:";
+
+		unit.name = exports.unitRealNames[unit.baseId] || unit.name;
+		if (unit.isGL) ++ maxGlCount;
+		if (!locked) {
+			progresses.push(1);
+		} else {
+			if (found) return;
+
+			progresses.push(0);
+			indicator = "🔺";
+			unit.requiredUnits.forEach(req => {
+				let levels = "";
+				let playerUnit = player.unitsData.find(u => u.name === req.baseId);
+				let progress = 0;
+				let unitName = exports.unitRealNames[req.baseId] || req.baseId;
+
+				if (!playerUnit) {
+					playerUnit = {"gear": 0, "relic": 0, "stars": 0};
+					if (!req.gearLevel)
+						levels = "`"+playerUnit.stars+"/"+req.stars+"`:star:";
+					else
+						levels = "`"+"G00/"+req.gearLevel+"; R"+playerUnit.relic+"/"+req.relicTier+"`";
+					msg = levels+": "+unitName;
+					progresses.push(progress);
+					msg = "❌ "+msg+" is locked! 0%";
+					progressObjects.push({"progress": progress, "msg": msg});
+					return;
+				}
+
+				if (req.stars) { // special case of ships
+					levels = playerUnit.stars+"/"+req.stars;
+					msg = "`"+levels+"`:star:: "+unitName;
+
+					if (playerUnit.stars < req.stars) {
+						progress = playerUnit.stars / req.stars;
+						msg = "🔺 "+msg+" is only "+playerUnit.stars+"⭐. "+(progress*100).toFixed()+"%";
+					} else {
+						progress = 1;
+						msg = "✅ "+msg+" is ready.";
+					}
+					progressObjects.push({"progress": progress, "msg": msg});
+					progresses.push(progress);
+					return;
+				}
+
+				if (playerUnit.gear.toString().length<2) playerUnit.gear = "0"+playerUnit.gear;
+				levels = "G"+playerUnit.gear+"/"+req.gearLevel+"; R"+playerUnit.relic+"/"+req.relicTier;
+				msg = "`"+levels+"`: "+unitName;
+
+				// Distribute weight > Star is fixed to 30%, for a 9 relic it-s 15%, under R9 we take his ratio.
+				const  starWeight = 0.25;
+				const relicWeight = 0.20 * req.relicTier / 9;
+				const  gearWeight = 1 - starWeight - relicWeight;
+
+				progress = starWeight * starTotalsShards[playerUnit.stars] / starTotalsShards[7];
+				progress+= gearWeight * gearDifficultyEvaluation[parseInt(playerUnit.gear)] / gearDifficultyEvaluation[parseInt(req.gearLevel)];
+				// Update all character required for a GL need relics, but in case of we can control if req.relicTier is greater than 0.
+				// Weight will already consider all progress to gear, but we will avoid to divide by zero.
+				if (req.relicTier > 0) {
+					progress += relicWeight * relicDifficultyEvaluation[playerUnit.relic] / relicDifficultyEvaluation[req.relicTier];
+				}
+				if (playerUnit.stars < 7) {
+					progresses.push(progress);
+					msg = "🔺 "+msg+" is only "+playerUnit.stars+"⭐. "+(progress*100).toFixed()+"%";
+					progressObjects.push({"progress": progress, "msg": msg});
+					return;
+				}
+
+				if (playerUnit.gear < req.gearLevel) {
+					progresses.push(progress);
+					msg = "😕 "+msg+" in progress. "+(progress*100).toFixed()+"%";
+					progressObjects.push({"progress": progress, "msg": msg});
+					return;
+				}
+
+				if (playerUnit.relic < req.relicTier) {
+					progresses.push(progress);
+					msg = "👉 "+msg+" in progress. "+(progress*100).toFixed()+"%";
+					progressObjects.push({"progress": progress, "msg": msg});
+					return;
+				}
+
+				progress = 1;
+				progresses.push(progress);
+				msg = "✅ "+msg+" is ready.";
+				progressObjects.push({"progress": progress, "msg": msg});
+			}); // end of loop on requirements
+		}
+
+		if (progresses.length) {
+			const sum = progresses.reduce((a, b) => a + b, 0);
+			let avg = 100*sum/progresses.length || 0;
+			let average = "";
+
+			avg = Math.floor(avg);
+			average = avg.toString();
+			while (average.length < 3) average = " " + average;
+			let resume = "~ `" + average + "%` for "+unit.name;
+
+			if (playerMainUnit && playerMainUnit.combatType === 2)
+				resume += " "+playerMainUnit.stars+":star:";
+			else if (playerMainUnit && typeof playerMainUnit.combatType === "undefined")
+				console.log("Player's GL:", playerMainUnit);
+
+			progressObjects.sort((a, b) => b.progress - a.progress); // sort in desc order
+			progressObjects.forEach(po => lines.push(po.msg));
+			lines.push(resume);
+
+				if  (avg< 50) indicator = "🔺";
+			else if (avg< 65) indicator = "🔶";
+			else if (avg< 80) indicator = "🤔";
+			else if (avg<100) { indicator = "👉"; color = "ORANGE"; }
+
+			progressByTopUnit[indicator+" "+resume] = avg + (avg * (locked? 0: 1));
+
+			progresses = [];
+		}
+
+		if ( concatUpMsg && (concatUpMsg.includes(unit.baseId) || unit.baseId.includes(concatUpMsg)) ) {
+			found = true;
+			picture = unit.image;
+			console.log(logPrefix()+unit.name+" found");
+		}
+	}); // end of loop on units
+
+	if (!found) {
+		lines = Object.keys(progressByTopUnit);
+		lines.sort((k1, k2) => {
+			return progressByTopUnit[k2] - progressByTopUnit[k1];
+		});
+	}
+
+	let richMsg = new RichEmbed()
+		.setTitle(player.name+"'s unit status")
+		.setDescription(lines).setColor(color)
+		.setTimestamp(player.updated)
+		.setFooter(config.footer.message, config.footer.iconUrl);
+
+	if (picture && typeof picture === "string" && picture.slice(0, 1)==="/") {
+		picture = "https://swgoh.gg"+picture;
+	}
+
+	if (picture) {
+		richMsg.setThumbnail(picture);
+	}
+
+	message.channel.send(richMsg).catch(function(ex) {
+		console.warn(ex);
+		message.reply(ex.message+" (please allow link integration)");
+		message.channel.send(lines);
+	});
+};
+
+/** Check for Galactic Legends requirements TODO
+ * @param {object} player The target player
+ * @param {object} message The origin message (request)
+ */
 exports.checkLegendReq = function(player, message) {
 	const req = require("../data/gl-checklist");
 
