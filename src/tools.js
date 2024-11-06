@@ -204,7 +204,10 @@ exports.checkConquestUnits = function(player, message) {
 				}
 
 				if (playerUnit.gear.toString().length<2) playerUnit.gear = "0"+playerUnit.gear;
-				levels = "G"+playerUnit.gear+"/"+req.gearLevel+"; R"+playerUnit.relic+"/"+req.relicTier;
+				if (playerUnit.gear < req.gearLevel)
+					levels = "G"+playerUnit.gear+"/"+req.gearLevel;
+				else
+					levels = "R"+playerUnit.relic+"/"+req.relicTier;
 				msg = "`"+levels+"`: "+unitName;
 
 				// Distribute weight > Star is fixed to 30%, for a 9 relic it-s 15%, under R9 we take his ratio.
@@ -1945,9 +1948,6 @@ exports.rememberGuildStats = function(g, message) {
 exports.removeAllycode = function(allycode) {
 	let logPrefix = exports.logPrefix; // shortcut
 	let sql = "DELETE FROM users WHERE allycode=? LIMIT 1";
-
-	console.warn("Would have removed player with allycode: "+allycode);
-	return; // TODO: remove those 2 lines
 
 	console.log(logPrefix()+sql+" // with allycode="+allycode);
 	if (!allycode) {
