@@ -65,7 +65,7 @@ let down_time = listen_since - start;
 
 // Run the periodical process:
 tools.periodicalProcess(true); // true to identify the first time
-const timer = setInterval(tools.periodicalProcess, 31000); // 31'000 ms = 31s */
+const timer = setInterval(tools.periodicalProcess, 91000); // 31'000 ms = 31s */
 
 // Start listening:
 client.on("ready", () => {
