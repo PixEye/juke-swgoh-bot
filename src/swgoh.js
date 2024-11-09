@@ -164,9 +164,12 @@ exports.getPlayerData = async function(users, callback, message) {
 				console.warn(msg);
 				console.dir(player);
 				if (message) message.reply(msg);
-				if (allycode)
-					// tools.removeAllycode(allycode);
-					console.warn(logPrefix()+"Would have removed player with allycode: "+allycode);
+				if (allycode && player.guild.id===0) {
+					tools.removeAllycode(allycode);
+					/* msg = "Would have removed player with allycode: "+allycode;
+					msg+= ". Guild.id = "+player.guild.id;
+					console.warn(logPrefix()+msg); // */
+				}
 				return;
 			}
 

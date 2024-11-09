@@ -1963,11 +1963,75 @@ exports.removeAllycode = function(allycode) {
 		}
 
 		let nbr = result.affectedRows; // shortcut for number of records
-		if (nbr) {
-			console.log(logPrefix()+"User deleted from the DB.");
-		} else {
+		if (!nbr) {
 			console.log(logPrefix()+"User not found in DB.");
-		} // */
+			return;
+		}
+
+		console.log(logPrefix()+"User deleted from the DB.");
+		exports.removeUnitsByAc(allycode);
+	});
+};
+
+/** Remove a player's evolutions from the DB
+ * @param {number} allycode
+ */
+exports.removeEvolsByAc = function(allycode) {
+	let logPrefix = exports.logPrefix; // shortcut
+	let sql = "DELETE FROM evols WHERE allycode=?";
+
+	console.log(logPrefix()+sql+" // with allycode="+allycode);
+	if (!allycode) {
+		console.warn("Wrong allycode!");
+		return;
+	}
+
+	db_pool.query(sql, [allycode], function(exc, result) {
+		if (exc) {
+			console.log(sql);
+			console.warn(logPrefix()+"DelEvolsByAC error: "+exc);
+			return;
+		}
+
+		let nbr = result.affectedRows; // shortcut for number of records
+		if (!nbr) {
+			console.log(logPrefix()+"User's evols not found in DB.");
+			return;
+		}
+
+		console.log(logPrefix()+nbr+" user's evols deleted from the DB.");
+		exports.removeUnitsByAc(allycode);
+	});
+};
+
+/** Remove a player's units from the DB
+ * @param {number} allycode
+ */
+exports.removeUnitsByAc = function(allycode) {
+	let logPrefix = exports.logPrefix; // shortcut
+	let sql = "DELETE FROM units WHERE allycode=? LIMIT 500";
+
+	console.log(logPrefix()+sql+" // with allycode="+allycode);
+	if (!allycode) {
+		console.warn("Wrong allycode!");
+		return;
+	}
+
+	db_pool.query(sql, [allycode], function(exc, result) {
+		if (exc) {
+			console.log(sql);
+			console.warn(logPrefix()+"DelUnitsByAC error: "+exc);
+			return;
+		}
+
+		let nbr = result.affectedRows; // shortcut for number of records
+		if (!nbr) {
+			console.log(logPrefix()+"User's units not found in DB.");
+			return;
+		}
+
+		console.log(logPrefix()+nbr+" user's units deleted from the DB.");
+		exports.removeEvolsByAc(allycode);
 	});
 };
 
