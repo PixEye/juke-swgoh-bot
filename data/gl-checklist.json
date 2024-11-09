@@ -365,10 +365,16 @@
 				{ "gearLevel": 13, "relicTier": 8, "baseId": "GENERALSKYWALKER" },
 				{ "gearLevel": 13, "relicTier": 5, "baseId": "ASAJVENTRESS" },
 				{ "gearLevel": 13, "relicTier": 7, "baseId": "NIGHTTROOPER" },
+
 				{ "gearLevel": 13, "relicTier": 9, "baseId": "COMMANDERAHSOKA" },
 				{ "gearLevel": 13, "relicTier": 7, "baseId": "CAPTAINENOCH" },
 				{ "gearLevel": 13, "relicTier": 7, "baseId": "DEATHTROOPERPERIDEA" },
-				{ "gearLevel": 13, "relicTier": 5, "baseId": "EZRABRIDGERS3" }
+				{ "gearLevel": 13, "relicTier": 5, "baseId": "EZRABRIDGERS3" },
+
+				{ "gearLevel": 13, "relicTier": 9, "baseId": "FULCRUMAHSOKA" },
+				{ "gearLevel": 13, "relicTier": 7, "baseId": "CT7567", "comment": "Rex" },
+				{ "gearLevel": 13, "relicTier": 5, "baseId": "BARRISSOFFEE" },
+				{ "gearLevel": 13, "relicTier": 7, "baseId": "PADAWANSABINEWREN" }
 			]
 		},
 		{
