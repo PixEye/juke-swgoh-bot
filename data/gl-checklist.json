@@ -377,6 +377,7 @@
 			"image": "https://game-assets.swgoh.gg/textures/temp-baylan-skoll.jpg",
 			"requiredUnits": [
 				{ "gearLevel": 13, "relicTier": 7, "baseId": "GRANDADMIRALTHRAWN" },
+				{ "gearLevel": 13, "relicTier": 7, "baseId": "MARROCK" },
 				{ "gearLevel": 13, "relicTier": 7, "baseId": "MORGANELSBETH" },
 				{ "gearLevel": 13, "relicTier": 7, "baseId": "GREATMOTHERS" },
 				{ "gearLevel": 13, "relicTier": 7, "baseId": "SHINHATI" }
