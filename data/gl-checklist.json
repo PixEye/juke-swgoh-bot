@@ -318,14 +318,17 @@
 				{"gearLevel": 13, "relicTier": 7, "baseId": "PRINCESSKNEESAA"},
 				{"gearLevel": 13, "relicTier": 3, "baseId": "WICKET"},
 				{"gearLevel": 13, "relicTier": 5, "baseId": "ADMINISTRATORLANDO"},
+
 				{"gearLevel": 13, "relicTier": 3, "baseId": "ADMIRALACKBAR"},
 				{"gearLevel": 13, "relicTier": 7, "baseId": "SCOUTTROOPER_V3"},
 				{"gearLevel": 13, "relicTier": 8, "baseId": "R2D2_LEGENDARY"},
 				{"gearLevel": 13, "relicTier": 5, "baseId": "HOTHHAN"},
+
 				{"gearLevel": 13, "relicTier": 5, "baseId": "HOTHLEIA"},
 				{"gearLevel": 13, "relicTier": 3, "baseId": "CHIEFCHIRPA"},
 				{"gearLevel": 13, "relicTier": 7, "baseId": "COMMANDERLUKESKYWALKER"},
 				{"gearLevel": 13, "relicTier": 5, "baseId": "BOUSHH"},
+
 				{"gearLevel": 13, "relicTier": 7, "baseId": "C3POCHEWBACCA"},
 				{"gearLevel": 13, "relicTier": 3, "baseId": "LOBOT"},
 				{"gearLevel": 13, "relicTier": 7, "baseId": "CAPTAINDROGAN"}
@@ -374,7 +377,12 @@
 				{ "gearLevel": 13, "relicTier": 9, "baseId": "FULCRUMAHSOKA" },
 				{ "gearLevel": 13, "relicTier": 7, "baseId": "CT7567", "comment": "Rex" },
 				{ "gearLevel": 13, "relicTier": 5, "baseId": "BARRISSOFFEE" },
-				{ "gearLevel": 13, "relicTier": 7, "baseId": "PADAWANSABINE" }
+				{ "gearLevel": 13, "relicTier": 7, "baseId": "PADAWANSABINE" },
+
+				{ "gearLevel": 13, "relicTier": 5, "baseId": "GENERALSYNDULLA" },
+				{ "gearLevel": 13, "relicTier": 8, "baseId": "PLOKOON" },
+				{ "gearLevel": 13, "relicTier": 7, "baseId": "HUYANG" },
+				{ "stars": 7, "baseId": "JEDISTARFIGHTERAHSOKATANO" }
 			]
 		},
 		{
