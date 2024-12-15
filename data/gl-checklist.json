@@ -261,7 +261,7 @@
 		{
 			"baseId": "TBD_CALKESTISSURVIVOR",
 			"unitName": "Cal Kestis",
-			"image": "https://game-assets.swgoh.gg/textures/tex.jg_charui_calkestissurvivor_preview.png",
+			"image": "https://game-assets.swgoh.gg/textures/tex.jg_charui_jediknightcal.png",
 			"isGL": false,
 			"requiredUnits": [
 				{"gearLevel": 12, "relicTier": 0, "baseId": "CALKESTIS"},
@@ -311,7 +311,7 @@
 		{
 			"baseId": "TBD_GLLEIAORGANA",
 			"unitName": "Leia Organa",
-			"image": "https://game-assets.swgoh.gg/textures/tex.jg_charui_leiagl_preview.png",
+			"image": "https://game-assets.swgoh.gg/textures/tex.jg_charui_glleia.png",
 			"isGL": true,
 			"requiredUnits": [
 				{"gearLevel": 13, "relicTier": 7, "baseId": "CAPTAINREX"},
@@ -349,7 +349,7 @@
 		{
 			"baseId": "TBD_JARJAR",
 			"unitName": "Jar Jar Binks",
-			"image": "https://game-assets.swgoh.gg/textures/tex.jg_charui_jarjarbinks_preview.png",
+			"image": "https://game-assets.swgoh.gg/textures/tex.jg_charui_jarjarbinks.png",
 			"isGL": false,
 			"requiredUnits": [
 				{ "gearLevel": 13, "relicTier": 5, "baseId": "BOSSNASS" },
@@ -388,7 +388,7 @@
 		{
 			"baseId": "TBD_BAYLAN_SKOLL",
 			"unitName": "Baylan Skoll",
-			"image": "https://game-assets.swgoh.gg/textures/temp-baylan-skoll.jpg",
+			"image": "https://game-assets.swgoh.gg/textures/tex.jg_charui_baylanskoll.png",
 			"requiredUnits": [
 				{ "gearLevel": 13, "relicTier": 7, "baseId": "GRANDADMIRALTHRAWN" },
 				{ "gearLevel": 13, "relicTier": 7, "baseId": "MARROK" },
