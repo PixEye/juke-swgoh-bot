@@ -263,7 +263,7 @@ exports.checkConquestUnits = function(player, message) {
 			if (playerMainUnit && playerMainUnit.combatType === 2)
 				resume += " "+playerMainUnit.stars+":star:";
 			else if (playerMainUnit && typeof playerMainUnit.combatType === "undefined")
-				console.log("Player's GL:", playerMainUnit);
+				console.log("Player's conquest units:", playerMainUnit);
 
 			progressObjects.sort((a, b) => b.progress - a.progress); // sort in desc order
 			progressObjects.forEach(po => lines.push(po.msg));
@@ -294,7 +294,7 @@ exports.checkConquestUnits = function(player, message) {
 	}
 
 	let richMsg = new RichEmbed()
-		.setTitle(player.name+"'s unit status")
+		.setTitle(player.name+"'s conquest unit status")
 		.setDescription(lines).setColor(color)
 		.setTimestamp(player.updated)
 		.setFooter(config.footer.message, config.footer.iconUrl);
@@ -307,11 +307,12 @@ exports.checkConquestUnits = function(player, message) {
 		richMsg.setThumbnail(picture);
 	}
 
-	message.channel.send(richMsg).catch(function(ex) {
-		console.warn(ex);
-		message.reply(ex.message+" (please allow link integration)");
-		message.channel.send(lines);
-	});
+	message.channel.send(richMsg)
+		.catch(function(ex) {
+			console.warn(ex);
+			message.reply(ex.message+" (please allow link integration)");
+			message.channel.send(lines);
+		});
 };
 
 /** Check for Galactic Legends requirements TODO
