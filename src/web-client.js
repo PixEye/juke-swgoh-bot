@@ -11,7 +11,7 @@ const TOOLS = require("./tools");
 const WEB = require("https");
 
 // Source pages:
-// const WARSTATS_TOP_GUILDS = "https://goh.warstats.net/?sort=tw&direction=asc";
+// const WAR_STATS_TOP_GUILDS = "https://goh.warstats.net/?sort=tw&direction=asc";
 // const PROXIMA_GUILDS = "https://goh.warstats.net/15/ProXima";
 // const SWGOH_TOP_GUILDS = "https://swgoh.gg/g/";
 const BASE_SPEED_OF_TOONS = "https://swgoh.gg/characters/stats/#2";
@@ -131,7 +131,7 @@ exports.parseSwgohGgToonList = function(html, result, chunkCnt) {
 	});
 };
 
-exports.parseWarstatsGuildList = function(html, result, chunkCnt) {
+exports.parseWarStatsGuildList = function(html, result, chunkCnt) {
 	var fileSize = html.length;
 
 	if (result.statusCode !== 200) {
@@ -222,7 +222,7 @@ exports.wget = function(url, callback) {
 	});
 };
 
-// exports.wget(PROXIMA_GUILDS, exports.parseWarstatsGuildList);
+// exports.wget(PROXIMA_GUILDS, exports.parseWarStatsGuildList);
 // exports.wget(SWGOH_TOP_GUILDS, exports.parseSwgohGgGuildList);
 exports.wget(BASE_SPEED_OF_TOONS, exports.parseSwgohGgToonList);
 

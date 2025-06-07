@@ -2348,11 +2348,13 @@ exports.toMySQLdate = function(d) {
 	// toLocaleString("en-ZA"):
 	//	2020/05/07, 16:13:45
 
-	// Target format example:
-	//	2020-05-07 16:13:45
-	d = d.toISOString().replace("T", " ").replace(/z$/i, "").replace(/\..*$/, "");
+	// Target format example: 2020-05-07 16:13:45
+	//   toISOString() gives format like this: 2025-06-07T10:29:49.199Z
+	// toLocalString() gives format like this: 07/06/2025 12:41:53
+	// let str = d.toISOString().replace("T", " ").replace(/z$/i, "").replace(/\..*$/, "");
+	let str = d.toISOString().slice(0, 10) + d.toLocaleString().slice(10);
 
-	return d;
+	return str;
 };
 
 /** Transform underscores to spaces
@@ -2523,7 +2525,7 @@ exports.updatePlayerDataInDb = function(player, message, callback) {
 		// Remember user's stats:
 		let update = new Date(player.updated);
 
-		update = exports.toMySQLdate(update);
+		update = exports.toMySQLdate(update); // object to 'YYYY-MM-DD HH:MM:SS' string
 		console.log(logPrefix()+"Data updated at: %s", update);
 
 		let sql2 = "UPDATE users SET";
@@ -2535,7 +2537,7 @@ exports.updatePlayerDataInDb = function(player, message, callback) {
 			"g13Count": player.g13Count,
 			"guildRefId": mysql.escape(player.guild.id),
 			"zetaCount": player.zetaCount,
-			"ts": "NOW()" // = MySQL function. Was: mysql.escape(update)
+			"ts": "'"+update+"'"
 		};
 		if (typeof player.glCount === "number") {
 			mapping["glCount"] = player.glCount;
