@@ -2352,7 +2352,12 @@ exports.toMySQLdate = function(d) {
 	//   toISOString() gives format like this: 2025-06-07T10:29:49.199Z
 	// toLocalString() gives format like this: 07/06/2025 12:41:53
 	// let str = d.toISOString().replace("T", " ").replace(/z$/i, "").replace(/\..*$/, "");
-	let str = d.toISOString().slice(0, 10) + d.toLocaleString().slice(10);
+	let localDate = d.toLocaleString();
+	let localDay   = localDate.slice(0, 2);
+	let localMonth = localDate.slice(3, 5);
+	let localYear  = localDate.slice(6, 10);
+	let localTime  = localDate.slice(11);
+	let str = localYear+'-'+localMonth+'-'+localDay+' '+localTime;
 
 	return str;
 };
