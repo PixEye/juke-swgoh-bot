@@ -41,6 +41,7 @@ const mapping = {
 		"last_updated": "updated"
 	}
 };
+const config = require("./config.json");
 const tools = require("./tools"); // Several functions
 
 /** Fetch a player data
@@ -49,13 +50,18 @@ const tools = require("./tools"); // Several functions
  */
 exports.fetchPlayer = async function(payload) {
 	const allycode = payload.allycodes[0];
+	const params = {
+		'headers': {
+			'x-gg-bot-access': config.swApi.key
+		}
+	};
 	const url = "https://swgoh.gg/api/player/" + allycode;
 
 	let logPrefix = tools.logPrefix;
 
 	try {
 		console.log(logPrefix()+'GET', url);
-		let response = await fetch(url); // needs NodeJS 12 or +
+		let response = await fetch(url, params); // needs NodeJS 12 or +
 		if (!response.ok) {
 			let txt = await response.text();
 			console.warn(url + ' failed!', txt);
@@ -167,13 +173,18 @@ exports.fetchGuild = async function(payload) {
 	let player = await exports.fetchPlayer(payload);
 
 	const guild_id = player.guild.id;
+	const params = {
+		'headers': {
+			'x-gg-bot-access': config.swApi.key
+		}
+	};
 	const url = "https://swgoh.gg/api/guild-profile/" + guild_id;
 
 	player = {}; // free some memory
 
 	try {
 		console.log(logPrefix()+'GET', url);
-		let response = await fetch(url);
+		let response = await fetch(url, params);
 		if (!response.ok) {
 			let txt = await response.text();
 			console.warn(url + ' failed!', txt);

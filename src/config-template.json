@@ -41,6 +41,7 @@
   },
   "swApi": {
     "user": "<your api.swgoh.help login>",
-    "pass": "<your api.swgoh.help password>"
+    "pass": "<your api.swgoh.help password>",
+    "key": "<your swgoh.gg API key>"
   }
 }
