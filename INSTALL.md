@@ -4,7 +4,7 @@
 
 ## Quick description
 
-Juke's SWGoH bot: a Star Wars Galaxy of Heros helper bot running on [Discord](https://discordapp.com/). SWGoH is a mobile game (for Android and iOS).
+Juke's SWGoH bot: a Star Wars Galaxy of Heroes helper bot running on [Discord](https://discordapp.com/). SWGoH is a mobile game (for Android and iOS).
 
 This bot get players and guilds data through the [SWGoH Help API](https://api.swgoh.help/).
 
