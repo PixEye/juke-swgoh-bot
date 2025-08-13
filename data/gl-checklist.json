@@ -414,7 +414,7 @@
 		},
 		{
 			"baseId": "TBD_GL_HONDO",
-			"unitName": "Hondo Ohnaka",
+			"unitName": "King Pirate Hondo Ohnaka",
 			"image": "https://game-assets.swgoh.gg/textures/tex.jg_charui_glhondo.png",
 			"isGL": true,
 			"requiredUnits": [
