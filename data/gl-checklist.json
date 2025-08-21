@@ -425,7 +425,11 @@
 				{ "gearLevel": 13, "relicTier": 5, "baseId": "QUIGGOLD" },
 				{ "gearLevel": 13, "relicTier": 6, "baseId": "KIX" },
 				{ "gearLevel": 13, "relicTier": 9, "baseId": "GENERALSKYWALKER" },
-				{ "gearLevel": 13, "relicTier": 8, "baseId": "REY" }
+				{ "gearLevel": 13, "relicTier": 8, "baseId": "REY" },
+				{ "gearLevel": 13, "relicTier": 7, "baseId": "BRUTUS" },
+				{ "gearLevel": 13, "relicTier": 7, "baseId": "VANE" },
+				{ "gearLevel": 13, "relicTier": 9, "baseId": "GENERALKENOBI" },
+				{ "gearLevel": 13, "relicTier": 5, "baseId": "CHIRRUTIMWE" }
 			]
 		}
 	]
