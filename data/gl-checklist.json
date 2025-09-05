@@ -2,6 +2,7 @@
 	"selfUrl": "https://swgoh.gg/api/gl-checklist/",
 	"units": [
 		{
+			"baseId": "TBD_KYLO",
 			"image": "https://game-assets.swgoh.gg/textures/tex.jg_charui_galacticlegend_kylo.png",
 			"isGL": true,
 			"requiredUnits": [
@@ -19,10 +20,10 @@
 				{"gearLevel": 13, "relicTier": 3, "baseId": "FIRSTORDERTIEPILOT"},
 				{"gearLevel": 13, "relicTier": 7, "baseId": "EMPERORPALPATINE"}
 			],
-			"baseId": "TBD_KYLO",
 			"unitName": "Kylo"
 		},
 		{
+			"baseId": "TBD_Rey",
 			"image": "https://game-assets.swgoh.gg/textures/tex.jg_charui_whiteroberey.png",
 			"isGL": true,
 			"requiredUnits": [
@@ -40,10 +41,10 @@
 				{"gearLevel": 13, "relicTier": 7, "baseId": "BB8"},
 				{"gearLevel": 13, "relicTier": 3, "baseId": "SMUGGLERCHEWBACCA"}
 			],
-			"baseId": "TBD_Rey",
 			"unitName": "Rey"
 		},
 		{
+			"baseId": "JEDIKNIGHTLUKE",
 			"image": "https://game-assets.swgoh.gg/textures/tex.jg_charui_jediknightluke.png",
 			"isGL": false,
 			"requiredUnits": [
@@ -59,10 +60,10 @@
 				{"gearLevel": 13, "relicTier": 3, "baseId": "COMMANDERLUKESKYWALKER"},
 				{"gearLevel": 13, "relicTier": 3, "baseId": "HERMITYODA"}
 			],
-			"baseId": "JEDIKNIGHTLUKE",
 			"unitName": "Jedi Knight Luke"
 		},
 		{
+			"baseId": "TBD_JMLS",
 			"image": "https://game-assets.swgoh.gg/textures/tex.jg_charui_luke_grandmaster.png",
 			"isGL": true,
 			"requiredUnits": [
@@ -71,21 +72,23 @@
 				{"gearLevel": 13, "relicTier": 5, "baseId": "C3POCHEWBACCA"},
 				{"gearLevel": 13, "relicTier": 5, "baseId": "OLDBENKENOBI"},
 				{"gearLevel": 13, "relicTier": 7, "baseId": "REYJEDITRAINING"},
+
 				{"gearLevel": 13, "relicTier": 5, "baseId": "C3POLEGENDARY"},
 				{"gearLevel": 13, "relicTier": 7, "baseId": "R2D2_LEGENDARY"},
 				{"gearLevel": 13, "relicTier": 6, "baseId": "CHEWBACCALEGENDARY"},
 				{"gearLevel": 13, "relicTier": 6, "baseId": "HANSOLO"},
 				{"gearLevel": 13, "relicTier": 7, "baseId": "JEDIKNIGHTLUKE"},
+
 				{"gearLevel": 13, "relicTier": 3, "baseId": "PRINCESSLEIA"},
 				{"gearLevel": 13, "relicTier": 5, "baseId": "HERMITYODA"},
 				{"gearLevel": 13, "relicTier": 3, "baseId": "WEDGEANTILLES"},
 				{"gearLevel": 13, "relicTier": 3, "baseId": "BIGGSDARKLIGHTER"},
 				{"gearLevel": 13, "relicTier": 5, "baseId": "ADMINISTRATORLANDO"}
 			],
-			"baseId": "TBD_JMLS",
 			"unitName": "Jedi Master Luke Skywalker"
 		},
 		{
+			"baseId": "TBD_SEE",
 			"image": "https://game-assets.swgoh.gg/textures/tex.jg_charui_espalpatine.png",
 			"isGL": true,
 			"requiredUnits": [
@@ -94,21 +97,23 @@
 				{"gearLevel": 13, "relicTier": 3, "baseId": "ROYALGUARD"},
 				{"gearLevel": 13, "relicTier": 7, "baseId": "VADER"},
 				{"gearLevel": 13, "relicTier": 7, "baseId": "EMPERORPALPATINE"},
+
 				{"gearLevel": 13, "relicTier": 4, "baseId": "DIRECTORKRENNIC"},
 				{"gearLevel": 13, "relicTier": 6, "baseId": "COUNTDOOKU"},
 				{"gearLevel": 13, "relicTier": 7, "baseId": "SITHMARAUDER"},
 				{"gearLevel": 13, "relicTier": 7, "baseId": "DARTHSIDIOUS"},
 				{"gearLevel": 13, "relicTier": 4, "baseId": "MAUL"},
+
 				{"gearLevel": 13, "relicTier": 7, "baseId": "ANAKINKNIGHT"},
 				{"gearLevel": 13, "relicTier": 6, "baseId": "GRANDADMIRALTHRAWN"},
 				{"gearLevel": 13, "relicTier": 3, "baseId": "GRANDMOFFTARKIN"},
 				{"gearLevel": 13, "relicTier": 3, "baseId": "VEERS"},
 				{"gearLevel": 13, "relicTier": 3, "baseId": "COLONELSTARCK"}
 			],
-			"baseId": "TBD_SEE",
 			"unitName": "Sith Eternal Emperor"
 		},
 		{
+			"baseId": "TBD_GK",
 			"image": "https://game-assets.swgoh.gg/textures/tex.jg_charui_globiwan.png",
 			"isGL": true,
 			"requiredUnits": [
@@ -117,21 +122,23 @@
 				{"gearLevel": 13, "relicTier": 3, "baseId": "MACEWINDU"},
 				{"gearLevel": 13, "relicTier": 5, "baseId": "BOKATAN"},
 				{"gearLevel": 13, "relicTier": 3, "baseId": "QUIGONJINN"},
+
 				{"gearLevel": 13, "relicTier": 5, "baseId": "MAGNAGUARD"},
 				{"gearLevel": 13, "relicTier": 5, "baseId": "CLONESERGEANTPHASEI"},
 				{"gearLevel": 13, "relicTier": 7, "baseId": "WATTAMBOR"},
 				{"gearLevel": 13, "relicTier": 7, "baseId": "GRIEVOUS"},
 				{"gearLevel": 13, "relicTier": 5, "baseId": "CADBANE"},
+
 				{"gearLevel": 13, "relicTier": 5, "baseId": "CC2224"},
 				{"gearLevel": 13, "relicTier": 7, "baseId": "JANGOFETT"},
 				{"gearLevel": 13, "relicTier": 7, "baseId": "SHAAKTI"},
 				{"gearLevel": 13, "relicTier": 8, "baseId": "GRANDMASTERYODA"},
 				{"stars": 6, "baseId": "CAPITALNEGOTIATOR"}
 			],
-			"baseId": "TBD_GK",
 			"unitName": "Jedi Master Kenobi"
 		},
 		{
+			"baseId": "TBD_LV",
 			"image": "https://game-assets.swgoh.gg/textures/tex.jg_charui_anakin_fallen.png",
 			"isGL": true,
 			"requiredUnits": [
@@ -140,21 +147,23 @@
 				{"gearLevel": 13, "relicTier": 5, "baseId": "BADBATCHTECH"},
 				{"gearLevel": 13, "relicTier": 5, "baseId": "TUSKENRAIDER"},
 				{"gearLevel": 13, "relicTier": 8, "baseId": "PADMEAMIDALA"},
+
 				{"gearLevel": 13, "relicTier": 8, "baseId": "GENERALSKYWALKER"},
 				{"gearLevel": 13, "relicTier": 5, "baseId": "EMBO"},
 				{"gearLevel": 13, "relicTier": 7, "baseId": "CT210408"},
 				{"gearLevel": 13, "relicTier": 5, "baseId": "BADBATCHECHO"},
 				{"gearLevel": 13, "relicTier": 8, "baseId": "COUNTDOOKU"},
+
 				{"gearLevel": 13, "relicTier": 7, "baseId": "ZAMWESELL"},
 				{"gearLevel": 13, "relicTier": 7, "baseId": "GRANDMOFFTARKIN"},
 				{"gearLevel": 13, "relicTier": 8, "baseId": "ARCTROOPER501ST"},
 				{"gearLevel": 13, "relicTier": 7, "baseId": "NUTEGUNRAY"},
 				{"stars": 7, "baseId": "YWINGCLONEWARS"}
 			],
-			"baseId": "TBD_LV",
 			"unitName": "Lord Vader"
 		},
 		{
+			"baseId": "TBD_STARKILLER",
 			"image": "https://game-assets.swgoh.gg/textures/tex.charui_starkiller.png",
 			"isGL": false,
 			"requiredUnits": [
@@ -163,7 +172,6 @@
 				{"gearLevel": 13, "relicTier": 5, "baseId": "DARTHTALON"},
 				{"gearLevel": 13, "relicTier": 5, "baseId": "MARAJADE"}
 			],
-			"baseId": "TBD_STARKILLER",
 			"unitName": "Star Killer"
 		},
 		{
@@ -188,15 +196,19 @@
 				{"gearLevel": 13, "relicTier": 5, "baseId": "KRRSANTAN"},
 				{"gearLevel": 13, "relicTier": 8, "baseId": "HANSOLO"},
 				{"gearLevel": 13, "relicTier": 3, "baseId": "GAMORREANGUARD"},
+
 				{"gearLevel": 13, "relicTier": 6, "baseId": "GREEDO"},
 				{"gearLevel": 13, "relicTier": 5, "baseId": "UNDERCOVERLANDO"},
 				{"gearLevel": 13, "relicTier": 7, "baseId": "JEDIKNIGHTLUKE"},
+
 				{"gearLevel": 13, "relicTier": 3, "baseId": "JAWA"},
 				{"gearLevel": 13, "relicTier": 4, "baseId": "URORRURRR"},
 				{"gearLevel": 13, "relicTier": 7, "baseId": "C3POLEGENDARY"},
+
 				{"gearLevel": 13, "relicTier": 5, "baseId": "BOUSHH"},
 				{"gearLevel": 13, "relicTier": 6, "baseId": "AURRA_SING"},
 				{"gearLevel": 13, "relicTier": 7, "baseId": "FENNECSHAND"},
+
 				{"gearLevel": 13, "relicTier": 7, "baseId": "BOBAFETT"},
 				{"gearLevel": 13, "relicTier": 3, "baseId": "HUMANTHUG"},
 				{"stars": 7, "baseId": "OUTRIDER"}
@@ -294,14 +306,17 @@
 				{"gearLevel": 13, "relicTier": 9, "baseId": "DARTHMALAK"},
 				{"gearLevel": 13, "relicTier": 7, "baseId": "SITHTROOPER"},
 				{"gearLevel": 13, "relicTier": 7, "baseId": "FOSITHTROOPER"},
+
 				{"gearLevel": 13, "relicTier": 7, "baseId": "MAUL"},
 				{"gearLevel": 13, "relicTier": 7, "baseId": "HK47"},
 				{"gearLevel": 13, "relicTier": 7, "baseId": "BASTILASHAN"},
 				{"gearLevel": 13, "relicTier": 5, "baseId": "SITHASSASSIN"},
+
 				{"gearLevel": 13, "relicTier": 5, "baseId": "50RT"},
 				{"stars": 7, "baseId": "FURYCLASSINTERCEPTOR"},
 				{"stars": 7, "baseId": "SITHSUPREMACYCLASS"},
 				{"stars": 7, "baseId": "TIEDAGGER"},
+
 				{"stars": 7, "baseId": "SITHBOMBER"},
 				{"stars": 7, "baseId": "SITHINFILTRATOR"},
 				{"stars": 7, "baseId": "SITHFIGHTER"},
