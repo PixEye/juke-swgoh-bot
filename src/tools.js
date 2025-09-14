@@ -193,7 +193,7 @@ exports.checkConquestUnits = function(player, message) {
 
 					if (playerUnit.stars < req.stars) {
 						progress = playerUnit.stars / req.stars;
-						msg = "🔺 "+msg+" is only "+playerUnit.stars+"⭐. "+(progress*100).toFixed()+"%";
+						msg = "🔺 "+msg+" = "+playerUnit.stars+"⭐. "+(progress*100).toFixed()+"%";
 					} else {
 						progress = 1;
 						msg = "✅ "+msg+" is ready.";
@@ -224,7 +224,7 @@ exports.checkConquestUnits = function(player, message) {
 				}
 				if (playerUnit.stars < 7) {
 					progresses.push(progress);
-					msg = "🔺 "+msg+" is only "+playerUnit.stars+"⭐. "+(progress*100).toFixed()+"%";
+					msg = "🔺 "+msg+" = "+playerUnit.stars+"⭐. "+(progress*100).toFixed()+"%";
 					progressObjects.push({"progress": progress, "msg": msg});
 					return;
 				}
@@ -258,7 +258,7 @@ exports.checkConquestUnits = function(player, message) {
 			avg = Math.floor(avg);
 			average = avg.toString();
 			while (average.length < 3) average = " " + average;
-			let resume = "~ `" + average + "%` for "+unit.name;
+			let resume = "~ `" + average + "%` "+unit.name;
 
 			if (playerMainUnit && playerMainUnit.combatType === 2)
 				resume += " "+playerMainUnit.stars+":star:";
@@ -455,7 +455,7 @@ exports.checkLegendReq = function(player, message) {
 
 					if (playerUnit.stars < req.stars) {
 						progress = playerUnit.stars / req.stars;
-						msg = "🔺 "+msg+" is only "+playerUnit.stars+"⭐. "+(progress*100).toFixed()+"%";
+						msg = "🔺 "+msg+" = "+playerUnit.stars+"⭐. "+(progress*100).toFixed()+"%";
 					} else {
 						progress = 1;
 						msg = "✅ "+msg+" is ready.";
@@ -487,21 +487,21 @@ exports.checkLegendReq = function(player, message) {
 				}
 				if (playerUnit.stars < 7) {
 					progresses.push(progress);
-					msg = "🔺 "+msg+" is only "+playerUnit.stars+"⭐. "+(progress*100).toFixed()+"%";
+					msg = "🔺 "+msg+" = "+playerUnit.stars+"⭐. "+(progress*100).toFixed()+"%";
 					progressObjects.push({"progress": progress, "msg": msg});
 					return;
 				}
 
 				if (playerUnit.gear < req.gearLevel) {
 					progresses.push(progress);
-					msg = "😕 "+msg+" in progress. "+(progress*100).toFixed()+"%";
+					msg = "😕 "+msg+": "+(progress*100).toFixed()+"%";
 					progressObjects.push({"progress": progress, "msg": msg});
 					return;
 				}
 
 				if (playerUnit.relic < req.relicTier) {
 					progresses.push(progress);
-					msg = "👉 "+msg+" in progress. "+(progress*100).toFixed()+"%";
+					msg = "👉 "+msg+": "+(progress*100).toFixed()+"%";
 					progressObjects.push({"progress": progress, "msg": msg});
 					return;
 				}
@@ -521,7 +521,7 @@ exports.checkLegendReq = function(player, message) {
 			avg = Math.floor(avg);
 			average = avg.toString();
 			while (average.length < 3) average = " " + average;
-			let resume = "~ `" + average + "%` for "+unit.name;
+			let resume = "~ `" + average + "%` "+unit.name;
 
 			if (playerGl && playerGl.combatType === 2)
 				resume += " "+playerGl.stars+":star:";
