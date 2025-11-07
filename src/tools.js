@@ -133,11 +133,11 @@ exports.checkConquestUnits = function(player, message) {
 		if (concatUpMsg==="REY") concatUpMsg = "GL"+"REY";
 	}
 
-	conquestUnits.forEach(unit => {
+	conquestUnits.names.forEach(unitName => {
 		if (found) return;
 
 		let progresses = [];
-		let unitNickname = unit.trim().toUpperCase();
+		let unitNickname = unitName.trim().toUpperCase();
 
 		lines = [];
 		progressObjects = [];

@@ -1,19 +1,27 @@
-[
-	"RazorCrest",
-	"CommanderAhsoka",
-	"MaulS7",
-	"BobaFettScion",
-	"BenSolo",
-	"DarthMalgus",
-	"Scythe",
-	"Trench",
-	"FuryClassInterceptor",
-	"TaronMalicos",
-	"MoffGideonS3",
-	"DarthBane",
-	"QueenAmidala",
-	"LuthenRael",
-	"EzraExile",
-	"DarkRey",
-	"JocastaNu"
-]
+{
+	"subject": "Conquest units",
+	"since": "2024-06-24",
+	"link": "https://swgoh.gg/characters/?cat=conquest_reward_unit",
+	"names": [
+		"RazorCrest",
+		"CommanderAhsoka",
+		"MaulS7",
+		"BobaFettScion",
+		"BenSolo",
+		"DarthMalgus",
+		"Scythe",
+		"Trench",
+		"FuryClassInterceptor",
+		"TaronMalicos",
+		"MoffGideonS3",
+		"DarthBane",
+		"QueenAmidala",
+		"LuthenRael",
+		"EzraExile",
+		"DarkRey",
+		"JocastaNu",
+		"SM33",
+		"MazKanata",
+		"TheStranger"
+	]
+}
