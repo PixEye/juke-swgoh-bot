@@ -133,11 +133,11 @@ exports.checkConquestUnits = function(player, message) {
 		if (concatUpMsg==="REY") concatUpMsg = "GL"+"REY";
 	}
 
-	conquestUnits.names.forEach(unitName => {
+	conquestUnits.names.forEach(conquestUnitName => {
 		if (found) return;
 
 		let progresses = [];
-		let unitNickname = unitName.trim().toUpperCase();
+		let unitNickname = conquestUnitName.trim().toUpperCase();
 
 		lines = [];
 		progressObjects = [];
@@ -148,7 +148,7 @@ exports.checkConquestUnits = function(player, message) {
 		};
 		if (unitAliasNames[unit.baseId]) unit.baseId = unitAliasNames[unit.baseId];
 
-		msg = "Checking unit: " + unit.name+" ("+unit.baseId+")";
+		msg = "Checking unit: " + conquestUnitName+" ("+unit.baseId+")";
 		console.log(logPrefix()+msg);
 
 		msg = "Checking unit: **" + unit.name+"**";
