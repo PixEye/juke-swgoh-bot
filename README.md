@@ -37,6 +37,7 @@ Here is a quick list of main commands to know about this bot (do not write the q
 * "ps" or "playerStats" to get a player's statistics
 * "gs" or "guildStats" to get a player's guild statistics
 * "gl" or "check" to check one or all unit(s) for game requirements
+* "ccu" to check conquest units of a roster
 
 ## Installation
 
