@@ -387,6 +387,9 @@ exports.checkLegendReq = function(player, message) {
 			case "GL"+"AT":
 				unit.baseId = "GL"+"AHSOKA"+"TANO";
 				break;
+			case "GL_HONDO":
+				unit.baseId = "GL"+"HONDO";
+				break;
 			case "GL"+"LEIA"+"ORGANA":
 				unit.baseId = "GL"+"LEIA";
 				break;

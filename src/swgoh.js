@@ -279,16 +279,17 @@ exports.getPlayerData = async function(users, callback, message) {
 
 					// Fix: increase GP if relics
 					switch(unit.relics) {
-						case 0: break;
-						case 1: unit.gp +=  255 +  504; break;
-						case 2: unit.gp +=  536 + 1059; break;
-						case 3: unit.gp +=  842 + 1664; break;
-						case 4: unit.gp += 1173 + 2319; break;
-						case 5: unit.gp += 1530 + 3024; break;
-						case 6: unit.gp += 2040 + 4032; break;
-						case 7: unit.gp += 2678 + 5292; break;
-						case 8: unit.gp += 3443 + 6804; break;
-						case 9: unit.gp += 4000 + 8000; break;
+						case  0: break;
+						case  1: unit.gp +=  255 +   504; break;
+						case  2: unit.gp +=  536 +  1059; break;
+						case  3: unit.gp +=  842 +  1664; break;
+						case  4: unit.gp += 1173 +  2319; break;
+						case  5: unit.gp += 1530 +  3024; break;
+						case  6: unit.gp += 2040 +  4032; break;
+						case  7: unit.gp += 2678 +  5292; break;
+						case  8: unit.gp += 3443 +  6804; break;
+						case  9: unit.gp += 4000 +  8000; break;
+						case 10: unit.gp += 5000 + 10000; break;
 						default:
 							msg = "Invalid relic level for %s (ac=%d):";
 							console.warn(msg, unit.defId, allycode, unit.relics);
