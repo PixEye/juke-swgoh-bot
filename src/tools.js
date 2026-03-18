@@ -196,7 +196,7 @@ exports.checkConquestUnits = function(player, message) {
 						msg = "🔺 "+msg+" = "+playerUnit.stars+"⭐. "+(progress*100).toFixed()+"%";
 					} else {
 						progress = 1;
-						msg = "✅ "+msg+" is ready.";
+						msg = "✅ "+msg;
 					}
 					progressObjects.push({"progress": progress, "msg": msg});
 					progresses.push(progress);
@@ -245,7 +245,7 @@ exports.checkConquestUnits = function(player, message) {
 
 				progress = 1;
 				progresses.push(progress);
-				msg = "✅ "+msg+" is ready.";
+				msg = "✅ "+msg;
 				progressObjects.push({"progress": progress, "msg": msg});
 			}); // end of loop on requirements
 		}
@@ -461,7 +461,7 @@ exports.checkLegendReq = function(player, message) {
 						msg = "🔺 "+msg+" = "+playerUnit.stars+"⭐. "+(progress*100).toFixed()+"%";
 					} else {
 						progress = 1;
-						msg = "✅ "+msg+" is ready.";
+						msg = "✅ "+msg;
 					}
 					progressObjects.push({"progress": progress, "msg": msg});
 					progresses.push(progress);
@@ -511,7 +511,7 @@ exports.checkLegendReq = function(player, message) {
 
 				progress = 1;
 				progresses.push(progress);
-				msg = "✅ "+msg+" is ready.";
+				msg = "✅ "+msg;
 				progressObjects.push({"progress": progress, "msg": msg});
 			}); // end of loop on requirements
 		}
