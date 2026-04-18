@@ -99,7 +99,8 @@ exports.fetchPlayer = async function(payload) {
 			"omicronCount": 0,
 			"omicronSkills": [],
 			"omicronUnits": {},
-			"units": []
+			"units": [],
+			"updated": result.data.last_updated
 		};
 		let unitCountByCombatType = {};
 		let modsByUnit = {};

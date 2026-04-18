@@ -685,9 +685,9 @@ client.on("message", (message) => {
 			} else {
 				message.reply("Up to your will master. Leaving...");
 
-				let msg = "I was started at: "+tools.toMySQLdate(start)+" GMT.\n";
+				let msg = "I was started at: "+tools.toMySQLDate(start)+" GMT.\n";
 
-				msg += "I was listening since: "+tools.toMySQLdate(listen_since)+" GMT.";
+				msg += "I was listening since: "+tools.toMySQLDate(listen_since)+" GMT.";
 				console.log(logPrefix()+msg);
 				clearInterval(timer);
 				message.channel.send(msg).then(() => {
@@ -1394,8 +1394,8 @@ client.on("message", (message) => {
 			// let servers = [];
 
 			lines = [];
-			lines.push("`Started at..: "+tools.toMySQLdate(start)+" GMT`");
-			lines.push("`Listen since: "+tools.toMySQLdate(listen_since)+" GMT`");
+			lines.push("`Started at..: "+tools.toMySQLDate(start)+" GMT`");
+			lines.push("`Listen since: "+tools.toMySQLDate(listen_since)+" GMT`");
 			lines.push("Down time in minutes: "+Math.round(down_time/1000/60));
 			if (message.author.id === config.discord.ownerID) {
 				let percent = msgCount? Math.round(100 * cmdCount / msgCount): 0;

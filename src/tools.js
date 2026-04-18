@@ -1758,7 +1758,7 @@ exports.updateOldestGuildOr = function(callback) {
 		}
 
 		msg = "Start UOG process on: %s (%s / %s)...";
-		console.log(logPrefix()+msg, g.name, g.gm_allycode, exports.toMySQLdate(g.ts));
+		console.log(logPrefix()+msg, g.name, g.gm_allycode, exports.toMySQLDate(g.ts));
 		exports.alreadyFetchedGuildIds.push(g.id);
 
 		swgoh.getPlayerGuild(g.gm_allycode, message, function(guild) {
@@ -1797,7 +1797,7 @@ exports.updateOldestPlayer = function() {
 
 		let u = users[0];
 		msg = "Start UOP process on: %s (%s / %s)...";
-		console.log(logPrefix()+msg, u.game_name, u.allycode, exports.toMySQLdate(u.ts));
+		console.log(logPrefix()+msg, u.game_name, u.allycode, exports.toMySQLDate(u.ts));
 
 		swgoh.getPlayerData([u], function(player, message) {
 			exports.updatePlayerDataInDb(player, message, function() {
@@ -2346,9 +2346,11 @@ exports.territoryWarReset = function(player, message) {
  * @param {Date} d
  * @return {string} simplified date
  */
-exports.toMySQLdate = function(d) {
+exports.toMySQLDate = function(d) {
+	let logPrefix = exports.logPrefix; // shortcut
 	if (typeof(d)!=="object" || !(d instanceof Date)) {
-		d = new Date();
+		console.warn(logPrefix()+'WARN: Invalid date given:', d);
+		d = new Date(d);
 	}
 
 	// d = d.toISOString("en-ZA").replace(/\//g, "-").replace(",", "").slice(0, 19);
@@ -2360,11 +2362,19 @@ exports.toMySQLdate = function(d) {
 	// toLocalString() gives format like this: 07/06/2025 12:41:53
 	// let str = d.toISOString().replace("T", " ").replace(/z$/i, "").replace(/\..*$/, "");
 	let localDate = d.toLocaleString();
+	if (localDate==='Invalid Date') {
+		console.warn(logPrefix()+'WARN: Invalid date detected from:', d);
+		d = new Date();
+		localDate = d.toLocaleString();
+	}
+	console.log(logPrefix()+'Local date:', localDate);
+
 	let localDay   = localDate.slice(0, 2);
 	let localMonth = localDate.slice(3, 5);
 	let localYear  = localDate.slice(6, 10);
 	let localTime  = localDate.slice(11);
 	let str = localYear+'-'+localMonth+'-'+localDay+' '+localTime;
+	console.log(logPrefix()+'MySQL date:', str);
 
 	return str;
 };
@@ -2399,12 +2409,13 @@ exports.updatePlayerDataInDb = function(player, message, callback) {
 		let evols = [];
 		let lines = [];
 		let msg = "";
+		const now = new Date;
 		let newEvol = {
 			"allycode": allycode,
 			"unit_id": "",
 			"type": "",
 			"new_value": 0,
-			"ts": exports.toMySQLdate(now)
+			"ts": exports.toMySQLDate(now)
 		};
 
 		// If the user was unknown, do no look for any evolution:
@@ -2534,12 +2545,18 @@ exports.updatePlayerDataInDb = function(player, message, callback) {
 			}
 		}
 
-		// Remember user's stats:
 		let update = new Date(player.updated);
 
-		update = exports.toMySQLdate(update); // object to 'YYYY-MM-DD HH:MM:SS' string
-		console.log(logPrefix()+"Data updated at: %s", update);
+		const dateDiffInDays = now - update / (1000 * 3600 * 24);
+		if (dateDiffInDays > 15) {
+			console.warn(logPrefix()+"WARN: Data update was too old: '%s'", update);
+			update = now;
+		}
 
+		update = exports.toMySQLDate(update); // object to 'YYYY-MM-DD HH:MM:SS' string
+		console.log(logPrefix()+"Data updated at: '%s'", update);
+
+		// Remember user's stats:
 		let sql2 = "UPDATE users SET";
 		let mapping = {
 			"game_name": mysql.escape(player.name),
