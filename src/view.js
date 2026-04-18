@@ -345,7 +345,7 @@ exports.showAbbr = function(message) {
 	let nbAliases = Object.keys(unitAliasNames).length;
 	let nbMsgSent = 0;
 	let newAlias = '';
-	let now = new Date();
+	const now = new Date();
 	let richMsg = new RichEmbed().setColor("GREEN")
 		.setTimestamp(now).setFooter(config.footer.message, config.footer.iconUrl);
 
@@ -796,14 +796,18 @@ exports.showRandomTeam = function(player, message) {
  * @param {Object} message - The user's message to reply to
  */
 exports.showSwgohData = function(data, message) {
-	let now = new Date();
-	let dataToShow = typeof(data)==="object"?
+	const now = new Date();
+	const dataToShow = typeof(data)==="object"?
 		JSON.stringify(data).slice(0, 200): data;
+	const logPrefix = tools.logPrefix; // shortcut
+	const updatedOn = typeof(data)==="object" && data.updated? data.updated: now;
+
+	console.log(logPrefix()+'Updated on:', updatedOn);
 
 	let richMsg = new RichEmbed().setTitle("SWGoH data").setColor("GREEN")
 		// .setAuthor(config.discord.username)
 		.setDescription(dataToShow)
-		.setTimestamp(typeof(data)==="object" && data.updated? data.updated: now)
+		.setTimestamp(updatedOn)
 		.setFooter(config.footer.message, config.footer.iconUrl);
 
 	message.reply(richMsg).catch(function(ex) {
