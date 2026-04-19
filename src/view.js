@@ -161,7 +161,8 @@ exports.guildPlayerStats = function(allycode, message, guild) {
 		}
 	});
 
-	richMsg.setColor("GREEN").setDescription(lines).setTimestamp(guild.updated)
+	richMsg.setColor("GREEN").setDescription(lines)
+		.setTimestamp(tools.toMySQLDate(guild.updated))
 		.setFooter(config.footer.message, config.footer.iconUrl);
 
 	// Display the result:
@@ -272,7 +273,8 @@ exports.listOmicrons = function(player, message) {
 
 	let richMsg = new RichEmbed().setColor(color)
 		.setTitle(player.name+"'s "+player.omicronCount+" omicron(s)")
-		.setDescription(lines).setTimestamp(player.updated)
+		.setDescription(lines)
+		.setTimestamp(tools.toMySQLDate(player.updated))
 		.setFooter(config.footer.message, config.footer.iconUrl);
 
 	message.channel.send(richMsg);
@@ -422,7 +424,7 @@ exports.showGuildStats = function(guild, message) {
 			" (GP: "+ guild.leader.gp.toLocaleString(locale)+")", true)
 		.addField("Biggest GP:", guild.biggestPlayer.name+
 			" (GP: "+guild.biggestPlayer.gp.toLocaleString(locale)+")", true)
-		.setTimestamp(guild.updated)
+		.setTimestamp(tools.toMySQLDate(guild.updated))
 		.setFooter(config.footer.message, config.footer.iconUrl);
 
 	if (guild.bannerLogo) {
@@ -542,7 +544,8 @@ exports.showLastEvols = function(player, message, evols) {
 
 	let richMsg = new RichEmbed()
 		.setTitle(player.name+"'s "+n+" last evolution(s)")
-		.setDescription(lines).setColor(color).setTimestamp(player.updated)
+		.setDescription(lines).setColor(color)
+		.setTimestamp(tools.toMySQLDate(player.updated))
 		.setFooter(config.footer.message, config.footer.iconUrl);
 
 	message.channel.send(richMsg)
@@ -608,7 +611,7 @@ exports.showPlayerRelics = function(player, message) {
 	let richMsg = new RichEmbed()
 		.setTitle(player.name+" has "+n+" unit"+su+" with relics:")
 		.setDescription(lines).setColor(color)
-		.setTimestamp(player.updated)
+		.setTimestamp(tools.toMySQLDate(player.updated))
 		.setFooter(config.footer.message, config.footer.iconUrl);
 	message.channel.send(richMsg).catch(function(ex) {
 		console.warn(ex);
@@ -657,7 +660,8 @@ exports.showPlayerStats = function(player, message) {
 		lines.push("**Gift count:** "+(player.giftCount.toLocaleString(config.discord.locale)));
 
 	let richMsg = new RichEmbed().setTitle(player.name+"'s profile").setColor("GREEN")
-		.setDescription(lines).setTimestamp(player.updated)
+		.setDescription(lines)
+		.setTimestamp(tools.toMySQLDate(player.updated))
 		.setFooter(config.footer.message, config.footer.iconUrl);
 
 	if (player.displayAvatarURL) {
@@ -696,7 +700,8 @@ exports.showPlayerStats = function(player, message) {
 	});
 
 	let richMsg = new RichEmbed().setTitle(player.game_name+"'s registered  GAs").setColor("GREEN")
-		.setDescription(lines).setTimestamp(player.updated)
+		.setDescription(lines)
+		.setTimestamp(tools.toMySQLDate(player.updated))
 		.setFooter(config.footer.message, config.footer.iconUrl);
 
 	if (player.displayAvatarURL) {
@@ -745,7 +750,8 @@ exports.showPlayerStats = function(player, message) {
 
 	let richMsg = new RichEmbed().setColor("GREEN")
 		.setTitle(player.game_name+"'s " + type + " GA - Round " + ga_stats.round)
-		.setDescription(lines).setTimestamp(player.updated)
+		.setDescription(lines)
+		.setTimestamp(tools.toMySQLDate(player.updated))
 		.setFooter(config.footer.message, config.footer.iconUrl);
 
 	if (player.displayAvatarURL) {
@@ -777,7 +783,8 @@ exports.showRandomTeam = function(player, message) {
 	];
 
 	let richMsg = new RichEmbed().setTitle(player.name+"'s profile").setColor("GREEN")
-		.setDescription(lines).setTimestamp(player.updated)
+		.setDescription(lines)
+		.setTimestamp(tools.toMySQLDate(player.updated))
 		.setFooter(config.footer.message, config.footer.iconUrl);
 
 	if (player.displayAvatarURL) {
@@ -800,7 +807,7 @@ exports.showSwgohData = function(data, message) {
 	const dataToShow = typeof(data)==="object"?
 		JSON.stringify(data).slice(0, 200): data;
 	const logPrefix = tools.logPrefix; // shortcut
-	const updatedOn = typeof(data)==="object" && data.updated? data.updated: now;
+	const updatedOn = typeof(data)==="object" && data.updated? tools.toMySQLDate(data.updated): now;
 
 	console.log(logPrefix()+'Updated on:', updatedOn);
 
@@ -896,7 +903,8 @@ exports.showUnitInfo = function(player, message, unitName, ct) {
 	}
 
 	color = nbFound===1? "GREEN": "ORANGE";
-	let richMsg = new RichEmbed().setTimestamp(player.updated).setColor(color)
+	let richMsg = new RichEmbed().setColor(color)
+		.setTimestamp(tools.toMySQLDate(player.updated))
 		.setFooter(config.footer.message, config.footer.iconUrl);
 
 	unitName = locutus.ucwords(unitName);

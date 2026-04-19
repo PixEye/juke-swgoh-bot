@@ -296,7 +296,7 @@ exports.checkConquestUnits = function(player, message) {
 	let richMsg = new RichEmbed()
 		.setTitle(player.name+"'s conquest unit status")
 		.setDescription(lines).setColor(color)
-		.setTimestamp(player.updated)
+		.setTimestamp(exports.toMySQLDate(player.updated))
 		.setFooter(config.footer.message, config.footer.iconUrl);
 
 	if (picture && typeof picture === "string" && picture.slice(0, 1)==="/") {
@@ -564,7 +564,7 @@ exports.checkLegendReq = function(player, message) {
 	let richMsg = new RichEmbed()
 		.setTitle(player.name+"'s unit status")
 		.setDescription(lines).setColor(color)
-		.setTimestamp(player.updated)
+		.setTimestamp(exports.toMySQLDate(player.updated))
 		.setFooter(config.footer.message, config.footer.iconUrl);
 
 	if (picture && typeof picture === "string" && picture.slice(0, 1)==="/") {
@@ -637,7 +637,7 @@ exports.checkPlayerMods = function(player, message) {
 	let richMsg = new RichEmbed()
 		.setTitle(player.name+" has "+n+" unit(s) with "+tpmmc+" missing module(s)")
 		.setDescription(lines).setColor(color)
-		.setTimestamp(player.updated)
+		.setTimestamp(exports.toMySQLDate(player.updated))
 		.setFooter(config.footer.message, config.footer.iconUrl);
 
 	message.channel.send(richMsg).catch(function(ex) {
@@ -694,7 +694,7 @@ exports.checkUnitsGp = function(player, message, limit) {
 	let richMsg = new RichEmbed()
 		.setTitle(player.name+" has "+n+" unit(s) with GP between "+minit+"k and "+limit+"k")
 		.setDescription(lines).setColor(color)
-		.setTimestamp(player.updated)
+		.setTimestamp(exports.toMySQLDate(player.updated))
 		.setFooter(config.footer.message, config.footer.iconUrl);
 
 	message.channel
@@ -1061,10 +1061,11 @@ exports.getPlayerFromDiscordUser = function(user, message, callback) {
 		player.guild = {};
 		console.log(logPrefix()+result.length+" record(s) match(es) user's ID:", discord_id);
 		if (result.length > 1) {
+			const now = new Date();
+
 			let color  = "ORANGE";
 			let guilds = {};
 			let lines  = [];
-			let now    = new Date();
 			let title  = result.length+" record(s) match(es) this Discord ID!";
 
 			console.warn(logPrefix()+title);
@@ -1405,7 +1406,8 @@ exports.handleBehaviour = function(guild, message, target) {
 				console.log(logPrefix()+msg);
 				lines = [msg];
 				let richMsg = new RichEmbed().setColor(color).setTitle(title)
-					.setDescription(lines).setTimestamp(author.updated)
+					.setDescription(lines)
+					.setTimestamp(exports.toMySQLDate(author.updated))
 					.setFooter(config.footer.message, config.footer.iconUrl);
 				message.channel.send(richMsg).catch(function(ex) {
 					console.warn(ex);
@@ -1463,7 +1465,8 @@ exports.handleBehaviour = function(guild, message, target) {
 			title = n+" player"+as+" behaviour"+s+" in: "+guild.name;
 			console.log(logPrefix()+"%d line%s displayed", lines.length, s);
 			let richMsg = new RichEmbed().setColor(color).setTitle(title)
-				.setDescription(lines).setTimestamp(author.updated)
+				.setDescription(lines)
+				.setTimestamp(exports.toMySQLDate(author.updated))
 				.setFooter(config.footer.message, config.footer.iconUrl);
 			message.channel.send(richMsg).catch(function(ex) {
 				console.warn(ex);
@@ -1589,7 +1592,8 @@ exports.handleContest = function(guild, message, target) {
 				console.log(logPrefix()+msg);
 				lines = [msg];
 				let richMsg = new RichEmbed().setColor(color).setTitle(title)
-					.setDescription(lines).setTimestamp(author.updated)
+					.setDescription(lines)
+					.setTimestamp(exports.toMySQLDate(author.updated))
 					.setFooter(config.footer.message, config.footer.iconUrl);
 				message.channel.send(richMsg).catch(function(ex) {
 					console.warn(ex);
@@ -1636,7 +1640,8 @@ exports.handleContest = function(guild, message, target) {
 				lines = ["Every member of this guild has a contest score at zero."];
 			}
 			let richMsg = new RichEmbed().setColor(color).setTitle(title)
-				.setDescription(lines).setTimestamp(author.updated)
+				.setDescription(lines)
+				.setTimestamp(exports.toMySQLDate(author.updated))
 				.setFooter(config.footer.message, config.footer.iconUrl);
 			message.channel.send(richMsg).catch(function(ex) {
 				console.warn(ex);
@@ -2156,9 +2161,9 @@ exports.territoryWarGet = function(player, message) {
 			console.log(logPrefix()+"Will clean it up in %d minute(s)...", MINUTES_BEFORE_CLEANUP);
 
 			const basename = filename.replace(/^.*\//, "");
+			const now = new Date();
 
 			msg = basename+" contains headers & "+n+" records (total: "+lines.length+" lines)";
-			let now = new Date();
 			let richMsg = new RichEmbed()
 				.setTitle("TW data:").setColor("GREEN")
 				.setDescription(msg).attachFile(filename).setTimestamp(now)
@@ -2349,42 +2354,36 @@ exports.territoryWarReset = function(player, message) {
 exports.toMySQLDate = function(d) {
 	const iniDate = d;
 	const logPrefix = exports.logPrefix; // shortcut
-	const regExp = /\d\d\dZ$/;
+	const regExp = /\d\d\dZ$/i;
 
 	if (typeof(d)==='string' && d.indexOf('T')>=0) {
 		d = d.replace('+00:00', '');
 		d = d.replace(regExp, 'Z');
-		console.log(logPrefix()+'toMySQLDate('+iniDate+') string to:', d);
 		d = new Date(d);
+		console.log(logPrefix()+'toMySQLDate('+iniDate+') string to:', d);
 	}
 
 	if (typeof(d)!=='object' || !(d instanceof Date)) {
-		console.warn(logPrefix()+'WARN: Invalid date given:', d);
+		console.warn(logPrefix()+'WARN: Invalid date given:', iniDate);
 		d = new Date(d);
 	}
-
-	// d = d.toISOString('en-ZA').replace(/\//g, '-').replace(',', '').slice(0, 19);
-	// toLocaleString('en-ZA'):
-	//	2020/05/07, 16:13:45
 
 	// Target format example: 2020-05-07 16:13:45
 	//   toISOString() gives format like this: 2025-06-07T10:29:49.199Z
 	// toLocalString() gives format like this: 07/06/2025 12:41:53
-	// let str = d.toISOString().replace('T', ' ').replace(/z$/i, "").replace(/\..*$/, "");
 	let localDate = d.toLocaleString();
 	if (localDate==='Invalid Date') {
 		console.warn(logPrefix()+'WARN: Invalid date detected from:', iniDate);
 		d = new Date();
 		localDate = d.toLocaleString();
 	}
-	console.log(logPrefix()+'Local date:', localDate);
 
 	let localDay   = localDate.slice(0, 2);
 	let localMonth = localDate.slice(3, 5);
 	let localYear  = localDate.slice(6, 10);
 	let localTime  = localDate.slice(11);
 	let str = localYear+'-'+localMonth+'-'+localDay+' '+localTime;
-	console.log(logPrefix()+'MySQL date:', str);
+	console.log(logPrefix()+'Local date:', localDate, 'to MySQL date:', str);
 
 	return str;
 };
