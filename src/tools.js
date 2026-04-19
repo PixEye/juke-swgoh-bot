@@ -2343,27 +2343,37 @@ exports.territoryWarReset = function(player, message) {
 };
 
 /** Generate a date string in MySQL format (if no date is given, now is used)
- * @param {Date} d
+ * @param {Date|string} d
  * @return {string} simplified date
  */
 exports.toMySQLDate = function(d) {
-	let logPrefix = exports.logPrefix; // shortcut
-	if (typeof(d)!=="object" || !(d instanceof Date)) {
+	const iniDate = d;
+	const logPrefix = exports.logPrefix; // shortcut
+	const regExp = /\d\d\dZ$/;
+
+	if (typeof(d)==='string' && d.indexOf('T')>=0) {
+		d = d.replace('+00:00', '');
+		d = d.replace(regExp, 'Z');
+		console.log(logPrefix()+'toMySQLDate('+iniDate+') string to:', d);
+		d = new Date(d);
+	}
+
+	if (typeof(d)!=='object' || !(d instanceof Date)) {
 		console.warn(logPrefix()+'WARN: Invalid date given:', d);
 		d = new Date(d);
 	}
 
-	// d = d.toISOString("en-ZA").replace(/\//g, "-").replace(",", "").slice(0, 19);
-	// toLocaleString("en-ZA"):
+	// d = d.toISOString('en-ZA').replace(/\//g, '-').replace(',', '').slice(0, 19);
+	// toLocaleString('en-ZA'):
 	//	2020/05/07, 16:13:45
 
 	// Target format example: 2020-05-07 16:13:45
 	//   toISOString() gives format like this: 2025-06-07T10:29:49.199Z
 	// toLocalString() gives format like this: 07/06/2025 12:41:53
-	// let str = d.toISOString().replace("T", " ").replace(/z$/i, "").replace(/\..*$/, "");
+	// let str = d.toISOString().replace('T', ' ').replace(/z$/i, "").replace(/\..*$/, "");
 	let localDate = d.toLocaleString();
 	if (localDate==='Invalid Date') {
-		console.warn(logPrefix()+'WARN: Invalid date detected from:', d);
+		console.warn(logPrefix()+'WARN: Invalid date detected from:', iniDate);
 		d = new Date();
 		localDate = d.toLocaleString();
 	}
@@ -2396,7 +2406,7 @@ exports.updatePlayerDataInDb = function(player, message, callback) {
 	let allycode = player.allycode;
 	let begin = "";
 	let logPrefix = exports.logPrefix; // shortcut
-	let now = new Date();
+	const now = new Date();
 
 	if (!player.name) {
 		console.log(logPrefix()+"Invalid player's name for user:", player);
@@ -2545,15 +2555,27 @@ exports.updatePlayerDataInDb = function(player, message, callback) {
 			}
 		}
 
-		let update = new Date(player.updated);
+		console.log(logPrefix()+"player was updated at:", JSON.stringify(player.updated));
+		// Example: "2026-02-27T15:18:36.822899+00:00Z"
+		// Target.: "2026-04-19 09:30:33"
 
+		let update = new Date(player.updated);
+		if (update==='Invalid Date') {
+			console.warn(logPrefix()+"WARN: player update was invalid:", player.updated);
+			update = new Date(player.updated.replace('/\..*$/', ''));
+
+			if (update==='Invalid Date') {
+				update = now;
+				console.warn(logPrefix()+"WARN: player update was invalid again. Using now:", player.updated);
+			}
+		}
 		const dateDiffInDays = now - update / (1000 * 3600 * 24);
 		if (dateDiffInDays > 15) {
 			console.warn(logPrefix()+"WARN: Data update was too old: '%s'", update);
 			update = now;
 		}
 
-		update = exports.toMySQLDate(update); // object to 'YYYY-MM-DD HH:MM:SS' string
+		update = exports.toMySQLDate(player.updated); // object to 'YYYY-MM-DD HH:MM:SS' string
 		console.log(logPrefix()+"Data updated at: '%s'", update);
 
 		// Remember user's stats:
