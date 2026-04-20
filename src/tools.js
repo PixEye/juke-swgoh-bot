@@ -69,7 +69,7 @@ exports.addUnitName = function(code, name) {
 
 	db_pool.query(sql, [values], function(exc, result) {
 		if (exc) {
-			let otd = exc.sqlMessage? exc.sqlMessage: exc; // object to display
+			const otd = exc.sqlMessage? exc.sqlMessage: exc; // message to display
 
 			console.log("SQL:", sql);
 			console.log(logPrefix()+"AUN Exception:", otd);
@@ -829,7 +829,7 @@ exports.getGuildDbStats = function(player1, message, callback) {
 				if (typeof msg.delete==="function") msg.delete();
 
 				if (exc) {
-					let otd = exc.sqlMessage? exc.sqlMessage: exc; // object to display
+					const otd = exc.sqlMessage? exc.sqlMessage: exc; // message to display
 
 					console.log("SQL:", sql);
 					console.log(logPrefix()+"GGDBS Exception:", otd);
@@ -855,7 +855,7 @@ exports.getGuildDbStats = function(player1, message, callback) {
 				sql = "SELECT * FROM `users` WHERE guildRefId=?"; // get players
 				db_pool.query(sql, [guild.refId], function(exc, result) {
 					if (exc) {
-						let otd = exc.sqlMessage? exc.sqlMessage: exc; // object to display
+						const otd = exc.sqlMessage? exc.sqlMessage: exc; // message to display
 
 						console.log("SQL:", sql);
 						console.warn(logPrefix()+"GGDBS Exception:", otd);
@@ -883,7 +883,7 @@ exports.getGuildDbStats = function(player1, message, callback) {
 					sql = "SELECT * FROM `units` WHERE allycode IN (?)"; // get units
 					db_pool.query(sql, [allycodes], function(exc, result) {
 						if (exc) {
-							let otd = exc.sqlMessage? exc.sqlMessage: exc; // object to display
+							const otd = exc.sqlMessage? exc.sqlMessage: exc; // message to display
 
 							console.log("SQL:", sql);
 							console.log(logPrefix()+"GGDBS Exception:", otd);
@@ -962,7 +962,7 @@ exports.getLastEvolsFromDb = function(player, message) {
 
 	db_pool.query(sql, function(exc, result) {
 		if (exc) {
-			let otd = exc.sqlMessage? exc.sqlMessage: exc; // object to display
+			const otd = exc.sqlMessage? exc.sqlMessage: exc; // message to display
 
 			console.log("SQL:", sql);
 			console.log(logPrefix()+"GLA Exception:", otd);
@@ -1164,7 +1164,7 @@ exports.getPlayerStats = function(users, message, callback) {
  * @param {object} message The origin message (request)
  */
 exports.getUnregPlayers = function(allycode, message) {
-	let logPrefix = exports.logPrefix; // shortcut
+	const logPrefix = exports.logPrefix; // shortcut
 
 	if (!allycode) {
 		message.reply(":red_circle: Invalid or missing allycode!");
@@ -1186,27 +1186,27 @@ exports.getUnregPlayers = function(allycode, message) {
 				// Remember stats of the guild:
 				exports.rememberGuildStats(guild, message);
 
-				let sql = "SELECT * FROM `users` WHERE allycode IN (?)";
-				let guildAllycodes = Object.keys(guild.players);
-				let memberCnt = guildAllycodes.length;
+				const sql = "SELECT * FROM `users` WHERE allycode IN (?)";
+				const guildAllyCodes = Object.keys(guild.players);
+				const memberCnt = guildAllyCodes.length;
 
 				console.log(logPrefix()+"GUP: %d guild member(s).", memberCnt);
 				if (memberCnt !== guild.memberCount) { // data check
 					// Should not happen
-					msg = "GUP: guildAllycodes.length (%d) !== guild.memberCount (%d)!";
+					msg = "GUP WARN: guildAllyCodes.length (%d) !== guild.memberCount (%d)!";
 					console.warn(msg, memberCnt, guild.memberCount);
 				}
 
 				let n = memberCnt;
-				db_pool.query(sql, [guildAllycodes], function(exc, regPlayers) {
+				db_pool.query(sql, [guildAllyCodes], function(exc, regPlayers) {
 					let dbRegByAc = {};
 					let nbReg = 0;
 					let noProbePlayers = [];
 
 					if (exc) {
-						let otd = exc.sqlMessage? exc.sqlMessage: exc; // object to display
+						const otd = exc.sqlMessage? exc.sqlMessage: exc; // message to display
 
-						console.log(logPrefix()+"GUP SQL:", sql);
+						console.log( logPrefix()+"GUP SQL:", sql );
 						console.warn(logPrefix()+"GUP Exception:", otd);
 						message.reply("Failed! "+otd);
 						return;
@@ -1217,24 +1217,26 @@ exports.getUnregPlayers = function(allycode, message) {
 
 					let gonePlayers = {};
 					regPlayers.forEach(function(regPlayer) {
-						dbRegByAc[regPlayer.allycode] =
-							locutus.utf8_decode(regPlayer.game_name)+" ("+regPlayer.allycode+")";
+						const ac = regPlayer.allycode;
+						const allyCode = exports.cleanAc(ac);
+
+						dbRegByAc[ac] =
+							locutus.utf8_decode(regPlayer.game_name)+" ("+allyCode+")";
 
 						if (regPlayer.guildRefId !== guild.swgoh_id) {
-							gonePlayers[regPlayer.allycode] =
-								regPlayer.game_name+" ["+regPlayer.allycode+"]";
+							gonePlayers[ac] =
+								regPlayer.game_name+" ["+allyCode+"]";
 						}
 
 						if ( ! regPlayer.gp ) {
-							noProbePlayers.push(
-								regPlayer.name+" ("+regPlayer.allycode+")"
-							);
+							noProbePlayers[ac] =
+								regPlayer.name+" ("+allyCode+")";
 						}
 						++nbReg;
 
-						if ( ! guild.players[regPlayer.allycode] ) {
-							gonePlayers[regPlayer.allycode] =
-								regPlayer.game_name+" ("+regPlayer.allycode+")";
+						if ( ! guild.players[ac] ) {
+							gonePlayers[ac] =
+								regPlayer.game_name+" ("+allyCode+")";
 						}
 					});
 
@@ -1250,13 +1252,15 @@ exports.getUnregPlayers = function(allycode, message) {
 					console.log(logPrefix()+n+msg);
 
 					if (!n) {
-						message.channel.send(":white_check_mark: All "+guildAllycodes.length+
+						message.channel.send(":white_check_mark: All "+guildAllyCodes.length+
 							' players in guild "'+guild.name+'" are registered.');
 					}
 
 					let notRegPlayers = [];
-					guildAllycodes.forEach(function(allycode) {
-						if (!dbRegByAc[allycode]) {
+					guildAllyCodes.forEach(function(allycode) {
+						const ac = parseInt(allycode.replace('/-/g', ''));
+
+						if (!dbRegByAc[ac]) {
 							notRegPlayers.push(guild.players[allycode]+" ("+allycode+")");
 						}
 					});
@@ -1265,8 +1269,9 @@ exports.getUnregPlayers = function(allycode, message) {
 						logPrefix()+"GUP - "+dbRegByAc.length+" reg user(s): "+dbRegByAc.join(", ")
 					);
 
-					let userList = notRegPlayers.length? ": "+notRegPlayers.sort().join(", "): "";
-					msg = "**"+memberCnt+"**"+msg+userList+".";
+					const notRegPlayerCount = notRegPlayers.length;
+					let userList = notRegPlayerCount? ": "+notRegPlayers.sort().join(", "): "";
+					msg = "**"+notRegPlayerCount+"**"+msg+userList+".";
 
 					console.log(logPrefix()+"GUP - Not probed users count: "+noProbePlayers.length);
 					if (noProbePlayers.length) {
@@ -1358,7 +1363,7 @@ exports.handleBehaviour = function(guild, message, target) {
 				let msg = "";
 
 				if (exc) {
-					let otd = exc.sqlMessage? exc.sqlMessage: exc; // object to display
+					const otd = exc.sqlMessage? exc.sqlMessage: exc; // message to display
 
 					console.log("SQL:", sql);
 					console.warn(logPrefix()+"HBH Exception:", otd);
@@ -1389,7 +1394,7 @@ exports.handleBehaviour = function(guild, message, target) {
 				let lines = [];
 
 				if (exc) {
-					let otd = exc.sqlMessage? exc.sqlMessage: exc; // object to display
+					const otd = exc.sqlMessage? exc.sqlMessage: exc; // message to display
 
 					color = "RED";
 					console.log("SQL:", sql);
@@ -1431,7 +1436,7 @@ exports.handleBehaviour = function(guild, message, target) {
 			let logPrefix = exports.logPrefix; // shortcut
 
 			if (exc) {
-				let otd = exc.sqlMessage? exc.sqlMessage: exc; // object to display
+				const otd = exc.sqlMessage? exc.sqlMessage: exc; // message to display
 
 				console.log("SQL:", sql);
 				console.warn(logPrefix()+"HBH Exception:", otd);
@@ -1544,7 +1549,7 @@ exports.handleContest = function(guild, message, target) {
 		if (sql) {
 			db_pool.query(sql, [delta, target.allycode], function(exc, result) {
 				if (exc) {
-					let otd = exc.sqlMessage? exc.sqlMessage: exc; // object to display
+					const otd = exc.sqlMessage? exc.sqlMessage: exc; // message to display
 
 					console.log("SQL:", sql);
 					console.warn(logPrefix()+"GCT Exception:", otd);
@@ -1575,7 +1580,7 @@ exports.handleContest = function(guild, message, target) {
 				let lines = [];
 
 				if (exc) {
-					let otd = exc.sqlMessage? exc.sqlMessage: exc; // object to display
+					const otd = exc.sqlMessage? exc.sqlMessage: exc; // message to display
 
 					color = "RED";
 					console.log("SQL:", sql);
@@ -1614,7 +1619,7 @@ exports.handleContest = function(guild, message, target) {
 		sql+= " ORDER BY contestPoints DESC, game_name ASC LIMIT ?";
 		db_pool.query(sql, [guild.refId, limit], function(exc, result) {
 			if (exc) {
-				let otd = exc.sqlMessage? exc.sqlMessage: exc; // object to display
+				const otd = exc.sqlMessage? exc.sqlMessage: exc; // message to display
 
 				console.log("SQL:", sql);
 				console.warn(logPrefix()+"GCT Exception:", otd);
@@ -1837,7 +1842,7 @@ exports.refreshGuildStats = function(allycode, message, callback) {
 				if (typeof(msg.delete)==="function") msg.delete();
 
 				if (exc) {
-					let otd = exc.sqlMessage? exc.sqlMessage: exc; // object to display
+					const otd = exc.sqlMessage? exc.sqlMessage: exc; // message to display
 
 					console.log("SQL:", sql);
 					console.log(logPrefix()+"RGS Exception:", otd);
@@ -1863,7 +1868,7 @@ exports.refreshGuildStats = function(allycode, message, callback) {
 				sql = "SELECT * FROM `users` WHERE guildRefId=?"; // get players
 				db_pool.query(sql, [guild.refId], function(exc, result) {
 					if (exc) {
-						let otd = exc.sqlMessage? exc.sqlMessage: exc; // object to display
+						const otd = exc.sqlMessage? exc.sqlMessage: exc; // message to display
 
 						console.log("SQL:", sql);
 						console.warn(logPrefix()+"RGS Exception:", otd);
@@ -1908,7 +1913,7 @@ exports.rememberGuildStats = function(g, message) {
 
 	db_pool.query(sql, [values], function(exc, result) {
 		if (exc) {
-			let otd = exc.sqlMessage? exc.sqlMessage: exc; // object to display
+			const otd = exc.sqlMessage? exc.sqlMessage: exc; // message to display
 
 			console.log("SQL:", sql);
 			console.log(logPrefix()+"GS Exception:", otd);
@@ -1922,7 +1927,7 @@ exports.rememberGuildStats = function(g, message) {
 
 			db_pool.query(sql, values, function(exc, result) {
 				if (exc) {
-					otd = exc.sqlMessage? exc.sqlMessage: exc; // object to display
+					otd = exc.sqlMessage? exc.sqlMessage: exc; // message to display
 
 					console.log("SQL:", sql);
 					console.log(logPrefix()+"GS Exception:", otd);
@@ -2080,7 +2085,7 @@ exports.territoryWarGet = function(player, message) {
 
 	db_pool.query(sql, [], function(exc, result) {
 		if (exc) {
-			let otd = exc.sqlMessage? exc.sqlMessage: exc; // object to display
+			const otd = exc.sqlMessage? exc.sqlMessage: exc; // message to display
 
 			console.log("SQL:", sql);
 			console.log(logPrefix()+"RTW Exception:", otd);
@@ -2171,7 +2176,7 @@ exports.territoryWarGet = function(player, message) {
 
 			message.channel.send(richMsg)
 			.catch(exc => {
-				let otd = exc.message? exc.message: exc; // object to display
+				const otd = exc.message? exc.message: exc; // message to display
 
 				console.warn(logPrefix()+otd);
 				message.reply(otd);
@@ -2278,7 +2283,7 @@ exports.territoryWarReg = function(player, message) {
 			return;
 		}
 
-		let err_msg = exc.sqlMessage? exc.sqlMessage: exc; // object to display
+		let err_msg = exc.sqlMessage? exc.sqlMessage: exc; // message to display
 
 		console.log("SQL:", sql);
 		console.log(logPrefix()+"RTW Exception:", err_msg);
@@ -2296,7 +2301,7 @@ exports.territoryWarReg = function(player, message) {
 			if (exc) {
 				color = "RED";
 				richMsg.setColor(color);
-				err_msg = exc.sqlMessage? exc.sqlMessage: exc; // object to display
+				err_msg = exc.sqlMessage? exc.sqlMessage: exc; // message to display
 				console.log("SQL:", sql);
 				console.log(logPrefix()+"RTW Exception:", err_msg);
 			} else {
