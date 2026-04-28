@@ -29,7 +29,7 @@ let config = require("./config.json");
 
 const specialGuilds  = require("../data/special-guilds");
 const unitAliasNames = require("../data/unit-aliases");
-// const unitRealNames  = require("../data/unit-names");
+const unitRealNames  = require("../data/unit-names");
 
 // Define cumulated shards required for each star (from 0 to 7)
 // Use to the progress computation, to distinct invest between each star
@@ -148,10 +148,7 @@ exports.checkConquestUnits = function(player, message) {
 		};
 		if (unitAliasNames[unit.baseId]) unit.baseId = unitAliasNames[unit.baseId];
 
-		msg = "Checking unit: " + conquestUnitName+" ("+unit.baseId+")";
-		console.log(logPrefix()+msg);
-
-		msg = "Checking unit: **" + unit.name+"**";
+		msg = "Checking: **" + unit.name+"**";
 		lines.push(msg);
 
 		const uid = unitAliasNames[unit.baseId] || unit.baseId;
@@ -159,8 +156,10 @@ exports.checkConquestUnits = function(player, message) {
 		const locked = ! playerMainUnit;
 		let indicator = locked? ":green_circle:": ":white_check_mark:";
 
-		unit.name = exports.unitRealNames[unit.baseId] || unit.name;
-		if (unit.isGL) ++ maxGlCount;
+		unit.name = exports.unitRealNames[uid] || unitRealNames[uid] || unit.name;
+		let logMsg = "Checking conquest unit: " + unit.name+" ("+unit.baseId+")";
+		console.log(logPrefix()+logMsg);
+
 		if (!locked) {
 			progresses.push(1);
 		} else {
