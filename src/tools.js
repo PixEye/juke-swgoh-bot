@@ -72,6 +72,8 @@ exports.addUnitName = function(code, name) {
 			const otd = exc.sqlMessage? exc.sqlMessage: exc; // message to display
 
 			console.log("SQL:", sql);
+			console.log("code:", code);
+			console.log("name:", name);
 			console.log(logPrefix()+"AUN Exception:", otd);
 			return;
 		}
