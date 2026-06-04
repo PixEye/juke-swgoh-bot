@@ -1806,7 +1806,13 @@ exports.updateOldestPlayer = function() {
 		console.log(logPrefix()+msg, users.length, deltaInHours, delayInMs);
 		if ( ! users.length ) return;
 
-		let u = users[0];
+		let u = users.shift();
+		if (exports.lastFetchedUAC === u.allycode) {
+			msg = "WARN: '%s' (%s) user was already fetched just before => removing";
+			console.warn(logPrefix()+msg, u.game_name, u.allycode);
+			exports.removeAllycode(u.allyCode);
+			u = users.shift();
+		}
 		msg = "Start UOP process on: %s (%s / %s)...";
 		console.log(logPrefix()+msg, u.game_name, u.allycode, exports.toMySQLDate(u.ts));
 
@@ -1814,6 +1820,7 @@ exports.updateOldestPlayer = function() {
 			exports.updatePlayerDataInDb(player, message, function() {
 				let msg = "\\ UOP done for %s (%s).";
 
+				exports.lastFetchedUAC = player.allycode;
 				console.log(logPrefix()+msg, player.name, player.allycode);
 			});
 		});
