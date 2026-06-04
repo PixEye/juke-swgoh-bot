@@ -1810,7 +1810,7 @@ exports.updateOldestPlayer = function() {
 		if (exports.lastFetchedUAC === u.allycode) {
 			msg = "WARN: '%s' (%s) user was already fetched just before => removing";
 			console.warn(logPrefix()+msg, u.game_name, u.allycode);
-			exports.removeAllycode(u.allyCode);
+			exports.removeAllycode(u.allycode);
 			u = users.shift();
 		}
 		msg = "Start UOP process on: %s (%s / %s)...";
