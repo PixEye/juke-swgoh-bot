@@ -6,12 +6,7 @@
   "scripts": {
     "test": "echo 'Error: no test specified' && exit 1"
   },
-  "keywords": [
-    "swgoh",
-    "discord",
-    "game",
-    "bot"
-  ],
+  "keywords": ["swgoh", "discord", "game", "bot"],
   "author": "PixEye.net",
   "license": "ISC",
   "repository": "https://github.com/PixEye/juke-swgoh-bot",
