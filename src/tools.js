@@ -31,17 +31,17 @@ const specialGuilds  = require("../data/special-guilds");
 const unitAliasNames = require("../data/unit-aliases");
 const unitRealNames  = require("../data/unit-names");
 
-// Define cumulated shards required for each star (from 0 to 7)
-// Use to the progress computation, to distinct invest between each star
-const starTotalsShards = [0, 10, 25, 50, 80, 145, 230, 330]
-
 // Define cumulated evaluation to represent difficulty to upgrade a gear.
 // We get the Gear level power 2.
 const gearDifficultyEvaluation = [0, 1, 4, 9, 16, 25, 36, 49, 64, 81, 100, 121, 144, 169]
 
 // Define cumulated evaluation to represent difficulty to upgrade a relic.
 // We get the Relic level power 2.
-const relicDifficultyEvaluation = [0, 1, 4, 9, 16, 25, 36, 49, 64, 81]
+const relicDifficultyEvaluation = [0, 1, 4, 9, 16, 25, 36, 49, 64, 81, 100]
+
+// Define cumulated shards required for each star (from 0 to 7)
+// Use to the progress computation, to distinct invest between each star
+const starTotalsShards = [0, 10, 25, 50, 80, 145, 230, 330]
 
 // Prepare DB connection pool:
 const db_pool = mysql.createPool({
@@ -211,9 +211,9 @@ exports.checkConquestUnits = function(player, message) {
 					levels = "R"+playerUnit.relic+"/"+req.relicTier;
 				msg = "`"+levels+"`: "+unitName;
 
-				// Distribute weight > Star is fixed to 30%, for a 9 relic it-s 15%, under R9 we take his ratio.
+				// Distribute weight > Star is fixed to 30%, for a 10 relic it-s 15%, under R9 we take his ratio.
 				const  starWeight = 0.25;
-				const relicWeight = 0.20 * req.relicTier / 9;
+				const relicWeight = 0.20 * req.relicTier / 10;
 				const  gearWeight = 1 - starWeight - relicWeight;
 
 				progress = starWeight * starTotalsShards[playerUnit.stars] / starTotalsShards[7];
@@ -477,9 +477,9 @@ exports.checkLegendReq = function(player, message) {
 					levels = "R"+playerUnit.relic+"/"+req.relicTier;
 				msg = "`"+levels+"`: "+unitName;
 
-				// Distribute weight > Star is fixed to 30%, for a 9 relic it-s 15%, under R9 we take his ratio.
+				// Distribute weight > Star is fixed to 30%, for a relic 10 it-s 15%, under R9 we take his ratio.
 				const  starWeight = 0.25;
-				const relicWeight = 0.20 * req.relicTier / 9;
+				const relicWeight = 0.20 * req.relicTier / 10;
 				const  gearWeight = 1 - starWeight - relicWeight;
 
 				progress = starWeight * starTotalsShards[playerUnit.stars] / starTotalsShards[7];
