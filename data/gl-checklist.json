@@ -1,5 +1,5 @@
 {
-	"selfUrl": "https://swgoh.gg/api/gl-checklist/",
+	"selfBaseUrl": "https://swgoh.gg/api/gl-checklist/",
 	"units": [
 		{
 			"baseId": "TBD_KYLO",
@@ -11,10 +11,12 @@
 				{"gearLevel": 13, "relicTier": 5, "baseId": "FIRSTORDEROFFICERMALE"},
 				{"gearLevel": 13, "relicTier": 5, "baseId": "FIRSTORDERTROOPER"},
 				{"gearLevel": 13, "relicTier": 7, "baseId": "KYLOREN"},
+
 				{"gearLevel": 13, "relicTier": 5, "baseId": "PHASMA"},
 				{"gearLevel": 13, "relicTier": 5, "baseId": "FIRSTORDEREXECUTIONER"},
 				{"gearLevel": 13, "relicTier": 3, "baseId": "SMUGGLERHAN"},
 				{"gearLevel": 13, "relicTier": 5, "baseId": "FOSITHTROOPER"},
+
 				{"gearLevel": 13, "relicTier": 3, "baseId": "FIRSTORDERSPECIALFORCESPILOT"},
 				{"gearLevel": 13, "relicTier": 5, "baseId": "GENERALHUX"},
 				{"gearLevel": 13, "relicTier": 3, "baseId": "FIRSTORDERTIEPILOT"},
@@ -32,10 +34,12 @@
 				{"gearLevel": 13, "relicTier": 5, "baseId": "FINN"},
 				{"gearLevel": 13, "relicTier": 5, "baseId": "RESISTANCETROOPER"},
 				{"gearLevel": 13, "relicTier": 7, "baseId": "REY"},
+
 				{"gearLevel": 13, "relicTier": 5, "baseId": "POE"},
 				{"gearLevel": 13, "relicTier": 3, "baseId": "RESISTANCEPILOT"},
 				{"gearLevel": 13, "relicTier": 5, "baseId": "EPIXFINN"},
 				{"gearLevel": 13, "relicTier": 5, "baseId": "AMILYNHOLDO"},
+
 				{"gearLevel": 13, "relicTier": 5, "baseId": "ROSETICO"},
 				{"gearLevel": 13, "relicTier": 5, "baseId": "EPIXPOE"},
 				{"gearLevel": 13, "relicTier": 7, "baseId": "BB8"},
@@ -449,8 +453,20 @@
 				{ "gearLevel": 13, "relicTier": 5, "baseId": "CHIRRUTIMWE" },
 
 				{ "gearLevel": 13, "relicTier": 7, "baseId": "CAPTAINSILVO" },
-        		{ "gearLevel": 13, "relicTier": 8, "baseId": "COUNTDOOKU" },
-        		{ "gearLevel": 13, "relicTier": 8, "baseId": "BOSSK" }
+				{ "gearLevel": 13, "relicTier": 8, "baseId": "COUNTDOOKU" },
+				{ "gearLevel": 13, "relicTier": 8, "baseId": "BOSSK" }
+			]
+		},
+		{
+			"baseId": "TBD_MANDOGROGU",
+			"unitName": "The Mandalorian and Grogu",
+			"image": "https://game-assets.swgoh.gg/textures/tex.jg_charui_glmandogrogu_preview.png",
+			"isGL": true,
+			"requiredUnits": [
+				{ "gearLevel": 13, "relicTier": 10, "baseId": "THEMANDALORIAN" },
+				{ "gearLevel": 13, "relicTier": 9, "baseId": "R5D4" },
+				{ "gearLevel": 13, "relicTier": 7, "baseId": "GREEFKARGA" },
+				{ "gearLevel": 13, "relicTier": 6, "baseId": "RACCOON" }
 			]
 		}
 	]
