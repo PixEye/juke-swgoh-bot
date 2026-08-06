@@ -1,0 +1,28 @@
+[
+	{
+		"id": "MaulHateFueled",
+		"firstSeenDate": "2026-01-13",
+		"name": "Maul (Hate-Fueled)",
+		"requirements": [
+			"Stormtrooper Luke",
+			"IG-90",
+			"Yoda & Chewbacca",
+			"Asajj (dark disciple)",
+			"Inquisitor Barriss",
+			"Vador Duel's End"
+		]
+	},
+	{
+		"id": "CassianUndercover",
+		"firstSeenDate": "2026-04-07",
+		"name": "Cassian Andor (Undercover)",
+		"requirements": [
+			"Cinta",
+			"Dedra Meero",
+			"Kleya",
+			"Major Partagaz",
+			"Vel",
+			"KX Security Droid"
+		]
+	}
+]
