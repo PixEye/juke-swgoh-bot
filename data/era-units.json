@@ -1,28 +1,35 @@
-[
-	{
-		"id": "MaulHateFueled",
-		"firstSeenDate": "2026-01-13",
-		"name": "Maul (Hate-Fueled)",
-		"requirements": [
-			"Stormtrooper Luke",
-			"IG-90",
-			"Yoda & Chewbacca",
-			"Asajj (dark disciple)",
-			"Inquisitor Barriss",
-			"Vador Duel's End"
-		]
-	},
-	{
-		"id": "CassianUndercover",
-		"firstSeenDate": "2026-04-07",
-		"name": "Cassian Andor (Undercover)",
-		"requirements": [
-			"Cinta",
-			"Dedra Meero",
-			"Kleya",
-			"Major Partagaz",
-			"Vel",
-			"KX Security Droid"
-		]
-	}
-]
+{
+	"title": "Era units' requirements",
+	"units": [
+		{
+			"baseId": "MaulHateFueled",
+			"firstSeenDate": "2026-01-13",
+			"image": "https://game-assets.swgoh.gg/textures/tex.charui_maulhatefueled.png",
+			"isGL": false,
+			"name": "Maul (Hate-Fueled)",
+			"requiredUnits": [
+				{"gearLevel": 13, "relicTier": 6, "baseId": "Stormtrooper Luke"},
+				{"gearLevel": 13, "relicTier": 6, "baseId": "IG-90"},
+				{"gearLevel": 13, "relicTier": 6, "baseId": "Yoda & Chewbacca"},
+				{"gearLevel": 13, "relicTier": 6, "baseId": "Asajj (dark disciple)"},
+				{"gearLevel": 13, "relicTier": 6, "baseId": "Inquisitor Barriss"},
+				{"gearLevel": 13, "relicTier": 6, "baseId": "Vador Duel's End"}
+			]
+		},
+		{
+			"baseId": "CassianUndercover",
+			"firstSeenDate": "2026-04-07",
+			"image": "https://game-assets.swgoh.gg/textures/tex.charui_cassianundercover.png",
+			"isGL": false,
+			"name": "Cassian Andor (Undercover)",
+			"requiredUnits": [
+				{"gearLevel": 13, "relicTier": 6, "baseId": "Cinta"},
+				{"gearLevel": 13, "relicTier": 6, "baseId": "Dedra Meero"},
+				{"gearLevel": 13, "relicTier": 6, "baseId": "Kleya"},
+				{"gearLevel": 13, "relicTier": 6, "baseId": "Major Partagaz"},
+				{"gearLevel": 13, "relicTier": 6, "baseId": "Vel"},
+				{"gearLevel": 13, "relicTier": 6, "baseId": "KX Security Droid"}
+			]
+		}
+	]
+}
