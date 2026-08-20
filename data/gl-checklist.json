@@ -466,7 +466,12 @@
 				{ "gearLevel": 13, "relicTier": 10, "baseId": "THEMANDALORIAN" },
 				{ "gearLevel": 13, "relicTier": 9, "baseId": "R5D4" },
 				{ "gearLevel": 13, "relicTier": 7, "baseId": "GREEFKARGA" },
-				{ "gearLevel": 13, "relicTier": 6, "baseId": "RACCOON" }
+				{ "gearLevel": 13, "relicTier": 6, "baseId": "RACCOON" },
+
+				{ "gearLevel": 13, "relicTier": 9, "baseId": "IG11" },
+				{ "gearLevel": 13, "relicTier": 7, "baseId": "CARSONTEVA" },
+				{ "gearLevel": 13, "relicTier": 7, "baseId": "RANGERZEB" },
+				{ "gearLevel": 13, "relicTier": 7, "baseId": "BISHOP" }
 			]
 		}
 	]
