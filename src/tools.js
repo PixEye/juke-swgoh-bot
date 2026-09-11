@@ -213,7 +213,7 @@ exports.checkConquestUnits = function(player, message) {
 
 				// Distribute weight > Star is fixed to 30%, for a 10 relic it-s 15%, under R9 we take his ratio.
 				const  starWeight = 0.25;
-				const relicWeight = 0.20 * req.relicTier / 10;
+				const relicWeight = 0.50 * req.relicTier / 10;
 				const  gearWeight = 1 - starWeight - relicWeight;
 
 				progress = starWeight * starTotalsShards[playerUnit.stars] / starTotalsShards[7];
@@ -479,7 +479,7 @@ exports.checkLegendReq = function(player, message) {
 
 				// Distribute weight > Star is fixed to 30%, for a relic 10 it-s 15%, under R9 we take his ratio.
 				const  starWeight = 0.25;
-				const relicWeight = 0.20 * req.relicTier / 10;
+				const relicWeight = 0.50 * req.relicTier / 10;
 				const  gearWeight = 1 - starWeight - relicWeight;
 
 				progress = starWeight * starTotalsShards[playerUnit.stars] / starTotalsShards[7];
