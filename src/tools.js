@@ -1718,8 +1718,12 @@ exports.periodicalProcess = function(firstTime = false) {
 	if (now.getHours() === 6)
 		exports.updateOldestGuildOr(exports.updateOldestPlayer);
 	else // */
-	if (!firstTime) {
-		exports.alreadyFetchedGuildIds = [];
+
+	exports.alreadyFetchedGuildIds = [];
+	if (firstTime) {
+		// wait a bit
+		setTimeout(exports.updateOldestPlayer, 2000);
+	} else {
 		exports.updateOldestPlayer();
 	}
 };
@@ -1789,7 +1793,7 @@ exports.updateOldestPlayer = function() {
 	let sql = "SELECT allycode, game_name, ts FROM users"+
 		" WHERE NOT banned AND discord_id IS NOT NULL"+
 		" AND TIMESTAMP"+"DIFF(HOUR, ts, NOW())>"+deltaInHours+
-		" ORDER BY ts LIMIT 5";
+		" ORDER BY ts LIMIT 2";
 	let start = new Date();
 
 	db_pool.query(sql, function(exc, users) {
@@ -1808,10 +1812,14 @@ exports.updateOldestPlayer = function() {
 
 		let u = users.shift();
 		if (exports.lastFetchedUAC === u.allycode) {
-			msg = "WARN: '%s' (%s) user was already fetched just before => removing";
+			msg = "WARN: '%s' (%s) user was already fetched just before => try next one";
 			console.warn(logPrefix()+msg, u.game_name, u.allycode);
-			exports.removeAllycode(u.allycode);
+			// exports.removeAllycode(u.allycode); // forget it
 			u = users.shift();
+			if (!u) {
+				console.warn(logPrefix()+"WARN: no user left to update");
+				return;
+			}
 		}
 		msg = "Start UOP process on: %s (%s / %s)...";
 		console.log(logPrefix()+msg, u.game_name, u.allycode, exports.toMySQLDate(u.ts));
