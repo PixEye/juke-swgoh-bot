@@ -3,6 +3,7 @@
 	"units": [
 		{
 			"baseId": "TBD_KYLO",
+			"unitName": "Suprem Leader Kylo Ren",
 			"image": "https://game-assets.swgoh.gg/textures/tex.jg_charui_galacticlegend_kylo.png",
 			"isGL": true,
 			"requiredUnits": [
@@ -21,11 +22,11 @@
 				{"gearLevel": 13, "relicTier": 5, "baseId": "GENERALHUX"},
 				{"gearLevel": 13, "relicTier": 3, "baseId": "FIRSTORDERTIEPILOT"},
 				{"gearLevel": 13, "relicTier": 7, "baseId": "EMPERORPALPATINE"}
-			],
-			"unitName": "Kylo"
+			]
 		},
 		{
 			"baseId": "TBD_Rey",
+			"unitName": "Rey",
 			"image": "https://game-assets.swgoh.gg/textures/tex.jg_charui_whiteroberey.png",
 			"isGL": true,
 			"requiredUnits": [
@@ -44,11 +45,11 @@
 				{"gearLevel": 13, "relicTier": 5, "baseId": "EPIXPOE"},
 				{"gearLevel": 13, "relicTier": 7, "baseId": "BB8"},
 				{"gearLevel": 13, "relicTier": 3, "baseId": "SMUGGLERCHEWBACCA"}
-			],
-			"unitName": "Rey"
+			]
 		},
 		{
 			"baseId": "JEDIKNIGHTLUKE",
+			"unitName": "Jedi Knight Luke",
 			"image": "https://game-assets.swgoh.gg/textures/tex.jg_charui_jediknightluke.png",
 			"isGL": false,
 			"requiredUnits": [
@@ -63,11 +64,11 @@
 				{"gearLevel": 13, "relicTier": 3, "baseId": "HOTHHAN"},
 				{"gearLevel": 13, "relicTier": 3, "baseId": "COMMANDERLUKESKYWALKER"},
 				{"gearLevel": 13, "relicTier": 3, "baseId": "HERMITYODA"}
-			],
-			"unitName": "Jedi Knight Luke"
+			]
 		},
 		{
 			"baseId": "TBD_JMLS",
+			"unitName": "Jedi Master Luke Skywalker",
 			"image": "https://game-assets.swgoh.gg/textures/tex.jg_charui_luke_grandmaster.png",
 			"isGL": true,
 			"requiredUnits": [
@@ -88,11 +89,11 @@
 				{"gearLevel": 13, "relicTier": 3, "baseId": "WEDGEANTILLES"},
 				{"gearLevel": 13, "relicTier": 3, "baseId": "BIGGSDARKLIGHTER"},
 				{"gearLevel": 13, "relicTier": 5, "baseId": "ADMINISTRATORLANDO"}
-			],
-			"unitName": "Jedi Master Luke Skywalker"
+			]
 		},
 		{
 			"baseId": "TBD_SEE",
+			"unitName": "Sith Eternal Emperor",
 			"image": "https://game-assets.swgoh.gg/textures/tex.jg_charui_espalpatine.png",
 			"isGL": true,
 			"requiredUnits": [
@@ -113,11 +114,11 @@
 				{"gearLevel": 13, "relicTier": 3, "baseId": "GRANDMOFFTARKIN"},
 				{"gearLevel": 13, "relicTier": 3, "baseId": "VEERS"},
 				{"gearLevel": 13, "relicTier": 3, "baseId": "COLONELSTARCK"}
-			],
-			"unitName": "Sith Eternal Emperor"
+			]
 		},
 		{
 			"baseId": "TBD_GK",
+			"unitName": "Jedi Master Kenobi",
 			"image": "https://game-assets.swgoh.gg/textures/tex.jg_charui_globiwan.png",
 			"isGL": true,
 			"requiredUnits": [
@@ -138,11 +139,11 @@
 				{"gearLevel": 13, "relicTier": 7, "baseId": "SHAAKTI"},
 				{"gearLevel": 13, "relicTier": 8, "baseId": "GRANDMASTERYODA"},
 				{"stars": 6, "baseId": "CAPITALNEGOTIATOR"}
-			],
-			"unitName": "Jedi Master Kenobi"
+			]
 		},
 		{
 			"baseId": "TBD_LV",
+			"unitName": "Lord Vader",
 			"image": "https://game-assets.swgoh.gg/textures/tex.jg_charui_anakin_fallen.png",
 			"isGL": true,
 			"requiredUnits": [
@@ -163,11 +164,11 @@
 				{"gearLevel": 13, "relicTier": 8, "baseId": "ARCTROOPER501ST"},
 				{"gearLevel": 13, "relicTier": 7, "baseId": "NUTEGUNRAY"},
 				{"stars": 7, "baseId": "YWINGCLONEWARS"}
-			],
-			"unitName": "Lord Vader"
+			]
 		},
 		{
 			"baseId": "TBD_STARKILLER",
+			"unitName": "Star Killer",
 			"image": "https://game-assets.swgoh.gg/textures/tex.charui_starkiller.png",
 			"isGL": false,
 			"requiredUnits": [
@@ -175,8 +176,7 @@
 				{"gearLevel": 13, "relicTier": 5, "baseId": "KYLEKATARN"},
 				{"gearLevel": 13, "relicTier": 5, "baseId": "DARTHTALON"},
 				{"gearLevel": 13, "relicTier": 5, "baseId": "MARAJADE"}
-			],
-			"unitName": "Star Killer"
+			]
 		},
 		{
 			"baseId": "TBD_GI",
